@@ -1,0 +1,51 @@
+<div class="login-background">
+    <div class="login-card">
+      <img src="images/panGulfLogo.jpg" alt="Pan Gulf Logo" class="logo" />
+  
+      <h3>Welcome to PMS</h3>
+      <p class="subheading">Employee Login</p>
+  
+      <form #loginform="ngForm" (ngSubmit)="loginUser(loginform)">
+        <input 
+          type="text" 
+          placeholder="Username" 
+          name="email"
+          [(ngModel)]="login.email"
+          #email="ngModel"
+          required
+        />
+  
+        <input 
+          type="password" 
+          placeholder="Password" 
+          name="password"
+          [(ngModel)]="login.password"
+          #password="ngModel"
+          required
+        />
+  
+        <div *ngIf="email.invalid && email.touched" class="error-message">
+          Email is required.
+        </div>
+  
+        <div class="remember-me">
+          <input 
+            type="checkbox" 
+            id="rememberMe" 
+            name="rememberMe"
+            [(ngModel)]="login.rememberMe"
+          />
+          <label for="rememberMe">Remember me</label>
+        </div>
+  
+        <button type="submit" class="login-btn" routerlink="/otp">Login</button>
+      </form>
+  
+      <a href="#" class="login-as-customer">Login As Customer</a>
+  
+      <footer>
+        © 2018 Pan Gulf Technologies Pvt. Ltd. All rights reserved.
+      </footer>
+    </div>
+  </div>
+  

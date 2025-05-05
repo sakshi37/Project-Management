@@ -1,0 +1,138 @@
+<div class="container mt-4">
+  <!-- Add Holiday Button -->
+  <div class="text-end mb-3">
+    <button class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#holidayModal" (click)="openAddModal()">
+      + Add Holiday
+    </button>
+  </div>
+  <div class="entries-dropdown">
+    <label for="entries">Show</label>
+    <select id="entries" [(ngModel)]="itemsPerPage">
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+    </select>
+    <span>Entries</span>
+  </div>
+  <!-- Filters -->
+  <div class="mb-3 row">
+    <div class="col-md-4">
+      <select class="form-select" [(ngModel)]="filter.listType">
+        <option value="">Select Holiday List Type</option>
+        <option value="1">US Holiday List</option>
+        <option value="0">Non-US Holiday List</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <p-datepicker 
+        [(ngModel)]="filterYear" 
+        view="year" 
+        dateFormat="yy" 
+        (onSelect)="onYearSelect($event)" 
+        showIcon="true"
+        inputId="year" 
+        placeholder="Select Year"
+        class="form-control rounded-3 w-50">
+      </p-datepicker>
+    </div>
+    <div class="col-md-4 text-end">
+      <button class="btn btn-secondary" (click)="filterHolidays()">Search</button>
+    </div>
+  </div>
+
+  <!-- Holiday List Table -->
+  <div class="row gy-4" *ngIf="filteredResults && filteredResults.length > 0; else noData">
+    <div class="col-12">
+      <div>
+        <table class="mb-0">
+          <thead>
+            <tr>
+              <th><div class="head-first">Sr. No</div></th>
+              <th><div class="head-other">Holiday Name</div></th>
+              <th><div class="head-other">Day</div></th>
+              <th><div class="head-other">Date</div></th>
+              <th><div class="head-other">Year</div></th>
+              <th><div class="head-other">Holiday List</div></th>
+              <th><div class="head-last">Action</div></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index" [ngClass]="{ 'inactive-row': !h.holidayStatus }">
+              <td><div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
+              <td><div class="tr-other-child">{{ h.holidayName }}</div></td>
+              <td><div class="tr-other-child">{{ h.dayName }}</div></td>
+              <td><div class="tr-other-child">{{ h.formattedDate }}</div></td>
+              <td><div class="tr-other-child">{{ getYear(h.holidayDate) }}</div></td>
+              <td><div class="tr-other-child">{{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }}</div></td>
+              <td>
+                <div class="tr-last-child">
+                  <button class="btn btn-sm edit-btn me-2" (click)="onEdit(h)" data-bs-toggle="modal" data-bs-target="#holidayModal">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="onStatusChange(h)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination-wrapper">
+          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data Template -->
+  <ng-template #noData>
+    <div class="alert alert-info text-center mt-4">No holidays found.</div>
+  </ng-template>
+
+  <!-- Holiday Modal -->
+  <div class="modal fade" id="holidayModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">{{ isEditMode ? 'Edit Holiday' : 'Add New Holiday' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            (click)="resetForm()"></button>
+        </div>
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <form [formGroup]="holidayForm" (ngSubmit)="onSubmit()" class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label">Holiday Name:</label>
+              <input type="text" class="form-control" formControlName="holidayName" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Date:</label>
+              <input type="date" class="form-control" formControlName="holidayDate" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">List Type:</label>
+              <select class="form-select" formControlName="holidayListType">
+                <option value="1">US Holiday</option>
+                <option value="0">Non-US Holiday</option>
+              </select>
+            </div>
+
+            <!-- <div class="col-md-6">
+              <label class="form-label">Status:</label>
+              <select class="form-select" formControlName="holidayStatus">
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div> -->
+
+            <div class="col-12 d-flex justify-content-end">
+              <button class="btn btn-success" type="submit">{{ isEditMode ? 'Update' : 'Add' }}</button>
+              <button class="btn btn-secondary ms-2" type="button" data-bs-dismiss="modal" (click)="resetForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

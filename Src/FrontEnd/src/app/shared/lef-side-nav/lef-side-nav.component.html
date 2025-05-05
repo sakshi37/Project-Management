@@ -1,0 +1,131 @@
+<app-header></app-header>
+
+<div class="d-flex flex-column sidebar bg-primary text-white p-3">
+  <!-- Profile Section -->
+  <div class="text-center mb-4">
+    <img
+      [src]="user.profileImage"
+      class="rounded-circle mb-2 border border-white"
+      width="80"
+      height="80"
+      alt="Profile Image"
+    />
+    <h6 class="mb-0">{{ user.name }}</h6>
+    <small class="text-white-50">{{ user.department }}</small>
+  </div>
+
+  <!-- Dashboard -->
+  <a
+    routerLink="/dashboard"
+    routerLinkActive="active-link"
+    class="sidebar-link mb-2"
+  >
+    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+  </a>
+
+  <!-- Accordion -->
+  <div class="accordion accordion-flush" id="sidebarMenu" #sidebarMenu>
+    <!-- Profile -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button collapsed bg-transparent text-white"
+          type="button"
+          aria-expanded="false"
+          aria-controls="profileMenu"
+          (click)="toggleProfileMenu()"
+        >
+          <i class="fas fa-user me-2"></i> Profile
+        </button>
+      </h2>
+      <div
+        id="profileMenu"
+        #profileMenu
+        class="accordion-collapse collapse"
+        data-bs-parent="#sidebarMenu"
+      >
+        <div class="accordion-body ps-4">
+          <a routerLink="/changePassword" class="sidebar-link d-block mb-2">
+            <i class="fas fa-lock me-2"></i> Change Password
+          </a>
+          <a routerLink="/logout" class="sidebar-link d-block">
+            <i class="fas fa-sign-out-alt me-2"></i> Log Out
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Masters -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button collapsed bg-transparent text-white"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mastersMenu"
+          (click)="toggleMastersMenu()"
+        >
+          <i class="fas fa-cogs me-2"></i> Masters
+        </button>
+      </h2>
+      <div
+        id="mastersMenu"
+        #mastersMenu
+        class="accordion-collapse collapse"
+        data-bs-parent="#sidebarMenu"
+      >
+        <div class="accordion-body ps-4">
+          <a routerLink="/employee" class="sidebar-link d-block mb-2"
+            >Employee Master</a
+          >
+          <a routerLink="/holiday" class="sidebar-link d-block mb-2"
+            >Holiday Calendar</a
+          >
+          <a routerLink="/settings" class="sidebar-link d-block mb-2"
+            >Settings</a
+          >
+          <a routerLink="/team-composition" class="sidebar-link d-block mb-2"
+            >Team Composition</a
+          >
+          <a routerLink="/gmc" class="sidebar-link d-block">GMC</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HR -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button collapsed bg-transparent text-white"
+          type="button"
+          aria-expanded="false"
+          aria-controls="hrMenu"
+          (click)="toggleHrMenu()"
+        >
+          <i class="fas fa-briefcase me-2"></i> HR
+        </button>
+      </h2>
+      <div
+        id="hrMenu"
+        #hrMenu
+        class="accordion-collapse collapse"
+        data-bs-parent="#sidebarMenu"
+      >
+        <div class="accordion-body ps-4">
+          <a routerLink="/attendance" class="sidebar-link d-block mb-2"
+            >Timesheet Update</a
+          >
+          <a routerLink="/leave-management" class="sidebar-link d-block mb-2"
+            >Daily Report</a
+          >
+          <a routerLink="/leave-management" class="sidebar-link d-block mb-2"
+            >Employee Attendance Report</a
+          >
+          <a routerLink="/leave-management" class="sidebar-link d-block"
+            >Daily Report</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
