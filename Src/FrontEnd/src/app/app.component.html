@@ -1,0 +1,10 @@
+<!-- app.component.html -->
+<ng-container *ngIf="!hideLayout">
+    <app-header></app-header>
+    <app-lef-side-nav></app-lef-side-nav>
+  </ng-container>
+  
+  <div class="main-content" [ngStyle]="{ 'margin-left': !hideLayout ? '250px' : '0' }">
+    <router-outlet></router-outlet>
+  </div>
+  

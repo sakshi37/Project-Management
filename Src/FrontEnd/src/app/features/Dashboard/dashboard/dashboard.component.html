@@ -1,0 +1,42 @@
+<app-header></app-header>
+<app-lef-side-nav></app-lef-side-nav>
+<app-dashboard-info></app-dashboard-info>
+<div class="container">
+  <div class="row">
+    <div class="col-3">
+      <app-lef-side-nav></app-lef-side-nav>
+    </div>
+    <div class="col-9">
+      <h4 class="mb-3">Product List</h4>
+  
+    <table class="table table-bordered table-hover align-middle text-center">
+      <thead class="table-dark">
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Price ($)</th>
+          <th>Rating</th>
+          <th>Reviews</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products; track product.id) {
+          <tr>
+            <td>
+              <img [src]="product.image" alt="Product" width="80" height="80">
+            </td>
+            <td>{{ product.title }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.rating.rate }} ⭐</td>
+            <td>{{ product.rating.count }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>

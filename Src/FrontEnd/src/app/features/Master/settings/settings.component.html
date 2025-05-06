@@ -1,0 +1,22 @@
+<app-subcategory-tabs
+  (tabChanged)="onTabChanged($event)"
+></app-subcategory-tabs>
+
+<div *ngIf="activeTab === 'Country'">
+  <app-country></app-country>
+</div>
+
+<div *ngIf="activeTab === 'State'">
+  <app-state></app-state>
+</div>
+
+<div *ngIf="activeTab === 'City'">
+  <app-city></app-city>
+</div>
+
+<div *ngIf="activeTab === 'Designation'">
+  <app-designation></app-designation>
+</div>
+<div *ngIf="activeTab === 'Branch'">
+  <app-branch></app-branch>
+</div>
