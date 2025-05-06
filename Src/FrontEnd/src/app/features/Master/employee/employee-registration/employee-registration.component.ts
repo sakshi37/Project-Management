@@ -42,18 +42,6 @@ export class EmployeeRegistrationComponent implements OnInit {
     this.initForm();
     this.getLocation();
   }
-  strictEmailValidator = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const value = control.value;
-    const strictEmailRegex =
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|gov|edu|mil|biz|info|name|co|in|co\.in)$/i;
-
-    if (value && !strictEmailRegex.test(value)) {
-      return { strictEmail: true };
-    }
-    return null;
-  };
 
   generateEmployeeCode(): string {
     const now = new Date();
@@ -88,11 +76,11 @@ export class EmployeeRegistrationComponent implements OnInit {
       name: ['Vaishanavi Bhambure', Validators.required],
       code: [this.generateEmployeeCode(), Validators.required],
       address: ['Kalyan(w)', Validators.required],
-      mobileNo: ['123456781'],
+      mobileNo: ['123456781', Validators.required],
       skypeId: ['fdsts43'],
       email: [
         'vaishanvi.demo@gmail.com',
-        [Validators.required, Validators.email, this.strictEmailValidator],
+        [Validators.required, Validators.email],
       ],
       joinDate: ['', Validators.required],
       bccEmail: ['vaishanvi@demo.com'],
