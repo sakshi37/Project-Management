@@ -5,3 +5,5 @@ describe('ActivateEmployeeService', () => {
     expect(new ActivateEmployeeService()).toBeTruthy();
   });
 });
+
+export { ActivateEmployeeService };
