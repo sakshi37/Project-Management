@@ -13,7 +13,7 @@ export class InactiveEmployeeService {
 
     constructor(private http: HttpClient) {}
   
-    deactivateEmployee(employeeCode: string): Observable<InactiveEmployeeModel> {
-      return this.http.post<InactiveEmployeeModel>(`${this.baseUrl}/deactivate/${employeeCode}`, {});
+    deactivateEmployee(code: string): Observable<InactiveEmployeeModel> {
+      return this.http.post<InactiveEmployeeModel>(`${this.baseUrl}/Inactivate/${code}`, {});
     }
 }

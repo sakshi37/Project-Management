@@ -7,6 +7,7 @@ import { SubcategoryTabsComponent } from '../../../shared/subcategory-tabs/subca
 import { StateComponent } from './state/state-component.component';
 import { CityComponent } from './city/city.component';
 import { DesignationComponent } from './designation/designation.component';
+import { BranchComponent } from './branch/branch.component';
 
 @Component({
   selector: 'app-settings',
@@ -18,6 +19,8 @@ import { DesignationComponent } from './designation/designation.component';
     StateComponent,
     CityComponent,
     DesignationComponent,
+    BranchComponent
+    
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',

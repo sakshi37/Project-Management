@@ -20,6 +20,7 @@ export class SubcategoryTabsComponent {
     'State',
     'City',
     'Location',
+    'Branch',
     'Division',
     'Designation',
     'Drawing Property',

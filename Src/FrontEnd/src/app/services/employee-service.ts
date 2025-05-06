@@ -9,7 +9,7 @@ import { API_URL } from '../../constant';
   providedIn: 'root',
 })
 export class EmployeeService {
-  private baseUrl = 'https://localhost:7292/ALlEmployees';
+  private baseUrl = 'https://localhost:7292/AllEmployees';
 
   private url = API_URL;
 
@@ -26,9 +26,9 @@ export class EmployeeService {
     }
 
     return this.http.get<any>(
-      `https://localhost:7292/ALlEmployees?pageNumber=${page}&pageSize=${size}`,
-      { params }
+      `${this.url}/Employee/AllEmployees?pageNumber=${page}&pageSize=${size}&search=${search ?? ''}`
     );
+    
   }
   createEmployee(employee: CreateModel): Observable<any> {
     return this.http.post(this.url + '/Employee', employee);
