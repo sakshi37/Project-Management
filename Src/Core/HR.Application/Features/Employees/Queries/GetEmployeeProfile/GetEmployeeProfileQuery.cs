@@ -1,5 +1,6 @@
 ﻿using HR.Application.Contracts.Models.Common;
-using HR.Application.Features.Employee.Queries.GetAllEmployees;
+
+
 using MediatR;
 using System;
 

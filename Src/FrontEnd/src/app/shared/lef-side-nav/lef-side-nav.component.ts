@@ -3,13 +3,14 @@ import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard.component';
 import { ProfileService, UserProfile } from '../../services/profile-services';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-lef-side-nav',
   templateUrl: './lef-side-nav.component.html',
   styleUrls: ['./lef-side-nav.component.css'],
   standalone: true,
-  imports: [RouterLink, HeaderComponent],
+  imports: [RouterLink, HeaderComponent,CommonModule],
 })
 export class LefSideNavComponent {
   user: UserProfile = {

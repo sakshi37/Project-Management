@@ -9,7 +9,7 @@ using HR.Application.Contracts.Persistence;
 using HR.Application.Contracts.Models.Common;
 
 
-namespace HR.Application.Features.Employee.Queries.GetAllEmployees
+namespace HR.Application.Features.Employees.Queries.GetAllEmployees
 {
    
     public class GetAllEmployeeQueryHandler : IRequestHandler<GetAllEmployeeQuery, PaginatedResult<GetAllEmployeeVm>>

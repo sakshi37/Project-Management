@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.Application.Features.Employee.Queries.GetAllEmployees
+namespace HR.Application.Features.Employees.Queries.GetAllEmployees
 {
 
  public class GetAllEmployeeQuery : IRequest<PaginatedResult<GetAllEmployeeVm>>

@@ -12,7 +12,7 @@ namespace HR.Persistence
     {
         public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("HrConnString")));
             services.AddScoped<ICountryRepository, CountryRepository>();
             services.AddScoped<IStateRepository, StateRepository>();
             services.AddScoped<IDesignationRepository, DesignationRepository>();

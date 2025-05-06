@@ -63,8 +63,7 @@ public class MappingProfile : Profile
         CreateMap<CreateHolidayDto, Holiday>();
         CreateMap<UpdateHolidayDto, Holiday>();
         CreateMap<Holiday, HolidayDto>();
-     CreateMap<Branch, BranchDto>();
+           CreateMap<Branch, BranchDto>();
         CreateMap<CreateBranchDto, Branch>();
-
     }
 }

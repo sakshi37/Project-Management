@@ -1,8 +1,8 @@
 ﻿using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
-using HR.Application.Features.Employee.Commands.Query;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
+using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,9 +26,7 @@ namespace HR.API.Controllers
             var response = await _mediator.Send(new CreateEmployeeCommand(dto));
             return Ok(response);
         }
-
-
-        [HttpGet("AllEmployees")]
+ [HttpGet("AllEmployees")]
         public async Task<IActionResult> GetEmployees([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var query = new GetAllEmployeeQuery { PageNumber = pageNumber, PageSize = pageSize };
@@ -62,6 +60,8 @@ namespace HR.API.Controllers
             var result = await _mediator.Send(new MakeEmployeeActiveCommand(code));
             return Ok(new { message = result });
         }
+
+
 
 
 

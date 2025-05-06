@@ -1,27 +1,24 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { ActivateEmployeeService } from '../../../../services/activate-employee-service';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivateEmployeeModel } from '../../../../Models/activate-employee-model';
+import { ActivateEmployeeService } from '../../../../services/activate-employee-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-activate-employee',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, FormsModule],
+  imports: [],
   templateUrl: './activate-employee.component.html',
   styleUrl: './activate-employee.component.css'
 })
 export class ActivateEmployeeComponent {
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<ActivateEmployeeComponent>,
-    private activateemployeecomponentservice :ActivateEmployeeService
+    @Inject(MAT_DIALOG_DATA) public data: any, // Injected data from the dialog
+    private dialogRef: MatDialogRef<ActivateEmployeeComponent>, // MatDialog reference
+    private activateEmployeeService: ActivateEmployeeService // Inject ActivateEmployeeService
   ) {}
 
   activate(): void {
-    this.activateemployeecomponentservice.activateEmployee(this.data.code).subscribe({
+    this.activateEmployeeService.activateEmployee(this.data.code).subscribe({
           next: (res: ActivateEmployeeModel) => {
             Swal.fire({
                       title: 'Success!',
@@ -42,7 +39,6 @@ export class ActivateEmployeeComponent {
           
         });
   }
-
   close(): void {
     this.dialogRef.close();
   }

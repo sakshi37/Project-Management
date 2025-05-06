@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Branch } from '../Models/branch-model';
+
 import { API_URL } from '../../constant';
+import { Branch } from '../Models/branch-model';
 // adjust path as needed
 
 @Injectable({

@@ -47,6 +47,4 @@ export class InactivateEmployeeComponent {
   close(): void {
     this.dialogRef.close(true);
   }
- 
-  
 }
