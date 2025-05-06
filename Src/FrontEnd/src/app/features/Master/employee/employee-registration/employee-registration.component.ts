@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import autoTable from 'jspdf-autotable';
+
 import {
   FormBuilder,
   FormGroup,
@@ -32,6 +34,7 @@ export class EmployeeRegistrationComponent implements OnInit {
   locations: { id: number; name: string }[] = [];
   selectedImage: string | null = null;
   selectedSignature: string | null = null;
+  isDisable: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -73,22 +76,19 @@ export class EmployeeRegistrationComponent implements OnInit {
 
   initForm(): void {
     this.employeeForm = this.fb.group({
-      name: ['Vaishanavi Bhambure', Validators.required],
-      code: [this.generateEmployeeCode(), Validators.required],
-      address: ['Kalyan(w)', Validators.required],
-      mobileNo: ['123456781', Validators.required],
-      skypeId: ['fdsts43'],
-      email: [
-        'vaishanvi.demo@gmail.com',
-        [Validators.required, Validators.email],
-      ],
+      name: ['', Validators.required],
+      code: [{ value: this.generateEmployeeCode(), disabled: true }],
+      address: ['', Validators.required],
+      mobileNo: ['', Validators.required],
+      skypeId: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       joinDate: ['', Validators.required],
-      bccEmail: ['vaishanvi@demo.com'],
+      bccEmail: [''],
       panNumber: ['123efg'],
       birthDate: ['', Validators.required],
       image: [''],
       signature: [''],
-      loginStatus: [true],
+      loginStatus: [],
       leftCompany: [false],
       // leaveCompany: [false],
       locationId: [1],

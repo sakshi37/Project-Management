@@ -41,7 +41,9 @@ namespace HR.API.Controllers
             var response = await _mediator.Send(new CreateEmployeeCommand(dto));
             return Ok(response);
         }
- [HttpGet("AllEmployees")]
+
+
+        [HttpGet("AllEmployees")]
         public async Task<IActionResult> GetEmployees([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var query = new GetAllEmployeeQuery { PageNumber = pageNumber, PageSize = pageSize };

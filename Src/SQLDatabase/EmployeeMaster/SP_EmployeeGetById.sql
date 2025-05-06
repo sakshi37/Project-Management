@@ -1,5 +1,5 @@
-CREATE PROCEDURE SP_EmployeeGetById
-    @Id INT
+CREATE or alter PROCEDURE SP_EmployeeGetByEmail
+    @Email varchar(50)
 AS
 BEGIN
     SELECT 
@@ -27,7 +27,9 @@ BEGIN
         Fk_BranchId,
         Fk_DivisionId
     FROM Tbl_Employee_master
-    WHERE Id = @Id;
+    WHERE Email = @Email;
 END
 
-EXEC SP_EmployeeGetById @Id = 1;
+EXEC SP_EmployeeGetByEmail @Email = 'vaishanvi.demo@gmail.com'
+
+select * from Tbl_Employee_master

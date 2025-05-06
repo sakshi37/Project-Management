@@ -8,7 +8,7 @@
 
           <!-- Name -->
           <div class="mb-3">
-            <label class="form-label">Name</label>
+            <label class="form-label">Employee Name</label>
             <input
               type="text"
               class="form-control"
@@ -28,9 +28,10 @@
 
           <!-- Code -->
           <div class="mb-3">
-            <label class="form-label">Code</label>
+            <label class="form-label">Employee Code</label>
             <input
               type="text"
+              [disabled]="isDisable"
               class="form-control"
               formControlName="code"
               placeholder="Enter Code"

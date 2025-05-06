@@ -16,6 +16,7 @@
 
 //        public async Task<GetEmployeeVm> Handle(GetEmployeeByEmailQuery request, CancellationToken cancellationToken)
 //        {
+//            var email = await _employeeRepo.GetEmaployeeByEmail(request)
 
 //        }
 //    }

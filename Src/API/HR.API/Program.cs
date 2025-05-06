@@ -39,18 +39,25 @@ namespace HR.API
             builder.Services.AddSwaggerGen();
 
             // CORS policy
-            builder.Services.AddCors(o => o.AddPolicy("MyPolicy",
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:4200")
-                               .AllowAnyMethod()
-                               .AllowAnyHeader();
-                    }));
+            //builder.Services.AddCors(o => o.AddPolicy("MyPolicy",
+            //        builder =>
+            //        {
+            //            builder.WithOrigins("http://localhost:4200")
+            //                   .AllowAnyMethod()
+            //                   .AllowAnyHeader();
+            //        }));
 
             var app = builder.Build();
 
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
+
+
             // Use CORS
-            app.UseCors("MyPolicy");
+            //app.UseCors("MyPolicy");
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())

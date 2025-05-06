@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
+using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Domain.Entities;
@@ -18,7 +19,7 @@ namespace HR.Persistence.Repositories
             _appDbContext = appDbContext;
 
         }
-         public async Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize)
         {
             var allData = await _appDbContext.GetAllEmployeeVms
                 .FromSqlRaw("EXEC SP_GetAllEmployeeSummary")
@@ -155,11 +156,29 @@ namespace HR.Persistence.Repositories
                 DivisionId = employee.DivisionId
             };
         }
+
+        //public async Task<EmployeeDto> GetEmployeeByEmail(string email)
+        //{
+        //    var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
+        //    var employee = await _appDbContext.Employees
+        //        .FromSqlRaw(sql, email)
+        //        .FirstOrDefaultAsync();
+
+        //    return employee;
+        //}
+
+        public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
+        {
+            var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
+            var employee = await _appDbContext.Employees
+                .FromSqlRaw(sql, email)
+                .FirstOrDefaultAsync();
+
+            return employee;
+        }
     }
-
-
-
 }
+
 
 
 
