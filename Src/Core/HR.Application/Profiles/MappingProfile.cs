@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using HR.Application.Features.Branches.Commands.CreateBranch;
+using HR.Application.Features.Branches.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.CreateCity;
 using HR.Application.Features.Cities.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.UpdateCity;
@@ -61,5 +63,7 @@ public class MappingProfile : Profile
         CreateMap<CreateHolidayDto, Holiday>();
         CreateMap<UpdateHolidayDto, Holiday>();
         CreateMap<Holiday, HolidayDto>();
+           CreateMap<Branch, BranchDto>();
+        CreateMap<CreateBranchDto, Branch>();
     }
 }

@@ -1,7 +1,10 @@
-﻿using HR.Application.Features.Cities.Commands.Dtos;
+﻿using HR.Application.Features.Branches.Commands.Dtos;
+using HR.Application.Features.Cities.Commands.Dtos;
 using HR.Application.Features.Countries.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Employee.Dtos;
+using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Location.Query;
 using HR.Application.Features.States.Commands.Dtos;
@@ -24,6 +27,9 @@ public class AppDbContext : DbContext
     public DbSet<GetAllLocationDto> dtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
 
+ public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
+    public DbSet<BranchDto> BranchDtos { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,6 +45,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
 
 
+      modelBuilder.Entity<BranchDto>().HasNoKey();
+        modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
+        modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
 
 
 
