@@ -19,7 +19,7 @@ import { DashboardComponent } from './features/Dashboard/dashboard/dashboard.com
     LefSideNavComponent,
     CommonModule,
     ReactiveFormsModule,
-    DashboardComponent,
+    // DashboardComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
