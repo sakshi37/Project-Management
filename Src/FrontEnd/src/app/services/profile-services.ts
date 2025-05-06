@@ -12,7 +12,7 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class ProfileService {
-  private apiUrl = 'https://localhost:7292/ProfileDetalis';
+  private apiUrl = 'https://localhost:7292/api/Employee/ProfileDetalis';
 
   constructor(private http: HttpClient) {}
 

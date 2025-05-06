@@ -63,7 +63,6 @@ namespace HR.Persistence.Repositories
             return await Task.FromResult(employeeProfile);
         }
 
-
         public async Task<Employee> AddEmployee(CreateEmployeeMasterDto employee)
         {
             Console.WriteLine(employee.Image);

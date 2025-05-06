@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HR.Application.Dtos;
 using HR.Application.Features.Branches.Commands.CreateBranch;
 using HR.Application.Features.Branches.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.CreateCity;
@@ -29,6 +30,7 @@ public class MappingProfile : Profile
 
     public MappingProfile()
     {
+        CreateMap<Tbl_LoginMaster, Tbl_LoginMasterDto>().ReverseMap();
 
 
         CreateMap<CreateTimeSheetDto, TimeSheet>();

@@ -19,15 +19,12 @@ export class DashboardComponent implements OnInit{
   }
   
   ngOnInit(): void {
-    this.getProductList();
+    
   }
 
   // * api call to get the list
   getProductList(){
-    this.apiService.getListOfPorducts().subscribe((res) => {
-      console.log("Products List------->", res);
-      this.products = res;
-    });
+    
   }
 
 }

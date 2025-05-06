@@ -1,7 +1,10 @@
 using HR.Application;
+using HR.Application.Contracts.Persistence;
 using HR.Application.Profiles;
+using HR.Domain.Entities;
 using HR.Persistence;
 using HR.Persistence.Context;
+using HR.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -23,6 +26,16 @@ namespace HR.API
 
             // Register Application Services
             builder.Services.AddApplicationServices();
+            builder.Services.AddServiceRegistration(builder.Configuration);
+            
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
+            builder.Services.AddMemoryCache();
+
+            // Email Settings
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
 
             builder.Services.AddPersistenceServices(builder.Configuration);
 
@@ -48,11 +61,12 @@ namespace HR.API
             //        }));
 
             var app = builder.Build();
-
             app.UseCors(x => x
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader());
+
+            
 
 
 
