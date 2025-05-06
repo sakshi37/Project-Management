@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, NgZone } from '@angular/core';  
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthResponseModel, Login } from '../../Models/login';
+import { AuthResponseModel, Login, VerifyOTPDto } from '../../Models/login';
 import { UserService } from '../../services/user.service';
+import { Otp } from '../../Models/otp';
 
 declare var bootstrap: any;
 @Component({
@@ -46,24 +47,30 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(this.login).subscribe({
       next: (response: AuthResponseModel) => {
-        console.log('Login Response:', response);  // Check the response object
-    if (response.userName) {
-      localStorage.setItem('userName', response.userName);  // Save username
-    } else {
-      console.error('Username is missing from the response');
-    }
- // Save other details
- localStorage.setItem('otp', response.otp);
- localStorage.setItem('email', response.email);
+        localStorage.setItem('otp', response.otp);
+        localStorage.setItem('email', response.email);
+        localStorage.setItem('userName', response.userName);
+        localStorage.setItem('checkFirstLogin', response.firstLogin);  
+        localStorage.setItem('roleName',response.roleName);
 
- // Show OTP Modal
- const modalElement = document.getElementById('otpModal');
- const otpModal = new bootstrap.Modal(modalElement);
- otpModal.show();
+      // localStorage.setItem('empid', response.empid.toString());
+        console.log(localStorage.getItem('userName'));
 
-         // start Login button Spinner 
+        
+        // loginForm.reset();
+        if(response.firstLogin) {
+        const modalElement = document.getElementById('otpModal');
+        const otpModal = new bootstrap.Modal(modalElement);
+        otpModal.show();
+      }
+      else {
+        this.router.navigate(['/dashboard']);
+        sessionStorage.setItem('isAuthenticated', 'true');
+      }
+
+         // START: Login Button Spinner Addition
       this.isLoggingIn = false;
-      // end Login button Spinner  
+      // END: Login Button Spinner Addition
       },
       error: (error) => {
         console.error('Login failed!', error);
@@ -82,18 +89,29 @@ export class LoginComponent implements OnInit {
     setTimeout(() => {
       const enteredOtp = this.otpDigits.join('');
       const storedOtp = localStorage.getItem('otp');
+      if(localStorage.getItem('userName') != null)
+      {
+        let userNaav:string = String(localStorage.getItem('userName'));
+        const OtpRequest:VerifyOTPDto = {
+          userName: userNaav,
+          password: this.login.password,
+          otp: enteredOtp
+        }
+        console.log(OtpRequest);
+        this.userService.verifyOtp(OtpRequest).subscribe({
+          next: (res:AuthResponseModel)=> {
+            alert('OTP Verified Successfully!'); 
+            const modalElement = document.getElementById('otpModal');
+            const otpModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            otpModal.hide();
+            sessionStorage.setItem('isAuthenticated', 'true');
+            this.router.navigate(['/dashboard']);
+          }, error: (error) => {
+            console.error('Otp Failed', error.error);
+            alert('Incorrect OTP. Please try again.');
+          }
+        });
 
-      if (enteredOtp === storedOtp) {
-        alert('OTP Verified Successfully!'); 
-        const modalElement = document.getElementById('otpModal');
-        const otpModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-        otpModal.hide();
-       sessionStorage.setItem('isAuthenticated', 'true');
-        this.router.navigate(['/dashboard']);
-
-      } else {
-        alert('Incorrect OTP. Please try again.');
-        
       }
 
       this.isVerifying = false;
@@ -140,7 +158,7 @@ export class LoginComponent implements OnInit {
   // <!-- -----IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
  //forgot password logic
   
-  forgotUsername: string = ''
+  forgotUsername: string = '';
 forgotOtp: string = '';
 newPassword: string = '';
 confirmNewPassword: string = '';
@@ -158,7 +176,7 @@ openForgotPasswordModal() {
       },
       error: (error) => {
         console.error('Failed to send OTP!', error);
-        alert('Failed to send OTP. Please check your UserName and try again.');
+        alert('Failed to send OTP. Please check your email and try again.');
       }
     });
   }
