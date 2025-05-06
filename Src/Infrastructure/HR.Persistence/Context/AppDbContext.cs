@@ -9,6 +9,7 @@ using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Location.Query;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
+using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HR.Persistence.Context;
@@ -26,6 +27,7 @@ public class AppDbContext : DbContext
     public DbSet<EmployeeDto> Employees { get; set; }
     public DbSet<GetAllLocationDto> dtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
+    public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
 
  public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
