@@ -2,16 +2,11 @@
 
 <div class="d-flex flex-column sidebar bg-primary text-white p-3">
   <!-- Profile Section -->
-  <div class="text-center mb-4">
-    <img
-      [src]="user.profileImage"
-      class="rounded-circle mb-2 border border-white"
-      width="80"
-      height="80"
-      alt="Profile Image"
-    />
-    <h6 class="mb-0">{{ user.name }}</h6>
-    <small class="text-white-50">{{ user.department }}</small>
+  <div *ngIf="user" class="text-center mb-4">
+    <!-- <img [src]="user.image || 'https://img.icons8.com/?size=100&id=52883&format=png&color=FFFFFF'"  *ngIf="imageSrc" class="rounded-circle mb-2" width="80" height="80" alt="Profile Image"> -->
+    <img [src]="imageSrc" *ngIf="imageSrc" alt="Profile Image" class="rounded-circle mb-2" width="80" height="80" alt="Profile Image"/>
+    <h2 class="mb-0">{{ user.name }}</h2>
+    <small class="text-white">{{ user.designationName }}</small>
   </div>
 
   <!-- Dashboard -->

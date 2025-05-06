@@ -13,7 +13,8 @@ export class InactiveEmployeeService {
 
     constructor(private http: HttpClient) {}
   
-    deactivateEmployee(employeeCode: string): Observable<InactiveEmployeeModel> {
-      return this.http.post<InactiveEmployeeModel>(`${this.baseUrl}/deactivate/${employeeCode}`, {});
+    deactivateEmployee(code: string): Observable<InactiveEmployeeModel> {
+      const sanitizedCode = code.replace('%09', ''); // Remove any unwanted tab characters
+      return this.http.post<InactiveEmployeeModel>(`${this.baseUrl}/api/Employee/Inactivate/${code}`, {});
     }
 }

@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { InactiveEmployeeService } from '../../../../services/inactive-employee-service';
 import { InactiveEmployeeModel } from '../../../../Models/inactive-employee-model';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -19,16 +20,28 @@ export class InactivateEmployeeComponent {
   ) {}
 
   inactivate(): void {
-    this.inactiveemployeeService.deactivateEmployee(this.data.employeeCode).subscribe({
+    this.inactiveemployeeService.deactivateEmployee(this.data.code).subscribe({
       next: (res: InactiveEmployeeModel) => {
-        alert(res.message); 
+        Swal.fire({
+          title: 'Success!',
+          text: res.message,
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        }).then(()=>{
         this.dialogRef.close(true);
+        });
       },
       error: (err) => {
         console.error(err);
-        alert('Failed to deactivate employee');
+        Swal.fire({
+          title: 'Fail!',
+          text: err.message,
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        })
       }
     });
+   
   }
   
   close(): void {

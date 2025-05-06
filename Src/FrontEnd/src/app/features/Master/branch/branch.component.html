@@ -1,0 +1,117 @@
+<div class="container mt-4">
+    <!-- Add Branch Button -->
+    <div class="text-end mb-3">
+      <button type="button" class="btn custom-add-btn"
+        data-bs-toggle="modal" data-bs-target="#branchModal" (click)="openAddBranchModal()">
+        + Add Branch
+      </button>
+    </div>
+  
+    <!-- Entries Dropdown -->
+    <div class="entries-dropdown">
+      <label for="entries">Show</label>
+      <select id="entries" [(ngModel)]="itemsPerPage">
+        <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+      </select>
+      <span>Entries</span>
+    </div>
+  
+    <!-- Search -->
+    <div class="mb-3 row">
+      <div class="input-group" style="width: 300px;">
+        <span class="input-group-text" style="background-color: transparent;">
+          <i class="fas fa-search"></i>
+        </span>
+        <input type="text" id="search" class="form-control" placeholder="Search Branch"
+               [(ngModel)]="searchText" (ngModelChange)="filterBranches()" style="background-color: transparent;">
+      </div>
+    </div>
+  
+    <!-- Branch Modal -->
+    <div class="modal fade" id="branchModal" tabindex="-1" aria-labelledby="branchModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="branchModalLabel">{{ isEditMode ? 'Edit Branch' : 'Add New Branch' }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+              (click)="resetForm()"></button>
+          </div>
+  
+          <!-- Body -->
+          <div class="modal-body">
+            <form [formGroup]="branchForm" (ngSubmit)="onSubmit()" class="row g-3">
+              <div class="col-md-6">
+                <label for="fk_CityId" class="form-label">City:</label>
+                <select class="form-select" formControlName="fk_CityId" id="fk_CityId">
+                  <option value="">Select City</option>
+                  <option *ngFor="let city of cities" [value]="city.cityId">{{ city.cityName }}</option>
+                </select>
+              </div>
+  
+              <div class="col-md-6">
+                <label for="branchName" class="form-label">Branch Name:</label>
+                <input type="text" class="form-control" formControlName="branchName" id="branchName" />
+              </div>
+  
+              <div class="col-12 d-flex justify-content-end">
+                <button type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Add' }}</button>
+                <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal"
+                  (click)="resetForm()">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Branch List -->
+    <div class="row gy-4" *ngIf="filteredBranches && filteredBranches.length > 0; else noBranchData">
+      <div class="col-12">
+        <table class="mb-0">
+          <thead>
+            <tr>
+              <th><div class="head-first">Sr. No</div></th>
+              <th><div class="head-other">Branch Name</div></th>
+              <th><div class="head-other">City</div></th>
+              <th><div class="head-other">State</div></th>
+              <th><div class="head-other">Status</div></th>
+              <th><div class="head-last">Action</div></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let branch of filteredBranches | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i">
+              <td><div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
+              <td><div class="tr-other-child">{{ branch.branchName }}</div></td>
+              <td><div class="tr-other-child">{{ branch.cityName }}</div></td>
+              <td><div class="tr-other-child">{{ branch.stateName }}</div></td>
+              <td>
+                <div class="tr-other-child">
+                  <span class="badge status-badge" [ngClass]="branch.branchStatus ? 'active' : 'inactive'">
+                    {{ branch.branchStatus ? 'Active' : 'Inactive' }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div class="tr-last-child">
+                  <button class="btn btn-sm edit-btn" (click)="onEditBranch(branch)" data-bs-toggle="modal" data-bs-target="#branchModal">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <div class="pagination-wrapper">
+          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  
+    <!-- No Branches -->
+    <ng-template #noBranchData>
+      <div class="alert alert-info text-center mt-4">No branches found.</div>
+    </ng-template>
+  </div>
+  

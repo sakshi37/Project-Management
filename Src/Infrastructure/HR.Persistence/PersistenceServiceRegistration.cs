@@ -22,7 +22,7 @@ namespace HR.Persistence
             services.AddScoped<IEmployeeMasterRepository, EmployeeRepository>();
             services.AddScoped<ILocationMasterRepository, LocationMasterRepository>();
             services.AddScoped<IStateRepository, StateRepository>();
-
+            services.AddScoped<IBranchRepository, BranchRepository>();
 
 
 
