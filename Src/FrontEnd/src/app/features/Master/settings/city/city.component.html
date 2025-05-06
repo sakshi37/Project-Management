@@ -32,7 +32,7 @@
             (click)="resetForm()"></button>
         </div>
         <!-- Modal Body -->
-        <div class="modal-body">
+        <!-- <div class="modal-body">
           <form [formGroup]="cityForm" (ngSubmit)="onSubmit()" class="row g-3">
             
             <div class="col-md-6">
@@ -70,7 +70,62 @@
                 (click)="resetForm()">Cancel</button>
             </div>
           </form>
+        </div> -->
+        <div class="modal-body">
+          <form [formGroup]="cityForm" (ngSubmit)="onSubmit()" class="row g-3">
+            
+            <div class="col-md-6">
+              <label for="countryId" class="form-label"> Country:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-globe"></i>
+                <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId">
+                  <option value="">Select Country</option>
+                  <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}</option>
+                </select>
+              </div>
+            </div>
+        
+            <div class="col-md-6">
+              <label for="stateId" class="form-label">State:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-map-marked-alt"></i>
+                <select class="form-select" formControlName="stateId" id="stateId">
+                  <option value="">Select State</option>
+                  <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
+                </select>
+              </div>
+            </div>
+        
+            <div class="col-md-6">
+              <label for="cityName" class="form-label">City Name:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-city"></i>
+                <input type="text" class="form-control" formControlName="cityName" id="cityName" />
+              </div>
+            </div>
+        
+            <div class="col-md-6">
+              <label for="cityStatus" class="form-label"> Status:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-toggle-on"></i>
+                <select id="cityStatus" class="form-select" formControlName="cityStatus">
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
+              </div>
+            </div>
+        
+            <div class="col-12 d-flex justify-content-end">
+              <button type="submit" class="btn btn-success" data-bs-dismiss="modal">
+                <i class="fas fa-check-circle"></i> {{ isEditMode ? 'Update' : 'Add' }}
+              </button>
+              <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal" (click)="resetForm()">
+                <i class="fas fa-times-circle"></i> Cancel
+              </button>
+            </div>
+          </form>
         </div>
+        
       </div>
     </div>
   </div>

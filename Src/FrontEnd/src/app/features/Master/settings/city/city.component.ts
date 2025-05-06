@@ -118,18 +118,39 @@ export class CityComponent implements OnInit, AfterViewInit {
     this.cityModal.show();
   }
 
+  // onEdit(city: GetCityDto): void {
+  //   this.cityForm.patchValue({
+  //     countryId: city.countryId,
+  //     stateId: city.stateId,
+  //     cityName: city.cityName,
+  //     status: city.cityStatus ? '1' : '0',
+  //   });
+  //   this.selectedCityId = city.cityId;
+  //   this.isEditMode = true;
+  //   this.filterStates();
+  //   this.cityModal.show();
+  // }
   onEdit(city: GetCityDto): void {
     this.cityForm.patchValue({
       countryId: city.countryId,
-      stateId: city.stateId,
       cityName: city.cityName,
-      status: city.cityStatus ? '1' : '0',
+      cityStatus: city.cityStatus ? '1' : '0',
     });
+  
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
+  
     this.filterStates();
+  
+    setTimeout(() => {
+      this.cityForm.patchValue({ stateId: city.stateId });
+    }, 0);
+  
     this.cityModal.show();
   }
+  
+  
+  
 
   onSubmit(): void {
     if (this.cityForm.invalid) return;
