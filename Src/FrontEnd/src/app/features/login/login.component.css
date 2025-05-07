@@ -1,10 +1,10 @@
 .login-background {
-  /* background: url('') no-repeat center center; */
   background-size: cover;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: url(../../../assets/images/homeimg.webp)no-repeat center center/cover ;
 }
 
 .login-card {
@@ -14,6 +14,8 @@
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   text-align: center;
+  /* position: fixed;
+  margin-top: -100px; */
 }
 
 .logo {
