@@ -11,7 +11,6 @@ namespace HR.Application.Features.Locations.Commands.UpdateLocation
         public int LocationId { get; set; }
         public string LocationName { get; set; }
         public int CityId { get; set; }
-
         public bool LocationStatus { get; set; }
         public int UpdatedBy { get; set; }
     }

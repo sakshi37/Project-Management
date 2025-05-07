@@ -23,8 +23,7 @@ namespace HR.Persistence
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<IStateRepository, StateRepository>();
             services.AddScoped<IBranchRepository, BranchRepository>();
-            //services.AddScoped<IDivisionRepository, DivisionRepository>();
-
+            services.AddScoped<IDivisionRepositry, DivisionRepository>();
 
 
 

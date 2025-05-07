@@ -59,7 +59,7 @@ export class CityComponent implements OnInit, AfterViewInit {
   }
 
   initForm(): void {
-    this.cityForm = this.fb.group({
+    this.cityForm = this.fb.group({ 
       countryId: ['', Validators.required],
       stateId: ['', Validators.required],
       cityName: ['', Validators.required],

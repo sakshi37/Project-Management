@@ -16,30 +16,28 @@ import { CountryComponent } from './features/Master/settings/country/country.com
 import { StateComponent } from './features/Master/settings/state/state-component.component';
 import { HolidayComponent } from './features/Master/holiday/holiday.component';
 import { TeamCompositionComponent } from './features/Master/team-composition/team-composition.component';
-import { LocationComponent } from './features/Master/settings/location/location.component';
+import { AuthGuard } from './services/authguard';
 export const routes: Routes = [
-  { path: '', component: LoginComponent },
-  { path: 'sidebar', component: LefSideNavComponent },
-  { path: 'team-composition', component: TeamCompositionComponent },
+  { path: '', component: LoginComponent},
+  { path: 'sidebar', component: LefSideNavComponent,canActivate: [AuthGuard]},
+  { path: 'team-composition', component: TeamCompositionComponent ,canActivate: [AuthGuard]},
 
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard]},
   { path: 'settings', component: SettingsComponent },
-  { path: 'country', component: CountryComponent },
-  { path: 'state', component: StateComponent },
-  { path: 'holiday', component: HolidayComponent },
-  { path: 'location', component: LocationComponent },
+  { path: 'country', component: CountryComponent,canActivate: [AuthGuard] },
+  { path: 'state', component: StateComponent,canActivate: [AuthGuard] },
+  { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard] },
 
+  { path: 'changePassword', component: ChangePasswordComponent,canActivate: [AuthGuard] },
+  { path: 'gmc', component: GmcComponent ,canActivate: [AuthGuard]},
 
-  { path: 'changePassword', component: ChangePasswordComponent },
-  { path: 'gmc', component: GmcComponent },
+  { path: 'timesheetupdate', component: TimesheetUpdateComponent,canActivate: [AuthGuard] },
 
-  { path: 'timesheetupdate', component: TimesheetUpdateComponent },
-
-  { path: 'employee', component: EmployeeComponent },
-  { path: 'employee-registration', component: EmployeeRegistrationComponent },
+  { path: 'employee', component: EmployeeComponent ,canActivate: [AuthGuard]},
+  { path: 'employee-registration', component: EmployeeRegistrationComponent,canActivate: [AuthGuard] },
 
   { path: 'otp', component: OtpComponent },
-  { path: 'sidebar', component: LefSideNavComponent },
+  { path: 'sidebar', component: LefSideNavComponent,canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
 
   

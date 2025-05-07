@@ -170,12 +170,13 @@ onStateChange(): void {
       });
       this.selectedlocationId = location.locationId;
       this.isEditMode = true;
-      // this.filterStates();
+      this.filterStates();
       this.filterCities();
       this.locationModal.show();
       // console.log(location.cityName);  
     }
 
+  
 
     onSubmit(): void {
         if (this.locationForm.invalid) {
@@ -187,14 +188,14 @@ onStateChange(): void {
         const cityid = +this.locationForm.value.cityId;
         const payload = {
           locationName: this.locationForm.value.locationName,
-          cityId: cityid,
+          cityId:cityid,
           locationStatus: statusBool,
     
         };
         if (this.isEditMode && this.selectedlocationId) {
           const updateDto: UpdateLocationDto = {
             ...payload, locationId: this.selectedlocationId, updatedBy: 1,
-            updateDto: ''
+            stateId: 0
           };
           console.log("payload",updateDto);
           this.locationService.updateLocation(updateDto).subscribe({

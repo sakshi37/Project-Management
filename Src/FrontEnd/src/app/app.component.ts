@@ -19,8 +19,9 @@ import { LocationComponent } from "./features/Master/settings/location/location.
     HeaderComponent,
     LefSideNavComponent,
     CommonModule,
-    ReactiveFormsModule
-],
+    ReactiveFormsModule,
+    // DashboardComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

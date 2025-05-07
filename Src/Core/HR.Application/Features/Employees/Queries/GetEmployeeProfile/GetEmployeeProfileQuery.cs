@@ -1,4 +1,6 @@
 ﻿using HR.Application.Contracts.Models.Common;
+
+
 using MediatR;
 using System;
 

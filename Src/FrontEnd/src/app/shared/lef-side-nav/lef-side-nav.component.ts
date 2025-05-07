@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './lef-side-nav.component.html',
   styleUrls: ['./lef-side-nav.component.css'],
   standalone: true,
-  imports: [RouterLink, HeaderComponent, CommonModule],
+  imports: [RouterLink, HeaderComponent,CommonModule],
 })
 export class LefSideNavComponent {
   user: UserProfile = {

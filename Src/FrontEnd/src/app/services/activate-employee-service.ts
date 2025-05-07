@@ -11,8 +11,12 @@ export class ActivateEmployeeService {
 
     constructor(private http: HttpClient) {}
   
-    activateEmployee(Code: string): Observable<ActivateEmployeeModel> {
-      return this.http.put<ActivateEmployeeModel>(`${this.baseUrl}/Activate/${Code}`, {},// empty body
-        { headers: { 'Content-Type': 'application/json' } });
+    activateEmployee(code: string): Observable<ActivateEmployeeModel> {
+      const sanitizedCode = code.replace('%09', '');
+      console.log('Activating employee with code:', code); // Log code for debugging
+      return this.http.put<ActivateEmployeeModel>(`${this.baseUrl}/api/Employee/Activate/${code}`, {}, {
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
+    
 }
