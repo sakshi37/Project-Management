@@ -38,7 +38,7 @@ namespace HR.Persistence.Repositories
                 throw new CityValidationException("Invalid state ID.");
 
             var existingCity = await _context.Cities
-                 .FromSqlRaw("EXEC dbo.CheckCityDuplicate @CityName = {0}, @StateId = {1}", dto.CityName, dto.StateId)
+                 .FromSqlRaw("EXEC dbo.SP_CheckCityDuplicate @CityName = {0}, @StateId = {1}", dto.CityName, dto.StateId)
                  .AsNoTracking()
                  .ToListAsync();
             var foundcity = existingCity.FirstOrDefault();

@@ -34,6 +34,8 @@ export class CityComponent implements OnInit, AfterViewInit {
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
   itemsPerPage: number = 5; // default value
+  selectedSortColumn = '';
+  sortDirectionAsc = true;
 
   private cityModal!: bootstrap.Modal;
   private modalElement: ElementRef | undefined;
@@ -250,6 +252,29 @@ export class CityComponent implements OnInit, AfterViewInit {
   resetForm(): void {
     this.cityForm.reset({ countryId: '', stateId: '', cityName: '', cityStatus: '1' });
     this.selectedCityId = null;
+  }
+
+  sortCities(column: string) {
+    if (this.selectedSortColumn === column) {
+      this.sortDirectionAsc = !this.sortDirectionAsc;
+    } else {
+      this.selectedSortColumn = column;
+      this.sortDirectionAsc = true;
+    }
+
+    this.filteredCities.sort((a, b) => {
+      const aValue = a[column]?.toString().toLowerCase() || '';
+      const bValue = b[column]?.toString().toLowerCase() || '';
+
+      if (aValue < bValue) return this.sortDirectionAsc ? -1 : 1;
+      if (aValue > bValue) return this.sortDirectionAsc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.selectedSortColumn !== column) return 'fa-sort';
+    return this.sortDirectionAsc ? 'fa-sort-up' : 'fa-sort-down';
   }
 
   // onStatusChange(city: GetCityDto): void {

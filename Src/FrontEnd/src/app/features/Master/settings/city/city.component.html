@@ -135,7 +135,7 @@
     <div class="col-12">
       <div>
         <table class="mb-0">
-          <thead>
+          <!-- <thead>
             <tr>
               <th><div class="head-first">Sr. No</div></th>
               <th><div class="head-other">City Name</div></th>
@@ -144,7 +144,26 @@
               <th><div class="head-other">Status</div></th>
               <th><div class="head-last">Action</div></th>
             </tr>
+          </thead> -->
+          <thead>
+            <tr>
+              <th><div class="head-first">Sr. No</div></th>
+              <th (click)="sortCities('cityName')">
+                <div class="head-other sortable">City Name  <i class="fas" [ngClass]="getSortIcon('cityName')"></i></div>
+              </th>
+              <th (click)="sortCities('stateName')">
+                <div class="head-other sortable">State  <i class="fas" [ngClass]="getSortIcon('stateName')"></i></div>
+              </th>
+              <th (click)="sortCities('countryName')">
+                <div class="head-other sortable">Country  <i class="fas" [ngClass]="getSortIcon('countryName')"></i></div>
+              </th>
+              <th (click)="sortCities('cityStatus')">
+                <div class="head-other sortable">Status</div>
+              </th>
+              <th><div class="head-last">Action</div></th>
+            </tr>
           </thead>
+          
           <tbody>
             <tr *ngFor="let city of filteredCities | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i" [ngClass]="{ 'inactive-row': !city.cityStatus }">
               <td><div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
