@@ -64,12 +64,9 @@ export class EmployeeComponent implements OnInit {
   }
 
   editEmployee(emp: any): void {
-    this.dialog.open(InactivateEmployeeComponent
-      , {
-      width: '1000px',
-     
-      data: emp
-    })
+    // Implement the logic to edit an employee
+    console.log('Editing employee:', emp);
+    // You can navigate to another page or open a modal to edit the employee
   }
 
   openInactivatePopup(emp: any): void {
