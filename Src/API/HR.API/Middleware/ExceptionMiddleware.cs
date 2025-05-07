@@ -1,5 +1,6 @@
 ﻿
 using System.Net;
+using HR.Application.Exception;
 using HR.Application.Exceptions;
 
 namespace ArtSystem.Api.Middleware
@@ -33,6 +34,9 @@ namespace ArtSystem.Api.Middleware
                     statusCode = HttpStatusCode.NotFound;
                     break;
                 case UserNotFoundException BadRequest:
+                    statusCode = HttpStatusCode.BadRequest;
+                    break;
+                case CityValidationException:
                     statusCode = HttpStatusCode.BadRequest;
                     break;
                 default:
