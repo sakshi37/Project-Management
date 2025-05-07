@@ -10,10 +10,10 @@ using HR.Application.Features.Countries.Commands.UpdateCountry;
 using HR.Application.Features.Designations.Commands.CreateDesignation;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.UpdateDesignation;
+using HR.Application.Features.Dtos;
 using HR.Application.Features.Holidays.Commands.CreateHoliday;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Holidays.Commands.UpdateHoliday;
-using HR.Application.Features.Location.Query;
 using HR.Application.Features.States.Commands.CreateState;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.States.Commands.UpdateState;
@@ -53,7 +53,7 @@ public class MappingProfile : Profile
         CreateMap<CreateDesignationDto, Designation>();
         CreateMap<UpdateDesignationDto, Designation>();
         CreateMap<Designation, DesignationDto>();
-        CreateMap<Location, GetAllLocationDto>();
+        CreateMap<Location, LocationDto>();
 
         CreateMap<CreateCityDto, City>();
         CreateMap<UpdateCityDto, City>();

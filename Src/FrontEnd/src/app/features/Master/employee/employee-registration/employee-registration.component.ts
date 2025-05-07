@@ -22,7 +22,6 @@ import { RouterLink } from '@angular/router';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    RouterLink,
     FormsModule,
   ],
 })

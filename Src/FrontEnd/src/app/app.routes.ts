@@ -16,6 +16,7 @@ import { CountryComponent } from './features/Master/settings/country/country.com
 import { StateComponent } from './features/Master/settings/state/state-component.component';
 import { HolidayComponent } from './features/Master/holiday/holiday.component';
 import { TeamCompositionComponent } from './features/Master/team-composition/team-composition.component';
+import { LocationComponent } from './features/Master/settings/location/location.component';
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'sidebar', component: LefSideNavComponent },
@@ -26,6 +27,8 @@ export const routes: Routes = [
   { path: 'country', component: CountryComponent },
   { path: 'state', component: StateComponent },
   { path: 'holiday', component: HolidayComponent },
+  { path: 'location', component: LocationComponent },
+
 
   { path: 'changePassword', component: ChangePasswordComponent },
   { path: 'gmc', component: GmcComponent },
@@ -38,4 +41,6 @@ export const routes: Routes = [
   { path: 'otp', component: OtpComponent },
   { path: 'sidebar', component: LefSideNavComponent },
   { path: '**', redirectTo: '' },
+
+  
 ];
