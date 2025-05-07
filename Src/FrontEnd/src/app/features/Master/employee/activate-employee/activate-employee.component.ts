@@ -12,9 +12,9 @@ import Swal from 'sweetalert2';
 })
 export class ActivateEmployeeComponent {
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any, // Injected data from the dialog
-    private dialogRef: MatDialogRef<ActivateEmployeeComponent>, // MatDialog reference
-    private activateEmployeeService: ActivateEmployeeService // Inject ActivateEmployeeService
+    @Inject(MAT_DIALOG_DATA) public data: any, 
+    private dialogRef: MatDialogRef<ActivateEmployeeComponent>, 
+    private activateEmployeeService: ActivateEmployeeService 
   ) {}
 
   activate(): void {
