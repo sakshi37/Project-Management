@@ -1,23 +1,17 @@
+
 table {
     border-collapse: separate;
     border-spacing: 0 10px;
     width: 100%;
     border-radius: 12px;
-<<<<<<< HEAD
 
   }
   
-=======
- 
-  }
- 
->>>>>>> 6b4b06ed5087071740e96ece57292a5af7253017
   tbody tr {
     border-radius: 12px !important;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,0.08);
   }
-<<<<<<< HEAD
   
   tbody tr.active-row {
     background-color: #ffffff;
@@ -29,19 +23,6 @@ table {
     
   }
   
-=======
- 
-  tbody tr.active-row {
-    background-color: #ffffff;
-  }
- 
-  tbody tr.inactive-row {
-    background-color: #f0f0f0;
-    color: #7a7a7a;
-   
-  }
- 
->>>>>>> 6b4b06ed5087071740e96ece57292a5af7253017
   td {
     padding: 15px;
     border: none;
@@ -76,3 +57,4 @@ table {
     background-color: #beb5b5;
     color: #817070;
   }
+

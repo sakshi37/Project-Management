@@ -1,9 +1,7 @@
-﻿using HR.API.Helper;
-using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
+﻿using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
-using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -65,28 +63,14 @@ namespace HR.API.Controllers
 
 
 
-      
-        //[HttpPut("Update")]
-        //public async Task<IActionResult> UpdateEmployee([FromBody] UpdateEmployeeCommandDto dto)
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllEmployee()
         //{
-        //    Console.WriteLine($"[DEBUG] Received update request for Code: {dto.Code}");
-
-
-        //    var command = new UpdateEmployeeCommand(dto);
-        //    var result = await _mediator.Send(command);
-
-        //    if (result)
-        //    {
-        //        Console.WriteLine($"[INFO] Update successful for {dto.Code}");
-        //        return Ok("Employee updated successfully");
-        //    }
-
-        //    Console.WriteLine($"[WARN] Update failed for {dto.Code}");
-        //    return BadRequest("Failed to update employee");
-
+        //    var response = await _mediator.Send(new GetAllEmployeeQuery());
+        //    return Ok(response);
 
         //}
-
-
     }
 }
