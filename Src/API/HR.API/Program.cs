@@ -1,3 +1,4 @@
+using ArtSystem.Api.Middleware;
 using HR.Application;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Profiles;
@@ -77,7 +78,7 @@ namespace HR.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

@@ -11,6 +11,8 @@ import { UpdateCityDto } from './Models/update-city.dto';
 import { CreateCityDto } from './Models/create-city.dto';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import Swal from 'sweetalert2';
+import { ErrorHandlerService } from '../../../../services/error-handler.service';
 
 @Component({
   selector: 'app-city',
@@ -32,6 +34,8 @@ export class CityComponent implements OnInit, AfterViewInit {
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
   itemsPerPage: number = 5; // default value
+  selectedSortColumn = '';
+  sortDirectionAsc = true;
 
   private cityModal!: bootstrap.Modal;
   private modalElement: ElementRef | undefined;
@@ -41,7 +45,8 @@ export class CityComponent implements OnInit, AfterViewInit {
     private cityService: CityService,
     private stateService: StateService,
     private countryService: CountryService,
-    private el: ElementRef
+    private el: ElementRef,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -118,56 +123,158 @@ export class CityComponent implements OnInit, AfterViewInit {
     this.cityModal.show();
   }
 
+  // onEdit(city: GetCityDto): void {
+  //   this.cityForm.patchValue({
+  //     countryId: city.countryId,
+  //     stateId: city.stateId,
+  //     cityName: city.cityName,
+  //     status: city.cityStatus ? '1' : '0',
+  //   });
+  //   this.selectedCityId = city.cityId;
+  //   this.isEditMode = true;
+  //   this.filterStates();
+  //   this.cityModal.show();
+  // }
   onEdit(city: GetCityDto): void {
     this.cityForm.patchValue({
       countryId: city.countryId,
-      stateId: city.stateId,
       cityName: city.cityName,
-      status: city.cityStatus ? '1' : '0',
+      cityStatus: city.cityStatus ? '1' : '0',
     });
+  
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
+  
     this.filterStates();
+  
+    setTimeout(() => {
+      this.cityForm.patchValue({ stateId: city.stateId });
+    }, 0);
+  
     this.cityModal.show();
   }
+  
+  
+  
 
+  // onSubmit(): void {
+  //   if (this.cityForm.invalid) return;
+  //   const statusBool = this.cityForm.value.cityStatus === '1' ? true : false;
+
+  //   const payload = {
+  //     cityName: this.cityForm.value.cityName,
+  //     stateId: this.cityForm.value.stateId,
+  //     cityStatus: statusBool,
+
+  //   };
+  //   console.log('City status:', statusBool);
+
+  //   const createcitypayload = {
+  //     cityName: this.cityForm.value.cityName,
+  //     stateId: this.cityForm.value.stateId,
+  //   };
+  //   if (this.isEditMode && this.selectedCityId) {
+  //     const updateDto: UpdateCityDto = { ...payload, cityId: this.selectedCityId, updatedBy: 1 };
+  //     this.cityService.updateCity(updateDto).subscribe(() => {
+  //       this.loadCities();
+  //       // this.cityModal.hide();
+  //       this.resetForm();
+  //     });
+  //   }
+  //    else {
+  //     const createDto: CreateCityDto = { ...createcitypayload, createdBy: 1 };
+  //     this.cityService.createCity(createDto).subscribe(() => {
+  //       this.loadCities();
+  //       // this.cityModal.hide();
+  //       this.resetForm();
+  //     });
+  //   }
+  // }
   onSubmit(): void {
     if (this.cityForm.invalid) return;
-    const statusBool = this.cityForm.value.cityStatus === '1' ? true : false;
-
+  
+    const statusBool = this.cityForm.value.cityStatus === '1';
     const payload = {
       cityName: this.cityForm.value.cityName,
       stateId: this.cityForm.value.stateId,
       cityStatus: statusBool,
-
     };
-    console.log('City status:', statusBool);
-
-    const createcitypayload = {
+  
+    const createDto: CreateCityDto = {
       cityName: this.cityForm.value.cityName,
       stateId: this.cityForm.value.stateId,
+      createdBy: 1,
     };
+  
     if (this.isEditMode && this.selectedCityId) {
-      const updateDto: UpdateCityDto = { ...payload, cityId: this.selectedCityId, updatedBy: 1 };
-      this.cityService.updateCity(updateDto).subscribe(() => {
-        this.loadCities();
-        // this.cityModal.hide();
-        this.resetForm();
+      const updateDto: UpdateCityDto = {
+        ...payload,
+        cityId: this.selectedCityId,
+        updatedBy: 1
+      };
+  
+      this.cityService.updateCity(updateDto).subscribe({
+        next: () => {
+          this.loadCities();
+          this.cityModal.hide();
+          this.resetForm();
+  
+          Swal.fire({
+            icon: 'success',
+            title: 'Updated',
+            text: 'City updated successfully!',
+            confirmButtonColor: '#3085d6'
+          });
+        },
+        error: (err) => this.errorHandler.handleError(err)
       });
-    }
-     else {
-      const createDto: CreateCityDto = { ...createcitypayload, createdBy: 1 };
-      this.cityService.createCity(createDto).subscribe(() => {
-        this.loadCities();
-        // this.cityModal.hide();
-        this.resetForm();
+  
+    } else {
+      this.cityService.createCity(createDto).subscribe({
+        next: () => {
+          this.loadCities();
+          this.cityModal.hide();
+          this.resetForm();
+  
+          Swal.fire({
+            icon: 'success',
+            title: 'Created',
+            text: 'City created successfully!',
+            confirmButtonColor: '#3085d6'
+          });
+        },
+        error: (err) => this.errorHandler.handleError(err)
       });
     }
   }
+  
 
   resetForm(): void {
     this.cityForm.reset({ countryId: '', stateId: '', cityName: '', cityStatus: '1' });
     this.selectedCityId = null;
+  }
+
+  sortCities(column: string) {
+    if (this.selectedSortColumn === column) {
+      this.sortDirectionAsc = !this.sortDirectionAsc;
+    } else {
+      this.selectedSortColumn = column;
+      this.sortDirectionAsc = true;
+    }
+
+    this.filteredCities.sort((a, b) => {
+      const aValue = a[column]?.toString().toLowerCase() || '';
+      const bValue = b[column]?.toString().toLowerCase() || '';
+
+      if (aValue < bValue) return this.sortDirectionAsc ? -1 : 1;
+      if (aValue > bValue) return this.sortDirectionAsc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.selectedSortColumn !== column) return 'fa-sort';
+    return this.sortDirectionAsc ? 'fa-sort-up' : 'fa-sort-down';
   }
 
   // onStatusChange(city: GetCityDto): void {
