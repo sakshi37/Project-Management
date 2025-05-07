@@ -59,7 +59,7 @@ public class MappingProfile : Profile
 
         CreateMap<CreateCityDto, City>();
         CreateMap<UpdateCityDto, City>();
-        CreateMap<City, CityDto>();
+        CreateMap<City, CityDto>().ReverseMap();
         //CreateMap<Employee, GetEmployeeVm>();
 
         CreateMap<CreateHolidayDto, Holiday>();
