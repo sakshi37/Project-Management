@@ -156,15 +156,7 @@ namespace HR.Persistence.Repositories
             };
         }
 
-        //public async Task<EmployeeDto> GetEmployeeByEmail(string email)
-        //{
-        //    var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
-        //    var employee = await _appDbContext.Employees
-        //        .FromSqlRaw(sql, email)
-        //        .FirstOrDefaultAsync();
 
-        //    return employee;
-        //}
 
         public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
         {

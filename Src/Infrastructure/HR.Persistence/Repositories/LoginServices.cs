@@ -1,14 +1,13 @@
 ﻿using HR.Application.Contracts.Models;
-using HR.Domain.Entities;
-using HR.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using HR.Application.Exceptions;
-using Microsoft.Extensions.Caching.Memory;
-using HR.Application.Dtos;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
+using HR.Application.Dtos;
+using HR.Application.Exceptions;
+using HR.Domain.Entities;
 using HR.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HR.Identity.Services
 {
@@ -40,6 +39,7 @@ namespace HR.Identity.Services
             {
                 throw new UserNotFoundException("Invalid credentials, please try again!!");
             }
+            Console.WriteLine(user.UserName);
             //var otplogin =await _context.Tbl_LoginMaster.FirstOrDefaultAsync(ol=>ol.FirstLogin==);
             if (user.FirstLogin)
             {
@@ -216,7 +216,7 @@ namespace HR.Identity.Services
             return true;
         }
 
-        
+
 
         public async Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
         {
@@ -224,11 +224,11 @@ namespace HR.Identity.Services
             if (user == null)
             {
                 throw new UserNotFoundException("user with this username is not exist");
-            } 
-            
+            }
+
             if (user.FirstLogin)
-            {                
-               throw new Exception("You are New User Try with your Default Password Provided"); 
+            {
+                throw new Exception("You are New User Try with your Default Password Provided");
 
             }
 

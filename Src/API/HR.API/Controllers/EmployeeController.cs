@@ -2,6 +2,7 @@
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
+using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +38,11 @@ namespace HR.API.Controllers
 
             if (!emailContainsAt || !emailContainsDot) return BadRequest("Email must be valid");
 
-
+            var existingEmployee = await _mediator.Send(new GetEmployeeByEmailQuery(dto.Email));
+            if (existingEmployee != null)
+            {
+                return BadRequest("Employee with that email already exists");
+            }
             var response = await _mediator.Send(new CreateEmployeeCommand(dto));
             return Ok(response);
         }

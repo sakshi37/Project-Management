@@ -1,9 +1,10 @@
-﻿using HR.Application.Features.Employee.Commands.Query;
+﻿using HR.Application.Features.Employee.Dtos;
 using MediatR;
 
 namespace HR.Application.Features.Employees.Queries
 {
-    public record GetEmployeeByEmailQuery : IRequest<GetEmployeeVm>
+    public record GetEmployeeByEmailQuery(string email) : IRequest<EmployeeDto>
     {
+        //public string Email { get; set; }
     }
 }
