@@ -1,13 +1,13 @@
 <div class="container mt-4">
-
+ 
   <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
         <h5 class="mb-0">Employees Master</h5>
       </div>
-    
+   
       <div class="d-flex align-items-center">
         <button class="btn btn-outline-secondary me-2" [routerLink]="['/employee-registration']">
-          <i class="bi bi-plus-lg"></i> Add New Employee 
+          <i class="bi bi-plus-lg"></i> Add New Employee
         </button>
         <button class="btn btn-success me-2" (click)="exportexceldata()">
           <i class="bi bi-file-earmark-excel"></i> Excel
@@ -16,11 +16,11 @@
           <i class="bi bi-file-earmark-pdf"></i> PDF
         </button>
      
-
+ 
       </div>
     </div>
     <hr class="my-2">
-
+ 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <!-- Show Entries -->
       <div>
@@ -34,17 +34,22 @@
           entries
         </label>
       </div>
-    
+   
       <!-- Search Input -->
       <div>
         <label class="me-2">Search:</label>
         <input type="text" class="form-control form-control-sm d-inline-block" style="width: 200px;" [(ngModel)]="searchText" (input)="onSearch()" />
       </div>
     </div>
-  
+ 
   <div>
+<<<<<<< HEAD
       
 
+=======
+     
+ 
+>>>>>>> 6b4b06ed5087071740e96ece57292a5af7253017
   <table class="table table-bordered align-middle">
     <thead class="table-light">
       <tr>
@@ -60,14 +65,24 @@
               'tr-other-child': col.key !== 'srNo' && col.key !== 'action',
               'tr-last-child': col.key === 'action'
             }">
+<<<<<<< HEAD
     
             <ng-container [ngSwitch]="col.key">
     
+=======
+   
+            <ng-container [ngSwitch]="col.key">
+   
+>>>>>>> 6b4b06ed5087071740e96ece57292a5af7253017
               <!-- Sr. No. -->
               <ng-container *ngSwitchCase="'srNo'">
                 {{ (pageNumber - 1) * pageSize + i + 1 }}
               </ng-container>
+<<<<<<< HEAD
     
+=======
+   
+>>>>>>> 6b4b06ed5087071740e96ece57292a5af7253017
               <!-- Image -->
               <ng-container *ngSwitchCase="'image'">
                 <ng-container *ngIf="isValidBase64(emp[col.key]); else placeholder">
@@ -80,7 +95,7 @@
                   <span>No Image</span>
                 </ng-template>
               </ng-container>
-    
+   
               <!-- Login Status -->
               <ng-container *ngSwitchCase="'loginStatus'">
                 <span
@@ -89,7 +104,7 @@
                   {{ emp[col.key] ? 'Active' : 'Inactive' }}
                 </span>
               </ng-container>
-    
+   
               <!-- Action -->
               <ng-container *ngSwitchCase="'action'">
                 <img
@@ -114,34 +129,35 @@
                   style="cursor: pointer;"
                   (click)="openActivatePopup(emp)" />
               </ng-container>
-    
+   
               <!-- Default -->
               <ng-container *ngSwitchDefault>
                 {{ emp[col.key] }}
               </ng-container>
-    
+   
             </ng-container>
           </div>
         </td>
       </tr>
     </tbody>
-    
+   
   </table>
-
+ 
   <!-- Pagination Controls -->
   <div class="d-flex justify-content-between align-items-center mt-3">
-  
-
+ 
+ 
     <div>
       <button class="btn btn-sm btn-outline-secondary me-2" (click)="onPageChange(pageNumber - 1)" [disabled]="pageNumber <= 1">
         <i class="bi bi-chevron-left"></i> Previous
       </button>
-
+ 
       <span>Page {{ pageNumber }}</span>
-
+ 
       <button class="btn btn-sm btn-outline-secondary ms-2" (click)="onPageChange(pageNumber + 1)" [disabled]="(pageNumber * pageSize) >= totalCount">
         Next <i class="bi bi-chevron-right"></i>
       </button>
     </div>
   </div>
 </div>
+ 
