@@ -50,7 +50,7 @@ public class MappingProfile : Profile
 
         CreateMap<CreateStateDto, State>();
         CreateMap<UpdateStateDto, State>();
-        CreateMap<State, StateDto>();
+        CreateMap<State, StateDto>().ReverseMap();
 
         CreateMap<CreateDesignationDto, Designation>();
         CreateMap<UpdateDesignationDto, Designation>();

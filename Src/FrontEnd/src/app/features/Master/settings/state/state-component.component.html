@@ -78,9 +78,15 @@
           <thead>
             <tr>
               <th><div class="head-first">Sr. No</div></th>
-              <th><div class="head-other">State Name</div></th>
-              <th><div class="head-other">State Code</div></th>
-              <th><div class="head-other">Country</div></th>
+              <th (click)="sortStates('stateName')">
+                <div class="head-other">State Name  <i class="fas" [ngClass]="getSortIcon('stateName')"></i></div>
+              </th>
+              <th (click)="sortStates('stateCode')">
+                <div class="head-other">State Code  <i class="fas" [ngClass]="getSortIcon('stateCode')"></i></div>
+              </th>
+              <th (click)="sortStates('countryName')">
+                <div class="head-other">Country  <i class="fas" [ngClass]="getSortIcon('countryName')"></i></div>
+              </th>
               <th><div class="head-other">Status</div></th>
               <th><div class="head-last">Action</div></th>
             </tr>

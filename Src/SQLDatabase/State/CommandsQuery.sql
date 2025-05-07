@@ -2,7 +2,6 @@ EXEC SP_StateInsert
     @Fk_CountryId = 1,                
     @StateName = 'Maharashtra',
     @StateCode = 'MH',
-    @StateStatus = 1,
     @CreatedBy = 1;
 
 EXEC SP_StateUpdate 
