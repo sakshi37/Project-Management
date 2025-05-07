@@ -89,7 +89,7 @@ namespace HR.Persistence.Repositories
 
     new SqlParameter("@LoginStatus", employee.LoginStatus),
     new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
-    new SqlParameter("@leftDate", (object?)employee.LeaveCompany ?? DBNull.Value),
+    new SqlParameter("@leftDate", (object?)employee.LeftCompany ?? DBNull.Value),
 
     new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
     new SqlParameter("@Fk_DesignationId", (object?)employee.DesignationId ?? DBNull.Value),
@@ -145,7 +145,7 @@ namespace HR.Persistence.Repositories
                 Signature = signatureBytes,
                 LoginStatus = employee.LoginStatus,
                 LeftCompany = employee.LeftCompany,
-                LeaveCompany = employee.LeaveCompany,
+                LeftDate = employee.LeftDate,
                 LocationId = employee.LocationId,
                 DesignationId = employee.DesignationId,
                 ShiftId = employee.ShiftId,
@@ -161,9 +161,12 @@ namespace HR.Persistence.Repositories
         public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
         {
             var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
+            Console.WriteLine($"SQL Query: {sql}", email);
             var employee = await _appDbContext.Employees
                 .FromSqlRaw(sql, email)
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
+
 
             return employee;
         }

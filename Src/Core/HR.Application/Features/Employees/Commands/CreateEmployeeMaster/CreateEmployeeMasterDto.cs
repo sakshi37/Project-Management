@@ -28,6 +28,5 @@
     public int UserGroupId { get; set; }
     public int BranchId { get; set; }
     public int DivisionId { get; set; }
-
-
+    public DateTime? LeftDate { get; set; }
 }
