@@ -67,19 +67,11 @@ export class EmployeeComponent implements OnInit {
   }
 
   editEmployee(emp: any): void {
-<<<<<<< HEAD
-    console.log('Selected Employee:', emp);
-    console.log('Selected Employee Code:', emp.code);
-
-    this.Router.navigate(['/updateemployee'], {
-      queryParams: { code: emp.code },
-=======
     console.log('Selected Employee:', emp);  
     console.log('Selected Employee Code:', emp.code); 
   
-    this.router.navigate(['/update-employee'], {
+    this.Router.navigate(['/update-employee'], {
       queryParams: { code: emp.code }  
->>>>>>> Employee-master
     });
   }
 
