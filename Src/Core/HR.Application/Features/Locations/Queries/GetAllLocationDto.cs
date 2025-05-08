@@ -1,6 +1,6 @@
-﻿namespace HR.Domain.Entities
+﻿namespace HR.Application.Features.Location.Query
 {
-    public class Location
+    public class GetAllLocationDto
     {
         public int LocationId { get; set; }
         public string LocationName { get; set; }
