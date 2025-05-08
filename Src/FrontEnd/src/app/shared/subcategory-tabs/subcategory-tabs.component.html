@@ -1,0 +1,26 @@
+<div class="container mt-4">
+<div class="dropdown-header" (click)="toggleDropdown()">
+    <h4>Subcategories</h4>
+    <span [class.rotate]="isDropdownOpen">&#x25B2;</span>
+  </div>
+  
+  <div class="dropdown-content" *ngIf="isDropdownOpen">
+    <div class="tab-bar">
+      <div
+        class="tab"
+        *ngFor="let tab of tabs"
+        [class.active]="tab === selectedTab"
+        (click)="selectTab(tab)">
+        {{ tab }}
+      </div>
+    </div>
+  
+    <div class="tab-content mt-3">
+      <ng-container [ngSwitch]="selectedTab">
+        <!-- <app-country *ngSwitchCase="'Country'"></app-country> -->
+        <!-- add more components -->
+        <div *ngSwitchDefault>Select a subcategory</div>
+      </ng-container>
+    </div>
+  </div>
+</div>

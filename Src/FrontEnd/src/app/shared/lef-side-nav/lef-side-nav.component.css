@@ -1,0 +1,69 @@
+/* General Sidebar Styles */
+/* .sidebar {
+  width: 250px;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 60px;
+  z-index: 999;
+  background-color: #007bff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+} */
+.sidebar {
+  width: 250px;
+  height: calc(100vh - 60px); /* 60px is the navbar height */
+  position: fixed;
+  left: 0;
+  top: 60px;
+  z-index: 999;
+  background-color: #007bff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* enables scrolling */
+  overflow-x: hidden;
+  padding-bottom: 20px; /* optional for spacing */
+  scroll-behavior: smooth;
+}
+
+.sidebar .sidebar-link {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  display: block;
+  padding: 10px;
+}
+
+.sidebar .sidebar-link:hover {
+  background-color: #0056b3;
+}
+
+.accordion-button {
+  background-color: transparent;
+  color: white;
+  font-size: 16px;
+  text-align: left;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #0056b3;
+}
+
+.accordion-collapse {
+  display: none;
+  transition: max-height 0.3s ease;
+}
+
+.accordion-collapse.show {
+  display: block;
+}
+
+.accordion-body {
+  padding: 10px;
+}
+
+.accordion-header {
+  padding: 0;
+}
+
+.accordion-button i {
+  font-size: 18px;
+}

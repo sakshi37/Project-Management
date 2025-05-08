@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="14.0.0" />
+		<PackageReference Include="MediatR" Version="12.5.0" />
+		<PackageReference Include="Microsoft.SharePointOnline.CSOM" Version="16.1.25912.12000" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Infrastructure\HR.Infrastructure\HR.Infrastructure.csproj" />
+		<ProjectReference Include="..\HR.Domain\HR.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Features\Branches\Commands\CreateBranch\" />
+		<Folder Include="Features\Branches\Commands\DeleteBranch\" />
+		<Folder Include="Features\Branches\Commands\Dtos\" />
+		<Folder Include="Features\Branches\Queries\" />
+	</ItemGroup>
+
+</Project>
