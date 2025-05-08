@@ -1,21 +1,27 @@
-.sidebar {
+/* General Sidebar Styles */
+/* .sidebar {
   width: 250px;
-  height: calc(100vh - 60px);
+  height: 100%;
   position: fixed;
   left: 0;
   top: 60px;
   z-index: 999;
   background-color: #007bff;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+} */
+.sidebar {
+  width: 250px;
+  height: calc(100vh - 60px); /* 60px is the navbar height */
+  position: fixed;
+  left: 0;
+  top: 60px;
+  z-index: 999;
+  background-color: #007bff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* enables scrolling */
   overflow-x: hidden;
-  padding-bottom: 20px;
+  padding-bottom: 20px; /* optional for spacing */
   scroll-behavior: smooth;
-  transition: transform 0.3s ease;
-}
-
-.sidebar-collapsed {
-  transform: translateX(-100%);
 }
 
 .sidebar .sidebar-link {
@@ -26,45 +32,15 @@
   padding: 10px;
 }
 
-.sidebar-link-text{
-  color: rgba(0, 86, 179) !important;
-}
-.sidebar-link-text:hover{
-  color: #fff !important;
-}
 .sidebar .sidebar-link:hover {
-  background-color: rgba(0, 86, 179);
-  color: #fff;
-  border-radius: 8px;
+  background-color: #0056b3;
 }
 
 .accordion-button {
   background-color: transparent;
   color: white;
   font-size: 16px;
-  padding: 10px 15px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.accordion-button:hover {
-  background-color: rgba(0, 86, 179, 0.8) !important;
-  color: #fff !important;
-  border-radius: 8px !important;
-}
-
-.accordion-button span {
-  display: flex;
-  align-items: center;
-}
-
-.accordion-button .fa-chevron-down {
-  transition: transform 0.3s ease;
-}
-
-.accordion-button[aria-expanded="true"] .fa-chevron-down {
-  transform: rotate(180deg);
+  text-align: left;
 }
 
 .accordion-button:not(.collapsed) {
@@ -82,11 +58,7 @@
 
 .accordion-body {
   padding: 10px;
-  background-color: #edeff3;
-  border-radius: 10px;
 }
-
-
 
 .accordion-header {
   padding: 0;
@@ -94,24 +66,4 @@
 
 .accordion-button i {
   font-size: 18px;
-}
-
-.accordion-body[_ngcontent-ng-c666907675] {
-  padding: 10px;
-  background-color: white;
-  border-radius: 10px;
-}
-.accordion-flush > .accordion-item > .accordion-collapse, .accordion-flush > .accordion-item > .accordion-header .accordion-button, .accordion-flush > .accordion-item > .accordion-header .accordion-button.collapsed {
-  margin-bottom: 8px;
-}
-
-/* .accordion-button::after {
-  
-  background-image: var(--bs-accordion-btn-icon);
-  background-repeat: no-repeat;
-  background-size: var(--bs-accordion-btn-icon-width);
-  transition: var(--bs-accordion-btn-icon-transition);
-} */
-.accordion-button::after {
-  filter: invert(1); /* Makes black arrow white */
 }
