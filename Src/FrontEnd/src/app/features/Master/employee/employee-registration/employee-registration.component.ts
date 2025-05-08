@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import autoTable from 'jspdf-autotable';
+
 import {
   FormBuilder,
   FormGroup,
@@ -12,6 +14,7 @@ import { EmployeeService } from '../../../../services/employee-service';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-employee',
@@ -32,6 +35,7 @@ export class EmployeeRegistrationComponent implements OnInit {
   locations: { id: number; name: string }[] = [];
   selectedImage: string | null = null;
   selectedSignature: string | null = null;
+  isDisable: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -42,18 +46,6 @@ export class EmployeeRegistrationComponent implements OnInit {
     this.initForm();
     this.getLocation();
   }
-  strictEmailValidator = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const value = control.value;
-    const strictEmailRegex =
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|gov|edu|mil|biz|info|name|co|in|co\.in)$/i;
-
-    if (value && !strictEmailRegex.test(value)) {
-      return { strictEmail: true };
-    }
-    return null;
-  };
 
   generateEmployeeCode(): string {
     const now = new Date();
@@ -85,25 +77,21 @@ export class EmployeeRegistrationComponent implements OnInit {
 
   initForm(): void {
     this.employeeForm = this.fb.group({
-      name: ['Vaishanavi Bhambure', Validators.required],
-      code: [this.generateEmployeeCode(), Validators.required],
-      address: ['Kalyan(w)', Validators.required],
-      mobileNo: ['123456781'],
-      skypeId: ['fdsts43'],
-      email: [
-        'vaishanvi.demo@gmail.com',
-        [Validators.required, Validators.email, this.strictEmailValidator],
-      ],
+      name: ['', Validators.required],
+      code: [this.generateEmployeeCode()],
+      address: ['', Validators.required],
+      mobileNo: ['', Validators.required],
+      skypeId: [''],
+      email: ['', [Validators.required, Validators.email]],
       joinDate: ['', Validators.required],
-      bccEmail: ['vaishanvi@demo.com'],
-      panNumber: ['123efg'],
+      bccEmail: [''],
+      panNumber: [''],
       birthDate: ['', Validators.required],
       image: [''],
       signature: [''],
-      loginStatus: [true],
-      leftCompany: [false],
-      // leaveCompany: [false],
-      locationId: [1],
+      loginStatus: [],
+
+      locationId: [0],
       designationId: [1],
       shiftId: [1],
       employeeTypeId: [1],
@@ -145,6 +133,7 @@ export class EmployeeRegistrationComponent implements OnInit {
     //   emp.leaveCompany = new Date();
     // }
 
+    console.log(emp);
     this.employeeService.createEmployee(emp).subscribe({
       next: () => {
         this.resetForm();
@@ -157,10 +146,16 @@ export class EmployeeRegistrationComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error creating employee:', err);
+        console.log(err);
+
+        let errorMsg = 'Failed to create employee. Please try again.';
+        if (err instanceof HttpErrorResponse && typeof err.error === 'string') {
+          errorMsg = err.error;
+        }
         Swal.fire({
           icon: 'error',
           title: 'Error!',
-          text: 'Failed to create employee. Please try again.',
+          text: errorMsg,
           confirmButtonColor: '#d33',
         });
       },
