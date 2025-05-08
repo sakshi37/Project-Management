@@ -1,4 +1,5 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Exception;
 using HR.Application.Features.States.Commands.CreateState;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.States.Commands.UpdateState;
@@ -19,6 +20,24 @@ namespace HR.Persistence.Repositories
 
         public async Task<State> CreateAsync(CreateStateDto dto)
         {
+            if (string.IsNullOrEmpty(dto.StateName))
+                throw new StateValidationException("State name is required.");
+
+            if (dto.CountryId <= 0)
+                throw new StateValidationException("Invalid Country ID.");
+
+            var existingState = await _context.States
+                 .FromSqlRaw("EXEC dbo.SP_CheckStateDuplicate @StateName = {0}, @CountryId = {1}", dto.StateName, dto.CountryId)
+                 .AsNoTracking()
+                 .ToListAsync();
+            var foundstate = existingState.FirstOrDefault();
+
+
+            if (foundstate != null)
+            {
+                throw new CityValidationException("A state with the same name already exists in the selected country");
+            }
+
             var sql = "EXEC SP_StateInsert @Fk_CountryId = {0}, @StateName = {1}, @StateCode = {2}, @CreatedBy = {3}";
             await _context.Database.ExecuteSqlRawAsync(sql, dto.CountryId, dto.StateName, dto.StateCode, dto.CreatedBy);
             return new State
