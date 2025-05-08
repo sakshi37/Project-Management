@@ -11,6 +11,9 @@ using HR.Application.Features.Countries.Commands.UpdateCountry;
 using HR.Application.Features.Designations.Commands.CreateDesignation;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.UpdateDesignation;
+using HR.Application.Features.Divisions.Command.CreateLocationCommand;
+using HR.Application.Features.Divisions.Command.Dto;
+using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Dtos;
 using HR.Application.Features.Holidays.Commands.CreateHoliday;
 using HR.Application.Features.Holidays.Commands.Dtos;
@@ -67,5 +70,10 @@ public class MappingProfile : Profile
         CreateMap<Holiday, HolidayDto>();
            CreateMap<Branch, BranchDto>();
         CreateMap<CreateBranchDto, Branch>();
+
+        CreateMap<CreateDivisionDto, Division>();
+        CreateMap<UpdateDivisionDto, Division>();
+        CreateMap<Division, DivisionDtos>();
+            
     }
 }

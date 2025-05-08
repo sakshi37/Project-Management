@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.Divisions.Query.GetAllQuery
 {
-    public class GetAllDivisionQueryHandler : IRequestHandler<GetAllDivisionQuery, List<DivisionDtos>>
+    public class GetAllDivisionQueryHandler : IRequestHandler<GetAllDivisionQuery, List<GetAllDivisionQueryDto>>
     {
         private readonly IDivisionRepositry _repo;
         public GetAllDivisionQueryHandler(IDivisionRepositry repo)
@@ -19,7 +19,7 @@ namespace HR.Application.Features.Divisions.Query.GetAllQuery
             _repo = repo;
         }
 
-        public async Task<List<DivisionDtos>> Handle(GetAllDivisionQuery request, CancellationToken cancellationToken)
+        public async Task<List<GetAllDivisionQueryDto>> Handle(GetAllDivisionQuery request, CancellationToken cancellationToken)
         {
             return await _repo.GetAllAsync();
 

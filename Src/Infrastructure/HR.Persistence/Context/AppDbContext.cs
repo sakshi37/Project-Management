@@ -3,6 +3,7 @@ using HR.Application.Features.Cities.Commands.Dtos;
 using HR.Application.Features.Countries.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Divisions.Command.Dto;
+using HR.Application.Features.Divisions.Query.GetAllQuery;
 using HR.Application.Features.Dtos;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
@@ -34,6 +35,7 @@ public class AppDbContext : DbContext
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<LocationDto> LocationDtos { get; set; }
     public DbSet<DivisionDtos> DivisionDtos { get; set; }
+    public DbSet<GetAllDivisionQueryDto> GetAllDivisionQueryVms { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -54,6 +56,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
         modelBuilder.Entity<DivisionDtos>().HasNoKey();
+        modelBuilder.Entity<GetAllDivisionQueryDto>().HasNoKey();
 
 
 

@@ -5,6 +5,7 @@ using HR.Application.Features.Designations.Commands.UpdateDesignation;
 using HR.Application.Features.Divisions.Command.CreateLocationCommand;
 using HR.Application.Features.Divisions.Command.Dto;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
+using HR.Application.Features.Divisions.Query.GetAllQuery;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -21,23 +22,23 @@ namespace HR.Persistence.Repositories
         public async Task<Division> CreateAsync(CreateDivisionDto dto)
         {
 
-            string sql = "EXEC SP_DivisionInsert @DivisionName={0}, @ProjectManagerName={1}, @PrefixName={2}, @Fk_HolidayId={3}, @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6}";
+            string sql = "EXEC SP_DivisionInsert @DivisionName={0},@PrefixName={1},@Fk_HolidayId={2},   @ManHours={3}, @DivisionStatus={4},@Fk_ProjectManagerId={5}, @CreatedBy={6}";
             await _context.Database.ExecuteSqlRawAsync(sql,
                 dto.DivisionName,
-                dto.ProjectManagerName,
                 dto.PrefixName,
                 dto.Fk_HolidayId,
                 dto.ManHours,
-                dto.Divisionstatus,
+                dto.DivisionStatus,
+                dto.ProjectManagerId,
                 dto.CreatedBy);
             return new Division
             {
                 DivisionName = dto.DivisionName,
-                ProjectManagerName = dto.ProjectManagerName,
+                ProjectManagerId = dto.ProjectManagerId,
                 PrefixName = dto.PrefixName,
                 Fk_HolidayId = dto.Fk_HolidayId,
                 ManHours = dto.ManHours,
-                DivisionStatus = dto.Divisionstatus,
+                DivisionStatus = dto.DivisionStatus,
                 CreatedBy = dto.CreatedBy,
             };
         }
@@ -51,9 +52,9 @@ namespace HR.Persistence.Repositories
 
 
 
-        public async Task<List<DivisionDtos>> GetAllAsync()
+        public async Task<List<GetAllDivisionQueryDto>> GetAllAsync()
         {
-            return await _context.DivisionDtos.FromSqlRaw("EXEC SP_GetAllDivisions").ToListAsync();
+            return await _context.GetAllDivisionQueryVms.FromSqlRaw("EXEC SP_GetAllDivisions").ToListAsync();
         }
 
         public async Task<Division> UpdateAsync(UpdateDivisionDto dto)

@@ -10,16 +10,16 @@ namespace HR.Application.Features.Divisions.Command.DeleteDivision
 {
     public class DeleteDivisionCommandHandler : IRequestHandler<DeleteDivisionCommand, bool>
     {
-        private readonly IDivisionRepositry _repo;
+        private readonly IDivisionRepositry _divisionRepositry;
 
-        public DeleteDivisionCommandHandler(IDivisionRepositry repo)
+        public DeleteDivisionCommandHandler(IDivisionRepositry divisionRepository)
         {
-            //_repo = repo;
+            _divisionRepositry = divisionRepository;
         }
 
         public async Task<bool> Handle(DeleteDivisionCommand request, CancellationToken cancellationToken)
         {
-            await _repo.DeleteAsync(request.DivisionId, request.UpdatedBY);
+            await _divisionRepositry.DeleteAsync(request.DivisionId, request.UpdatedBY);
             return true;
         }
     }

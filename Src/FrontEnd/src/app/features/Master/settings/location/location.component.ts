@@ -35,11 +35,14 @@ export class LocationComponent implements OnInit, AfterViewInit {
     searchText: string = '';
     isEditMode = false;
     currentPage: number = 1;
-  itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
-  itemsPerPage: number = 5;
-  private locationModal!: bootstrap.Modal ;
-  private modalElement: ElementRef | undefined;
-  cityForm!:FormGroup;
+    itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
+    itemsPerPage: number = 5;
+    selectedSortColumn = '';
+    sortDirectionAsc = true;
+    private locationModal!: bootstrap.Modal ;
+    private modalElement: ElementRef | undefined;
+    cityForm!:FormGroup;
+    
   ;
 
 
@@ -229,6 +232,38 @@ onStateChange(): void {
       resetForm(): void {
         this.locationForm.reset({ countryId: '', stateId: '',cityId:'', loationName: '', locationStatus:'1' });
         // this.selectedlocationId = null;
+      }
+      sortLocations(column: keyof GetLocationDto) {
+        if (this.selectedSortColumn === column) {
+          this.sortDirectionAsc = !this.sortDirectionAsc;
+        } else {
+          this.selectedSortColumn = column;
+          this.sortDirectionAsc = true;
+        }
+      
+        this.filteredLocations.sort((a, b) => {
+          const aValue = a[column];
+          const bValue = b[column];
+      
+          if (typeof aValue === 'string' && typeof bValue === 'string') {
+            const aStr = aValue.toLowerCase();
+            const bStr = bValue.toLowerCase();
+            if (aStr < bStr) return this.sortDirectionAsc ? -1 : 1;
+            if (aStr > bStr) return this.sortDirectionAsc ? 1 : -1;
+          } else if (typeof aValue === 'boolean' && typeof bValue === 'boolean') {
+            return this.sortDirectionAsc
+              ? Number(aValue) - Number(bValue)
+              : Number(bValue) - Number(aValue);
+          }
+          return 0;
+        });
+      }
+      
+    
+      getSortIcon(column: string): string {
+        if (this.selectedSortColumn !== column) return 'fa-sort';
+        return this.sortDirectionAsc ? 'fa-sort-up' : 'fa-sort-down';
+      
       }
       onStatusChange(location: GetLocationDto): void {
           const confirmed = confirm(`Are you sure you want to mark "${location.locationName}" as ${location.locationStatus ? 'Inactive' : 'Active'}?`);
