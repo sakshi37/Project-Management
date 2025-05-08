@@ -35,8 +35,9 @@ export class AppComponent {
   // onSidebarToggled(visible: boolean) {
   //   this.isSidebarVisible = visible;
   // }
+  hideLayout = true;
   currentRoute: string = '';
-  hideLayout = false;
+  // hideLayout = false;
   isSidebarVisible = true;
 
   onSidebarToggled(newState: boolean) {
@@ -53,6 +54,7 @@ export class AppComponent {
         if (this.hideLayout) {
           this.isSidebarVisible = false;
         }
+
       });
   }  
 }
