@@ -10,7 +10,8 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2'
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
 
 
 @Component({
@@ -42,7 +43,7 @@ export class EmployeeComponent implements OnInit {
     { key: 'action', label: 'Action' }
   ];
 
-  constructor(private employeeService: EmployeeService,private dialog: MatDialog) {}
+  constructor(private employeeService: EmployeeService,private dialog: MatDialog,private router: Router) {}
 
 
   ngOnInit(): void {
@@ -64,10 +65,15 @@ export class EmployeeComponent implements OnInit {
   }
 
   editEmployee(emp: any): void {
-    // Implement the logic to edit an employee
-    console.log('Editing employee:', emp);
-    // You can navigate to another page or open a modal to edit the employee
+    console.log('Selected Employee:', emp);  
+    console.log('Selected Employee Code:', emp.code); 
+  
+    this.router.navigate(['/updateemployee'], {
+      queryParams: { code: emp.code }  
+    });
   }
+  
+  
 
   openInactivatePopup(emp: any): void {
     this.dialog.open(InactivateEmployeeComponent

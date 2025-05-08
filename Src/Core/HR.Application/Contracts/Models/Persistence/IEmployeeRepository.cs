@@ -1,5 +1,6 @@
 ﻿using HR.Application.Contracts.Models.Common;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Domain.Entities;
 
@@ -14,5 +15,8 @@ namespace HR.Application.Contracts.Persistence
         Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize);
         //Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(int id);
         Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(string Code);
+
+        Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto);
+
     }
 }

@@ -39,6 +39,9 @@ namespace ArtSystem.Api.Middleware
                 case CityValidationException:
                     statusCode = HttpStatusCode.BadRequest;
                     break;
+                case StateValidationException:
+                    statusCode = HttpStatusCode.BadRequest;
+                    break;
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     break;

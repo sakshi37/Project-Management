@@ -1,0 +1,17 @@
+.form-rectangle {
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ced4da;
+}
+
+.card {
+  border-radius: 1rem;
+}
+
+h5 {
+  color: #333;
+}
+
+button {
+  min-width: 100px;
+}
