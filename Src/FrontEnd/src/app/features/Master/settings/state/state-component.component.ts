@@ -10,6 +10,8 @@ import { GetCountryDto } from '../country/Models/get-country.dto';
 import { UpdateStateDto } from './Models/update-state.dto';
 import { CreateStateDto } from './Models/create-state.dto';
 import { NgxPaginationModule } from 'ngx-pagination';
+import Swal from 'sweetalert2';
+import { ErrorHandlerService } from '../../../../services/error-handler.service';
 
 @Component({
   selector: 'app-state',
@@ -31,6 +33,8 @@ export class StateComponent implements OnInit, AfterViewInit {
   currentPage: number = 1;
 itemsPerPageOptions: number[] = [3, 5, 10, 25]
 itemsPerPage: number = 5; // default value
+selectedSortColumn = '';
+sortDirectionAsc = true;
 
   private stateModal!: bootstrap.Modal;
   private modalElement: ElementRef | undefined;
@@ -39,7 +43,8 @@ itemsPerPage: number = 5; // default value
     private fb: FormBuilder,
     private stateService: StateService,
     private countryService: CountryService,
-    private el: ElementRef
+    private el: ElementRef,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -150,8 +155,14 @@ itemsPerPage: number = 5; // default value
           this.loadStates();
           this.resetForm();
           // this.stateModal?.hide();
+          Swal.fire({
+                      icon: 'success',
+                      title: 'Updated',
+                      text: 'City updated successfully!',
+                      confirmButtonColor: '#3085d6'
+                    });
         },
-        error: (err) => console.error('Update error:', err),
+        error: (err) => this.errorHandler.handleError(err)
       });
     }}
     else {
@@ -165,11 +176,41 @@ itemsPerPage: number = 5; // default value
               this.loadStates();
               this.resetForm();
               // this.stateModal?.hide();
+              Swal.fire({
+                          icon: 'success',
+                          title: 'Created',
+                          text: 'City created successfully!',
+                          confirmButtonColor: '#3085d6'
+                        });
             },
-            error: (err) => console.error('Error creating state:', err),
+            error: (err) => this.errorHandler.handleError(err)
           });
         }
   }
+
+  sortStates(column: string) {
+    if (this.selectedSortColumn === column) {
+      this.sortDirectionAsc = !this.sortDirectionAsc;
+    } else {
+      this.selectedSortColumn = column;
+      this.sortDirectionAsc = true;
+    }
+
+    this.filteredStates.sort((a, b) => {
+      const aValue = a[column]?.toString().toLowerCase() || '';
+      const bValue = b[column]?.toString().toLowerCase() || '';
+
+      if (aValue < bValue) return this.sortDirectionAsc ? -1 : 1;
+      if (aValue > bValue) return this.sortDirectionAsc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.selectedSortColumn !== column) return 'fa-sort';
+    return this.sortDirectionAsc ? 'fa-sort-up' : 'fa-sort-down';
+  }
+
   onStatusChange(state: GetStateDto): void {
     const confirmed = confirm(`Are you sure you want to mark "${state.stateName}" as ${state.stateStatus ? 'Inactive' : 'Active'}?`);
 

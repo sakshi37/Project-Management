@@ -116,6 +116,7 @@
                     style="cursor: pointer"
                     (click)="editEmployee(emp)"
                   />
+                  <!-- (click)="editEmployee(emp)" , -->
                   <img
                     *ngIf="emp.loginStatus === true"
                     src="https://img.icons8.com/ios-glyphs/16/FF0000/multiply.png"
@@ -148,12 +149,15 @@
     <!-- Pagination Controls -->
     <div class="d-flex justify-content-between align-items-center mt-3">
       <div>
+        <h5 class="mb-0">Employees Master</h5>
+      </div>
+
+      <div class="d-flex align-items-center">
         <button
-          class="btn btn-sm btn-outline-secondary me-2"
-          (click)="onPageChange(pageNumber - 1)"
-          [disabled]="pageNumber <= 1"
+          class="btn btn-outline-secondary me-2"
+          [routerLink]="['/employee-registration']"
         >
-          <i class="bi bi-chevron-left"></i> Previous
+          <i class="bi bi-plus-lg"></i> Add New Employee
         </button>
 
         <span>Page {{ pageNumber }}</span>

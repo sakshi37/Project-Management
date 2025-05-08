@@ -11,6 +11,7 @@ using HR.Application.Features.Countries.Commands.UpdateCountry;
 using HR.Application.Features.Designations.Commands.CreateDesignation;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.UpdateDesignation;
+using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Holidays.Commands.CreateHoliday;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Holidays.Commands.UpdateHoliday;
@@ -50,7 +51,7 @@ public class MappingProfile : Profile
 
         CreateMap<CreateStateDto, State>();
         CreateMap<UpdateStateDto, State>();
-        CreateMap<State, StateDto>();
+        CreateMap<State, StateDto>().ReverseMap();
 
         CreateMap<CreateDesignationDto, Designation>();
         CreateMap<UpdateDesignationDto, Designation>();
@@ -59,13 +60,18 @@ public class MappingProfile : Profile
 
         CreateMap<CreateCityDto, City>();
         CreateMap<UpdateCityDto, City>();
-        CreateMap<City, CityDto>();
+        CreateMap<City, CityDto>().ReverseMap();
         //CreateMap<Employee, GetEmployeeVm>();
 
         CreateMap<CreateHolidayDto, Holiday>();
         CreateMap<UpdateHolidayDto, Holiday>();
         CreateMap<Holiday, HolidayDto>();
-        CreateMap<Branch, BranchDto>();
+
+           CreateMap<Branch, BranchDto>();
         CreateMap<CreateBranchDto, Branch>();
+
+        CreateMap<UpdateEmployeeCommandDto, Employee>();
+        CreateMap<UpdateEmployeeCommand, UpdateEmployeeCommandDto>()
+            .ConstructUsing(cmd => cmd.Dto);
     }
 }

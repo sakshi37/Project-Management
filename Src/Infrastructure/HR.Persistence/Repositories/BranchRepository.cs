@@ -44,7 +44,6 @@ namespace HR.Persistence.Repositories
 
             return new BranchDto
             {
-                BranchId = 0, // If you get the ID from DB/SP, set it here
                 BranchName = dto.BranchName,
                 CityId = dto.Fk_CityId,
                 CityName = cityData?.CityName ?? "",

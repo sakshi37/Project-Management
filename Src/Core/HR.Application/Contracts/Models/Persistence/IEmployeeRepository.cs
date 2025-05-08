@@ -1,6 +1,7 @@
 ﻿using HR.Application.Contracts.Models.Common;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Domain.Entities;
 
@@ -17,5 +18,7 @@ namespace HR.Application.Contracts.Persistence
         Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(string Code);
 
         Task<EmployeeDto> GetEmaployeeByEmail(string email);
+        Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto);
+
     }
 }
