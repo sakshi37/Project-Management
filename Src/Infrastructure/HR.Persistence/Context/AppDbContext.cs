@@ -21,6 +21,8 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<CountryDto> CountryDtos { get; set; }
+    public DbSet<State> States { get; set; }
+
     public DbSet<StateDto> StateDtos { get; set; }
     public DbSet<DesignationDto> DesignationDtos { get; set; }
     public DbSet<City> Cities { get; set; }
@@ -44,6 +46,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
+        modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
+
         modelBuilder.Entity<CityDto>().HasNoKey();
         modelBuilder.Entity<HolidayDto>().HasNoKey();
 
@@ -52,7 +56,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
 
 
-      modelBuilder.Entity<BranchDto>().HasNoKey();
+        modelBuilder.Entity<BranchDto>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
         modelBuilder.Entity<DivisionDtos>().HasNoKey();

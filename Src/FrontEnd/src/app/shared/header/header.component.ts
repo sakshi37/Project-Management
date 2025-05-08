@@ -13,6 +13,15 @@ export class HeaderComponent {
   logout() {
     // Clear session or token
     this.router.navigate(['/login']);
+    localStorage.removeItem('email');
+    localStorage.removeItem('otp');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('checkFirstLogin');
+    localStorage.removeItem('roleName');
+  }
+
+  isLoggedIn():boolean{
+    return  !! localStorage.getItem('userName')
   }
 
 }

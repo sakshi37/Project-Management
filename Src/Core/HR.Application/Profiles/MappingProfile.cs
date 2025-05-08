@@ -15,6 +15,7 @@ using HR.Application.Features.Divisions.Command.CreateLocationCommand;
 using HR.Application.Features.Divisions.Command.Dto;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Dtos;
+using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Holidays.Commands.CreateHoliday;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Holidays.Commands.UpdateHoliday;
@@ -39,13 +40,13 @@ public class MappingProfile : Profile
         CreateMap<CreateTimeSheetDto, TimeSheet>();
         CreateMap<TimeSheet, CreateTimeSheetDto>();
         CreateMap<CreateEmployeeMasterDto, Employee>()
-.ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image != null ? Convert.FromBase64String(src.Image) : null)) // Decode Base64 string to byte[] 
-.ForMember(dest => dest.Signature, opt => opt.MapFrom(src => src.Signature != null ? Convert.FromBase64String(src.Signature) : null)) // Decode Base64 string to byte[]
-.ForMember(dest => dest.JoinDate, opt => opt.MapFrom(src => src.JoinDate));
+.ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image != null ? Convert.FromBase64String(src.Image) : null))
+.ForMember(dest => dest.Signature, opt => opt.MapFrom(src => src.Signature != null ? Convert.FromBase64String(src.Signature) : null)); // Decode Base64 string to byte[]
+                                                                                                                                       //.ForMember(dest => dest.JoinDate, opt => opt.MapFrom(src => src.JoinDate));
 
         CreateMap<Employee, CreateEmployeeMasterDto>()
-            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image != null ? Convert.ToBase64String(src.Image) : null)) // Encode byte[] to Base64 string
-            .ForMember(dest => dest.Signature, opt => opt.MapFrom(src => src.Signature != null ? Convert.ToBase64String(src.Signature) : null)); // Encode byte[] to Base64 string
+              .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image != null ? Convert.ToBase64String(src.Image) : null)) // Encode byte[] to Base64 string
+              .ForMember(dest => dest.Signature, opt => opt.MapFrom(src => src.Signature != null ? Convert.ToBase64String(src.Signature) : null)); // Encode byte[] to Base64 string
 
         CreateMap<CreateCountryDto, Country>();
         CreateMap<UpdateCountryDto, Country>();
@@ -53,7 +54,7 @@ public class MappingProfile : Profile
 
         CreateMap<CreateStateDto, State>();
         CreateMap<UpdateStateDto, State>();
-        CreateMap<State, StateDto>();
+        CreateMap<State, StateDto>().ReverseMap();
 
         CreateMap<CreateDesignationDto, Designation>();
         CreateMap<UpdateDesignationDto, Designation>();
@@ -68,6 +69,7 @@ public class MappingProfile : Profile
         CreateMap<CreateHolidayDto, Holiday>();
         CreateMap<UpdateHolidayDto, Holiday>();
         CreateMap<Holiday, HolidayDto>();
+
            CreateMap<Branch, BranchDto>();
         CreateMap<CreateBranchDto, Branch>();
 
@@ -75,5 +77,8 @@ public class MappingProfile : Profile
         CreateMap<UpdateDivisionDto, Division>();
         CreateMap<Division, DivisionDtos>();
             
+        CreateMap<UpdateEmployeeCommandDto, Employee>();
+        CreateMap<UpdateEmployeeCommand, UpdateEmployeeCommandDto>()
+            .ConstructUsing(cmd => cmd.Dto);
     }
 }

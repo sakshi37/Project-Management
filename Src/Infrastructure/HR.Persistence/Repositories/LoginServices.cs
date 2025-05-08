@@ -1,14 +1,13 @@
 ﻿using HR.Application.Contracts.Models;
-using HR.Domain.Entities;
-using HR.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using HR.Application.Exceptions;
-using Microsoft.Extensions.Caching.Memory;
-using HR.Application.Dtos;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
+using HR.Application.Dtos;
+using HR.Application.Exceptions;
+using HR.Domain.Entities;
 using HR.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HR.Identity.Services
 {
@@ -40,6 +39,7 @@ namespace HR.Identity.Services
             {
                 throw new UserNotFoundException("Invalid credentials, please try again!!");
             }
+            Console.WriteLine(user.UserName);
             //var otplogin =await _context.Tbl_LoginMaster.FirstOrDefaultAsync(ol=>ol.FirstLogin==);
             if (user.FirstLogin)
             {
@@ -54,7 +54,8 @@ namespace HR.Identity.Services
                     Otp = otp,
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
                     FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName
+                    RoleName = user.RoleName,
+                    UserCheckInTime = user.UserCheckInTime
                     //EmpId = user.fk_EmpId
                 };
 
@@ -68,7 +69,8 @@ namespace HR.Identity.Services
                     Email = user.Email,
                     UserName = user.UserName,
                     FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName
+                    RoleName = user.RoleName,
+                    UserCheckInTime= user.UserCheckInTime
                     //Otp = null,
                     //OtpExpiryTime = DateTime.Now.
                 };
@@ -212,11 +214,10 @@ namespace HR.Identity.Services
             await _context.SaveChangesAsync();
 
             RemoveOtp(user.UserName);
-
             return true;
         }
 
-        
+
 
         public async Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
         {
@@ -224,11 +225,11 @@ namespace HR.Identity.Services
             if (user == null)
             {
                 throw new UserNotFoundException("user with this username is not exist");
-            } 
-            
+            }
+
             if (user.FirstLogin)
-            {                
-               throw new Exception("You are New User Try with your Default Password Provided"); 
+            {
+                throw new Exception("You are New User Try with your Default Password Provided");
 
             }
 

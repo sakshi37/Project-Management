@@ -62,7 +62,8 @@ namespace HR.Persistence.Repositories
         public async Task<CountryDto> GetByIdAsync(int id)
         {
 
-            return await _context.CountryDtos.FromSqlRaw("EXEC SP_GetCountryById @CountryId = {0}", id).FirstOrDefaultAsync();
+            return await _context.CountryDtos
+                .FromSqlRaw("EXEC SP_GetCountryById @CountryId = {0}", id).FirstOrDefaultAsync();
         }
     }
 

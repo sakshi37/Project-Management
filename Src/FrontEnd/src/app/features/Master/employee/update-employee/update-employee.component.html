@@ -1,0 +1,181 @@
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h5 class="border-bottom pb-2 mb-4 font-weight-bold">Edit Details</h5>
+
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+      <!-- All your form-rows stay unchanged -->
+      <!-- Example: -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="employeeCode">Employee Code</label>
+          <input type="text" id="employeeCode" class="form-control" [value]="selectedEmployeeCode" readonly>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="address">Address</label>
+          <input type="text" id="address" class="form-control form-rectangle" formControlName="address" placeholder="Enter address">
+        </div>
+      </div>
+
+  <div class="form-row">
+    <!-- Mobile Number -->
+    <div class="col-md-6 form-group">
+      <label for="mobileNo">Mobile Number</label>
+      <input type="text" id="mobileNo" class="form-control form-rectangle" formControlName="mobileNo" placeholder="Enter mobile number">
+    </div>
+
+    <!-- Skype ID -->
+    <div class="col-md-6 form-group">
+      <label for="skypeId">Skype ID</label>
+      <input type="text" id="skypeId" class="form-control form-rectangle" formControlName="skypeId" placeholder="Enter Skype ID">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- Email -->
+    <div class="col-md-6 form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" class="form-control form-rectangle" formControlName="email" placeholder="Enter email">
+    </div>
+
+    <!-- BCC Email -->
+    <div class="col-md-6 form-group">
+      <label for="bccEmail">BCC Email</label>
+      <input type="email" id="bccEmail" class="form-control form-rectangle" formControlName="bccEmail" placeholder="Enter BCC email">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- PAN Number -->
+    <div class="col-md-6 form-group">
+      <label for="panNumber">PAN Number</label>
+      <input type="text" id="panNumber" class="form-control form-rectangle" formControlName="panNumber" placeholder="Enter PAN number">
+    </div>
+
+    <!-- Join Date -->
+    <div class="col-md-6 form-group">
+      <label for="joinDate">Join Date</label>
+      <input type="date" id="joinDate" class="form-control form-rectangle" formControlName="joinDate">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- Birth Date -->
+    <div class="col-md-6 form-group">
+      <label for="birthDate">Birth Date</label>
+      <input type="date" id="birthDate" class="form-control form-rectangle" formControlName="birthDate">
+    </div>
+
+    <!-- Leave Company Date -->
+    <div class="col-md-6 form-group">
+      <label for="leaveCompany">Leave Company Date</label>
+      <input type="date" id="leaveCompany" class="form-control form-rectangle" formControlName="leaveCompany">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- Login Status -->
+    <div class="col-md-6 form-group">
+      <label for="loginStatus">Login Status</label>
+      <select id="loginStatus" class="form-control form-rectangle" formControlName="loginStatus">
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+
+    <!-- Left Company -->
+    <div class="col-md-6 form-group">
+      <label for="leftCompany">Left Company</label>
+      <select id="leftCompany" class="form-control form-rectangle" formControlName="leftCompany">
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- File Uploads -->
+  <div class="form-row">
+    <div class="col-md-6 form-group">
+      <label for="imageUpload">Upload Image</label>
+      <input type="file" id="imageUpload" class="form-control form-rectangle" (change)="onImageSelected($event)" formControlName="image">
+    </div>
+
+    <div class="col-md-6 form-group">
+      <label for="signatureUpload">Upload Signature</label>
+      <input type="file" id="signatureUpload" class="form-control form-rectangle" (change)="onSignatureSelected($event)" formControlName="signature">
+    </div>
+  </div>
+
+  <!-- Location -->
+  <div class="form-row">
+    <div class="col-md-6 form-group">
+      <label for="locationId">Location</label>
+      <select id="locationId" class="form-control form-rectangle" formControlName="locationId">
+        <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
+      </select>
+    </div>
+
+   <!-- Designation -->
+<!-- Corrected designation dropdown -->
+<div class="col-md-6 form-group">
+  <label for="designationId">Designation</label>
+  <select id="designationId" class="form-control form-rectangle" formControlName="designationId">
+    <option *ngFor="let des of designations" [value]="des.designationId">{{ des.designationName }}</option>
+  </select>
+</div>
+
+</div>
+
+  <div class="form-row">
+    <!-- Shift -->
+    <div class="col-md-6 form-group">
+      <label for="shiftId">Shift</label>
+      <select id="shiftId" class="form-control form-rectangle" formControlName="shiftId">
+        <option *ngFor="let shift of shifts" [value]="shift.id">{{ shift.name }}</option>
+      </select>
+    </div>
+
+    <!-- Employee Type -->
+    <div class="col-md-6 form-group">
+      <label for="employeeTypeId">Employee Type</label>
+      <select id="employeeTypeId" class="form-control form-rectangle" formControlName="employeeTypeId">
+        <option *ngFor="let type of employeeTypes" [value]="type.id">{{ type.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- User Group -->
+    <div class="col-md-6 form-group">
+      <label for="userGroupId">User Group</label>
+      <select id="userGroupId" class="form-control form-rectangle" formControlName="userGroupId">
+        <option *ngFor="let group of userGroups" [value]="group.id">{{ group.name }}</option>
+      </select>
+    </div>
+
+    <!-- Branch -->
+    <div class="col-md-6 form-group">
+      <label for="branchId">Branch</label>
+      <select id="branchId" class="form-control form-rectangle" formControlName="branchId">
+        <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- Division -->
+    <div class="col-md-6 form-group">
+      <label for="divisionId">Division</label>
+      <select id="divisionId" class="form-control form-rectangle" formControlName="divisionId">
+        <option *ngFor="let division of divisions" [value]="division.id">{{ division.name }}</option>
+      </select>
+    </div>
+  </div>
+
+ 
+  <div class="form-group text-right mt-4">
+    <button type="button" class="btn btn-outline-secondary mr-2" (click)="cancel()">Cancel</button>
+    <button type="submit" class="btn btn-success" [disabled]="!employeeForm.valid">Save</button>
+  </div>
+</form>
+</div>
+</div>

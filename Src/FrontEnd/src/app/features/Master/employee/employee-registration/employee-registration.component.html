@@ -8,7 +8,7 @@
 
           <!-- Name -->
           <div class="mb-3">
-            <label class="form-label">Name</label>
+            <label class="form-label">Employee Name</label>
             <input
               type="text"
               class="form-control"
@@ -28,9 +28,10 @@
 
           <!-- Code -->
           <div class="mb-3">
-            <label class="form-label">Code</label>
+            <label class="form-label">Employee Code</label>
             <input
               type="text"
+              [disabled]="isDisable"
               class="form-control"
               formControlName="code"
               placeholder="Enter Code"
@@ -56,6 +57,7 @@
               placeholder="Enter Email"
             />
             <div
+              class="text-danger"
               *ngIf="
                 employeeForm.controls['email'].hasError('required') &&
                 employeeForm.controls['email'].touched
@@ -230,19 +232,6 @@
             />
             <label class="form-check-label" for="loginStatus"
               >Login Active</label
-            >
-          </div>
-
-          <!-- Left Company -->
-          <div class="form-check mb-2">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              formControlName="leftCompany"
-              id="leftCompany"
-            />
-            <label class="form-check-label" for="leftCompany"
-              >Left Company</label
             >
           </div>
         </div>

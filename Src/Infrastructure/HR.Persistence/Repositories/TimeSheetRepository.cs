@@ -20,17 +20,22 @@ namespace HR.Persistence.Repositories
 
         public async Task<TimeSheet> AddTimeSheet(CreateTimeSheetDto timeSheetDto)
         {
-            string sql = "EXEC SP_TimeSheetInsert  @Fk_EmployeeId = {0}, @Fk_JobId = {1},@StartDate = {2}, @EndDate = {3}, @CreatedBy = {4}, @TimeSheetStatus = {5}";
-            await _DbContext.Database.ExecuteSqlRawAsync(sql, timeSheetDto.EmployeeId, timeSheetDto.JobId, timeSheetDto.StartDate, timeSheetDto.EndDate, timeSheetDto.CreatedBy, timeSheetDto.TimeSheetStatus);
+            string sql = "EXEC SP_TimeSheetInsert  @StartDate = {0}, @EndDate = {1}, @Fk_EmployeeId = {2}, @Sequence = {3}, @Fk_JobId = {4}, @TimeSheetStatus = {5}, @CreatedBy = {6}, @CreatedDate = {7}, @UpdatedBy = {8}, @UpdatedDate = {9}";
+            await _DbContext.Database.ExecuteSqlRawAsync(sql, timeSheetDto.StartDate, timeSheetDto.EndDate, timeSheetDto.EmpId, timeSheetDto.Sequence, timeSheetDto.JobId, timeSheetDto.TimeSheetStatus, timeSheetDto.CreatedBy, timeSheetDto.CreatedDate, timeSheetDto.UpdatedBy, timeSheetDto.UpdatedDate);
 
             return new TimeSheet
             {
-                EmployeeId = timeSheetDto.EmployeeId,
-                JobId = timeSheetDto.JobId,
                 StartDate = timeSheetDto.StartDate,
                 EndDate = timeSheetDto.EndDate,
+                EmpId = timeSheetDto.EmpId,
+                Sequence = timeSheetDto.Sequence,
+                JobId = timeSheetDto.JobId,
+
+                TimeSheetStatus = timeSheetDto.TimeSheetStatus,
                 CreatedBy = timeSheetDto.CreatedBy,
-                TimeSheetStatus = timeSheetDto.TimeSheetStatus
+                CreatedDate = timeSheetDto.CreatedDate,
+                UpdatedBy = timeSheetDto.UpdatedBy,
+                UpdatedDate = timeSheetDto.UpdatedDate,
 
 
             };
