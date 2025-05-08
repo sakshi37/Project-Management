@@ -54,8 +54,7 @@ namespace HR.Identity.Services
                     Otp = otp,
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
                     FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName,
-                    UserCheckInTime = user.UserCheckInTime
+                    RoleName = user.RoleName
                     //EmpId = user.fk_EmpId
                 };
 
@@ -69,8 +68,7 @@ namespace HR.Identity.Services
                     Email = user.Email,
                     UserName = user.UserName,
                     FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName,
-                    UserCheckInTime= user.UserCheckInTime
+                    RoleName = user.RoleName
                     //Otp = null,
                     //OtpExpiryTime = DateTime.Now.
                 };
@@ -214,6 +212,7 @@ namespace HR.Identity.Services
             await _context.SaveChangesAsync();
 
             RemoveOtp(user.UserName);
+
             return true;
         }
 

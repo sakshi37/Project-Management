@@ -14,8 +14,7 @@ namespace HR.Application.Contracts.Models
         public DateTime OtpExpiryTime { get; set; }
         public bool FirstLogin { get; set; }
         public string RoleName { get; set; }
-        public DateTime UserCheckInTime { get; set; } 
-         
+
         //public int EmpId { get; set; }
     }
 }
