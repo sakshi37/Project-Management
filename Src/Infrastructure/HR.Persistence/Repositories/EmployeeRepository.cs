@@ -2,6 +2,7 @@
 using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
@@ -153,6 +154,84 @@ namespace HR.Persistence.Repositories
                 BranchId = employee.BranchId,
                 DivisionId = employee.DivisionId
             };
+        }
+
+        public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
+        {
+            Console.WriteLine($"[DEBUG] Starting UpdateEmployeeAsync for Code: {dto.Code}");
+
+            byte[] imageBytes = null;
+            byte[] signatureBytes = null;
+
+            if (!string.IsNullOrEmpty(dto.Image))
+            {
+                try
+                {
+                    imageBytes = Convert.FromBase64String(dto.Image);
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine($"[ERROR] Invalid Image Base64: {ex.Message}");
+                    imageBytes = null;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(dto.Signature))
+            {
+                try
+                {
+                    signatureBytes = Convert.FromBase64String(dto.Signature);
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine($"[ERROR] Invalid Signature Base64: {ex.Message}");
+                    signatureBytes = null;
+                }
+            }
+
+            var parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@Code", dto.Code ?? (object)DBNull.Value),
+        new SqlParameter("@Address", dto.Address ?? (object)DBNull.Value),
+        new SqlParameter("@MobileNo", dto.MobileNo ?? (object)DBNull.Value),
+        new SqlParameter("@SkypeId", dto.SkypeId ?? (object)DBNull.Value),
+        new SqlParameter("@JoinDate", (object?)dto.JoinDate ?? DBNull.Value),
+        new SqlParameter("@Email", dto.Email ?? (object)DBNull.Value),
+        new SqlParameter("@BccEmail", dto.BccEmail ?? (object)DBNull.Value),
+        new SqlParameter("@PanNumber", dto.PanNumber ?? (object)DBNull.Value),
+        new SqlParameter("@BirthDate", (object?)dto.BirthDate ?? DBNull.Value),
+        new SqlParameter("@Image", SqlDbType.VarBinary) { Value = (object?)imageBytes ?? DBNull.Value },
+        new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
+        new SqlParameter("@LoginStatus", (object?)dto.LoginStatus ?? DBNull.Value),
+        new SqlParameter("@LeftCompany", (object?)dto.LeftCompany ?? DBNull.Value),
+        new SqlParameter("@LeftDate", (object?)dto.LeaveCompany ?? DBNull.Value),
+        new SqlParameter("@Fk_LocationId", (object?)dto.LocationId ?? DBNull.Value),
+        new SqlParameter("@Fk_DesignationId", (object?)dto.DesignationId ?? DBNull.Value),
+        new SqlParameter("@Fk_ShiftId", (object?)dto.ShiftId ?? DBNull.Value),
+        new SqlParameter("@Fk_EmployeeTypeId", (object?)dto.EmployeeTypeId ?? DBNull.Value),
+        new SqlParameter("@Fk_UserGroupId", (object?)dto.UserGroupId ?? DBNull.Value),
+        new SqlParameter("@Fk_BranchId", (object?)dto.BranchId ?? DBNull.Value),
+        new SqlParameter("@Fk_DivisionId", (object?)dto.DivisionId ?? DBNull.Value)
+    };
+
+            try
+            {
+                var result = await _appDbContext.Database.ExecuteSqlRawAsync(
+                    @"EXEC SP_Employee_update 
+            @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber, @BirthDate, @Image,
+            @Signature, @LoginStatus, @LeftCompany, @LeftDate, @Fk_LocationId, @Fk_DesignationId, @Fk_ShiftId,
+            @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId",
+                    parameters.ToArray()
+                );
+
+                Console.WriteLine($"[DEBUG] Rows affected: {result}");
+                return result > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Exception in UpdateEmployeeAsync: {ex.Message}");
+                return false;
+            }
         }
     }
 
