@@ -1,6 +1,6 @@
-<app-header></app-header>
+<app-header (sidebarToggle)="toggleSidebar()"></app-header>
 
-<div class="d-flex flex-column sidebar bg-primary text-white p-3">
+<div [class.sidebar-collapsed]="!sidebarVisible" class="d-flex flex-column sidebar bg-primary text-white p-3">
   <!-- Profile Section -->
   <div *ngIf="user" class="text-center mb-4">
     <!-- <img [src]="user.image || 'https://img.icons8.com/?size=100&id=52883&format=png&color=FFFFFF'"  *ngIf="imageSrc" class="rounded-circle mb-2" width="80" height="80" alt="Profile Image"> -->
@@ -24,7 +24,7 @@
     <div class="accordion-item bg-transparent border-0">
       <h2 class="accordion-header">
         <button
-          class="accordion-button collapsed bg-transparent text-white"
+          class="accordion-button sidebar-link collapsed bg-transparent text-white"
           type="button"
           aria-expanded="false"
           aria-controls="profileMenu"

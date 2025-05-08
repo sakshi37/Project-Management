@@ -1,4 +1,4 @@
-import { Component, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { Component, Renderer2, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard.component';
@@ -43,6 +43,19 @@ ngOnInit(): void {
   
   }
 }
+// sidebarVisible: boolean = true;
+
+//   toggleSidebar() {
+//     this.sidebarVisible = !this.sidebarVisible;
+//   }
+sidebarVisible: boolean = true;
+
+  @Output() sidebarToggled = new EventEmitter<boolean>();
+
+  toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible;
+    this.sidebarToggled.emit(this.sidebarVisible);
+  }
 
   // Method to toggle profile menu
   toggleProfileMenu() {

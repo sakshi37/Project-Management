@@ -67,3 +67,11 @@
 .accordion-button i {
   font-size: 18px;
 }
+
+.sidebar {
+  transition: transform 0.3s ease;
+}
+
+.sidebar-collapsed {
+  transform: translateX(-100%);
+}

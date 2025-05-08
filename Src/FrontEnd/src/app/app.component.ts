@@ -30,6 +30,16 @@ export class AppComponent {
   }
 
   hideLayout = false;
+  // isSidebarOpen = true;
+
+  // onSidebarToggled(isOpen: boolean) {
+  //   this.isSidebarOpen = isOpen;
+  // }
+  isSidebarVisible: boolean = true;
+
+  onSidebarToggled(visible: boolean) {
+    this.isSidebarVisible = visible;
+  }
 
   constructor(private router: Router) {
     this.router.events
