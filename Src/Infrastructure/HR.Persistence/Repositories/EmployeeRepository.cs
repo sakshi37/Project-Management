@@ -156,7 +156,6 @@ namespace HR.Persistence.Repositories
             };
         }
 
-<<<<<<< HEAD
 
 
 
@@ -172,7 +171,7 @@ namespace HR.Persistence.Repositories
 
 
             return employee.FirstOrDefault();
-=======
+        }
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
             Console.WriteLine($"[DEBUG] Starting UpdateEmployeeAsync for Code: {dto.Code}");
@@ -249,7 +248,7 @@ namespace HR.Persistence.Repositories
                 Console.WriteLine($"[ERROR] Exception in UpdateEmployeeAsync: {ex.Message}");
                 return false;
             }
->>>>>>> dev
+
         }
     }
 }
