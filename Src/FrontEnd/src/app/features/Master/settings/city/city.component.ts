@@ -33,10 +33,9 @@ export class CityComponent implements OnInit, AfterViewInit {
   isEditMode = false;
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
-  itemsPerPage: number = 5; // default value
+  itemsPerPage: number = 5; 
   selectedSortColumn = '';
   sortDirectionAsc = true;
-
   private cityModal!: bootstrap.Modal;
   private modalElement: ElementRef | undefined;
 
@@ -64,7 +63,7 @@ export class CityComponent implements OnInit, AfterViewInit {
   }
 
   initForm(): void {
-    this.cityForm = this.fb.group({
+    this.cityForm = this.fb.group({ 
       countryId: ['', Validators.required],
       stateId: ['', Validators.required],
       cityName: ['', Validators.required],

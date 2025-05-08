@@ -25,7 +25,7 @@ export const routes: Routes = [
   { path: 'team-composition', component: TeamCompositionComponent ,canActivate: [AuthGuard]},
 
   { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard]},
-  { path: 'settings', component: SettingsComponent,canActivate: [AuthGuard]},
+  { path: 'settings', component: SettingsComponent,canActivate: [AuthGuard] },
   { path: 'country', component: CountryComponent,canActivate: [AuthGuard] },
   { path: 'state', component: StateComponent,canActivate: [AuthGuard] },
   { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard] },
@@ -41,4 +41,6 @@ export const routes: Routes = [
   { path: 'otp', component: OtpComponent },
   { path: 'sidebar', component: LefSideNavComponent,canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
+
+  
 ];
