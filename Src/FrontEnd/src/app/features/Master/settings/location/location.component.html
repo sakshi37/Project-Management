@@ -1,0 +1,164 @@
+<div class="container mt-4">
+  <!-- Add City Button -->
+  <div class="text-end mb-3">
+    <button type="button" class="btn custom-add-btn"
+      data-bs-toggle="modal" data-bs-target="#locationModal" (click)="openAddModal()">
+      + Add Location
+    </button>
+  </div>
+
+  <div class="entries-dropdown">
+    <label for="entries">Show</label>
+    <select id="entries" [(ngModel)]="itemsPerPage">
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+    </select>
+    <span>Entries</span>
+  </div>
+  
+  <div class="mb-3 row">
+    <div class="input-group" style="width: 300px;">
+        <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
+        <input type="text" id="search" class="form-control" placeholder="Search Location"
+               [(ngModel)]="searchText" (ngModelChange)="filterLocations()" style="background-color: transparent;">
+    </div>
+  </div>
+
+  <!-- City Modal -->
+  <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="locationModalLabel">{{ isEditMode ? 'Edit Location' : 'Add New Location' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            (click)="resetForm()"></button>
+        </div>
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <form [formGroup]="locationForm" (ngSubmit)="onSubmit()" class="row g-3">
+            
+            <div class="col-md-12">
+              <label for="countryId" class="form-label">Country:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-globe"></i>
+              <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId">
+                <option value="">Select Country</option>
+                <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}</option>
+              </select>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label for="stateId" class="form-label">State:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-map-marked-alt"></i>
+              <select class="form-select" formControlName="stateId" id="stateId"(change)="onStateChange()">
+                <option value="">Select State</option>
+                <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
+              </select>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <label for="cityId" class="form-label">City:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-city"></i>
+              <select class="form-select" formControlName="cityId" id="cityId">
+                <option value="">Select City</option>
+                <option *ngFor="let city of filteredCities" [value]="city.cityId">{{ city.cityName }}</option>
+              </select>
+              </div>
+
+            </div>
+
+            <div class="col-md-12">
+              <label for="locationName" class="form-label">Location Name:</label>
+              <input type="text" class="form-control" formControlName="locationName" id="locationName" />
+            </div>
+
+            <div class="col-md-12">
+                
+              
+              <label for="locationStatus" class="form-label">Status:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-toggle-on"></i>
+              <select id="locationStatus" class="form-select" formControlName="locationStatus">
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end">
+              <button type="submit" class="btn btn-success" data-bs-dismiss="modal" >{{ isEditMode ? 'Update' : 'Add' }}</button>
+              <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal"
+                (click)="resetForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- City List -->
+  <div class="row gy-4" *ngIf="locations && locations.length > 0; else noData">
+    <div class="col-12">
+      <div>
+        <table class="mb-0">
+          <thead>
+            <tr>
+              <th><div class="head-first">Sr. No</div></th>
+              <th (click)="sortLocations('locationName')">
+                <div class="head-other sortable">Location Name  <i class="fas" [ngClass]="getSortIcon('locationName')"></i></div>
+              </th>              
+              <th (click)="sortLocations('cityName')">
+                <div class="head-other sortable">City  <i class="fas" [ngClass]="getSortIcon('cityName')"></i></div>
+              </th>              
+              <th (click)="sortLocations('stateName')">
+                <div class="head-other sortable">State  <i class="fas" [ngClass]="getSortIcon('stateName')"></i></div>
+              </th>              
+              <th (click)="sortLocations('countryName')">
+                <div class="head-other sortable">Country<i class="fas" [ngClass]="getSortIcon('countryName')"></i></div>
+              </th>              
+              <th (click)="sortLocations('locationStatus')">
+                <div class="head-other sortable">Status</div>
+              </th>              
+              <th><div class="head-last">Action</div></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let location of filteredLocations | paginate:{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': !location.locationStatus }">
+              <td><div class="tr-first-child">{{  (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
+              <td><div class="tr-other-child">{{ location.locationName }}</div></td>
+              <td><div class="tr-other-child">{{ location.cityName }}</div></td>
+              <td><div class="tr-other-child">{{ location.stateName }}</div></td>
+              <td><div class="tr-other-child">{{ location.countryName }}</div></td>
+              <td>
+                <div class="tr-other-child">
+                  <span class="badge status-badge"
+                  [ngClass]="location.locationStatus ? 'active' : 'inactive'">
+                    {{ location.locationStatus ? 'Active' : 'Inactive' }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div class="tr-last-child">
+                  <button class="btn btn-sm edit-btn" (click)="onEdit(location)" data-bs-toggle="modal" data-bs-target="#locationModal">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination-wrapper">
+          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data Template -->
+  <ng-template #noData>
+    <div class="alert alert-info text-center mt-4">No locations found.</div>
+  </ng-template>
+</div>
