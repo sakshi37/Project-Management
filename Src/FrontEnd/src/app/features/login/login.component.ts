@@ -34,6 +34,16 @@ export class LoginComponent implements OnInit {
     private ngZone: NgZone  
   ) {}
 
+  passwordModel = {
+    oldPassword: '',
+    
+  }; 
+  showPassword: boolean = true;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   ngOnInit() { }
 
   loginUser(loginForm: NgForm) {

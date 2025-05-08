@@ -1,14 +1,4 @@
-/* General Sidebar Styles */
-/* .sidebar {
-  width: 250px;
-  height: 100%;
-  position: fixed;
-  left: 0;
-  top: 60px;
-  z-index: 999;
-  background-color: #007bff;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-} */
+
 .sidebar {
   width: 250px;
   height: calc(100vh - 60px); /* 60px is the navbar height */

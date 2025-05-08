@@ -22,27 +22,10 @@ export class ChangePasswordComponent {
   };
  
 
-  showOldPassword = false;
-  showNewPassword = false;
-  showConfirmPassword = false;
-
-  // Accepts one of 'old', 'new', or 'confirm'
-  // togglePasswordVisibility(field: 'old' | 'new' | 'confirm') {
-  //   switch (field) {
-  //     case 'old':
-  //       this.showOldPassword = !this.showOldPassword;
-  //       break;
-  //     case 'new':
-  //       this.showNewPassword = !this.showNewPassword;
-  //       break;
-  //     case 'confirm':
-  //       this.showConfirmPassword = !this.showConfirmPassword;
-  //       break;
-  //   }
-  // }
-
-
-
+  showOldPassword = true;
+  showNewPassword = true;
+  showConfirmPassword = true;
+ 
   constructor(private userService: UserService) {}
 
   toggleOldPasswordVisibility() {

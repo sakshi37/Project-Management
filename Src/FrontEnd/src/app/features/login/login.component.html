@@ -18,14 +18,35 @@
         Username is required.
       </div>
 
-      <input 
+      <!-- <input 
         type="password" 
         placeholder="Password" 
         name="password"
         [(ngModel)]="login.password"
         #password="ngModel"
         required
-      />
+      /> -->
+
+      <div class="password-wrapper" style="position: relative;">
+        <input 
+          [type]="showPassword ? 'password' : 'text'" 
+          placeholder="Password" 
+          name="password"
+          [(ngModel)]="login.password"
+          #password="ngModel"
+          required
+          style="padding-right: 40px;"
+        />
+        <button 
+          type="button" 
+          (click)="togglePasswordVisibility()" 
+          class="eye-btn" 
+          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none;"
+        >
+          <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
+      
 
       <div *ngIf="password.invalid && password.touched" class="error-message" style="color: red;">
         Password is required.
