@@ -68,7 +68,7 @@ export class EmployeeComponent implements OnInit {
     console.log('Selected Employee:', emp);  
     console.log('Selected Employee Code:', emp.code); 
   
-    this.router.navigate(['/updateemployee'], {
+    this.router.navigate(['/update-employee'], {
       queryParams: { code: emp.code }  
     });
   }

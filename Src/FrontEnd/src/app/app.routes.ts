@@ -35,9 +35,12 @@ export const routes: Routes = [
 
   { path: 'timesheetupdate', component: TimesheetUpdateComponent,canActivate: [AuthGuard] },
 
-  { path: 'employee', component: EmployeeComponent ,canActivate: [AuthGuard]},
+  { path: 'employee', component: EmployeeComponent },
   { path: 'employee-registration', component: EmployeeRegistrationComponent,canActivate: [AuthGuard] },
-{path:'updateemployee',component:UpdateEmployeeComponent},
+  {
+    path: 'update-employee',
+    component: UpdateEmployeeComponent
+  },
   { path: 'otp', component: OtpComponent },
   { path: 'sidebar', component: LefSideNavComponent,canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
