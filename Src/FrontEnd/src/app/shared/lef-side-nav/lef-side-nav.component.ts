@@ -1,6 +1,7 @@
 import { Component, Renderer2, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard.component';
 import { ProfileService, UserProfile } from '../../services/profile-services';
 import { CommonModule } from '@angular/common';
 
