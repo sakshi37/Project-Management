@@ -14,6 +14,7 @@ import { EmployeeService } from '../../../../services/employee-service';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-employee',
@@ -77,21 +78,20 @@ export class EmployeeRegistrationComponent implements OnInit {
   initForm(): void {
     this.employeeForm = this.fb.group({
       name: ['', Validators.required],
-      code: [{ value: this.generateEmployeeCode(), disabled: true }],
+      code: [this.generateEmployeeCode()],
       address: ['', Validators.required],
       mobileNo: ['', Validators.required],
-      skypeId: ['', Validators.required],
+      skypeId: [''],
       email: ['', [Validators.required, Validators.email]],
       joinDate: ['', Validators.required],
       bccEmail: [''],
-      panNumber: ['123efg'],
+      panNumber: [''],
       birthDate: ['', Validators.required],
       image: [''],
       signature: [''],
       loginStatus: [],
-      leftCompany: [false],
-      // leaveCompany: [false],
-      locationId: [1],
+
+      locationId: [0],
       designationId: [1],
       shiftId: [1],
       employeeTypeId: [1],
@@ -133,6 +133,7 @@ export class EmployeeRegistrationComponent implements OnInit {
     //   emp.leaveCompany = new Date();
     // }
 
+    console.log(emp);
     this.employeeService.createEmployee(emp).subscribe({
       next: () => {
         this.resetForm();
@@ -145,10 +146,16 @@ export class EmployeeRegistrationComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error creating employee:', err);
+        console.log(err);
+
+        let errorMsg = 'Failed to create employee. Please try again.';
+        if (err instanceof HttpErrorResponse && typeof err.error === 'string') {
+          errorMsg = err.error;
+        }
         Swal.fire({
           icon: 'error',
           title: 'Error!',
-          text: 'Failed to create employee. Please try again.',
+          text: errorMsg,
           confirmButtonColor: '#d33',
         });
       },

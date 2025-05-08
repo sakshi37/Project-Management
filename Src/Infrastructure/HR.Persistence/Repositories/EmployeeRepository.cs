@@ -88,8 +88,8 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
 
     new SqlParameter("@LoginStatus", employee.LoginStatus),
-    new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
-    new SqlParameter("@leftDate", (object?)employee.LeftCompany ?? DBNull.Value),
+    //new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
+    //new SqlParameter("@leftDate", (object?)employee.LeftCompany ?? DBNull.Value),
 
     new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
     new SqlParameter("@Fk_DesignationId", (object?)employee.DesignationId ?? DBNull.Value),
@@ -117,8 +117,7 @@ namespace HR.Persistence.Repositories
             @Image, 
             @Signature, 
             @LoginStatus, 
-            @LeftCompany, 
-            @leftDate, 
+            
             @Fk_LocationId, 
             @Fk_DesignationId, 
             @Fk_ShiftId, 
@@ -144,8 +143,8 @@ namespace HR.Persistence.Repositories
                 Image = imageBytes,
                 Signature = signatureBytes,
                 LoginStatus = employee.LoginStatus,
-                LeftCompany = employee.LeftCompany,
-                LeftDate = employee.LeftDate,
+                //LeftCompany = employee.LeftCompany,
+                //LeftDate = employee.LeftDate,
                 LocationId = employee.LocationId,
                 DesignationId = employee.DesignationId,
                 ShiftId = employee.ShiftId,
@@ -158,17 +157,19 @@ namespace HR.Persistence.Repositories
 
 
 
+
         public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
         {
             var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
             Console.WriteLine($"SQL Query: {sql}", email);
-            var employee = await _appDbContext.Employees
+            var employee = _appDbContext.Employees
                 .FromSqlRaw(sql, email)
                 .AsNoTracking()
-                .FirstOrDefaultAsync();
+                .AsEnumerable()
+                .ToList();
 
 
-            return employee;
+            return employee.FirstOrDefault();
         }
     }
 }
