@@ -20,15 +20,44 @@ export class ChangePasswordComponent {
     newPassword: '',
     confirmPassword: ''
   };
+ 
 
-  showPassword = false;
-  // password='^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'
+  showOldPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+
+  // Accepts one of 'old', 'new', or 'confirm'
+  // togglePasswordVisibility(field: 'old' | 'new' | 'confirm') {
+  //   switch (field) {
+  //     case 'old':
+  //       this.showOldPassword = !this.showOldPassword;
+  //       break;
+  //     case 'new':
+  //       this.showNewPassword = !this.showNewPassword;
+  //       break;
+  //     case 'confirm':
+  //       this.showConfirmPassword = !this.showConfirmPassword;
+  //       break;
+  //   }
+  // }
+
+
 
   constructor(private userService: UserService) {}
 
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
+  toggleOldPasswordVisibility() {
+    this.showOldPassword = !this.showOldPassword;
   }
+  
+  toggleNewPasswordVisibility() {
+    this.showNewPassword = !this.showNewPassword;
+  }
+  
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+
 
   onChangePassword(form: NgForm) {
     if (!form.valid) {
