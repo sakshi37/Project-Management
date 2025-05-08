@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
+using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
@@ -19,7 +20,7 @@ namespace HR.Persistence.Repositories
             _appDbContext = appDbContext;
 
         }
-         public async Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize)
         {
             var allData = await _appDbContext.GetAllEmployeeVms
                 .FromSqlRaw("EXEC SP_GetAllEmployeeSummary")
@@ -88,8 +89,8 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
 
     new SqlParameter("@LoginStatus", employee.LoginStatus),
-    new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
-    new SqlParameter("@leftDate", (object?)employee.LeaveCompany ?? DBNull.Value),
+    //new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
+    //new SqlParameter("@leftDate", (object?)employee.LeftCompany ?? DBNull.Value),
 
     new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
     new SqlParameter("@Fk_DesignationId", (object?)employee.DesignationId ?? DBNull.Value),
@@ -117,8 +118,7 @@ namespace HR.Persistence.Repositories
             @Image, 
             @Signature, 
             @LoginStatus, 
-            @LeftCompany, 
-            @leftDate, 
+            
             @Fk_LocationId, 
             @Fk_DesignationId, 
             @Fk_ShiftId, 
@@ -144,8 +144,8 @@ namespace HR.Persistence.Repositories
                 Image = imageBytes,
                 Signature = signatureBytes,
                 LoginStatus = employee.LoginStatus,
-                LeftCompany = employee.LeftCompany,
-                LeaveCompany = employee.LeaveCompany,
+                //LeftCompany = employee.LeftCompany,
+                //LeftDate = employee.LeftDate,
                 LocationId = employee.LocationId,
                 DesignationId = employee.DesignationId,
                 ShiftId = employee.ShiftId,
@@ -156,6 +156,23 @@ namespace HR.Persistence.Repositories
             };
         }
 
+
+
+
+          public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
+        {
+            var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
+            Console.WriteLine($"SQL Query: {sql}", email);
+            var employee = _appDbContext.Employees
+                .FromSqlRaw(sql, email)
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+
+            return employee.FirstOrDefault();
+        }
+        
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
             Console.WriteLine($"[DEBUG] Starting UpdateEmployeeAsync for Code: {dto.Code}");
@@ -234,10 +251,8 @@ namespace HR.Persistence.Repositories
             }
         }
     }
-
-
-
 }
+
 
 
 
