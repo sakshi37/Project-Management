@@ -8,7 +8,7 @@ namespace HR.Application.Features.Branches.Commands.Dtos
 {
     public class BranchDto
     {
-        public int BranchId { get; set; }
+      
         public string BranchName { get; set; }
         public int CityId { get; set; }
         public string CityName { get; set; }
