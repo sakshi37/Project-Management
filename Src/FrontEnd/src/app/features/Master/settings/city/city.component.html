@@ -13,6 +13,7 @@
     </select>
     <span>Entries</span>
   </div>
+  
   <div class="mb-3 row">
     <div class="input-group" style="width: 300px;">
         <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
@@ -148,7 +149,7 @@
           <thead>
             <tr>
               <th><div class="head-first">Sr. No</div></th>
-              <th (click)="sortCities('cityName')">
+              <th (click)="sortCities('city Name')">
                 <div class="head-other sortable">City Name  <i class="fas" [ngClass]="getSortIcon('cityName')"></i></div>
               </th>
               <th (click)="sortCities('stateName')">

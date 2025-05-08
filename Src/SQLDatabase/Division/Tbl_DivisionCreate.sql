@@ -14,3 +14,9 @@ CREATE TABLE dbo.Tbl_DivisionMaster (
 
     CONSTRAINT Fk_DivisionHoliday FOREIGN KEY (Fk_HolidayId) REFERENCES Tbl_HolidayMaster(HolidayId)
 );
+
+ALTER TABLE Tbl_DivisionMaster
+ADD ProjectManagerName NVARCHAR(100);
+
+select * from Tbl_DivisionMaster
+	
