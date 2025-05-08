@@ -251,8 +251,34 @@ namespace HR.Persistence.Repositories
                 return false;
             }
         }
+
+        public async Task<int> ReadCurrentEmpCounter()
+        {
+            var result = _appDbContext.Counter
+                .FromSqlRaw("EXEC SP_CounterRead")
+                .AsNoTracking()
+                .AsEnumerable()
+                .FirstOrDefault();
+
+            return result!.Id;
+        }
+
+        public async Task IncrCurrentEmpCounter()
+        {
+            await _appDbContext.Database.ExecuteSqlRawAsync("EXEC SP_CounterUpdate");
+        }
+
+        //public async Task<CountryDto> GetByIdAsync(int id)
+        //{
+
+        //    return await _context.CountryDtos
+        //        .FromSqlRaw("EXEC SP_GetCountryById @CountryId = {0}", id).FirstOrDefaultAsync();
+        //}
     }
+
+
 }
+
 
 
 
