@@ -15,9 +15,11 @@
 <div
   class="main-content"
   [ngStyle]="{
-    'margin-left': !hideLayout && isSidebarVisible ? '250px' : '0',
-    'transition': 'margin-left 0.3s ease'
+    'margin-left': isSidebarVisible ? '250px' : '0',
+    'transition': 'margin-left 0.3s ease',
+    'padding-top': '65px'
   }"
 >
   <router-outlet></router-outlet>
 </div>
+

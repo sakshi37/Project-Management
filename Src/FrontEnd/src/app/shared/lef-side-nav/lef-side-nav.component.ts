@@ -43,20 +43,22 @@ ngOnInit(): void {
   
   }
 }
+
 // sidebarVisible: boolean = true;
+
+//   @Output() sidebarToggled = new EventEmitter<boolean>();
 
 //   toggleSidebar() {
 //     this.sidebarVisible = !this.sidebarVisible;
+//     this.sidebarToggled.emit(this.sidebarVisible);
 //   }
+@Output() sidebarToggled = new EventEmitter<boolean>();
 sidebarVisible: boolean = true;
 
-  @Output() sidebarToggled = new EventEmitter<boolean>();
-
-  toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible;
-    this.sidebarToggled.emit(this.sidebarVisible);
-  }
-
+toggleSidebar() {
+  this.sidebarVisible = !this.sidebarVisible;
+  this.sidebarToggled.emit(this.sidebarVisible);
+}
   // Method to toggle profile menu
   toggleProfileMenu() {
     if (this.profileMenu) {

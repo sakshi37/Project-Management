@@ -1,7 +1,8 @@
-
+.main-content {
+}
 
 .main-content {
-  padding-top: 65px;
   transition: margin-left 0.3s ease;
-  /* padding: 20px; */
+  padding-top: 65px;
+
 }
