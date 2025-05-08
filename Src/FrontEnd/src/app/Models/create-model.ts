@@ -12,8 +12,7 @@ export interface CreateModel {
   image: string | null;
   signature: string | null;
   loginStatus: boolean;
-  leftCompany?: boolean;
-  // leaveCompany?: boolean | null | undefined | Date;
+
   locationId: number;
   designationId: number;
   shiftId: number;

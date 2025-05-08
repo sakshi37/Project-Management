@@ -32,7 +32,7 @@ public class AppDbContext : DbContext
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
 
- public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
+    public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
 
 
@@ -53,7 +53,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
 
 
-      modelBuilder.Entity<BranchDto>().HasNoKey();
+        modelBuilder.Entity<BranchDto>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
 
