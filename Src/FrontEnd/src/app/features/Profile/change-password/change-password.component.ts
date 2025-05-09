@@ -60,9 +60,12 @@ export class ChangePasswordComponent {
     newPassword: '',
     confirmPassword: ''
   };
+ 
 
-  showPassword = false;
-
+  showOldPassword = true;
+  showNewPassword = true;
+  showConfirmPassword = true;
+ 
   constructor(private userService: UserService) {}
 
   togglePasswordVisibility() {
