@@ -19,11 +19,11 @@ export class BranchService {
     return this.http.get<Branch[]>(this.apiUrl);
   }
 
-  addBranch(branchData: any): Observable<Branch> {
-    return this.http.post<Branch>(this.apiUrl, branchData);
+  addBranch(payload: any): Observable<Branch> {
+    return this.http.post<Branch>(`${this.apiUrl}`, payload);
   }
-  updateBranch(id: number, payload: any): Observable<Branch> {
-    return this.http.put<Branch>(`${this.apiUrl}/branches/${id}`, payload);
+  updateBranch(branchId: number, payload: any): Observable<Branch> {
+    return this.http.put<Branch>(`${this.apiUrl}/${branchId}`, payload);
   }
 
   // Add update/delete methods if needed later

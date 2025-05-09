@@ -1,7 +1,9 @@
 ﻿using System.Data;
 using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
+using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
@@ -18,7 +20,7 @@ namespace HR.Persistence.Repositories
             _appDbContext = appDbContext;
 
         }
-         public async Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize)
         {
             var allData = await _appDbContext.GetAllEmployeeVms
                 .FromSqlRaw("EXEC SP_GetAllEmployeeSummary")
@@ -87,8 +89,8 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
 
     new SqlParameter("@LoginStatus", employee.LoginStatus),
-    new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
-    new SqlParameter("@leftDate", (object?)employee.LeaveCompany ?? DBNull.Value),
+    //new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
+    //new SqlParameter("@leftDate", (object?)employee.LeftCompany ?? DBNull.Value),
 
     new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
     new SqlParameter("@Fk_DesignationId", (object?)employee.DesignationId ?? DBNull.Value),
@@ -116,8 +118,7 @@ namespace HR.Persistence.Repositories
             @Image, 
             @Signature, 
             @LoginStatus, 
-            @LeftCompany, 
-            @leftDate, 
+            
             @Fk_LocationId, 
             @Fk_DesignationId, 
             @Fk_ShiftId, 
@@ -143,8 +144,8 @@ namespace HR.Persistence.Repositories
                 Image = imageBytes,
                 Signature = signatureBytes,
                 LoginStatus = employee.LoginStatus,
-                LeftCompany = employee.LeftCompany,
-                LeaveCompany = employee.LeaveCompany,
+                //LeftCompany = employee.LeftCompany,
+                //LeftDate = employee.LeftDate,
                 LocationId = employee.LocationId,
                 DesignationId = employee.DesignationId,
                 ShiftId = employee.ShiftId,
@@ -154,11 +155,112 @@ namespace HR.Persistence.Repositories
                 DivisionId = employee.DivisionId
             };
         }
+
+
+
+
+          public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
+        {
+            var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
+            Console.WriteLine($"SQL Query: {sql}", email);
+            var employee = _appDbContext.Employees
+                .FromSqlRaw(sql, email)
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+
+            return employee.FirstOrDefault();
+        }
+        
+        public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
+        {
+            Console.WriteLine($"[DEBUG] Starting UpdateEmployeeAsync for Code: {dto.Code}");
+
+            byte[] imageBytes = null;
+            byte[] signatureBytes = null;
+
+            // For image
+            if (!string.IsNullOrEmpty(dto.Image))
+            {
+                try
+                {
+                   
+                    string base64Data = dto.Image.Split(',')[1];
+                    imageBytes = Convert.FromBase64String(base64Data);
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine($"[ERROR] Invalid Image Base64: {ex.Message}");
+                    imageBytes = null;
+                }
+            }
+
+            // For signature
+            if (!string.IsNullOrEmpty(dto.Signature))
+            {
+                try
+                {
+                    // Strip the 'data:image/jpeg;base64,' part for signature
+                    string base64Signature = dto.Signature.Split(',')[1];
+                    signatureBytes = Convert.FromBase64String(base64Signature);
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine($"[ERROR] Invalid Signature Base64: {ex.Message}");
+                    signatureBytes = null;
+                }
+            }
+
+            // Continue with SQL parameters as before
+            var parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@Code", dto.Code ?? (object)DBNull.Value),
+        new SqlParameter("@Address", dto.Address ?? (object)DBNull.Value),
+        new SqlParameter("@MobileNo", dto.MobileNo ?? (object)DBNull.Value),
+        new SqlParameter("@SkypeId", dto.SkypeId ?? (object)DBNull.Value),
+        new SqlParameter("@JoinDate", (object?)dto.JoinDate ?? DBNull.Value),
+        new SqlParameter("@Email", dto.Email ?? (object)DBNull.Value),
+        new SqlParameter("@BccEmail", dto.BccEmail ?? (object)DBNull.Value),
+        new SqlParameter("@PanNumber", dto.PanNumber ?? (object)DBNull.Value),
+        new SqlParameter("@BirthDate", (object?)dto.BirthDate ?? DBNull.Value),
+        new SqlParameter("@Image", SqlDbType.VarBinary) { Value = (object?)imageBytes ?? DBNull.Value },
+        new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
+        new SqlParameter("@LoginStatus", (object?)dto.LoginStatus ?? DBNull.Value),
+        new SqlParameter("@LeftCompany", (object?)dto.LeftCompany ?? DBNull.Value),
+        new SqlParameter("@LeftDate", (object?)dto.LeaveCompany ?? DBNull.Value),
+        new SqlParameter("@Fk_LocationId", (object?)dto.LocationId ?? DBNull.Value),
+        new SqlParameter("@Fk_DesignationId", (object?)dto.DesignationId ?? DBNull.Value),
+        new SqlParameter("@Fk_ShiftId", (object?)dto.ShiftId ?? DBNull.Value),
+        new SqlParameter("@Fk_EmployeeTypeId", (object?)dto.EmployeeTypeId ?? DBNull.Value),
+        new SqlParameter("@Fk_UserGroupId", (object?)dto.UserGroupId ?? DBNull.Value),
+        new SqlParameter("@Fk_BranchId", (object?)dto.BranchId ?? DBNull.Value),
+        new SqlParameter("@Fk_DivisionId", (object?)dto.DivisionId ?? DBNull.Value)
+    };
+
+            try
+            {
+                var result = await _appDbContext.Database.ExecuteSqlRawAsync(
+                    @"EXEC SP_Employee_update 
+    @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber, @BirthDate, @Image,
+    @Signature, @LoginStatus, @LeftCompany, @LeftDate, @Fk_LocationId, @Fk_DesignationId, @Fk_ShiftId,
+    @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId",
+                    parameters.ToArray()
+                );
+
+                Console.WriteLine($"[DEBUG] Rows affected: {result}");
+                return result > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Exception in UpdateEmployeeAsync: {ex.Message}");
+                return false;
+            }
+        }
+
     }
-
-
-
 }
+
 
 
 

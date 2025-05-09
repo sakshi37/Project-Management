@@ -1,7 +1,13 @@
-﻿using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
+﻿using HR.API.Helper;
+using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
+using HR.Application.Features.Employees.Commands.UpdateEmployee;
+
+using HR.Application.Features.Employees.Queries;
+
+
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +29,31 @@ namespace HR.API.Controllers
         public async Task<IActionResult> AddEmployee([FromBody] CreateEmployeeMasterDto dto)
         {
             Console.WriteLine(dto);
+
+            dto.Name = dto.Name.Trim();
+            if (dto.Name.Length < 2) return BadRequest("Name is too short. Name must be atleast 2 char long");
+            if (dto.Name.Length > 100) return BadRequest("Name is too long. Name must be atmost 100 char long");
+
+            dto.Email = dto.Email.Trim();
+            if (dto.Email.Length == 0) return BadRequest("Email is required");
+
+            var emailContainsAt = dto.Email.Contains('@');
+            var emailContainsDot = dto.Email.Contains('.');
+
+
+            if (!emailContainsAt || !emailContainsDot) return BadRequest("Email must be valid");
+
+            var existingEmployee = await _mediator.Send(new GetEmployeeByEmailQuery(dto.Email));
+            if (existingEmployee != null)
+            {
+                return BadRequest("Employee with that email already exists");
+            }
             var response = await _mediator.Send(new CreateEmployeeCommand(dto));
             return Ok(response);
         }
- [HttpGet("AllEmployees")]
+
+
+        [HttpGet("AllEmployees")]
         public async Task<IActionResult> GetEmployees([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var query = new GetAllEmployeeQuery { PageNumber = pageNumber, PageSize = pageSize };
@@ -72,5 +99,26 @@ namespace HR.API.Controllers
         //    return Ok(response);
 
         //}
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateEmployee([FromBody] UpdateEmployeeCommandDto dto)
+        {
+            Console.WriteLine($"[DEBUG] Received update request for Code: {dto.Code}");
+
+            UpdateEmployeeSanitizer.Clean(dto);
+
+            var command = new UpdateEmployeeCommand(dto);
+            var result = await _mediator.Send(command);
+
+            if (result)
+            {
+                Console.WriteLine($"[INFO] Update successful for {dto.Code}");
+                return Ok("Employee updated successfully");
+            }
+
+            Console.WriteLine($"[WARN] Update failed for {dto.Code}");
+            return BadRequest("Failed to update employee");
+
+
+        }
     }
 }

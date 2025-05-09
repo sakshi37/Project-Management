@@ -29,7 +29,20 @@ export class AppComponent {
     console.log((window as any).bootstrap); // Should log Bootstrap object
   }
 
-  hideLayout = false;
+  // hideLayout = false;
+  // isSidebarVisible: boolean = true;
+
+  // onSidebarToggled(visible: boolean) {
+  //   this.isSidebarVisible = visible;
+  // }
+  hideLayout = true;
+  currentRoute: string = '';
+  // hideLayout = false;
+  isSidebarVisible = true;
+
+  onSidebarToggled(newState: boolean) {
+    this.isSidebarVisible = newState;
+  }
 
   constructor(private router: Router) {
     this.router.events
@@ -37,6 +50,11 @@ export class AppComponent {
       .subscribe((event: NavigationEnd) => {
         const hiddenRoutes = ['/', '/login', '/otp'];
         this.hideLayout = hiddenRoutes.includes(event.urlAfterRedirects);
+  
+        if (this.hideLayout) {
+          this.isSidebarVisible = false;
+        }
+
       });
-  }
+  }  
 }
