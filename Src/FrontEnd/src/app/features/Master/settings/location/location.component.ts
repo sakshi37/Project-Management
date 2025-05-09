@@ -13,6 +13,8 @@ import { CountryService } from '../../../../services/country.service.service';
 import { GetCountryDto } from '../country/Models/get-country.dto';
 import { GetStateDto } from '../state/Models/get-state.dto';
 import { NgxPaginationModule } from 'ngx-pagination';
+import Swal from 'sweetalert2';
+import { ErrorHandlerService } from '../../../../services/error-handler.service';
 
 @Component({
   selector: 'app-location',
@@ -52,6 +54,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
     private cityService: CityService,
     private stateService: StateService,
     private countryService: CountryService,
+    private errorHandler: ErrorHandlerService,
     private el: ElementRef
   ) { }
   ngOnInit(): void {
@@ -205,10 +208,15 @@ onStateChange(): void {
             next:()=>{
                 this.loadLocations();
                 this.resetForm();
+                Swal.fire({
+                            icon: 'success',
+                            title: 'Updated',
+                            text: 'City updated successfully!',
+                            confirmButtonColor: '#3085d6'
+                          });
             },
-            error:(error) => {
-              console.log("Ooooooo",error);
-            }
+            error: (err) => this.errorHandler.handleError(err)
+            
           });
 
         }
@@ -219,10 +227,14 @@ onStateChange(): void {
             next:(res:CreateLocationDto)=>{
               this.loadLocations();
               this.resetForm();
+              Swal.fire({
+                          icon: 'success',
+                          title: 'Created',
+                          text: 'City created successfully!',
+                          confirmButtonColor: '#3085d6'
+                        });
           },
-          error:(error) => {
-            console.log("Ooooooo",error);
-          }
+          error:(err) => this.errorHandler.handleError(err)       
           });
           
         }
@@ -231,7 +243,7 @@ onStateChange(): void {
 
       resetForm(): void {
         this.locationForm.reset({ countryId: '', stateId: '',cityId:'', loationName: '', locationStatus:'1' });
-        // this.selectedlocationId = null;
+        this.selectedlocationId = null;
       }
       sortLocations(column: keyof GetLocationDto) {
         if (this.selectedSortColumn === column) {

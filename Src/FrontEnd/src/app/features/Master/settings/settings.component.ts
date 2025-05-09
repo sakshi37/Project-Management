@@ -9,6 +9,7 @@ import { CityComponent } from './city/city.component';
 import { DesignationComponent } from './designation/designation.component';
 import { BranchComponent } from './branch/branch.component';
 import { LocationComponent } from "./location/location.component";
+import { DivisionComponent } from "./division/division/division.component";
 
 @Component({
   selector: 'app-settings',
@@ -22,6 +23,7 @@ import { LocationComponent } from "./location/location.component";
     DesignationComponent,
     BranchComponent,
     LocationComponent,
+    DivisionComponent
 ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',

@@ -126,7 +126,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let location of filteredLocations | paginate:{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': !location.locationStatus }">
+            <tr *ngFor="let location of filteredLocations | paginate  :{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': !location.locationStatus }">
               <td><div class="tr-first-child">{{  (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
               <td><div class="tr-other-child">{{ location.locationName }}</div></td>
               <td><div class="tr-other-child">{{ location.cityName }}</div></td>
