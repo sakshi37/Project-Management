@@ -20,10 +20,14 @@ namespace HR.Persistence
             services.AddScoped<IHolidayRepository, HolidayRepository>();
             services.AddScoped<ITimeSheetRepository, TimeSheetRepository>();
             services.AddScoped<IEmployeeMasterRepository, EmployeeRepository>();
-            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<ILocationMasterRepository, LocationMasterRepository>();
             services.AddScoped<IStateRepository, StateRepository>();
             services.AddScoped<IBranchRepository, BranchRepository>();
-            services.AddScoped<IDivisionRepositry, DivisionRepository>();
+
+            services.AddScoped<IShiftRepository, ShiftRepository>();
+
+            services.AddScoped<IUserGroupRepository, UserGroupRepository>();
+
 
 
 

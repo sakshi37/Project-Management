@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -13,15 +14,12 @@ export class HeaderComponent {
   logout() {
     // Clear session or token
     this.router.navigate(['/login']);
-    localStorage.removeItem('email');
-    localStorage.removeItem('otp');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('checkFirstLogin');
-    localStorage.removeItem('roleName');
   }
+  @Output() sidebarToggle = new EventEmitter<void>();
+  sidebarOpen: boolean = false;
 
-  isLoggedIn():boolean{
-    return  !! localStorage.getItem('userName')
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+    this.sidebarToggle.emit(); // Notify parent to toggle sidebar visibility
   }
-
 }

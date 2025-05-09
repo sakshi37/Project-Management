@@ -25,7 +25,7 @@ export const routes: Routes = [
   { path: 'team-composition', component: TeamCompositionComponent ,canActivate: [AuthGuard]},
 
   { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard]},
-  { path: 'settings', component: SettingsComponent,canActivate: [AuthGuard] },
+  { path: 'settings', component: SettingsComponent },
   { path: 'country', component: CountryComponent,canActivate: [AuthGuard] },
   { path: 'state', component: StateComponent,canActivate: [AuthGuard] },
   { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard] },
@@ -36,7 +36,7 @@ export const routes: Routes = [
   { path: 'timesheetupdate', component: TimesheetUpdateComponent,canActivate: [AuthGuard] },
 
   { path: 'employee', component: EmployeeComponent },
-  { path: 'employee-registration', component: EmployeeRegistrationComponent,canActivate: [AuthGuard] },
+  { path: 'employee-registration', component: EmployeeRegistrationComponent},
   {
     path: 'update-employee',
     component: UpdateEmployeeComponent
@@ -44,6 +44,4 @@ export const routes: Routes = [
   { path: 'otp', component: OtpComponent },
   { path: 'sidebar', component: LefSideNavComponent,canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
-
-  
 ];
