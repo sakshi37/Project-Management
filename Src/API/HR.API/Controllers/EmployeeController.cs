@@ -3,11 +3,8 @@ using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
-<<<<<<< HEAD
 using HR.Application.Features.Employees.Queries;
-=======
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
->>>>>>> dev
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
