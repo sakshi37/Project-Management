@@ -17,7 +17,7 @@ public class AppDbContext : DbContext
 
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
+    public DbSet<Country> Countries { get; set; }
     public DbSet<CountryDto> CountryDtos { get; set; }
     public DbSet<State> States { get; set; }
 
@@ -42,6 +42,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
+        modelBuilder.Entity<Country>().ToTable("Tbl_CountryMaster");
+
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
 
