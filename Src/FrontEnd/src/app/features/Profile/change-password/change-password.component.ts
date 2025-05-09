@@ -60,13 +60,16 @@ export class ChangePasswordComponent {
     newPassword: '',
     confirmPassword: ''
   };
+ 
 
-  showPassword = false;
-
+  showOldPassword = true;
+  showNewPassword = true;
+  showConfirmPassword = true;
+ 
   constructor(private userService: UserService) {}
 
   togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
+    this.showOldPassword = !this.showOldPassword;
   }
 
   onChangePassword(form: NgForm) {

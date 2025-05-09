@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, NgZone } from '@angular/core';  
+import { Component, OnInit, NgZone, Injector } from '@angular/core';  
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthResponseModel, Login, VerifyOTPDto } from '../../Models/login';
 import { UserService } from '../../services/user.service';
 import { Otp } from '../../Models/otp';
+import { AppComponent } from '../../app.component';
 
 declare var bootstrap: any;
 @Component({
@@ -23,13 +24,26 @@ export class LoginComponent implements OnInit {
   formSubmitted = false;
   // -----
   isLoggingIn=false;
- 
+  
   
   constructor(
     private router: Router,
     private userService: UserService,
-    private ngZone: NgZone  
+    private ngZone: NgZone,
+    private injector: Injector  
   ) {}
+
+  passwordModel = {
+    oldPassword: '',
+    
+  }; 
+
+  //eyepassword functionality
+  showPassword: boolean = true;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   ngOnInit() { }
 
@@ -41,9 +55,9 @@ export class LoginComponent implements OnInit {
     }
     this.login = loginForm.value;
 
-     // START: Login Button Spinner Addition
+       // login button spinner
   this.isLoggingIn = true;
-  // END: Login Button Spinner Addition
+  
 
     this.userService.login(this.login).subscribe({
       next: (response: AuthResponseModel) => {
@@ -54,7 +68,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('roleName',response.roleName);
 
       // localStorage.setItem('empid', response.empid.toString());
-        console.log(localStorage.getItem('userName'));
+        // console.log(localStorage.getItem('userName'));
 
         
         // loginForm.reset();
@@ -64,21 +78,28 @@ export class LoginComponent implements OnInit {
         otpModal.show();
       }
       else {
-        this.router.navigate(['/dashboard']);
+        // this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard']).then(() => {
+          // Force layout to show immediately
+          const appRef = this.injector.get(AppComponent);
+          appRef.hideLayout = false;
+          appRef.isSidebarVisible = true;
+        });
+        
         sessionStorage.setItem('isAuthenticated', 'true');
       }
 
-         // START: Login Button Spinner Addition
+         // login button spinner
       this.isLoggingIn = false;
-      // END: Login Button Spinner Addition
+       
       },
       error: (error) => {
         console.error('Login failed!', error);
         alert("Invalid email or password. Please try again");
 
-          // START: Login Button Spinner Addition
+          //  login button spinner
       this.isLoggingIn = false;
-      // END: Login Button Spinner Addition
+      
       }
     });
   }
@@ -97,7 +118,7 @@ export class LoginComponent implements OnInit {
           password: this.login.password,
           otp: enteredOtp
         }
-        console.log(OtpRequest);
+        
         this.userService.verifyOtp(OtpRequest).subscribe({
           next: (res:AuthResponseModel)=> {
             alert('OTP Verified Successfully!'); 
