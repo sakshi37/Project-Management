@@ -159,7 +159,7 @@ namespace HR.Persistence.Repositories
 
 
 
-          public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
+        public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
         {
             var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
             Console.WriteLine($"SQL Query: {sql}", email);
@@ -174,8 +174,8 @@ namespace HR.Persistence.Repositories
         }
 
 
-        }
-        
+
+
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
             Console.WriteLine($"[DEBUG] Starting UpdateEmployeeAsync for Code: {dto.Code}");
@@ -188,7 +188,7 @@ namespace HR.Persistence.Repositories
             {
                 try
                 {
-                   
+
                     string base64Data = dto.Image.Split(',')[1];
                     imageBytes = Convert.FromBase64String(base64Data);
                 }

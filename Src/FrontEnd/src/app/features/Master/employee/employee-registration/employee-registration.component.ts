@@ -85,8 +85,8 @@ export class EmployeeRegistrationComponent implements OnInit {
       signature: [''],
       loginStatus: [],
 
-      locationId: [1],
-      designationId: [1],
+      locationId: [2],
+      designationId: [2],
       shiftId: [1],
       employeeTypeId: [1],
       usergroupId: [1],
