@@ -3,179 +3,250 @@
     <h5 class="border-bottom pb-2 mb-4 font-weight-bold">Edit Details</h5>
 
     <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
-      <!-- All your form-rows stay unchanged -->
-      <!-- Example: -->
+      <!-- Employee Code (Readonly) -->
       <div class="form-row">
         <div class="col-md-6 form-group">
           <label for="employeeCode">Employee Code</label>
-          <input type="text" id="employeeCode" class="form-control" [value]="selectedEmployeeCode" readonly>
+          <input
+            type="text"
+            id="employeeCode"
+            class="form-control"
+            [value]="selectedEmployeeCode"
+            readonly
+          />
         </div>
         <div class="col-md-6 form-group">
           <label for="address">Address</label>
-          <input type="text" id="address" class="form-control form-rectangle" formControlName="address" placeholder="Enter address">
+          <input
+            type="text"
+            id="address"
+            class="form-control"
+            formControlName="address"
+            placeholder="Enter address"
+          />
         </div>
       </div>
 
-  <div class="form-row">
-    <!-- Mobile Number -->
-    <div class="col-md-6 form-group">
-      <label for="mobileNo">Mobile Number</label>
-      <input type="text" id="mobileNo" class="form-control form-rectangle" formControlName="mobileNo" placeholder="Enter mobile number">
-    </div>
+      <!-- Mobile Number & Skype ID -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="mobileNo">Mobile Number</label>
+          <input
+            type="text"
+            id="mobileNo"
+            class="form-control"
+            formControlName="mobileNo"
+            placeholder="Enter mobile number"
+          />
+          <div *ngIf="employeeForm.get('mobileNo')?.invalid && (employeeForm.get('mobileNo')?.touched || employeeForm.get('mobileNo')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('mobileNo')?.errors?.required">Mobile number is required.</div>
+            <div *ngIf="employeeForm.get('mobileNo')?.errors?.pattern">Mobile number must be exactly 10 digits.</div>
+          </div>
+        </div>
 
-    <!-- Skype ID -->
-    <div class="col-md-6 form-group">
-      <label for="skypeId">Skype ID</label>
-      <input type="text" id="skypeId" class="form-control form-rectangle" formControlName="skypeId" placeholder="Enter Skype ID">
-    </div>
+        <div class="col-md-6 form-group">
+          <label for="skypeId">Skype ID</label>
+          <input
+            type="text"
+            id="skypeId"
+            class="form-control"
+            formControlName="skypeId"
+            placeholder="Enter Skype ID"
+          />
+          <div *ngIf="employeeForm.get('skypeId')?.invalid && (employeeForm.get('skypeId')?.touched || employeeForm.get('skypeId')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('skypeId')?.errors?.required">Skype ID is required.</div>
+            <div *ngIf="employeeForm.get('skypeId')?.errors?.minlength">Skype ID must be at least 16 characters.</div>
+            <div *ngIf="employeeForm.get('skypeId')?.errors?.maxlength">Skype ID cannot exceed 32 characters.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email & BCC Email -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter email"
+          />
+          <div *ngIf="employeeForm.get('email')?.invalid && (employeeForm.get('email')?.touched || employeeForm.get('email')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('email')?.errors?.required">Email is required.</div>
+            <div *ngIf="employeeForm.get('email')?.errors?.email">Please enter a valid email.</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 form-group">
+          <label for="bccEmail">BCC Email</label>
+          <input
+            type="email"
+            id="bccEmail"
+            class="form-control"
+            formControlName="bccEmail"
+            placeholder="Enter BCC email"
+          />
+          <div *ngIf="employeeForm.get('bccEmail')?.invalid && (employeeForm.get('bccEmail')?.touched || employeeForm.get('bccEmail')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('bccEmail')?.errors?.email">Please enter a valid BCC email.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAN Number & Join Date -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="panNumber">PAN Number</label>
+          <input
+            type="text"
+            id="panNumber"
+            class="form-control"
+            formControlName="panNumber"
+            placeholder="Enter PAN number"
+          />
+          <div *ngIf="employeeForm.get('panNumber')?.invalid && (employeeForm.get('panNumber')?.touched || employeeForm.get('panNumber')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('panNumber')?.errors?.required">PAN number is required.</div>
+            <div *ngIf="employeeForm.get('panNumber')?.errors?.pattern">PAN must be in format ABCDE1234F.</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 form-group">
+          <label for="joinDate">Join Date</label>
+          <input
+            type="date"
+            id="joinDate"
+            class="form-control"
+            formControlName="joinDate"
+          />
+          <div *ngIf="employeeForm.get('joinDate')?.invalid && (employeeForm.get('joinDate')?.touched || employeeForm.get('joinDate')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('joinDate')?.errors?.required">Join date is required.</div>
+            <div *ngIf="employeeForm.get('joinDate')?.errors?.futureDate">Cannot be a future date.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Birth Date & Leave Company Date -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="birthDate">Birth Date</label>
+          <input
+            type="date"
+            id="birthDate"
+            class="form-control"
+            formControlName="birthDate"
+          />
+          <div *ngIf="employeeForm.get('birthDate')?.invalid && (employeeForm.get('birthDate')?.touched || employeeForm.get('birthDate')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('birthDate')?.errors?.required">Birth date is required.</div>
+            <div *ngIf="employeeForm.get('birthDate')?.errors?.futureDate">Cannot be a future date.</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 form-group">
+          <label for="leaveCompany">Leave Company Date</label>
+          <input
+            type="date"
+            id="leaveCompany"
+            class="form-control"
+            formControlName="leaveCompany"
+          />
+          <div *ngIf="employeeForm.get('leaveCompany')?.invalid && (employeeForm.get('leaveCompany')?.touched || employeeForm.get('leaveCompany')?.dirty)" class="text-danger small">
+            <div *ngIf="employeeForm.get('leaveCompany')?.errors?.futureDate">Cannot be a future date.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Remaining dropdowns (Status, Branch, etc.) -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="loginStatus">Login Status</label>
+          <select id="loginStatus" class="form-control" formControlName="loginStatus">
+            <option [value]="true">Active</option>
+            <option [value]="false">Inactive</option>
+          </select>
+        </div>
+
+        <div class="col-md-6 form-group">
+          <label for="leftCompany">Left Company</label>
+          <select id="leftCompany" class="form-control" formControlName="leftCompany">
+            <option [value]="true">Yes</option>
+            <option [value]="false">No</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- File Uploads -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="imageUpload">Upload Image</label>
+          <input type="file" id="imageUpload" class="form-control" (change)="onImageSelected($event)" />
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="signatureUpload">Upload Signature</label>
+          <input type="file" id="signatureUpload" class="form-control" (change)="onSignatureSelected($event)" />
+        </div>
+      </div>
+
+      <!-- Dropdowns: Location, Designation, Shift, etc. -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="locationId">Location</label>
+          <select id="locationId" class="form-control" formControlName="locationId">
+            <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="designationId">Designation</label>
+          <select id="designationId" class="form-control" formControlName="designationId">
+            <option *ngFor="let des of designations" [value]="des.designationId">{{ des.designationName }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Final dropdown rows -->
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="shiftId">Shift</label>
+          <select id="shiftId" class="form-control" formControlName="shiftId">
+            <option *ngFor="let s of shifts" [value]="s.id">{{ s.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="employeeTypeId">Employee Type</label>
+          <select id="employeeTypeId" class="form-control" formControlName="employeeTypeId">
+            <option *ngFor="let t of employeeTypes" [value]="t.id">{{ t.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="userGroupId">User Group</label>
+          <select id="userGroupId" class="form-control" formControlName="userGroupId">
+            <option *ngFor="let ug of userGroups" [value]="ug.userGroupId">{{ ug.userGroupName }}</option>
+          </select>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="branchId">Branch</label>
+          <select id="branchId" class="form-control" formControlName="branchId">
+            <option *ngFor="let b of branches" [value]="b.branchId">{{ b.branchName }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="divisionId">Division</label>
+          <select id="divisionId" class="form-control" formControlName="divisionId">
+            <option *ngFor="let d of divisions" [value]="d.id">{{ d.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Save and Cancel Buttons -->
+      <div class="form-group text-right mt-4">
+        <button type="button" class="btn btn-outline-secondary mr-2" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn btn-success" [disabled]="employeeForm.invalid">Save</button>
+      </div>
+    </form>
   </div>
-
-  <div class="form-row">
-    <!-- Email -->
-    <div class="col-md-6 form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" class="form-control form-rectangle" formControlName="email" placeholder="Enter email">
-    </div>
-
-    <!-- BCC Email -->
-    <div class="col-md-6 form-group">
-      <label for="bccEmail">BCC Email</label>
-      <input type="email" id="bccEmail" class="form-control form-rectangle" formControlName="bccEmail" placeholder="Enter BCC email">
-    </div>
-  </div>
-
-  <div class="form-row">
-    <!-- PAN Number -->
-    <div class="col-md-6 form-group">
-      <label for="panNumber">PAN Number</label>
-      <input type="text" id="panNumber" class="form-control form-rectangle" formControlName="panNumber" placeholder="Enter PAN number">
-    </div>
-
-    <!-- Join Date -->
-    <div class="col-md-6 form-group">
-      <label for="joinDate">Join Date</label>
-      <input type="date" id="joinDate" class="form-control form-rectangle" formControlName="joinDate">
-    </div>
-  </div>
-
-  <div class="form-row">
-    <!-- Birth Date -->
-    <div class="col-md-6 form-group">
-      <label for="birthDate">Birth Date</label>
-      <input type="date" id="birthDate" class="form-control form-rectangle" formControlName="birthDate">
-    </div>
-
-    <!-- Leave Company Date -->
-    <div class="col-md-6 form-group">
-      <label for="leaveCompany">Leave Company Date</label>
-      <input type="date" id="leaveCompany" class="form-control form-rectangle" formControlName="leaveCompany">
-    </div>
-  </div>
-
-  <div class="form-row">
-    <!-- Login Status -->
-    <div class="col-md-6 form-group">
-      <label for="loginStatus">Login Status</label>
-      <select id="loginStatus" class="form-control form-rectangle" formControlName="loginStatus">
-        <option value="true">Active</option>
-        <option value="false">Inactive</option>
-      </select>
-    </div>
-
-    <!-- Left Company -->
-    <div class="col-md-6 form-group">
-      <label for="leftCompany">Left Company</label>
-      <select id="leftCompany" class="form-control form-rectangle" formControlName="leftCompany">
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- File Uploads -->
-  <div class="form-row">
-    <div class="col-md-6 form-group">
-      <label for="imageUpload">Upload Image</label>
-      <input type="file" id="imageUpload" class="form-control form-rectangle" (change)="onImageSelected($event)" formControlName="image">
-    </div>
-
-    <div class="col-md-6 form-group">
-      <label for="signatureUpload">Upload Signature</label>
-      <input type="file" id="signatureUpload" class="form-control form-rectangle" (change)="onSignatureSelected($event)" formControlName="signature">
-    </div>
-  </div>
-
-  <!-- Location -->
-  <div class="form-row">
-    <div class="col-md-6 form-group">
-      <label for="locationId">Location</label>
-      <select id="locationId" class="form-control form-rectangle" formControlName="locationId">
-        <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
-      </select>
-    </div>
-
-   <!-- Designation -->
-<!-- Corrected designation dropdown -->
-<div class="col-md-6 form-group">
-  <label for="designationId">Designation</label>
-  <select id="designationId" class="form-control form-rectangle" formControlName="designationId">
-    <option *ngFor="let des of designations" [value]="des.designationId">{{ des.designationName }}</option>
-  </select>
-</div>
-
-</div>
-
-  <div class="form-row">
-    <!-- Shift -->
-    <div class="col-md-6 form-group">
-      <label for="shiftId">Shift</label>
-      <select id="shiftId" class="form-control form-rectangle" formControlName="shiftId">
-        <option *ngFor="let shift of shifts" [value]="shift.id">{{ shift.name }}</option>
-      </select>
-    </div>
-
-    <!-- Employee Type -->
-    <div class="col-md-6 form-group">
-      <label for="employeeTypeId">Employee Type</label>
-      <select id="employeeTypeId" class="form-control form-rectangle" formControlName="employeeTypeId">
-        <option *ngFor="let type of employeeTypes" [value]="type.id">{{ type.name }}</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="form-row">
-    <!-- User Group -->
-    <div class="col-md-6 form-group">
-      <label for="userGroupId">User Group</label>
-      <select id="userGroupId" class="form-control form-rectangle" formControlName="userGroupId">
-        <option *ngFor="let group of userGroups" [value]="group.id">{{ group.name }}</option>
-      </select>
-    </div>
-
-    <!-- Branch -->
-    <div class="col-md-6 form-group">
-      <label for="branchId">Branch</label>
-      <select id="branchId" class="form-control form-rectangle" formControlName="branchId">
-        <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="form-row">
-    <!-- Division -->
-    <div class="col-md-6 form-group">
-      <label for="divisionId">Division</label>
-      <select id="divisionId" class="form-control form-rectangle" formControlName="divisionId">
-        <option *ngFor="let division of divisions" [value]="division.id">{{ division.name }}</option>
-      </select>
-    </div>
-  </div>
-
- 
-  <div class="form-group text-right mt-4">
-    <button type="button" class="btn btn-outline-secondary mr-2" (click)="cancel()">Cancel</button>
-    <button type="submit" class="btn btn-success" [disabled]="!employeeForm.valid">Save</button>
-  </div>
-</form>
-</div>
 </div>

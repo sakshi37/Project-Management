@@ -21,8 +21,7 @@ namespace HR.Domain.Entities
         public DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
-        public DateTime UserCheckInTime { get; set; }
-
+      
 
 
 

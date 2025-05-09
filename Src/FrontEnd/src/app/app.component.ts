@@ -10,7 +10,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { CountryComponent } from './features/Master/settings/country/country.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './features/Dashboard/dashboard/dashboard.component';
-import { LocationComponent } from "./features/Master/settings/location/location.component";
 
 @Component({
   selector: 'app-root',
@@ -30,7 +29,20 @@ export class AppComponent {
     console.log((window as any).bootstrap); // Should log Bootstrap object
   }
 
-  hideLayout = false;
+  // hideLayout = false;
+  // isSidebarVisible: boolean = true;
+
+  // onSidebarToggled(visible: boolean) {
+  //   this.isSidebarVisible = visible;
+  // }
+  hideLayout = true;
+  currentRoute: string = '';
+  // hideLayout = false;
+  isSidebarVisible = true;
+
+  onSidebarToggled(newState: boolean) {
+    this.isSidebarVisible = newState;
+  }
 
   constructor(private router: Router) {
     this.router.events
@@ -38,6 +50,11 @@ export class AppComponent {
       .subscribe((event: NavigationEnd) => {
         const hiddenRoutes = ['/', '/login', '/otp'];
         this.hideLayout = hiddenRoutes.includes(event.urlAfterRedirects);
+  
+        if (this.hideLayout) {
+          this.isSidebarVisible = false;
+        }
+
       });
-  }
+  }  
 }

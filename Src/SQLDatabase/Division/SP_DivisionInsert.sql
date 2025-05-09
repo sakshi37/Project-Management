@@ -1,39 +1,28 @@
 
-CREATE PROCEDURE SP_InsertDivision
+CREATE OR ALTER PROCEDURE SP_DivisionInsert
     @DivisionName NVARCHAR(75),
 	@ProjectManagerName NVARCHAR(100),
     @PrefixName NVARCHAR(20),
     @Fk_HolidayId INT,
     @ManHours FLOAT,
-    @CreatedBy NVARCHAR(50)
+    @DivisionStatus BIT,
+    @CreatedBy INT
 AS
 BEGIN
 
     -- Insert into Tbl_DivisionMaster
     INSERT INTO Tbl_DivisionMaster (
-        DivisionName,
-        ProjectManagerName,
-        PrefixName,
-        Fk_HolidayId,
-        ManHours,
-        DivisionStatus,
-        CreatedBy,
-        CreatedDate,
-        UpdatedBy,
-        UpdatedDate
+        DivisionName, ProjectManagerName, PrefixName,
+        Fk_HolidayId, ManHours, DivisionStatus,
+        CreatedBy, CreatedDate
     )
     VALUES (
-        @DivisionName,
-        @ProjectManagerName,
-        @PrefixName,
-        @Fk_HolidayId,
-        @ManHours,
-        1,  -- Default DivisionStatus to Active
-        @CreatedBy,
-        SYSDATETIME(),
-        @CreatedBy,
-        SYSDATETIME()
+        @DivisionName, @ProjectManagerName, @PrefixName,
+        @Fk_HolidayId, @ManHours, @DivisionStatus,
+        @CreatedBy, GETDATE()
     );
+
+    SELECT 'Division Added Successfully' AS Message;
 END;
 
 

@@ -1,12 +1,23 @@
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { API_URL } from "../../constant";
+import { Injectable } from "@angular/core";
+import { UserGroup } from "../Models/get-user-group-dto";
 
+@Injectable({
+  providedIn: 'root'
+})
 export class UpdateService {
-    private apiUrl = 'https://localhost:7292/api/Employee/Update';
-
+ private url = API_URL;
     constructor(private http: HttpClient) {}
   
     updateEmployee(updatedEmployee: any): Observable<any> {
-      return this.http.put(this.apiUrl, updatedEmployee);
+      return this.http.put(this.url + '/Employee/Update', updatedEmployee, {
+        responseType: 'text' as 'json'
+      });
     }
+     getAllUserGroups(): Observable<UserGroup[]> {
+    return this.http.get<UserGroup[]>(`${this.url}/UserGroup`);
+  }
+    
 }
