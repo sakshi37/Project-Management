@@ -25,10 +25,10 @@ export const routes: Routes = [
   { path: 'team-composition', component: TeamCompositionComponent ,canActivate: [AuthGuard]},
 
   { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard]},
-  { path: 'settings', component: SettingsComponent },
+  { path: 'settings', component: SettingsComponent,canActivate: [AuthGuard] },
   { path: 'country', component: CountryComponent,canActivate: [AuthGuard] },
   { path: 'state', component: StateComponent,canActivate: [AuthGuard] },
-  { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard] },
+  { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard]},
 
   { path: 'changePassword', component: ChangePasswordComponent,canActivate: [AuthGuard] },
   { path: 'gmc', component: GmcComponent ,canActivate: [AuthGuard]},
