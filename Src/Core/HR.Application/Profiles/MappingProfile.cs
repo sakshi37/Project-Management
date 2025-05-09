@@ -47,7 +47,7 @@ public class MappingProfile : Profile
 
         CreateMap<CreateCountryDto, Country>();
         CreateMap<UpdateCountryDto, Country>();
-        CreateMap<Country, CountryDto>();
+        CreateMap<Country, CountryDto>().ReverseMap();
 
         CreateMap<CreateStateDto, State>();
         CreateMap<UpdateStateDto, State>();

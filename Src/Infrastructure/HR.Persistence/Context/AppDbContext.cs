@@ -7,8 +7,10 @@ using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Location.Query;
+using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
+using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +19,7 @@ public class AppDbContext : DbContext
 
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
+    public DbSet<Country> Countries { get; set; }
     public DbSet<CountryDto> CountryDtos { get; set; }
     public DbSet<State> States { get; set; }
 
@@ -35,6 +37,9 @@ public class AppDbContext : DbContext
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
 
+    public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
+    public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +47,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
+        modelBuilder.Entity<Country>().ToTable("Tbl_CountryMaster");
+
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
 
@@ -56,6 +63,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<BranchDto>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
+
+
+        modelBuilder.Entity<GetAllShiftsVm>().HasNoKey();
+        modelBuilder.Entity<GetAllUserGroupQueryVm>().HasNoKey();
 
 
 
