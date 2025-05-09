@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, NgZone } from '@angular/core';  
+import { Component, OnInit, NgZone, Injector } from '@angular/core';  
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthResponseModel, Login, VerifyOTPDto } from '../../Models/login';
 import { UserService } from '../../services/user.service';
 import { Otp } from '../../Models/otp';
+import { AppComponent } from '../../app.component';
 
 declare var bootstrap: any;
 @Component({
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private ngZone: NgZone  
+    private ngZone: NgZone,
+    private injector: Injector  
   ) {}
 
   passwordModel = {
@@ -76,7 +78,14 @@ export class LoginComponent implements OnInit {
         otpModal.show();
       }
       else {
-        this.router.navigate(['/dashboard']);
+        // this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard']).then(() => {
+          // Force layout to show immediately
+          const appRef = this.injector.get(AppComponent);
+          appRef.hideLayout = false;
+          appRef.isSidebarVisible = true;
+        });
+        
         sessionStorage.setItem('isAuthenticated', 'true');
       }
 
