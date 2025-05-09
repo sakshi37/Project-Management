@@ -1,45 +1,31 @@
-﻿using HR.Application.Features.Locations.Commands.CreateLocation;
-using HR.Application.Features.Locations.Commands.DeleteLocation;
-using HR.Application.Features.Locations.Commands.UpdateLocation;
-using HR.Application.Features.Locations.Querry.GetAllLocationQuerry;
+﻿using HR.Application.Features.Location.Query;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
 namespace HR.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class LocationController : ControllerBase
     {
-        private readonly IMediator _mediator; 
+        readonly IMediator _mediator;
+
         public LocationController(IMediator mediator)
         {
-            _mediator = mediator;  
-        }
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateLocationDto dto)
-        => Ok(await _mediator.Send(new CreateLocationCommand(dto)));
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateLocationDto dto)
-        => Ok(await _mediator.Send(new UpdateLocationCommand(dto)));
+            _mediator = mediator;
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            int updatedBy = 1;
-            return Ok(await _mediator.Send(new DeleteLocationCommand(id, updatedBy)));
         }
+
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        
-            => Ok(await _mediator.Send(new GetAllLocationQuery()));
-        
+        public async Task<IActionResult> GetAllLocation()
+        {
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetById(int id)
-        //    => Ok( await _mediator.Send(new GetLocationByIdQuery(id)));
+            var dto = await _mediator.Send(new GetAllLocationListQuery());
+            return Ok(dto);
+        }
+
+
+
 
     }
 }

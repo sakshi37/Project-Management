@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-team-composition',
-  imports: [FormsModule],
+  imports: [RouterLink,FormsModule],
   templateUrl: './team-composition.component.html',
   styleUrl: './team-composition.component.css'
 })

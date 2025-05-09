@@ -1,16 +1,9 @@
-﻿using HR.Application.Features.Dtos;
-using HR.Application.Features.Locations.Commands.CreateLocation;
-using HR.Application.Features.Locations.Commands.UpdateLocation;
-using HR.Domain.Entities;
+﻿using HR.Application.Features.Location.Query;
 
-namespace HR.Application.Contracts.Models.Persistence
+namespace HR.Application.Contracts.Persistence
 {
-   public interface ILocationRepository
+    public interface ILocationMasterRepository
     {
-        Task<Location> CreateAsync(CreateLocationDto dto);
-        Task<Location> UpdateAsync(UpdateLocationDto dto);
-        Task DeleteAsync(int id, int UpdatedBy);
-        Task<List<LocationDto>> GetAllAsync();
-        //Task<LocationDto> GetByIdAsync(int id);
+        Task<List<GetAllLocationDto>> GetAllLocation();
     }
 }

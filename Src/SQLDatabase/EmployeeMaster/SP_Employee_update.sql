@@ -51,6 +51,9 @@ BEGIN
         SET Email = @Email
         WHERE UserName = @Code;
     END
+	  SELECT * 
+    FROM Tbl_Employee_master 
+    WHERE Code = @Code;
 END;
 
 
