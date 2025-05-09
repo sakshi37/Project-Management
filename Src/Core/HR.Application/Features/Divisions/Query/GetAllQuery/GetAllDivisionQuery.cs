@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.Divisions.Query.GetAllQuery
 {
-    public record GetAllDivisionQuery : IRequest<List<GetAllDivisionQueryDto>>;
+    public record GetAllDivisionQuery : IRequest<List<GetAllDivisionDto>>;
 
 }

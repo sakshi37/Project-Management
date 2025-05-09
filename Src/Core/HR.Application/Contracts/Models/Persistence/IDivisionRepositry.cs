@@ -5,6 +5,7 @@ using HR.Application.Features.Divisions.Command.CreateLocationCommand;
 using HR.Application.Features.Divisions.Command.Dto;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
+using HR.Application.Features.Divisions.Query.GetProjectManager;
 using HR.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,8 @@ namespace HR.Application.Contracts.Models.Persistence
         //Task<Division> CreateAsync(CreateDesignationDto dto);
         Task<Division> UpdateAsync(UpdateDivisionDto dto);
         Task DeleteAsync(int id, int updatedBy);
-        Task<List<GetAllDivisionQueryDto>> GetAllAsync();
+        Task<List<GetAllDivisionDto>> GetAllAsync();
         //Task<DivisionDto> GetByIdAsync(int id);
+        Task<List<GetAllProjectManagerDto>> GetAllPMAsync();
     }
 }

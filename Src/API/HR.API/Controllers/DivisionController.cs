@@ -4,6 +4,7 @@ using HR.Application.Features.Divisions.Command.CreateLocationCommand;
 using HR.Application.Features.Divisions.Command.DeleteDivision;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
+using HR.Application.Features.Divisions.Query.GetProjectManager;
 using HR.Application.Features.Locations.Commands.UpdateLocation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -39,5 +40,10 @@ namespace HR.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
            => Ok(await _mediator.Send(new GetAllDivisionQuery()));
+
+        [HttpGet("GetAllPM")]
+        public async Task<IActionResult> GetAllPm()
+           => Ok(await _mediator.Send(new GetAllProjectManagerQuery()));
+
     }
 }

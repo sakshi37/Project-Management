@@ -80,5 +80,5 @@ public class MappingProfile : Profile
         CreateMap<UpdateEmployeeCommandDto, Employee>();
         CreateMap<UpdateEmployeeCommand, UpdateEmployeeCommandDto>()
             .ConstructUsing(cmd => cmd.Dto);
-    }
+        }
 }

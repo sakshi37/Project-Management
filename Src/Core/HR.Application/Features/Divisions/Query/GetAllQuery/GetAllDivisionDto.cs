@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.Divisions.Query.GetAllQuery
 {
-   public  class GetAllDivisionQueryDto
+   public  class GetAllDivisionDto
     {
             public string? DivisionName { get; set; }
             public string? ProjectManagerName { get; set; }

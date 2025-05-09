@@ -6,6 +6,7 @@ using HR.Application.Features.Divisions.Command.CreateLocationCommand;
 using HR.Application.Features.Divisions.Command.Dto;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
+using HR.Application.Features.Divisions.Query.GetProjectManager;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -22,19 +23,19 @@ namespace HR.Persistence.Repositories
         public async Task<Division> CreateAsync(CreateDivisionDto dto)
         {
 
-            string sql = "EXEC SP_DivisionInsert @DivisionName={0},@PrefixName={1},@Fk_HolidayId={2},   @ManHours={3}, @DivisionStatus={4},@Fk_ProjectManagerId={5}, @CreatedBy={6}";
+            string sql = "EXEC SP_DivisionInsert @DivisionName={0},@ProjectManagerName={1},@PrefixName={2},@Fk_HolidayId={3},   @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6}";
             await _context.Database.ExecuteSqlRawAsync(sql,
                 dto.DivisionName,
+                dto.ProjectManagerName,
                 dto.PrefixName,
                 dto.Fk_HolidayId,
                 dto.ManHours,
                 dto.DivisionStatus,
-                dto.ProjectManagerId,
                 dto.CreatedBy);
             return new Division
             {
                 DivisionName = dto.DivisionName,
-                ProjectManagerId = dto.ProjectManagerId,
+                ProjectManagerName = dto.ProjectManagerName,
                 PrefixName = dto.PrefixName,
                 Fk_HolidayId = dto.Fk_HolidayId,
                 ManHours = dto.ManHours,
@@ -52,10 +53,12 @@ namespace HR.Persistence.Repositories
 
 
 
-        public async Task<List<GetAllDivisionQueryDto>> GetAllAsync()
+        public async Task<List<GetAllDivisionDto>> GetAllAsync()
         {
-            return await _context.GetAllDivisionQueryVms.FromSqlRaw("EXEC SP_GetAllDivisions").ToListAsync();
-        }
+            return await _context.GetAllDivisionQueryDtos.FromSqlRaw("EXEC SP_GetAllDivisions").ToListAsync();
+        }       
+
+        
 
         public async Task<Division> UpdateAsync(UpdateDivisionDto dto)
         {
@@ -73,6 +76,13 @@ namespace HR.Persistence.Repositories
                 DivisionStatus = dto.DivisionStatus,
                 UpdatedBy = dto.UpdatedBy
             };
+        }
+
+        public async Task<List<GetAllProjectManagerDto>> GetAllPMAsync()
+        {
+            string sql = "EXEC GetProjectManager";
+            var pms = await _context.GetAllProjectManagerDtos.FromSqlRaw(sql).ToListAsync();
+            return pms;
         }
     }
 }
