@@ -21,13 +21,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   standalone: true,
   templateUrl: './employee-registration.component.html',
   styleUrls: ['./employee-registration.component.css'],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    RouterLink,
-    FormsModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
 })
 export class EmployeeRegistrationComponent implements OnInit {
   employeeForm!: FormGroup;
@@ -91,7 +85,7 @@ export class EmployeeRegistrationComponent implements OnInit {
       signature: [''],
       loginStatus: [],
 
-      locationId: [0],
+      locationId: [1],
       designationId: [1],
       shiftId: [1],
       employeeTypeId: [1],
@@ -104,7 +98,7 @@ export class EmployeeRegistrationComponent implements OnInit {
   resetForm(): void {
     this.employeeForm.reset({
       code: this.generateEmployeeCode(),
-      loginStatus: true,
+      loginStatus: false,
       leftCompany: false,
       leaveCompany: false,
     });
@@ -122,9 +116,7 @@ export class EmployeeRegistrationComponent implements OnInit {
       locationId: parseInt(this.employeeForm.value.locationId),
       birthDate: this.formatDate(this.employeeForm.value.birthDate),
       joinDate: this.formatDate(this.employeeForm.value.joinDate),
-      // image: this.employeeForm.value.image?.replace(/['"]/g, '').trim() || null,
-      // signature:
-      //   this.employeeForm.value.signature?.replace(/['"]/g, '').trim() || null,
+
       image: this.selectedImage || null, // or the file path if you're saving the image path
       signature: this.selectedSignature || null,
     };
@@ -152,6 +144,7 @@ export class EmployeeRegistrationComponent implements OnInit {
         if (err instanceof HttpErrorResponse && typeof err.error === 'string') {
           errorMsg = err.error;
         }
+
         Swal.fire({
           icon: 'error',
           title: 'Error!',

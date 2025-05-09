@@ -258,9 +258,9 @@ namespace HR.Persistence.Repositories
                 .FromSqlRaw("EXEC SP_CounterRead")
                 .AsNoTracking()
                 .AsEnumerable()
-                .FirstOrDefault();
+                .ToList();
 
-            return result!.Id;
+            return result.FirstOrDefault()!.Id;
         }
 
         public async Task IncrCurrentEmpCounter()
@@ -268,12 +268,8 @@ namespace HR.Persistence.Repositories
             await _appDbContext.Database.ExecuteSqlRawAsync("EXEC SP_CounterUpdate");
         }
 
-        //public async Task<CountryDto> GetByIdAsync(int id)
-        //{
 
-        //    return await _context.CountryDtos
-        //        .FromSqlRaw("EXEC SP_GetCountryById @CountryId = {0}", id).FirstOrDefaultAsync();
-        //}
+
     }
 
 

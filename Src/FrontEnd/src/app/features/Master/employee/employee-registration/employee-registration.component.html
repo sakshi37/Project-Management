@@ -1,9 +1,9 @@
 <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
   <div class="container mt-5">
-    <div class="row g-4">
-      <!-- Employee Card -->
+    <div class="row gy-4 gx-5">
+      <!-- Employee Info -->
       <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
+        <div class="card shadow-sm rounded border-0 bg-white p-4 h-100">
           <h5 class="text-muted mb-3">Employee Info</h5>
 
           <!-- Name -->
@@ -26,27 +26,6 @@
             </div>
           </div>
 
-          <!-- Code -->
-          <div class="mb-3">
-            <label class="form-label">Employee Code</label>
-            <input
-              type="text"
-              [disabled]="isDisable"
-              class="form-control"
-              formControlName="code"
-              placeholder="Enter Code"
-            />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('code')?.touched &&
-                employeeForm.get('code')?.hasError('required')
-              "
-            >
-              Code is required.
-            </div>
-          </div>
-
           <!-- Email -->
           <div class="mb-3">
             <label class="form-label">Email</label>
@@ -66,6 +45,7 @@
               Email is required
             </div>
             <div
+              class="text-danger"
               *ngIf="
                 employeeForm.controls['email'].hasError('email') &&
                 employeeForm.controls['email'].touched
@@ -97,9 +77,9 @@
         </div>
       </div>
 
-      <!-- Agreement Card -->
+      <!-- Agreement -->
       <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
+        <div class="card shadow-sm rounded border-0 bg-white p-4 h-100">
           <h5 class="text-muted mb-3">Agreement</h5>
 
           <!-- Join Date -->
@@ -182,9 +162,9 @@
         </div>
       </div>
 
-      <!-- Payment / Misc -->
+      <!-- Miscellaneous -->
       <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
+        <div class="card shadow-sm rounded border-0 bg-white p-4 h-100">
           <h5 class="text-muted mb-3">Miscellaneous</h5>
 
           <!-- Skype ID -->
@@ -223,7 +203,7 @@
           </div>
 
           <!-- Login Status -->
-          <div class="form-check mb-2">
+          <div class="form-check mb-3">
             <input
               class="form-check-input"
               type="checkbox"
@@ -237,9 +217,9 @@
         </div>
       </div>
 
-      <!-- Profile Upload -->
+      <!-- Profile & Signature -->
       <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
+        <div class="card shadow-sm rounded border-0 bg-white p-4 h-100">
           <h5 class="text-muted mb-3">Profile & Signature</h5>
 
           <!-- Profile Image -->
@@ -280,12 +260,12 @@
         </div>
       </div>
 
-      <!-- Submit Button -->
+      <!-- Buttons -->
       <div class="col-12 d-flex justify-content-end">
         <button type="submit" class="btn btn-dark btn-lg me-2">Save</button>
         <button
           type="button"
-          class="btn btn-outline-secondary btn-lg"
+          class="btn btn-outline-secondary btn-lg me-2"
           (click)="resetForm()"
         >
           Reset
