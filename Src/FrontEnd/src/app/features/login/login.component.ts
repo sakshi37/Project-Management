@@ -23,13 +23,25 @@ export class LoginComponent implements OnInit {
   formSubmitted = false;
   // -----
   isLoggingIn=false;
- 
+  
   
   constructor(
     private router: Router,
     private userService: UserService,
     private ngZone: NgZone  
   ) {}
+
+  passwordModel = {
+    oldPassword: '',
+    
+  }; 
+
+  //eyepassword functionality
+  showPassword: boolean = true;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   ngOnInit() { }
 
@@ -41,9 +53,9 @@ export class LoginComponent implements OnInit {
     }
     this.login = loginForm.value;
 
-     // START: Login Button Spinner Addition
+       // login button spinner
   this.isLoggingIn = true;
-  // END: Login Button Spinner Addition
+  
 
     this.userService.login(this.login).subscribe({
       next: (response: AuthResponseModel) => {
@@ -54,7 +66,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('roleName',response.roleName);
 
       // localStorage.setItem('empid', response.empid.toString());
-        console.log(localStorage.getItem('userName'));
+        // console.log(localStorage.getItem('userName'));
 
         
         // loginForm.reset();
@@ -68,17 +80,17 @@ export class LoginComponent implements OnInit {
         sessionStorage.setItem('isAuthenticated', 'true');
       }
 
-         // START: Login Button Spinner Addition
+         // login button spinner
       this.isLoggingIn = false;
-      // END: Login Button Spinner Addition
+       
       },
       error: (error) => {
         console.error('Login failed!', error);
         alert("Invalid email or password. Please try again");
 
-          // START: Login Button Spinner Addition
+          //  login button spinner
       this.isLoggingIn = false;
-      // END: Login Button Spinner Addition
+      
       }
     });
   }
@@ -97,7 +109,7 @@ export class LoginComponent implements OnInit {
           password: this.login.password,
           otp: enteredOtp
         }
-        console.log(OtpRequest);
+        
         this.userService.verifyOtp(OtpRequest).subscribe({
           next: (res:AuthResponseModel)=> {
             alert('OTP Verified Successfully!'); 

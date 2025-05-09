@@ -159,7 +159,7 @@ namespace HR.Persistence.Repositories
 
 
 
-        public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
+          public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
         {
             var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
             Console.WriteLine($"SQL Query: {sql}", email);
@@ -174,6 +174,8 @@ namespace HR.Persistence.Repositories
         }
 
 
+        }
+        
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
             Console.WriteLine($"[DEBUG] Starting UpdateEmployeeAsync for Code: {dto.Code}");
@@ -181,11 +183,14 @@ namespace HR.Persistence.Repositories
             byte[] imageBytes = null;
             byte[] signatureBytes = null;
 
+            // For image
             if (!string.IsNullOrEmpty(dto.Image))
             {
                 try
                 {
-                    imageBytes = Convert.FromBase64String(dto.Image);
+                   
+                    string base64Data = dto.Image.Split(',')[1];
+                    imageBytes = Convert.FromBase64String(base64Data);
                 }
                 catch (FormatException ex)
                 {
@@ -194,11 +199,14 @@ namespace HR.Persistence.Repositories
                 }
             }
 
+            // For signature
             if (!string.IsNullOrEmpty(dto.Signature))
             {
                 try
                 {
-                    signatureBytes = Convert.FromBase64String(dto.Signature);
+                    // Strip the 'data:image/jpeg;base64,' part for signature
+                    string base64Signature = dto.Signature.Split(',')[1];
+                    signatureBytes = Convert.FromBase64String(base64Signature);
                 }
                 catch (FormatException ex)
                 {
@@ -207,6 +215,7 @@ namespace HR.Persistence.Repositories
                 }
             }
 
+            // Continue with SQL parameters as before
             var parameters = new List<SqlParameter>
     {
         new SqlParameter("@Code", dto.Code ?? (object)DBNull.Value),
@@ -236,9 +245,9 @@ namespace HR.Persistence.Repositories
             {
                 var result = await _appDbContext.Database.ExecuteSqlRawAsync(
                     @"EXEC SP_Employee_update 
-            @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber, @BirthDate, @Image,
-            @Signature, @LoginStatus, @LeftCompany, @LeftDate, @Fk_LocationId, @Fk_DesignationId, @Fk_ShiftId,
-            @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId",
+    @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber, @BirthDate, @Image,
+    @Signature, @LoginStatus, @LeftCompany, @LeftDate, @Fk_LocationId, @Fk_DesignationId, @Fk_ShiftId,
+    @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId",
                     parameters.ToArray()
                 );
 
