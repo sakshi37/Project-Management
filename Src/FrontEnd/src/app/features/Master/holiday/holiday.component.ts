@@ -20,12 +20,14 @@ export class HolidayComponent implements OnInit, AfterViewInit {
   holidayForm!: FormGroup;
   holidays: GetHolidayDto[] = [];
   filteredResults: GetHolidayDto[] = [];
+
   selectedHolidayId: number | null = null;
   isEditMode = false;
   private modal!: bootstrap.Modal;
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
   itemsPerPage: number = 5; // default value
+
 
   filter = {
     listType: '',
@@ -145,7 +147,7 @@ export class HolidayComponent implements OnInit, AfterViewInit {
     });
     this.selectedHolidayId = null;
   }
-
+ 
   onStatusChange(holiday: GetHolidayDto): void {
     const confirmed = confirm(`Are you sure you want to mark "${holiday.holidayName}" as ${holiday.holidayStatus ? 'Inactive' : 'Active'}?`);
     if (!confirmed) {

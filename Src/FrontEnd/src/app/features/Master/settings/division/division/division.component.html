@@ -1,0 +1,161 @@
+<div class="container mt-4">
+    <!-- Add Designation Button -->
+    <div class="text-end mb-3">
+      <button type="button" class="btn custom-add-btn"
+        data-bs-toggle="modal" data-bs-target="#divisionModal" (click)="openAddModal()">
+        + Add Division
+      </button>
+    </div>
+    <!-- show etries -->
+  <div class="entries-dropdown">
+    <label for="entries">Show</label>
+    <select id="entries" [(ngModel)]="itemsPerPage">
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+    </select>
+    <span>Entries</span>
+  </div>
+
+
+    <div class="mb-3 row">
+      <div class="input-group" style="width: 300px;">
+          <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
+          <input type="text" id="search" class="form-control" placeholder="Search Division"
+                 [(ngModel)]="searchText" (ngModelChange)="filterDivisions()" style="background-color: transparent;">
+      </div>
+    </div>
+    
+    <!-- Designation Modal -->
+    <div class="modal fade" id="divisionModal" tabindex="-1" aria-labelledby="divisionModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="divisionModalLabel">{{ isEditMode ? 'Edit Division' : 'Add New Division' }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetForm()"></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <form [formGroup]="divisionForm" (ngSubmit)="onSubmit()" class="row g-3">
+              <div class="col-12">
+                <label for="divisionName" class="form-label">Division Name:</label>
+                <input type="text" id="divisionName" class="form-control" formControlName="divisionName">
+              </div>
+                  <div class="col-12">
+                    <label for="projectManagerName" class="form-label">Project Manager Name</label>
+                  <!-- <input type="text" id="fk_ProjectManagerName" class="form-control" formControlName="projectManagerName"> -->
+                    <select class="form-select" name="projectManagerName" id="projectManagerName" formControlName="projectManagerName">
+                      <option value="" disabled selected>--Select Project Manager--</option>
+                      <option *ngFor="let pm of projectManagerNames" value="{{pm.projectManager}}">{{pm.projectManager}}</option>
+                    </select>
+                </div>
+              
+                  <div class="col-12">
+                    <label for="prefixName" class="form-label">Prefix Name</label>
+                    <input type="text" id="prefixName" class="form-control" formControlName="prefixName">
+                  </div>
+
+                  <div class="col-12">
+                    <label for="manHours" class="form-label">Man Hours</label>
+                    <input type="text" id="manHours" class="form-control" formControlName="manHours">
+                  </div>
+                  
+                  <div class="col-12">
+                    <label for="holidayListType" class="form-label">HolidayList Type:</label>
+                    <select id="holidayListType" class="form-select" formControlName="holidayListType">
+                      <option value="1">Us-Based</option>
+                      <option value="0">Non-UsBased</option>
+                    </select>
+                  </div>
+    
+  
+              <div class="col-12">
+                <label for="divisionStatus" class="form-label">Status:</label>
+                <select id="divisionStatus" name="divisionStatus" class="form-select" formControlName="divisionStatus">
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
+              </div>
+  
+              <div class="col-12 d-flex justify-content-end">
+                <button data-bs-dismiss="modal" type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Add' }}</button>
+                <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal" (click)="resetForm()">Cancel</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Designation Table -->
+  <div class="row gy-4" *ngIf="divisions && divisions.length > 0; else noData">
+    <div class="col-12">
+      <table class="mb-0">
+        <!-- <thead>
+          <tr>
+            <th><div class="head-first">Sr. No</div></th>
+            <th><div class="head-other">Division Name</div></th>
+            <th><div class="head-other">Project Manager Name</div></th>
+            <th><div class="head-other">Prefix Name</div></th>
+            <th><div class="head-other">Man Hours</div></th>
+            <th><div class="head-other">Status</div></th>
+            <th><div class="head-last">Action</div></th>
+          </tr>
+        </thead> -->
+        <thead>
+            <tr>
+              <th><div class="head-first">Sr. No</div></th>
+              <th (click)="sortDivisions('divisionName')">
+                <div class="head-other sortable">Division <i class="fas" [ngClass]="getSortIcon('divisionName')"></i></div>
+              </th>
+              <th (click)="sortDivisions('projectManagerName')">
+                <div class="head-other sortable">Project Manager<i class="fas" [ngClass]="getSortIcon('projectManagerName')"></i></div>
+              </th>
+              <th (click)="sortDivisions('prefixName')">
+                <div class="head-other sortable">Prefix Name<i class="fas" [ngClass]="getSortIcon('prefixName')"></i></div>
+              </th>
+              <th (click)="sortDivisions('manHours')">
+                <div class="head-other sortable">Man Hours<i class="fas" [ngClass]="getSortIcon('manHours')"></i></div>
+              </th>
+              <th (click)="sortDivisions('cityStatus')">
+                <div class="head-other sortable">Status</div>
+              </th>
+              <th><div class="head-last">Action</div></th>
+            </tr>
+          </thead>
+        <tbody>
+          <tr *ngFor="let division of filteredDivisions | paginate:{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': division.divisionStatus}">
+            <td><div class="tr-first-child">{{ i + 1 }}</div></td>
+            <td><div class="tr-other-child">{{ division.divisionName }}</div></td>
+            <td><div class="tr-other-child">{{ division.projectManagerName }}</div></td>
+            <td><div class="tr-other-child">{{ division.prefixName }}</div></td>
+            <td><div class="tr-other-child">{{ division.manHours }}</div></td>
+
+            <td>
+              <div class="tr-other-child">
+                <span class="badge status-badge"
+                  [ngClass]="division.divisionStatus ? 'active' : 'inactive'">
+                  {{ division.divisionStatus ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </td>
+            <td>
+              <div class="tr-last-child">
+                <button class="btn btn-sm edit-btn" (click)="onEdit(division)">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+              <div class="pagination-wrapper">
+          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+        </div>
+    </div>
+  </div>
+
+  <!-- No Data Template -->
+  <ng-template #noData>
+    <div class="alert alert-info text-center mt-4">No divisions found.</div>
+  </ng-template>
+  </div>
+  

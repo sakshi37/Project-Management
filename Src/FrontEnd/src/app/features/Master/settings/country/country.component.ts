@@ -7,6 +7,8 @@ import { CreateCountryDto } from './Models/create-country.dto';
 import { CommonModule } from '@angular/common';
 import * as bootstrap from 'bootstrap'; // Import Bootstrap for manual modal control
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ErrorHandlerService } from '../../../../services/error-handler.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-country',
@@ -26,10 +28,13 @@ export class CountryComponent implements OnInit, AfterViewInit {
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
   itemsPerPage: number = 5; // default value
+  selectedSortColumn = '';
+sortDirectionAsc = true;
   private countryModal: bootstrap.Modal | undefined;
   private modalElement: ElementRef | undefined;
 
-  constructor(private fb: FormBuilder, private countryService: CountryService, private el: ElementRef) { }
+  constructor(private fb: FormBuilder, private countryService: CountryService, private el: ElementRef, private errorHandler: ErrorHandlerService
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -132,8 +137,14 @@ export class CountryComponent implements OnInit, AfterViewInit {
           this.getCountries();
           this.resetForm();
           this.countryModal?.hide();
+          Swal.fire({
+                      icon: 'success',
+                      title: 'Updated',
+                      text: 'City updated successfully!',
+                      confirmButtonColor: '#3085d6'
+                    });
         },
-        error: (err) => console.error('Error updating country:', err),
+        error: (err) => this.errorHandler.handleError(err)
       });
     } else {
       // Create new country
@@ -147,8 +158,14 @@ export class CountryComponent implements OnInit, AfterViewInit {
           this.getCountries();
           this.resetForm();
           this.countryModal?.hide();
+          Swal.fire({
+                      icon: 'success',
+                      title: 'Created',
+                      text: 'City created successfully!',
+                      confirmButtonColor: '#3085d6'
+                    });
         },
-        error: (err) => console.error('Error creating country:', err),
+        error: (err) => this.errorHandler.handleError(err)
       });
     }
   }
@@ -165,6 +182,29 @@ export class CountryComponent implements OnInit, AfterViewInit {
     this.isEditMode = true;
     this.countryModal?.show();
   }
+  sortCountries(column: string) {
+    if (this.selectedSortColumn === column) {
+      this.sortDirectionAsc = !this.sortDirectionAsc;
+    } else {
+      this.selectedSortColumn = column;
+      this.sortDirectionAsc = true;
+    }
+
+    this.filteredCountries.sort((a, b) => {
+      const aValue = a[column]?.toString().toLowerCase() || '';
+      const bValue = b[column]?.toString().toLowerCase() || '';
+
+      if (aValue < bValue) return this.sortDirectionAsc ? -1 : 1;
+      if (aValue > bValue) return this.sortDirectionAsc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.selectedSortColumn !== column) return 'fa-sort';
+    return this.sortDirectionAsc ? 'fa-sort-up' : 'fa-sort-down';
+  }
+
 
   onStatusChange(country: GetCountryDto): void {
     const confirmed = confirm(`Are you sure you want to mark "${country.countryName}" as ${country.countryStatus ? 'Inactive' : 'Active'}?`);

@@ -19,3 +19,16 @@ export interface Employee {
     pageSize: number;
   }
   
+  export interface EmployeeFull extends Employee {
+  address: string;
+  mobileNo: string;
+  skypeId: string;
+  joinDate: string;
+  email: string;
+  bccEmail: string;
+  panNumber: string;
+  birthDate: string;
+  signature: string | null;
+  leftCompany: boolean;
+  leftDate: string;
+}

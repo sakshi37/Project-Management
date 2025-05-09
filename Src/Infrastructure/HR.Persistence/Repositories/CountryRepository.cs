@@ -1,4 +1,7 @@
-﻿using HR.Application.Contracts.Models.Persistence;
+﻿
+
+using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Exception;
 using HR.Application.Features.Countries.Commands.CreateCountry;
 using HR.Application.Features.Countries.Commands.Dtos;
 using HR.Application.Features.Countries.Commands.UpdateCountry;
@@ -19,6 +22,21 @@ namespace HR.Persistence.Repositories
 
         public async Task<Country> CreateAsync(CreateCountryDto dto)
         {
+            if (string.IsNullOrEmpty(dto.CountryName))
+                throw new CountryValidationException("Country name is required.");
+
+
+            var existingCountry = await _context.Set<CountryDto>()
+                 .FromSqlRaw("EXEC dbo.SP_CheckCountryDuplicate @CountryName = {0},@CountryCode = {1}", dto.CountryName,dto.CountryCode)
+                 .AsNoTracking()
+                 .ToListAsync();
+            var foundcountry = existingCountry.FirstOrDefault();
+
+
+            if (foundcountry != null)
+            {
+                throw new CountryValidationException("A Country with the same name already exists");
+            }
             string sql = "EXEC SP_CountryInsert @CountryName = {0}, @CountryCode = {1}, @CreatedBy = {2}";
             await _context.Database.ExecuteSqlRawAsync(sql, dto.CountryName, dto.CountryCode, dto.CreatedBy);
 

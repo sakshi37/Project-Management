@@ -12,6 +12,7 @@ import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
+import { EmployeeFull } from '../../../Models/employee-model';
 
 @Component({
   selector: 'app-employee',
@@ -24,6 +25,9 @@ export class EmployeeComponent implements OnInit {
   pageNumber = 1;
   pageSize = 10;
   totalCount = 0;
+  fullEmployeeList: EmployeeFull[] = [];
+
+  
 
   searchText: string = '';
 
@@ -54,6 +58,7 @@ export class EmployeeComponent implements OnInit {
     this.employeeService
       .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
       .subscribe((res) => {
+        this.fullEmployeeList = res.data;
         this.employees = res.data;
         this.totalCount = res.totalCount;
       });
@@ -66,14 +71,20 @@ export class EmployeeComponent implements OnInit {
     this.loadEmployees();
   }
 
-  editEmployee(emp: any): void {
-    console.log('Selected Employee:', emp);
-    console.log('Selected Employee Code:', emp.code);
-
-    this.Router.navigate(['/updateemployee'], {
-      queryParams: { code: emp.code },
-    });
+ editEmployee(emp: any): void {
+  if (!emp || !emp.code) {
+    console.error('Selected employee is missing code or is invalid:', emp);
+    return;
   }
+
+  console.log('Selected Employee:', emp);
+  console.log('Selected Employee Code:', emp.code);
+
+  this.Router.navigate(['/update-employee'], {
+    state: { employee: emp }  
+  });
+}
+
 
   openInactivatePopup(emp: any): void {
     this.dialog

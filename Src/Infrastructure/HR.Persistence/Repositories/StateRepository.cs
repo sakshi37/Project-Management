@@ -35,7 +35,7 @@ namespace HR.Persistence.Repositories
 
             if (foundstate != null)
             {
-                throw new CityValidationException("A state with the same name already exists in the selected country");
+                throw new StateValidationException("A state with the same name already exists in the selected country");
             }
 
             var sql = "EXEC SP_StateInsert @Fk_CountryId = {0}, @StateName = {1}, @StateCode = {2}, @CreatedBy = {3}";
