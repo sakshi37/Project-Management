@@ -25,8 +25,8 @@
 .dropdown-content {
   border: 1px solid #ddd;
   border-top: none;
-  padding: 10px;
-  background: #fafafa;
+  padding: 5px;
+  background: #edeff3;
   border-radius: 0 0 4px 4px;
 }
 
@@ -38,7 +38,7 @@
 
 .tab {
   padding: 6px 12px;
-  background: #ddd;
+  background: #edeff3;
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s;
@@ -49,6 +49,6 @@
 }
 
 .tab.active {
-  background: #007bff;
+  background: #5b7cfd;
   color: white;
 }
