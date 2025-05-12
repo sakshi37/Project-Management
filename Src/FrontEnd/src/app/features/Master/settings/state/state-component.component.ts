@@ -63,8 +63,8 @@ sortDirectionAsc = true;
   initForm(): void {
     this.stateForm = this.fb.group({
       countryId: ['', Validators.required],
-      stateName: ['', Validators.required],
-      stateCode: ['', Validators.required],
+      stateName: ['', [Validators.required, Validators.maxLength(100)]],
+      stateCode: ['', [Validators.required, Validators.maxLength(10)]],
       stateStatus: ['1', Validators.required],
     });
   }
@@ -124,7 +124,15 @@ sortDirectionAsc = true;
     this.stateModal?.show();
   }
   onSubmit(): void {
-    if (this.stateForm.invalid) return;
+    if (this.stateForm.invalid){
+      this.stateForm.markAllAsTouched();
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please fill in all required fields.',
+        confirmButtonColor: '#d33'});
+      return;
+    }
 
     const statusBool = this.stateForm.value.stateStatus === '1' ? true : false;
     console.log(this.stateForm.value.countryId, this.stateForm.value.stateName,this.stateForm.value.stateCode, this.stateForm.value.stateStatus);
@@ -132,7 +140,7 @@ sortDirectionAsc = true;
       stateId: this.selectedStateId,
       countryId: this.stateForm.value.countryId,
       stateName: this.stateForm.value.stateName,
-      stateCode: this.stateForm.value.stateCode,
+      stateCode: this.stateForm.value.stateCode.toUpperCase(),
       stateStatus: statusBool,
       updatedBy: 1
     };

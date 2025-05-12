@@ -34,6 +34,7 @@ namespace HR.Persistence.Repositories
                 .ToList();
 
             return new PaginatedResult<GetAllEmployeeVm>(pagedData, totalCount, pageNumber, pageSize);
+
         }
 
         public async Task<string> MakeEmployeeActiveAsync(string code)

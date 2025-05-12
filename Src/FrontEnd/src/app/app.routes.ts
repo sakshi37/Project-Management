@@ -33,7 +33,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard],
   },
-  { path: 'settings', component: SettingsComponent },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
   { path: 'country', component: CountryComponent, canActivate: [AuthGuard] },
   { path: 'state', component: StateComponent, canActivate: [AuthGuard] },
   { path: 'holiday', component: HolidayComponent, canActivate: [AuthGuard] },
