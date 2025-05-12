@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Exception;
 using HR.Application.Features.Countries.Commands.Dtos;
 using HR.Application.Features.Countries.Commands.UpdateCountry;
 using HR.Application.Features.Holidays.Commands.CreateHoliday;
@@ -26,6 +27,21 @@ namespace HR.Persistence.Repositories
 
         public async Task<Holiday> CreateAsync(CreateHolidayDto dto)
         {
+            if (string.IsNullOrEmpty(dto.HolidayName))
+                throw new HolidayValidationException("Holiday name is required.");
+
+
+            var existingHoliday = await _context.Set<HolidayDto>()
+                 .FromSqlRaw("EXEC SP_CheckHolidayDuplicate @HolidayName = {0}, @HolidayDate = {1}",dto.HolidayName,dto.HolidayDate)
+                 .AsNoTracking()
+                 .ToListAsync();
+            var foundholiday = existingHoliday.FirstOrDefault();
+
+
+            if (foundholiday != null)
+            {
+                throw new HolidayValidationException("A Holiday with the same name already exists");
+            }
             var sql = "EXEC SP_HolidayInsert @HolidayName = {0}, @HolidayDate = {1}, @HolidayListType = {2}, @CreatedBy = {3}";
             await _context.Database.ExecuteSqlRawAsync(sql, dto.HolidayName, dto.HolidayDate, dto.HolidayListType, dto.CreatedBy);
             return new Holiday
