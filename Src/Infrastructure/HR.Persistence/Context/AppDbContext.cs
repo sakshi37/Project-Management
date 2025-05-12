@@ -34,7 +34,7 @@ public class AppDbContext : DbContext
 
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
-
+    public DbSet<Counter> Counter { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,6 +56,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<BranchDto>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
+        modelBuilder.Entity<Counter>().HasNoKey();
+
 
 
 

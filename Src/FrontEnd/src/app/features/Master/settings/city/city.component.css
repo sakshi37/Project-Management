@@ -180,3 +180,7 @@
     margin-right: 6px;
   }
   
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  

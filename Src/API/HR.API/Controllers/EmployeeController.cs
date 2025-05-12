@@ -6,8 +6,6 @@ using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 
 using HR.Application.Features.Employees.Queries;
-
-
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +34,14 @@ namespace HR.API.Controllers
 
             dto.Email = dto.Email.Trim();
             if (dto.Email.Length == 0) return BadRequest("Email is required");
+
+            dto.SkypeId = dto.SkypeId?.Trim();
+            if (dto.SkypeId.Length < 6 || dto.SkypeId.Length > 32) return BadRequest("Skype ID must be between 6 and 32 characters.");
+            if (!char.IsLetter(dto.SkypeId[0])) return BadRequest("Skype ID must start with a letter.");
+
+            dto.MobileNo = dto.MobileNo.Trim();
+            if (dto.MobileNo.Length != 10) return BadRequest("Mobile No must be 10 digit");
+            if (!dto.MobileNo.All(char.IsDigit)) return BadRequest("Mobile No must be in digit");
 
             var emailContainsAt = dto.Email.Contains('@');
             var emailContainsDot = dto.Email.Contains('.');
@@ -89,16 +95,6 @@ namespace HR.API.Controllers
         }
 
 
-
-
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllEmployee()
-        //{
-        //    var response = await _mediator.Send(new GetAllEmployeeQuery());
-        //    return Ok(response);
-
-        //}
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateEmployee([FromBody] UpdateEmployeeCommandDto dto)
         {

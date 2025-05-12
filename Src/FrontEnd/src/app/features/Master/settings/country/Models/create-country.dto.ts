@@ -1,5 +1,6 @@
 export interface CreateCountryDto {
-    countryName: string ;
-  countryCode: string ;
-  createdBy: number ;
+  // CountryId: number;
+  countryName: string;
+  countryCode: string;
+  createdBy: number;
 }
