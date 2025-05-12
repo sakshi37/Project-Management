@@ -2,7 +2,6 @@
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.UpdateDesignation;
 using HR.Application.Features.Divisions.Command.CreateLocationCommand;
-using HR.Application.Features.Divisions.Command.Dto;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
 using HR.Application.Features.Divisions.Query.GetProjectManager;
@@ -17,10 +16,10 @@ namespace HR.Application.Contracts.Models.Persistence
 {
     public interface IDivisionRepositry
     {
-        Task<Division> CreateAsync(CreateDivisionDto dto);
+        Task<division> CreateAsync(CreateDivisionDto dto);
 
         //Task<Division> CreateAsync(CreateDesignationDto dto);
-        Task<Division> UpdateAsync(UpdateDivisionDto dto);
+        Task<division> UpdateAsync(UpdateDivisionDto dto);
         Task DeleteAsync(int id, int updatedBy);
         Task<List<GetAllDivisionDto>> GetAllAsync();
         //Task<DivisionDto> GetByIdAsync(int id);

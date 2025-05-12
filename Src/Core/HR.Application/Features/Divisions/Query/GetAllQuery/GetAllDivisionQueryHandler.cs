@@ -1,7 +1,6 @@
-﻿        using HR.Application.Contracts.Models.Persistence;
+﻿using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.Cities.Commands.Dtos;
 using HR.Application.Features.Cities.Queries.GetAllCities;
-using HR.Application.Features.Divisions.Command.Dto;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ namespace HR.Application.Features.Divisions.Query.GetAllQuery
 
         }
 
-        
+
     }
 
 

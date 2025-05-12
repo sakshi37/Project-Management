@@ -3,7 +3,6 @@ using HR.Application.Features.Designations.Commands.CreateDesignation;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.UpdateDesignation;
 using HR.Application.Features.Divisions.Command.CreateLocationCommand;
-using HR.Application.Features.Divisions.Command.Dto;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
 using HR.Application.Features.Divisions.Query.GetProjectManager;
@@ -20,7 +19,7 @@ namespace HR.Persistence.Repositories
         {
             _context = context;
         }
-        public async Task<Division> CreateAsync(CreateDivisionDto dto)
+        public async Task<division> CreateAsync(CreateDivisionDto dto)
         {
 
             string sql = "EXEC SP_DivisionInsert @DivisionName={0},@ProjectManagerName={1},@PrefixName={2},@Fk_HolidayId={3},   @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6}";
@@ -32,7 +31,7 @@ namespace HR.Persistence.Repositories
                 dto.ManHours,
                 dto.DivisionStatus,
                 dto.CreatedBy);
-            return new Division
+            return new division
             {
                 DivisionName = dto.DivisionName,
                 ProjectManagerName = dto.ProjectManagerName,
@@ -55,16 +54,16 @@ namespace HR.Persistence.Repositories
 
         public async Task<List<GetAllDivisionDto>> GetAllAsync()
         {
-            return await _context.GetAllDivisionQueryDtos.FromSqlRaw("EXEC SP_GetAllDivisions").ToListAsync();
-        }       
+            return await _context.GetAllDivisionQueryDtos.FromSqlRaw("EXEC Rahul.SP_GetAllDivisions").ToListAsync();
+        }
 
-        
 
-        public async Task<Division> UpdateAsync(UpdateDivisionDto dto)
+
+        public async Task<division> UpdateAsync(UpdateDivisionDto dto)
         {
-            string sql = "EXEC Rahul.SP_DivisionUpdate @DivisionId={0},@DivisionName={1},@ProjectManagerName={2}, @PrefixName={3},@Fk_HolidayId={4},@ManHours ={5},@DivisionStatus ={6}, @UpdatedBy={7}";
+            string sql = "EXEC Rahul.UpdateDivision @DivisionId={0},@DivisionName={1},@ProjectManagerName={2}, @PrefixName={3},@HolidayId={4},@ManHours ={5},@DivisionStatus ={6}, @UpdatedBy={7}";
             await _context.Database.ExecuteSqlRawAsync(sql, dto.DivisionId, dto.DivisionName, dto.ProjectManagerName, dto.PrefixName, dto.Fk_HolidayId, dto.ManHours, dto.DivisionStatus, dto.UpdatedBy);
-            return new Division
+            return new division
             {
 
                 DivisionId = dto.DivisionId,

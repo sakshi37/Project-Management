@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.Divisions.Query.GetProjectManager
 {
-    public class GetAllProjectManagerQueryHandler :IRequestHandler<GetAllProjectManagerQuery, List<GetAllProjectManagerDto>>
+    public class GetAllProjectManagerQueryHandler : IRequestHandler<GetAllProjectManagerQuery, List<GetAllProjectManagerDto>>
     {
         private readonly IDivisionRepositry _divisionRepositry;
         public GetAllProjectManagerQueryHandler(IDivisionRepositry divisionRepository)

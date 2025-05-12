@@ -8,8 +8,8 @@ import { StateComponent } from './state/state-component.component';
 import { CityComponent } from './city/city.component';
 import { DesignationComponent } from './designation/designation.component';
 import { BranchComponent } from './branch/branch.component';
-import { LocationComponent } from "./location/location.component";
 import { DivisionComponent } from "./division/division/division.component";
+import { LocationComponent } from './location/location.component';
 
 @Component({
   selector: 'app-settings',

@@ -1,11 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { LocationService } from '../../../../services/location.service';
-import { GetLocationDto } from './Models/get-location.dto';
-import { UpdateLocationDto } from './Models/update-location.dto';
+
 import * as bootstrap from 'bootstrap';
-import { CreateLocationDto } from './Models/create-location.dto';
+
 import { GetCityDto } from '../../settings/city/Models/get-city.dto';
 import { CityService } from '../../../../services/city.service';
 import { StateService } from '../../../../services/state.service';
@@ -15,6 +13,10 @@ import { GetStateDto } from '../state/Models/get-state.dto';
 import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import { ErrorHandlerService } from '../../../../services/error-handler.service';
+import { GetLocationDto } from './Models/get-location-dto';
+import { UpdateLocationDto } from './Models/update-location-dto';
+import { CreateLocationDto } from './Models/create-location-dto';
+import { LocationService } from '../../../../services/location-service';
 
 @Component({
   selector: 'app-location',
