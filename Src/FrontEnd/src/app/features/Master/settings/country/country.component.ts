@@ -1,5 +1,11 @@
 import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { GetCountryDto } from './Models/get-country.dto';
 import { CountryService } from '../../../../services/country.service.service';
 import { UpdateCountryDto } from './Models/update-country.dto';
@@ -12,11 +18,15 @@ import { NgxPaginationModule } from 'ngx-pagination';
   selector: 'app-country',
   templateUrl: './country.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule,NgxPaginationModule],
-  styleUrls: ['./country.component.css']
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgxPaginationModule,
+  ],
+  styleUrls: ['./country.component.css'],
 })
 export class CountryComponent implements OnInit, AfterViewInit {
-
   countryForm!: FormGroup;
   countries: GetCountryDto[] = [];
   isEditMode: boolean = false;
@@ -29,7 +39,11 @@ export class CountryComponent implements OnInit, AfterViewInit {
   private countryModal: bootstrap.Modal | undefined;
   private modalElement: ElementRef | undefined;
 
-  constructor(private fb: FormBuilder, private countryService: CountryService, private el: ElementRef) { }
+  constructor(
+    private fb: FormBuilder,
+    private countryService: CountryService,
+    private el: ElementRef
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -40,10 +54,17 @@ export class CountryComponent implements OnInit, AfterViewInit {
     this.modalElement = this.el.nativeElement.querySelector('#countryModal');
     console.log('Modal Element in ngAfterViewInit:', this.modalElement);
     if (this.modalElement) {
-      this.countryModal = new bootstrap.Modal(this.modalElement as unknown as Element); // Cast to Element
-      console.log('Country Modal Instance in ngAfterViewInit:', this.countryModal);
+      this.countryModal = new bootstrap.Modal(
+        this.modalElement as unknown as Element
+      ); // Cast to Element
+      console.log(
+        'Country Modal Instance in ngAfterViewInit:',
+        this.countryModal
+      );
     } else {
-      console.error('Modal element with ID "countryModal" not found in the DOM.');
+      console.error(
+        'Modal element with ID "countryModal" not found in the DOM.'
+      );
     }
   }
 
@@ -70,19 +91,19 @@ export class CountryComponent implements OnInit, AfterViewInit {
   getCountries(): void {
     this.countryService.getAllCountries().subscribe((data) => {
       this.countries = data;
-      this.filteredCountries = [...data]; 
+      this.filteredCountries = [...data];
     });
   }
 
   filterCountries(): void {
     const search = this.searchText?.trim().toLowerCase();
-  
+
     if (!search) {
       this.filteredCountries = [...this.countries];
       return;
     }
-  
-    this.filteredCountries = this.countries.filter(c =>
+
+    this.filteredCountries = this.countries.filter((c) =>
       c.countryName.toLowerCase().includes(search)
     );
   }
@@ -116,14 +137,14 @@ export class CountryComponent implements OnInit, AfterViewInit {
       countryName: this.countryForm.value.countryName,
       countryCode: this.countryForm.value.countryCode,
       countryStatus: statusValue,
-      updatedBy: 1
+      updatedBy: 1,
     };
 
     if (this.isEditMode && this.selectedCountryId !== null) {
       // Update existing country
       const updateDto: UpdateCountryDto = {
         ...countryDto,
-        countryId: this.selectedCountryId as number
+        countryId: this.selectedCountryId as number,
       };
       console.log('Update Payload:', updateDto);
 
@@ -139,7 +160,7 @@ export class CountryComponent implements OnInit, AfterViewInit {
       // Create new country
       const createDto: CreateCountryDto = {
         ...countryDto,
-        createdBy: 1
+        createdBy: 1,
       };
 
       this.countryService.createCountry(createDto).subscribe({
@@ -167,23 +188,29 @@ export class CountryComponent implements OnInit, AfterViewInit {
   }
 
   onStatusChange(country: GetCountryDto): void {
-    const confirmed = confirm(`Are you sure you want to mark "${country.countryName}" as ${country.countryStatus ? 'Inactive' : 'Active'}?`);
+    const confirmed = confirm(
+      `Are you sure you want to mark "${country.countryName}" as ${
+        country.countryStatus ? 'Inactive' : 'Active'
+      }?`
+    );
 
     if (!confirmed) {
       this.getCountries();
       return;
     }
 
-    const newStatus = country.countryStatus ? 0 : 1; 
+    const newStatus = country.countryStatus ? 0 : 1;
 
-    this.countryService.softDeleteCountry(country.countryId, newStatus).subscribe({
-      next: () => {
-        this.getCountries();
-      },
-      error: (err) => {
-        console.error('Error updating country status:', err);
-        this.getCountries();
-      }
-    });
+    this.countryService
+      .softDeleteCountry(country.countryId, newStatus)
+      .subscribe({
+        next: () => {
+          this.getCountries();
+        },
+        error: (err) => {
+          console.error('Error updating country status:', err);
+          this.getCountries();
+        },
+      });
   }
 }

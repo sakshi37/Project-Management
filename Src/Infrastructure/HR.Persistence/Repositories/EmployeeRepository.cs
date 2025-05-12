@@ -99,11 +99,17 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Fk_UserGroupId", (object?)employee.UserGroupId ?? DBNull.Value),
     new SqlParameter("@Fk_BranchId", (object?)employee.BranchId ?? DBNull.Value),
     new SqlParameter("@Fk_DivisionId", (object?)employee.DivisionId ?? DBNull.Value),
+     new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
+    new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
+    new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
+    new SqlParameter("@Fk_GenderId", (object?)employee.GenderId ?? DBNull.Value),
+
+
 };
 
 
             await _appDbContext.Database.ExecuteSqlRawAsync(
-                @"EXEC SP_Employee_insert 
+                @"EXEC dbo.SP_EmployeeInsert 
             @Name,
             @Code, 
             
@@ -125,7 +131,11 @@ namespace HR.Persistence.Repositories
             @Fk_EmployeeTypeId, 
             @Fk_UserGroupId,
             @Fk_BranchId,
-            @Fk_DivisionId",
+            @Fk_DivisionId,
+            @Fk_CountryId,
+            @Fk_StateId,
+            @Fk_CityId,
+            @Fk_GenderId",
                 parameters.ToArray()
             );
 
@@ -152,7 +162,11 @@ namespace HR.Persistence.Repositories
                 EmployeeTypeId = employee.EmployeeTypeId,
                 UserGroupId = employee.UserGroupId,
                 BranchId = employee.BranchId,
-                DivisionId = employee.DivisionId
+                DivisionId = employee.DivisionId,
+                CountryId = employee.CountryId,
+                StateId = employee.StateId,
+                CityId = employee.CityId,
+                GenderId = employee.GenderId,
             };
         }
 
