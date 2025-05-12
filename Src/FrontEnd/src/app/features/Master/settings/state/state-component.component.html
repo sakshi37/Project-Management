@@ -34,42 +34,67 @@
         <!-- Modal Body -->
         <div class="modal-body">
           <form [formGroup]="stateForm" (ngSubmit)="onSubmit()" class="row g-3">
+            <!-- Country Dropdown -->
             <div class="col-12">
               <label for="countryId" class="form-label">Country:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
-                <select id="countryId" class="form-select" formControlName="countryId">
-                  <option value="" disabled selected>Select Country</option>
+                <select id="countryId" class="form-select"
+                  [ngClass]="{ 'is-invalid': stateForm.get('countryId')?.touched && stateForm.get('countryId')?.invalid }"
+                  formControlName="countryId">
+                  <option value="" disabled>Select Country</option>
                   <option *ngFor="let c of countries" [value]="c.countryId">{{ c.countryName }}</option>
                 </select>
               </div>
-
+              <div *ngIf="stateForm.get('countryId')?.touched && stateForm.get('countryId')?.invalid"
+                class="text-danger">
+                Country is required.
+              </div>
             </div>
 
+            <!-- State Name -->
             <div class="col-md-12">
               <label for="stateName" class="form-label">State Name:</label>
               <div class="input-icon-group">
                 <i class="fas fa-map-marked-alt"></i>
-              <input type="text" id="stateName" class="form-control" formControlName="stateName">
+                <input type="text" id="stateName" class="form-control"
+                  [ngClass]="{ 'is-invalid': stateForm.get('stateName')?.touched && stateForm.get('stateName')?.invalid }"
+                  formControlName="stateName">
+              </div>
+              <div *ngIf="stateForm.get('stateName')?.touched && stateForm.get('stateName')?.invalid"
+                class="text-danger">
+                <div *ngIf="stateForm.get('stateName')?.errors?.['required']">State Name is required.</div>
+                <div *ngIf="stateForm.get('stateName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
               </div>
             </div>
 
+            <!-- State Code -->
             <div class="col-md-12">
               <label for="stateCode" class="form-label">State Code:</label>
               <div class="input-icon-group">
-              <i class="fa-solid fa-location-crosshairs"></i>
-              <input type="text" id="stateCode" class="form-control" formControlName="stateCode">
+                <i class="fa-solid fa-location-crosshairs"></i>
+                <input type="text" id="stateCode" class="form-control"
+                  [ngClass]="{ 'is-invalid': stateForm.get('stateCode')?.touched && stateForm.get('stateCode')?.invalid }"
+                  formControlName="stateCode">
+              </div>
+              <div *ngIf="stateForm.get('stateCode')?.touched && stateForm.get('stateCode')?.invalid"
+                class="text-danger">
+                <div *ngIf="stateForm.get('stateCode')?.errors?.['required']">State Code is required.</div>
+                <div *ngIf="stateForm.get('stateCode')?.errors?.['maxlength']">Max 10 characters allowed.</div>
+                <!-- <div *ngIf="stateForm.get('stateCode')?.errors?.['pattern']">Only 2–3 uppercase letters allowed (e.g.,
+                  MH, NY).</div> -->
+              </div>
             </div>
-            </div>
+
 
             <div class="col-12">
               <label for="stateStatus" class="form-label">Status:</label>
               <div class="input-icon-group">
                 <i class="fas fa-toggle-on"></i>
-              <select id="stateStatus" class="form-control" formControlName="stateStatus">
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-              </select>
+                <select id="stateStatus" class="form-control" formControlName="stateStatus">
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
               </div>
             </div>
 

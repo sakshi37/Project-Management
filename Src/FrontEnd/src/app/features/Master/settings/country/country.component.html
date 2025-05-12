@@ -34,21 +34,40 @@
         <!-- Modal Body -->
         <div class="modal-body">
           <form [formGroup]="countryForm" (ngSubmit)="onSubmit()" class="row g-3">
+            <!-- Country Name -->
             <div class="col-md-12">
               <label for="countryName" class="form-label">Country Name:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
-                <input type="text" id="countryName" class="form-control" formControlName="countryName">
+                <input type="text" id="countryName" class="form-control"
+                  [ngClass]="{ 'is-invalid': countryForm.get('countryName')?.touched && countryForm.get('countryName')?.invalid }"
+                  formControlName="countryName" />
+              </div>
+              <div *ngIf="countryForm.get('countryName')?.touched && countryForm.get('countryName')?.invalid"
+                class="text-danger">
+                <div *ngIf="countryForm.get('countryName')?.errors?.['required']">Country Name is required.</div>
+                <div *ngIf="countryForm.get('countryName')?.errors?.['maxlength']">Maximum 100 characters allowed.</div>
               </div>
             </div>
 
+            <!-- Country Code -->
             <div class="col-md-12">
               <label for="countryCode" class="form-label">Country Code:</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-location-crosshairs"></i>
-                <input type="text" id="countryCode" class="form-control" formControlName="countryCode">
+                <input type="text" id="countryCode" class="form-control"
+                  [ngClass]="{ 'is-invalid': countryForm.get('countryCode')?.touched && countryForm.get('countryCode')?.invalid }"
+                  formControlName="countryCode" />
+              </div>
+              <div *ngIf="countryForm.get('countryCode')?.touched && countryForm.get('countryCode')?.invalid"
+                class="text-danger">
+                <div *ngIf="countryForm.get('countryCode')?.errors?.['required']">Country Code is required.</div>
+                <div *ngIf="countryForm.get('countryCode')?.errors?.['maxlength']">Maximum 10 characters allowed.</div>
+                <!-- <div *ngIf="countryForm.get('countryCode')?.errors?.['pattern']">Enter 2–3 uppercase letters (e.g., IN,
+                  USA).</div> -->
               </div>
             </div>
+
 
             <div class="col-12">
               <label for="status" class="form-label">Status:</label>

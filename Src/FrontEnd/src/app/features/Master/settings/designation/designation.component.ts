@@ -7,6 +7,7 @@ import { UpdateDesignationDto } from './Models/update-designation.dto';
 import { CreateDesignationDto } from './Models/create-designation.dto';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-designation',
@@ -48,7 +49,7 @@ export class DesignationComponent implements OnInit, AfterViewInit {
 
   initForm(): void {
     this.designationForm = this.fb.group({
-      designationName: ['', Validators.required],
+      designationName: ['', [Validators.required, Validators.maxLength(100)]],
       designationStatus: ['1', Validators.required]
     });
   }
@@ -84,7 +85,7 @@ export class DesignationComponent implements OnInit, AfterViewInit {
   onEdit(designation: GetDesignationDto): void {
     this.designationForm.patchValue({
       designationName: designation.designationName,
-      status: designation.designationStatus? '1' : '0' 
+      designationStatus: designation.designationStatus? '1' : '0' 
     });
     this.selectedDesignationId = designation.designationId;
     this.isEditMode = true;
@@ -92,7 +93,16 @@ export class DesignationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    if (this.designationForm.invalid) return;
+    if (this.designationForm.invalid) {
+      this.designationForm.markAllAsTouched();
+      Swal.fire({
+              icon: 'error',
+              title: 'Invalid',
+              text: 'Please fill all details!',
+              confirmButtonColor: '#d33'
+            });
+      return;
+    }
     const statusBool = this.designationForm.value.designationStatus === '1' ? true : false;
 
     const payload = {
@@ -125,7 +135,7 @@ export class DesignationComponent implements OnInit, AfterViewInit {
   }
 
   resetForm(): void {
-    this.designationForm.reset({ designationName: '', status: '1' });
+    this.designationForm.reset({ designationName: '', designationStatus: '1' });
     this.selectedDesignationId = null;
   }
 
