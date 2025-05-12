@@ -1,6 +1,7 @@
 ﻿
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.Contracts;
 
 namespace HR.Domain.Entities
@@ -21,7 +22,10 @@ namespace HR.Domain.Entities
         public DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
-      
+
+        
+        public bool LoginStatus { get; set; }
+
 
 
 

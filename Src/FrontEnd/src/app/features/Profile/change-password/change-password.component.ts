@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
@@ -22,7 +22,7 @@ export class ChangePasswordComponent {
   showNewPassword = true;
   showConfirmPassword = true;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService,private router: Router) {} 
 
   toggleOldPasswordVisibility() {
     this.showOldPassword = !this.showOldPassword;
@@ -47,7 +47,7 @@ export class ChangePasswordComponent {
       // alert('New passwords do not match.');
       Swal.fire('Mismatch', 'New passwords do not match.', 'error');
       return;
-    }
+    } 
 
     const requestData = {
       userName: String(localStorage.getItem('userName')),
@@ -61,8 +61,10 @@ export class ChangePasswordComponent {
     this.userService.updatePasswords(requestData).subscribe({
       next: (res: string) => {
         // alert('Password updated successfully!');
-        Swal.fire('Success', 'Password updated successfully!', 'success');
-        form.resetForm();
+        Swal.fire('Success', 'Password updated successfully!', 'success' ).then(()=>{
+          form.resetForm();
+          this.router.navigate(['/dashboard']);
+        })
       },
       error: (err) => {
         console.error(err);
@@ -70,11 +72,13 @@ export class ChangePasswordComponent {
           // alert('Password Updated Successfully.');
           Swal.fire('Success', 'Password updated successfully!', 'success');
           form.resetForm();
+          this.router.navigate(['/dashboard']);
         } else {
           // alert('Error updating password.');
           Swal.fire('Error', 'Error updating password.', 'error');
         }
       }
     });
+    
   }
 }

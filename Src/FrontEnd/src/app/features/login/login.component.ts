@@ -63,24 +63,45 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('userName', response.userName);
         localStorage.setItem('checkFirstLogin', response.firstLogin);  
         localStorage.setItem('roleName', response.roleName);
+        localStorage.setItem('loginStatus',String(response.LoginStatus));
 
         console.log(localStorage.getItem('userName'));
 
-        if(response.firstLogin) {
-          const modalElement = document.getElementById('otpModal');
-          const otpModal = new bootstrap.Modal(modalElement);
-          otpModal.show();
-        } else {
-          this.router.navigate(['/dashboard']);
-          sessionStorage.setItem('isAuthenticated', 'true');
-        }
+        
+
+        // if(response.firstLogin) {
+        //   const modalElement = document.getElementById('otpModal');
+        //   const otpModal = new bootstrap.Modal(modalElement);
+        //   otpModal.show();
+        // } else {
+        //   this.router.navigate(['/dashboard']);
+        //   sessionStorage.setItem('isAuthenticated', 'true');
+        // }
+
+        if (!response.LoginStatus) {
+  Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
+  
+  this.isLoggingIn = false;
+  return;
+}
+
+if (response.firstLogin) {
+  const modalElement = document.getElementById('otpModal');
+  const otpModal = new bootstrap.Modal(modalElement);
+  otpModal.show();
+} else {
+  this.router.navigate(['/dashboard']);
+  sessionStorage.setItem('isAuthenticated', 'true');
+}
 
         this.isLoggingIn = false;
       },
       error: (error) => {
         console.error('Login failed!', error);
+        
         // alert("Invalid email or password. Please try again");
         Swal.fire('Login Failed', 'Invalid email or password. Please try again.', 'error');
+        OkButtonColor: '#28a745';
         this.isLoggingIn = false;
       }
     });
@@ -148,18 +169,7 @@ export class LoginComponent implements OnInit {
   
     const loginUser = new Login(email, '', false); 
   
-    // this.userService.resendOtp(loginUser).subscribe({
-    //   next: (response: any) => {
-    //     localStorage.setItem('otp', response.otp);  
-    //     // alert('OTP Resent Successfully!');
-    //     Swal.fire('Success', 'OTP Resent Successfully!', 'success');
-    //   },
-    //   error: (error) => {
-    //     console.error('Resend OTP failed!', error);
-    //     // alert('Failed to resend OTP. Please try again.');
-    //     Swal.fire('Failed', 'Failed to resend OTP. Please try again.', 'error');
-    //   }
-    // });
+    
   }
 
   // Forgot password logic
@@ -175,7 +185,9 @@ export class LoginComponent implements OnInit {
       input: 'text',
       inputPlaceholder: 'Enter your username',
       showCancelButton: true,
-      confirmButtonText: 'Submit' 
+      confirmButtonText: 'Submit ' ,
+       confirmButtonColor: '#28a745',
+       cancelButtonColor:'darkgrey'
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         this.forgotUsername = result.value;

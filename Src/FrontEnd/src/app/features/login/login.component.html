@@ -11,7 +11,7 @@
         placeholder="UserName" 
         name="userName"
         [(ngModel)]="login.userName"
-        #userName="ngModel" 
+        #userName="ngModel"
         required
       />
       <div *ngIf="userName.invalid && userName.touched" class="error-message" style="color: red;">
