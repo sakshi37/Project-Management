@@ -36,7 +36,7 @@ export const routes: Routes = [
   { path: 'timesheetupdate', component: TimesheetUpdateComponent,canActivate: [AuthGuard] },
 
   { path: 'employee', component: EmployeeComponent },
-  { path: 'employee-registration', component: EmployeeRegistrationComponent,canActivate: [AuthGuard] },
+  { path: 'employee-registration', component: EmployeeRegistrationComponent},
   {
     path: 'update-employee',
     component: UpdateEmployeeComponent
