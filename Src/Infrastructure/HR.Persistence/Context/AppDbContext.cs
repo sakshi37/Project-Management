@@ -11,6 +11,7 @@ using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
+using HR.Domain;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,8 +29,9 @@ public class AppDbContext : DbContext
     public DbSet<City> Cities { get; set; }
     public DbSet<CityDto> CityDtos { get; set; }
     public DbSet<HolidayDto> HolidayDtos { get; set; }
-
+    public DbSet<TotalValue> TotalValues { get; set; }
     public DbSet<EmployeeDto> Employees { get; set; }
+    public DbSet<Employee> Tbl_Employee_master { get; set; }
     public DbSet<GetAllLocationDto> dtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
@@ -51,9 +53,11 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
+        modelBuilder.Entity<Employee>().ToTable("Tbl_Employee_master");
 
         modelBuilder.Entity<CityDto>().HasNoKey();
         modelBuilder.Entity<HolidayDto>().HasNoKey();
+        modelBuilder.Entity<TotalValue>().HasNoKey();
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
         modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
