@@ -13,6 +13,7 @@ namespace HR.Application.Features.TimeSheets.Commands.PunchIn
         }
         public async Task Handle(PunchInCommand request, CancellationToken cancellationToken)
         {
+            var attendance = await _timeSheetRepository.CheckOpenPunchIn(request.EmpId);
             var startDateTime = DateTime.Now;
             await _timeSheetRepository.punchIn(request.EmpId, startDateTime);
         }

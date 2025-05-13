@@ -56,6 +56,18 @@ namespace HR.Persistence.Repositories
 
         }
 
+        public async Task<Attendance> CheckOpenPunchIn(int empId)
+        {
+            string sql = "EXEC dbo.SP_CheckOpenPunchIn @FK_EmpId={0}";
+
+            var openPunchIn = await _DbContext.attendance
+                .FromSqlRaw(sql, empId)
+                .FirstOrDefaultAsync();
+
+            return openPunchIn;
+        }
+
     }
+}
 }
 

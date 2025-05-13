@@ -55,7 +55,7 @@ public class AppDbContext : DbContext
     public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
 
-
+    public DbSet<Attendance> attendance { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,11 +73,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
         //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
-
+        modelBuilder.Entity<Attendance>().HasNoKey();
 
         modelBuilder.Entity<BranchDto>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
+
         modelBuilder.Entity<Counter>().HasNoKey();
 
         modelBuilder.Entity<GetAllDivisionDto>().HasNoKey();

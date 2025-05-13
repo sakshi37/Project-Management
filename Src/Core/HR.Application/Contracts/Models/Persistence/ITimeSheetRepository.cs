@@ -10,5 +10,6 @@ namespace HR.Application.Contracts.Persistence
         Task<List<GetAllTimeSheetListDto>> GetAllTimeSheetList();
 
         Task punchIn(int empId, DateTime startDateTime);
+        Task<Attendance> CheckOpenPunchIn(int empId);
     }
 }
