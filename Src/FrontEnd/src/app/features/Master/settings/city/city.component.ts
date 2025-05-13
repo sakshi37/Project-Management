@@ -1,5 +1,11 @@
 import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { CityService } from '../../../../services/city.service';
 import { CountryService } from '../../../../services/country.service.service';
@@ -18,7 +24,12 @@ import { ErrorHandlerService } from '../../../../services/error-handler.service'
   selector: 'app-city',
   templateUrl: './city.component.html',
   styleUrls: ['./city.component.css'],
-  imports: [CommonModule, ReactiveFormsModule, FormsModule,NgxPaginationModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgxPaginationModule,
+  ],
   standalone: true,
 })
 export class CityComponent implements OnInit, AfterViewInit {
@@ -59,7 +70,9 @@ export class CityComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.modalElement = this.el.nativeElement.querySelector('#cityModal');
     if (this.modalElement) {
-      this.cityModal = new bootstrap.Modal(this.modalElement as unknown as Element);
+      this.cityModal = new bootstrap.Modal(
+        this.modalElement as unknown as Element
+      );
     }
   }
 
@@ -67,17 +80,19 @@ export class CityComponent implements OnInit, AfterViewInit {
     this.cityForm = this.fb.group({
       countryId: ['', Validators.required],
       stateId: ['', Validators.required],
-      cityName: ['', [Validators.required, Validators.maxLength(100)]],
-      cityStatus: ['1', Validators.required]
+      cityName: ['', Validators.required],
+      cityStatus: ['1', Validators.required],
     });
   }
 
   loadCountries(): void {
-    this.countryService.getAllCountries().subscribe(res => this.countries = res);
+    this.countryService
+      .getAllCountries()
+      .subscribe((res) => (this.countries = res));
   }
 
   loadStates(): void {
-    this.stateService.getAllStates().subscribe(res => {
+    this.stateService.getAllStates().subscribe((res) => {
       this.states = res;
       // console.log('States:', this.states);
       this.filterStates();
@@ -90,26 +105,26 @@ export class CityComponent implements OnInit, AfterViewInit {
       this.filteredCities = [...data];
     });
   }
-  
+
   filterCities(): void {
+    ``;
     const search = this.searchText?.trim().toLowerCase();
-  
+
     if (!search) {
       this.filteredCities = [...this.cities];
       return;
     }
-  
-    this.filteredCities = this.cities.filter(c =>
+
+    this.filteredCities = this.cities.filter((c) =>
       c.cityName.toLowerCase().includes(search)
     );
   }
 
-  
   filterStates(): void {
     const countryId = +this.cityForm.get('countryId')?.value;
     console.log('Selected CountryId:', countryId);
     console.log('All States:', this.states);
-    this.filteredStates = this.states.filter(s => s.countryId === countryId);
+    this.filteredStates = this.states.filter((s) => s.countryId === countryId);
   }
 
   onCountryChange(): void {
@@ -141,21 +156,18 @@ export class CityComponent implements OnInit, AfterViewInit {
       cityName: city.cityName,
       cityStatus: city.cityStatus ? '1' : '0',
     });
-  
+
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
-  
+
     this.filterStates();
-  
+
     setTimeout(() => {
       this.cityForm.patchValue({ stateId: city.stateId });
     }, 0);
-  
+
     this.cityModal.show();
   }
-  
-  
-  
 
   // onSubmit(): void {
   //   if (this.cityForm.invalid) return;
@@ -191,75 +203,69 @@ export class CityComponent implements OnInit, AfterViewInit {
   //   }
   // }
   onSubmit(): void {
-    if (this.cityForm.invalid){
-      this.cityForm.markAllAsTouched();
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Please fill in all required fields.',
-        confirmButtonColor: '#d33'
-      });
-      return; 
-    }
-  
+    if (this.cityForm.invalid) return;
+
     const statusBool = this.cityForm.value.cityStatus === '1';
     const payload = {
       cityName: this.cityForm.value.cityName,
       stateId: this.cityForm.value.stateId,
       cityStatus: statusBool,
     };
-  
+
     const createDto: CreateCityDto = {
       cityName: this.cityForm.value.cityName,
       stateId: this.cityForm.value.stateId,
       createdBy: 1,
     };
-  
+
     if (this.isEditMode && this.selectedCityId) {
       const updateDto: UpdateCityDto = {
         ...payload,
         cityId: this.selectedCityId,
-        updatedBy: 1
+        updatedBy: 1,
       };
-  
+
       this.cityService.updateCity(updateDto).subscribe({
         next: () => {
           this.loadCities();
           this.cityModal.hide();
           this.resetForm();
-  
+
           Swal.fire({
             icon: 'success',
             title: 'Updated',
             text: 'City updated successfully!',
-            confirmButtonColor: '#3085d6'
+            confirmButtonColor: '#3085d6',
           });
         },
-        error: (err) => this.errorHandler.handleError(err)
+        error: (err) => this.errorHandler.handleError(err),
       });
-  
     } else {
       this.cityService.createCity(createDto).subscribe({
         next: () => {
           this.loadCities();
           this.cityModal.hide();
           this.resetForm();
-  
+
           Swal.fire({
             icon: 'success',
             title: 'Created',
             text: 'City created successfully!',
-            confirmButtonColor: '#3085d6'
+            confirmButtonColor: '#3085d6',
           });
         },
-        error: (err) => this.errorHandler.handleError(err)
+        error: (err) => this.errorHandler.handleError(err),
       });
     }
   }
-  
 
   resetForm(): void {
-    this.cityForm.reset({ countryId: '', stateId: '', cityName: '', cityStatus: '1' });
+    this.cityForm.reset({
+      countryId: '',
+      stateId: '',
+      cityName: '',
+      cityStatus: '1',
+    });
     this.selectedCityId = null;
   }
 
@@ -295,23 +301,27 @@ export class CityComponent implements OnInit, AfterViewInit {
   //   }
   // }
   onStatusChange(city: GetCityDto): void {
-    const confirmed = confirm(`Are you sure you want to mark "${city.cityName}" as ${city.cityStatus ? 'Inactive' : 'Active'}?`);
+    const confirmed = confirm(
+      `Are you sure you want to mark "${city.cityName}" as ${
+        city.cityStatus ? 'Inactive' : 'Active'
+      }?`
+    );
 
     if (!confirmed) {
-      this.loadCities(); 
+      this.loadCities();
       return;
     }
 
-    const newStatus = city.cityStatus ? 0 : 1; 
+    const newStatus = city.cityStatus ? 0 : 1;
 
     this.cityService.softDeleteCity(city.cityId, newStatus).subscribe({
       next: () => {
-        this.loadCities(); 
+        this.loadCities();
       },
       error: (err) => {
         console.error('Error updating City status:', err);
-        this.loadCities(); 
-      }
+        this.loadCities();
+      },
     });
   }
 }
