@@ -94,7 +94,12 @@ namespace HR.Persistence.Repositories
                 throw new CityValidationException("Invalid city ID.");
 
             var sql = "EXEC SP_CityDelete @CityId = {0}, @UpdatedBy = {1}";
-            await _context.Database.ExecuteSqlRawAsync(sql, id, updatedBy);
+           int rowsAffected =await _context.Database.ExecuteSqlRawAsync(sql, id, updatedBy);
+
+            if (rowsAffected < 1)
+            {
+                throw new Exception("Delete Failed :(");
+            }
         }
 
         public async Task<List<CityDto>> GetAllAsync()

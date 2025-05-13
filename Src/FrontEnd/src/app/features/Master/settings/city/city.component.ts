@@ -67,7 +67,7 @@ export class CityComponent implements OnInit, AfterViewInit {
     this.cityForm = this.fb.group({
       countryId: ['', Validators.required],
       stateId: ['', Validators.required],
-      cityName: ['', Validators.required],
+      cityName: ['', [Validators.required, Validators.maxLength(100)]],
       cityStatus: ['1', Validators.required]
     });
   }
@@ -191,7 +191,16 @@ export class CityComponent implements OnInit, AfterViewInit {
   //   }
   // }
   onSubmit(): void {
-    if (this.cityForm.invalid) return;
+    if (this.cityForm.invalid){
+      this.cityForm.markAllAsTouched();
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please fill in all required fields.',
+        confirmButtonColor: '#d33'
+      });
+      return; 
+    }
   
     const statusBool = this.cityForm.value.cityStatus === '1';
     const payload = {

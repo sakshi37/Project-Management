@@ -9,6 +9,7 @@ import * as bootstrap from 'bootstrap'; // Import Bootstrap for manual modal con
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ErrorHandlerService } from '../../../../services/error-handler.service';
 import Swal from 'sweetalert2';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-country',
@@ -55,8 +56,8 @@ sortDirectionAsc = true;
   // Initialize the form
   private initForm(): void {
     this.countryForm = this.fb.group({
-      countryName: ['', Validators.required],
-      countryCode: ['', Validators.required],
+      countryName: ['', [Validators.required, Validators.maxLength(100)]],
+      countryCode: ['', [Validators.required, Validators.maxLength(10)]],
       status: ['1', Validators.required],
     });
   }
@@ -112,14 +113,23 @@ sortDirectionAsc = true;
 
   // Submit the form (create or update)
   onSubmit(): void {
-    if (this.countryForm.invalid) return;
+    if (this.countryForm.invalid){
+      this.countryForm.markAllAsTouched();
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid',
+        text: 'Please fill all details!',
+        confirmButtonColor: '#d33'
+      });
+      return;
+    } 
 
     const statusValue = this.countryForm.value.status === '1' ? true : false;
 
     const countryDto = {
       countryId: this.selectedCountryId,
       countryName: this.countryForm.value.countryName,
-      countryCode: this.countryForm.value.countryCode,
+      countryCode: (this.countryForm.value.countryCode).toUpperCase(),
       countryStatus: statusValue,
       updatedBy: 1
     };

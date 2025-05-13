@@ -12,8 +12,9 @@
     </select>
     <span>Entries</span>
   </div>
+  
   <!-- Filters -->
-  <div class="mb-3 row">
+  <!-- <div class="mb-3 row">
     <div class="col-md-4">
       <select class="form-select" [(ngModel)]="filter.listType">
         <option value="">Select Holiday List Type</option>
@@ -22,22 +23,59 @@
       </select>
     </div>
     <div class="col-md-4">
-      <p-datepicker 
-        [(ngModel)]="filterYear" 
-        view="year" 
-        dateFormat="yy" 
-        (onSelect)="onYearSelect($event)" 
-        showIcon="true"
-        inputId="year" 
-        placeholder="Select Year"
-        class="form-control rounded-3 w-50">
+      <p-datepicker [(ngModel)]="filterYear" view="year" dateFormat="yy" (onSelect)="onYearSelect($event)"
+        showIcon="true" inputId="year" placeholder="Select Year" class="form-control rounded-3 w-50">
       </p-datepicker>
     </div>
     <div class="col-md-4 text-end">
       <button class="btn btn-secondary" (click)="filterHolidays()">Search</button>
     </div>
+  </div> -->
+  <div class="mb-3 row align-items-center">
+    <!-- Holiday List Type Dropdown -->
+    <div class="col-md-3">
+      <div class="input-group">
+        <span class="input-group-text" style="background-color: transparent;">
+          <i class="fas fa-search"></i>
+        </span>
+        <input type="text"
+               id="search"
+               class="form-control"
+               placeholder="Search Holiday"
+               [(ngModel)]="searchText"
+               (ngModelChange)="filterHolidaysbyName()"
+               style="background-color: transparent;">
+      </div>
+    </div>
+  
+    <!-- Year Picker -->
+    <div class="col-md-3">
+      <p-datepicker [(ngModel)]="filterYear"
+                    view="year"
+                    dateFormat="yy"
+                    (onSelect)="onYearSelect($event)"
+                    showIcon="true"
+                    inputId="year"
+                    placeholder="Select Year"
+                    class="form-control rounded-3 w-100">
+      </p-datepicker>
+    </div>
+  
+    <!-- Search Input -->
+    <div class="col-md-4">
+      <select class="form-select" [(ngModel)]="filter.listType">
+        <option value="">Select Holiday List Type</option>
+        <option value="1">US Holiday List</option>
+        <option value="0">Non-US Holiday List</option>
+      </select>
+    </div>
+  
+    <!-- Search Button -->
+    <div class="col-md-2 text-end">
+      <button class="btn btn-secondary w-100" (click)="filterHolidays()">Search</button>
+    </div>
   </div>
-
+  
   <!-- Holiday List Table -->
   <div class="row gy-4" *ngIf="filteredResults && filteredResults.length > 0; else noData">
     <div class="col-12">
@@ -45,26 +83,65 @@
         <table class="mb-0">
           <thead>
             <tr>
-              <th><div class="head-first">Sr. No</div></th>
-              <th><div class="head-other">Holiday Name</div></th>
-              <th><div class="head-other">Day</div></th>
-              <th><div class="head-other">Date</div></th>
-              <th><div class="head-other">Year</div></th>
-              <th><div class="head-other">Holiday List</div></th>
-              <th><div class="head-last">Action</div></th>
+              <th>
+                <div class="head-first">Sr. No</div>
+              </th>
+              <th>
+                <div class="head-other">Holiday Name</div>
+              </th>
+              <th>
+                <div class="head-other">Day</div>
+              </th>
+              <th>
+                <div class="head-other">Date</div>
+              </th>
+              <th>
+                <div class="head-other">Year</div>
+              </th>
+              <th>
+                <div class="head-other">Holiday List</div>
+              </th>
+              <th>
+                <div class="head-last">Action</div>
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index" [ngClass]="{ 'inactive-row': !h.holidayStatus }">
-              <td><div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
-              <td><div class="tr-other-child">{{ h.holidayName }}</div></td>
-              <td><div class="tr-other-child">{{ h.dayName }}</div></td>
-              <td><div class="tr-other-child">{{ h.formattedDate }}</div></td>
-              <td><div class="tr-other-child">{{ getYear(h.holidayDate) }}</div></td>
-              <td><div class="tr-other-child">{{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }}</div></td>
+            <!-- <tr
+              *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index"
+              [ngClass]="{ 'inactive-row': !h.holidayStatus }"> -->
+            <tr
+              *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index"
+              [ngClass]="{ 'inactive-row': !h.holidayStatus, 'past-holiday': isPastDate(h.holidayDate) }">
+
+              <td>
+                <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ h.holidayName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ h.dayName }}</div>
+              </td>
+              <!-- <td>
+                <div class="tr-other-child">{{ h.formattedDate }}</div>
+              </td> -->
+              <td>
+                <div class="tr-other-child" [ngClass]="{ 'past-holiday': isPastDate(h.holidayDate) }">
+                  {{ h.formattedDate }}
+                </div>
+              </td>
+              
+              <td>
+                <div class="tr-other-child">{{ getYear(h.holidayDate) }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }}</div>
+              </td>
               <td>
                 <div class="tr-last-child">
-                  <button class="btn btn-sm edit-btn me-2" (click)="onEdit(h)" data-bs-toggle="modal" data-bs-target="#holidayModal">
+                  <button class="btn btn-sm edit-btn me-2" (click)="onEdit(h)" data-bs-toggle="modal"
+                    data-bs-target="#holidayModal">
                     <i class="fas fa-edit"></i> Edit
                   </button>
                   <button class="btn btn-sm btn-danger" (click)="onStatusChange(h)">
@@ -101,14 +178,26 @@
         <div class="modal-body">
           <form [formGroup]="holidayForm" (ngSubmit)="onSubmit()" class="row g-3">
             <div class="col-md-12">
-              <label class="form-label">Holiday Name:</label>
-              <input type="text" class="form-control" formControlName="holidayName" />
+              <label for="holidayName" class="form-label">Holiday Name:</label>
+              <input type="text" id="holidayName" class="form-control" formControlName="holidayName"
+                placeholder="Enter holiday name" />
+              <div *ngIf="holidayForm.get('holidayName')?.touched && holidayForm.get('holidayName')?.invalid"
+                class="text-danger mt-1">
+                <div *ngIf="holidayForm.get('holidayName')?.errors?.['required']">Holiday Name is required.</div>
+                <div *ngIf="holidayForm.get('holidayName')?.errors?.['maxlength']">Maximum 100 characters allowed.</div>
+              </div>
             </div>
 
+            <!-- Holiday Date -->
             <div class="col-md-6">
-              <label class="form-label">Date:</label>
-              <input type="date" class="form-control" formControlName="holidayDate" />
+              <label for="holidayDate" class="form-label">Date:</label>
+              <input type="date" id="holidayDate" class="form-control" formControlName="holidayDate" />
+              <div *ngIf="holidayForm.get('holidayDate')?.touched && holidayForm.get('holidayDate')?.invalid"
+                class="text-danger mt-1">
+                <div *ngIf="holidayForm.get('holidayDate')?.errors?.['required']">Date is required.</div>
+              </div>
             </div>
+
 
             <div class="col-md-6">
               <label class="form-label">List Type:</label>
@@ -127,8 +216,10 @@
             </div> -->
 
             <div class="col-12 d-flex justify-content-end">
-              <button class="btn btn-success" data-bs-dismiss="modal" type="submit">{{ isEditMode ? 'Update' : 'Add' }}</button>
-              <button class="btn btn-secondary ms-2" type="button" data-bs-dismiss="modal" (click)="resetForm()">Cancel</button>
+              <button class="btn btn-success" data-bs-dismiss="modal" type="submit">{{ isEditMode ? 'Update' : 'Add'
+                }}</button>
+              <button class="btn btn-secondary ms-2" type="button" data-bs-dismiss="modal"
+                (click)="resetForm()">Cancel</button>
             </div>
           </form>
         </div>
