@@ -22,15 +22,13 @@
   </div>
   
   <!-- Designation Modal -->
-  <div class="modal fade" id="designationModal" tabindex="-1" aria-labelledby="designationModalLabel" aria-hidden="true">
+  <!-- <div class="modal fade" id="designationModal" tabindex="-1" aria-labelledby="designationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <!-- Modal Header -->
         <div class="modal-header">
           <h5 class="modal-title" id="designationModalLabel">{{ isEditMode ? 'Edit Designation' : 'Add New Designation' }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetForm()"></button>
         </div>
-        <!-- Modal Body -->
         <div class="modal-body">
           <form [formGroup]="designationForm" (ngSubmit)="onSubmit()" class="row g-3">
             <div class="col-12">
@@ -49,6 +47,76 @@
             <div class="col-12 d-flex justify-content-end">
               <button type="submit" class="btn btn-success" data-bs-dismiss="modal">{{ isEditMode ? 'Update' : 'Add' }}</button>
               <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal" (click)="resetForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <!-- Country Modal -->
+  <div class="modal fade" id="designationModal" tabindex="-1" aria-labelledby="designationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="designationModalLabel">{{ isEditMode ? 'Edit Designation' : 'Add New Designation' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            (click)="resetForm()"></button>
+        </div>
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <form [formGroup]="designationForm" (ngSubmit)="onSubmit()" class="row g-3">
+            <div class="col-md-12">
+              <label for="designationName" class="form-label">Designation Name:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-briefcase"></i>
+                <input
+                  type="text"
+                  id="designationName"
+                  class="form-control"
+                  formControlName="designationName"
+                  [ngClass]="{
+                    'is-invalid':
+                      designationForm.get('designationName')?.touched &&
+                      designationForm.get('designationName')?.invalid
+                  }"
+                />
+              </div>
+            
+              <div
+                *ngIf="
+                  designationForm.get('designationName')?.touched &&
+                  designationForm.get('designationName')?.invalid
+                "
+                class="text-danger"
+              >
+                <div *ngIf="designationForm.get('designationName')?.errors?.['required']">
+                  Designation Name is required.
+                </div>
+                <div *ngIf="designationForm.get('designationName')?.errors?.['maxlength']">
+                  Max 100 characters allowed.
+                </div>
+              </div>
+            </div>
+            
+
+
+            <div class="col-12">
+              <label for="designationStatus" class="form-label">Status:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-toggle-on"></i>
+                <select id="designationStatus" class="form-control" formControlName="designationStatus">
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end">
+              <button type="submit" class="btn btn-success" data-bs-dismiss="modal">{{ isEditMode ? 'Update' : 'Add'
+                }}</button>
+              <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal"
+                (click)="resetForm()">Cancel</button>
             </div>
           </form>
         </div>

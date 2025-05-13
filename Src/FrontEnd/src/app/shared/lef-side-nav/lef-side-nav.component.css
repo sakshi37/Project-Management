@@ -1,11 +1,11 @@
 .sidebar {
-  width: 250px;
+  width: 270px;
   height: calc(100vh - 60px);
   position: fixed;
   left: 0;
   top: 60px;
   z-index: 999;
-  background-color: #007bff;
+  background-color: #5b7cfd;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   overflow-x: hidden;
@@ -114,4 +114,7 @@
 } */
 .accordion-button::after {
   filter: invert(1); /* Makes black arrow white */
+}
+.text-center{
+  margin-top: 20px !important;
 }

@@ -36,7 +36,8 @@ constructor(
   public otp:string,
   otpExpiryTime:string,
   public firstLogin:string,
-  public roleName:string
+  public roleName:string,
+  public userCheckInTime: string
 ) { }
 }
 export class VerifyOTPDto {

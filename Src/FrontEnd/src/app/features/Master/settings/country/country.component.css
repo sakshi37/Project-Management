@@ -177,4 +177,6 @@
   .btn-success i, .btn-secondary i {
     margin-right: 6px;
   }
-  
+  .is-invalid {
+    border-color: #dc3545;
+  }
