@@ -276,7 +276,6 @@ namespace HR.Persistence.Repositories
             }
         }
 
-
         public async Task<int> ReadCurrentEmpCounter()
         {
             var result = _appDbContext.Counter
