@@ -20,8 +20,8 @@ namespace HR.Application.Features.Cities.Commands.UpdateCity
 
         public UpdateCityCommandHandler(ICityRepository repo, IMapper mapper)
         {
-            _repo = repo;
-            _mapper = mapper;
+                _repo = repo;
+                _mapper = mapper;
         }
 
         public async Task<CityDto> Handle(UpdateCityCommand request, CancellationToken cancellationToken)
