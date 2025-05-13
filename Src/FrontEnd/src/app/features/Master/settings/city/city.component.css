@@ -180,7 +180,15 @@
     margin-right: 6px;
   }
   
+<<<<<<< HEAD
   .is-invalid {
     border-color: #dc3545;
   }
+=======
+
+  .is-invalid {
+    border-color: #dc3545;
+  }
+
+>>>>>>> 5c175288101be26e2a2252c707548fe0f9bf862f
   
