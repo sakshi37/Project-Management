@@ -26,8 +26,13 @@ namespace HR.Persistence
             services.AddScoped<IShiftRepository, ShiftRepository>();
 
             services.AddScoped<IUserGroupRepository, UserGroupRepository>();
+
+            services.AddScoped<IEmployeeTypeRepository, EmployeeTypeRepository>();
+            services.AddScoped<IFamilyRepository, FamilyRepository>();
+
             services.AddScoped<IDivisionRepositry, DivisionRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
+
 
 
 

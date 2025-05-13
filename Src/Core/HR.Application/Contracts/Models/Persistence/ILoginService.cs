@@ -18,7 +18,8 @@ namespace HR.Application.Contracts.Models.Persistence
 
         Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest);
 
-
+        Task InsertLoginAsync(int empId, int createdBy);
 
     }
+
 }
