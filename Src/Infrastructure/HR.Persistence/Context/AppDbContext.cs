@@ -9,11 +9,7 @@ using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Holidays.Commands.Dtos;
-using HR.Application.Features.Location.Query;
-using HR.Application.Features.States.Commands.Dtos;
-using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.Locations.Dtos;
-using HR.Application.Features.Locations.Queries.GetAllLocation;
 using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
@@ -39,7 +35,7 @@ public class AppDbContext : DbContext
     public DbSet<TotalValue> TotalValues { get; set; }
     public DbSet<EmployeeDto> Employees { get; set; }
 
-   // public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
+    // public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
 
     public DbSet<Employee> Tbl_Employee_master { get; set; }
     public DbSet<LocationDto> dtos { get; set; }
@@ -56,7 +52,7 @@ public class AppDbContext : DbContext
     public DbSet<GetAllDivisionDto> GetAllDivisionQueryDtos { get; set; }
     public DbSet<GetAllProjectManagerDto> GetAllProjectManagerDtos { get; set; }
 
-    public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
+    public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
 
 
