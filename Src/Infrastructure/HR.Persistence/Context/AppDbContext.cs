@@ -18,6 +18,9 @@ using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
+using HR.Application.Features.Location.Query;
+using HR.Application.Features.States.Commands.Dtos;
+using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +29,7 @@ public class AppDbContext : DbContext
 
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-    public DbSet<Country> Countries { get; set; }
+
     public DbSet<CountryDto> CountryDtos { get; set; }
     public DbSet<State> States { get; set; }
 
@@ -69,14 +72,15 @@ public class AppDbContext : DbContext
 
 
 
+    public DbSet<Counter> Counter { get; set; }
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
-        modelBuilder.Entity<Country>().ToTable("Tbl_CountryMaster");
-
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
         modelBuilder.Entity<Employee>().ToTable("Tbl_Employee_master");
@@ -93,9 +97,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<BranchDto>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeVm>().HasNoKey();
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
+        modelBuilder.Entity<Counter>().HasNoKey();
 
         modelBuilder.Entity<GetAllDivisionDto>().HasNoKey();
         modelBuilder.Entity<GetAllProjectManagerDto>().HasNoKey();
+
 
 
         modelBuilder.Entity<GetAllShiftsVm>().HasNoKey();
@@ -110,6 +116,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
+
 
 
 
