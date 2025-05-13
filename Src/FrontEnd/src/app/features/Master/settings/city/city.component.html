@@ -1,11 +1,13 @@
 <div class="container mt-4">
   <!-- Add City Button -->
   <div class="text-end mb-3">
-    <button type="button" class="btn custom-add-btn"
-      data-bs-toggle="modal" data-bs-target="#cityModal" (click)="openAddModal()">
+    <button type="button" class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#cityModal"
+      (click)="openAddModal()">
       + Add City
     </button>
   </div>
+
+  <!-- show etries -->
   <div class="entries-dropdown">
     <label for="entries">Show</label>
     <select id="entries" [(ngModel)]="itemsPerPage">
@@ -15,9 +17,9 @@
   </div>
   <div class="mb-3 row">
     <div class="input-group" style="width: 300px;">
-        <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
-        <input type="text" id="search" class="form-control" placeholder="Search City"
-               [(ngModel)]="searchText" (ngModelChange)="filterCities()" style="background-color: transparent;" >
+      <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
+      <input type="text" id="search" class="form-control" placeholder="Search City" [(ngModel)]="searchText"
+        (ngModelChange)="filterCities()" style="background-color: transparent;">
     </div>
   </div>
 
@@ -73,37 +75,54 @@
         </div> -->
         <div class="modal-body">
           <form [formGroup]="cityForm" (ngSubmit)="onSubmit()" class="row g-3">
-            
+
+            <!-- Country -->
             <div class="col-md-12">
-              <label for="countryId" class="form-label"> Country:</label>
+              <label for="countryId" class="form-label">Country:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
-                <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId">
+                <select id="countryId" class="form-select" formControlName="countryId" (change)="onCountryChange()"
+                  [ngClass]="{ 'is-invalid': cityForm.get('countryId')?.touched && cityForm.get('countryId')?.invalid }">
                   <option value="">Select Country</option>
-                  <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}</option>
+                  <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}
+                  </option>
                 </select>
               </div>
+              <div *ngIf="cityForm.get('countryId')?.touched && cityForm.get('countryId')?.invalid" class="text-danger">
+                Country is required.
+              </div>
             </div>
-        
+
+            <!-- State -->
             <div class="col-md-12">
               <label for="stateId" class="form-label">State:</label>
               <div class="input-icon-group">
                 <i class="fas fa-map-marked-alt"></i>
-                <select class="form-select" formControlName="stateId" id="stateId">
+                <select id="stateId" class="form-select" formControlName="stateId"
+                  [ngClass]="{ 'is-invalid': cityForm.get('stateId')?.touched && cityForm.get('stateId')?.invalid }">
                   <option value="">Select State</option>
                   <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
                 </select>
               </div>
+              <div *ngIf="cityForm.get('stateId')?.touched && cityForm.get('stateId')?.invalid" class="text-danger">
+                State is required.
+              </div>
             </div>
-        
+
+            <!-- City Name -->
             <div class="col-md-12">
               <label for="cityName" class="form-label">City Name:</label>
               <div class="input-icon-group">
                 <i class="fas fa-city"></i>
-                <input type="text" class="form-control" formControlName="cityName" id="cityName" />
+                <input type="text" id="cityName" class="form-control" formControlName="cityName"
+                  [ngClass]="{ 'is-invalid': cityForm.get('cityName')?.touched && cityForm.get('cityName')?.invalid }">
+              </div>
+              <div *ngIf="cityForm.get('cityName')?.touched && cityForm.get('cityName')?.invalid" class="text-danger">
+                <div *ngIf="cityForm.get('cityName')?.errors?.['required']">City Name is required.</div>
+                <div *ngIf="cityForm.get('cityName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
               </div>
             </div>
-        
+
             <div class="col-md-12">
               <label for="cityStatus" class="form-label"> Status:</label>
               <div class="input-icon-group">
@@ -114,7 +133,7 @@
                 </select>
               </div>
             </div>
-        
+
             <div class="col-12 d-flex justify-content-end">
               <button type="submit" class="btn btn-success" data-bs-dismiss="modal">
                 <i class="fas fa-check-circle"></i> {{ isEditMode ? 'Update' : 'Add' }}
@@ -125,7 +144,7 @@
             </div>
           </form>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -147,40 +166,55 @@
           </thead> -->
           <thead>
             <tr>
-              <th><div class="head-first">Sr. No</div></th>
+              <th>
+                <div class="head-first">Sr. No</div>
+              </th>
               <th (click)="sortCities('cityName')">
-                <div class="head-other sortable">City Name  <i class="fas" [ngClass]="getSortIcon('cityName')"></i></div>
+                <div class="head-other sortable">City Name <i class="fas" [ngClass]="getSortIcon('cityName')"></i></div>
               </th>
               <th (click)="sortCities('stateName')">
-                <div class="head-other sortable">State  <i class="fas" [ngClass]="getSortIcon('stateName')"></i></div>
+                <div class="head-other sortable">State <i class="fas" [ngClass]="getSortIcon('stateName')"></i></div>
               </th>
               <th (click)="sortCities('countryName')">
-                <div class="head-other sortable">Country  <i class="fas" [ngClass]="getSortIcon('countryName')"></i></div>
+                <div class="head-other sortable">Country <i class="fas" [ngClass]="getSortIcon('countryName')"></i>
+                </div>
               </th>
               <th (click)="sortCities('cityStatus')">
                 <div class="head-other sortable">Status</div>
               </th>
-              <th><div class="head-last">Action</div></th>
+              <th>
+                <div class="head-last">Action</div>
+              </th>
             </tr>
           </thead>
-          
+
           <tbody>
-            <tr *ngFor="let city of filteredCities | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i" [ngClass]="{ 'inactive-row': !city.cityStatus }">
-              <td><div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
-              <td><div class="tr-other-child">{{ city.cityName }}</div></td>
-              <td><div class="tr-other-child">{{ city.stateName }}</div></td>
-              <td><div class="tr-other-child">{{ city.countryName }}</div></td>
+            <tr
+              *ngFor="let city of filteredCities | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
+              [ngClass]="{ 'inactive-row': !city.cityStatus }">
+              <td>
+                <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ city.cityName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ city.stateName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ city.countryName }}</div>
+              </td>
               <td>
                 <div class="tr-other-child">
-                  <span class="badge status-badge"
-                    [ngClass]="city.cityStatus ? 'active' : 'inactive'">
+                  <span class="badge status-badge" [ngClass]="city.cityStatus ? 'active' : 'inactive'">
                     {{ city.cityStatus ? 'Active' : 'Inactive' }}
                   </span>
                 </div>
               </td>
               <td>
                 <div class="tr-last-child">
-                  <button class="btn btn-sm edit-btn" (click)="onEdit(city)" data-bs-toggle="modal" data-bs-target="#cityModal">
+                  <button class="btn btn-sm edit-btn" (click)="onEdit(city)" data-bs-toggle="modal"
+                    data-bs-target="#cityModal">
                     <i class="fas fa-edit"></i> Edit
                   </button>
                 </div>

@@ -59,7 +59,9 @@ namespace HR.Identity.Services
                     Otp = otp,
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
                     FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName
+                    RoleName = user.RoleName,
+                    UserCheckInTime = DateTime.Now
+
                     //EmpId = user.fk_EmpId
                 };
 
@@ -73,7 +75,9 @@ namespace HR.Identity.Services
                     Email = user.Email,
                     UserName = user.UserName,
                     FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName
+                    RoleName = user.RoleName,
+                    UserCheckInTime = DateTime.Now
+
                     //Otp = null,
                     //OtpExpiryTime = DateTime.Now.
                 };
