@@ -86,42 +86,43 @@
     <h4 class="mb-3">Add GMC Details - Family</h4>
     <hr class="my-3">
     <form (ngSubmit)="saveFamilyDetails()" #famForm="ngForm">
-   
- 
-
-    <div class="row g-3">
-      <div class="col-md-6">
-        <label>Family Member</label>
-        <select class="form-control" [(ngModel)]="family.member" name="familyMember">
-          <option value="">Select</option>
-          <option *ngFor="let type of familyTypes" [value]="type">{{ type }}</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label>Name</label>
-        <input type="text" class="form-control" [(ngModel)]="family.name" name="familyName">
-      </div>
-
-      <div class="col-md-6">
-        <label>Birth Date</label>
-        <input type="date" class="form-control" [(ngModel)]="family.birthDate" name="familyBirthDate">
-      </div>
-      <div class="col-md-6">
-        <label>Age</label>
-        <input type="number" class="form-control" [(ngModel)]="family.age" name="familyAge">
-      </div>
-
-      <div class="col-md-6">
-        <label>Relation With Employee</label>
-        <input type="text" class="form-control" [(ngModel)]="family.relation" name="relation">
-      </div>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label>Family Member</label>
+      <select class="form-control" [(ngModel)]="family.fk_FamilyMemberTypeId" name="familyMemberId">
+        <option value="">Select</option>
+        <option *ngFor="let type of familyTypes" [value]="type.id">{{ type.label }}</option>
+      </select>
     </div>
 
-    <div class="mt-4">
-      <button class="btn btn-success" type="submit">Save Family Details</button>
+    <div class="col-md-6">
+      <label>Name</label>
+      <input type="text" class="form-control" [(ngModel)]="family.familyMemberName" name="familyName">
     </div>
+
+    <div class="col-md-6">
+      <label>Birth Date</label>
+      <input type="date" class="form-control" [(ngModel)]="family.birthDate" name="birthDate">
+    </div>
+
+    <div class="col-md-6">
+      <label>Age</label>
+      <input type="number" class="form-control" [(ngModel)]="family.age" name="age">
+    </div>
+
+    <div class="col-md-6">
+      <label>Relation With Employee</label>
+      <input type="text" class="form-control" [(ngModel)]="family.relationWithEmployee" name="relationWithEmployee">
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <button type="submit" class="btn btn-success">Save Family Details</button>
+  </div>
+</form>
+
      
-    </form>
+    
 
     <!-- FAMILY LIST TABLE -->
     <div class="mt-5">
@@ -140,11 +141,13 @@
         <tbody>
           <tr *ngFor="let member of familyList; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ member.member }}</td>
-            <td>{{ member.name }}</td>
+            <td>{{ member.familyMemberName }}</td>
+             <td>{{ member.age }}</td>
+             <td>{{ member.relationWithEmployee }}</td>
+
             <td>{{ member.birthDate }}</td>
-            <td>{{ member.age }}</td>
-            <td>{{ member.relation }}</td>
+            
+            
           </tr>
         </tbody>
       </table>

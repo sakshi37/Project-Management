@@ -7,6 +7,7 @@ using HR.Application.Features.Employees.Commands.UpdateEmployee;
 
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.LoginMaster.Commands.InsertLogin;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -111,10 +112,12 @@ namespace HR.API.Controllers
                 return Ok("Employee updated successfully");
             }
 
+
             Console.WriteLine($"[WARN] Update failed for {dto.Code}");
             return BadRequest("Failed to update employee");
 
 
         }
+       
     }
 }

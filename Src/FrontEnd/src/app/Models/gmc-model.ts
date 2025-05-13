@@ -15,11 +15,11 @@ export interface Employee {
     
   }
   
-  export interface FamilyMember {
-    member: string;
-    name: string;
-    birthDate: string;
-    age: number | null;
-    relation: string;
-  }
-  
+ export interface FamilyMemberForm {
+  member: string;              // dropdown value like "Father"
+  name: string;                // actual name input
+  birthDate: string;           // input type="date" gives string
+  age: number | null;
+  relation: string;
+  familyStatus: boolean;
+}
