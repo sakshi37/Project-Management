@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import autoTable from 'jspdf-autotable';
-
 import {
   FormBuilder,
   FormGroup,
@@ -11,10 +9,13 @@ import {
 import { CommonModule } from '@angular/common';
 import { CreateModel } from '../../../../Models/create-model';
 import { EmployeeService } from '../../../../services/employee-service';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import Swal from 'sweetalert2';
+import { Router, RouterLink, RouterModule } from '@angular/router';
+import { CountryService } from '../../../../services/country.service.service';
+import { StateService } from '../../../../services/state.service';
+import { CityComponent } from '../../settings/city/city.component';
+import { CityService } from '../../../../services/city.service';
 
 @Component({
   selector: 'app-employee',
@@ -26,62 +27,109 @@ import { HttpErrorResponse } from '@angular/common/http';
     ReactiveFormsModule,
     FormsModule,
     RouterLink,
-    FormsModule,
+    RouterModule,
   ],
 })
 export class EmployeeRegistrationComponent implements OnInit {
   employeeForm!: FormGroup;
-  employees: CreateModel[] = [];
   locations: { id: number; name: string }[] = [];
+  countries: { id: number; name: string }[] = [];
+  states: { id: number; name: string; countryId: number }[] = [];
+  cities: { id: number; name: string }[] = [];
   selectedImage: string | null = null;
   selectedSignature: string | null = null;
-  isDisable: boolean = true;
+  filteredStates: { id: number; name: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private countryService: CountryService,
+    private stateService: StateService,
+    private cityService: CityService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.getLocation();
-  }
+    this.getState();
+    this.getCountry();
+    this.getCity();
 
-  generateEmployeeCode(): string {
-    const now = new Date();
-    const yearMonth = now.getFullYear().toString().slice(-2);
-    const random = Math.floor(100 + Math.random() * 900);
-    return `EMP${yearMonth}${random}`;
+    // Trigger filtering of states when CountryId changes
+    this.employeeForm.get('CountryId')?.valueChanges.subscribe((countryId) => {
+      this.filterStates(countryId); // Update filtered states based on countryId
+    });
   }
 
   getLocation() {
     this.employeeService.getAllLocation().subscribe({
       next: (data) => {
-        const transeformdata = data.map((m) => {
-          const id = m.locationId;
-          console.log(id);
-
-          const name = m.locationName;
-          console.log(name);
-          return { id: id, name: name };
-        });
-        console.log(transeformdata);
-        this.locations = transeformdata;
+        this.locations = data.map((m) => ({
+          id: m.locationId,
+          name: m.locationName,
+        }));
       },
+      error: (e) => console.log(e),
+    });
+  }
 
-      error: (e) => {
-        console.log(e);
+  getState() {
+    this.stateService.getAllStates().subscribe({
+      next: (data) => {
+        this.states = data.map((state) => ({
+          id: state.stateId,
+          name: state.stateName,
+          countryId: state.countryId,
+        }));
+        this.filterStates(this.employeeForm.get('CountryId')?.value);
+      },
+      error: (err) => console.error('Error fetching states:', err),
+    });
+  }
+
+  getCity() {
+    this.cityService.getAllCities().subscribe({
+      next: (data) => {
+        this.cities = data.map((city) => ({
+          id: city.cityId,
+          name: city.cityName,
+        }));
+      },
+    });
+  }
+  getCountry() {
+    this.countryService.getAllCountries().subscribe({
+      next: (data) => {
+        this.countries = data.map((country) => ({
+          id: country.countryId,
+          name: country.countryName,
+        }));
       },
     });
   }
 
+  filterStates(countryId: number): void {
+    this.filteredStates = this.states.filter(
+      (state) => state.countryId === countryId
+    );
+  }
+
   initForm(): void {
     this.employeeForm = this.fb.group({
-      name: ['', Validators.required],
-      code: [this.generateEmployeeCode()],
-      address: ['', Validators.required],
-      mobileNo: ['', Validators.required],
-      skypeId: [''],
+      name: ['', Validators.required, Validators.pattern('^[a-zA-Z ]+$')],
+      code: [''],
+      address: ['Vikroli (w)', Validators.required],
+      mobileNo: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]{10}$'),
+          Validators.minLength(10),
+          Validators.maxLength(10),
+        ],
+      ],
+      skypeId: ['dgcgdecfy'],
       email: ['', [Validators.required, Validators.email]],
       joinDate: ['', Validators.required],
       bccEmail: [''],
@@ -90,24 +138,29 @@ export class EmployeeRegistrationComponent implements OnInit {
       image: [''],
       signature: [''],
       loginStatus: [],
-
-      locationId: [0],
-      designationId: [1],
+      locationId: [1],
+      designationId: [2],
       shiftId: [1],
       employeeTypeId: [1],
       usergroupId: [1],
       branchId: [1],
       divisionId: [1],
+      CountryId: [1],
+      StateId: [1],
+      CityId: [1],
+      GenderId: [1],
     });
   }
 
   resetForm(): void {
     this.employeeForm.reset({
-      code: this.generateEmployeeCode(),
-      loginStatus: true,
+      loginStatus: false,
       leftCompany: false,
       leaveCompany: false,
     });
+    this.selectedImage = null;
+    this.selectedSignature = null;
+    this.filteredStates = [];
   }
 
   onSubmit(): void {
@@ -118,22 +171,13 @@ export class EmployeeRegistrationComponent implements OnInit {
 
     const emp: CreateModel = {
       ...this.employeeForm.value,
-
       locationId: parseInt(this.employeeForm.value.locationId),
       birthDate: this.formatDate(this.employeeForm.value.birthDate),
       joinDate: this.formatDate(this.employeeForm.value.joinDate),
-      // image: this.employeeForm.value.image?.replace(/['"]/g, '').trim() || null,
-      // signature:
-      //   this.employeeForm.value.signature?.replace(/['"]/g, '').trim() || null,
-      image: this.selectedImage || null, // or the file path if you're saving the image path
+      image: this.selectedImage || null,
       signature: this.selectedSignature || null,
     };
 
-    // if (emp.leftCompany && !emp.leaveCompany) {
-    //   emp.leaveCompany = new Date();
-    // }
-
-    console.log(emp);
     this.employeeService.createEmployee(emp).subscribe({
       next: () => {
         this.resetForm();
@@ -141,13 +185,13 @@ export class EmployeeRegistrationComponent implements OnInit {
           icon: 'success',
           title: 'Success!',
           text: 'Employee created successfully!',
+
           confirmButtonColor: '#3085d6',
         });
+        this.router.navigate(['/employee']);
       },
       error: (err) => {
         console.error('Error creating employee:', err);
-        console.log(err);
-
         let errorMsg = 'Failed to create employee. Please try again.';
         if (err instanceof HttpErrorResponse && typeof err.error === 'string') {
           errorMsg = err.error;
@@ -167,64 +211,19 @@ export class EmployeeRegistrationComponent implements OnInit {
     return newDate.toISOString().split('T')[0];
   }
 
-  // loadCountries(): void {
-  //   this.countryService.getAllCountries().subscribe(res => this.countries = res);
-  // }
-
-  // loadStates(): void {
-  //   this.stateService.getAllStates().subscribe(res => {
-  //     this.states = res;
-  //     // console.log('States:', this.states);
-
-  //   });
-  // }
-
-  // getCountries(): void {
-  //   this.countryService.getAllCountries().subscribe({
-  //     next: (countries: GetCountryDto[]) => {
-  //       this.countries = countries;
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching countries:', err);
-  //     }
-  //   });
-  // }
-
-  // loadCountries(): void {
-  //   this.countryService.getAllCountries().subscribe(res => this.countries = res);
-  // }
-
-  // loadStates(): void {
-  //   this.stateService.getAllStates().subscribe(res => {
-  //     this.states = res;
-  //     // console.log('States:', this.states);
-  //     this.filterStates();
-  //   });
-  // }
-
-  // loadCities(): void {
-  //   this.cityService.getAllCities().subscribe(res => this.cities = res);
-  // }
-
   onFileChange(event: any, field: 'image' | 'signature'): void {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-
       reader.readAsDataURL(file);
       reader.onload = () => {
-        const base64String = (reader.result as string).split(',')[1]; // Extract only the Base64 part
-
+        const base64String = (reader.result as string).split(',')[1];
         if (field === 'image') {
           this.selectedImage = base64String;
-          this.employeeForm.patchValue({
-            image: this.selectedImage,
-          });
+          this.employeeForm.patchValue({ image: this.selectedImage });
         } else if (field === 'signature') {
           this.selectedSignature = base64String;
-          this.employeeForm.patchValue({
-            signature: this.selectedSignature,
-          });
+          this.employeeForm.patchValue({ signature: this.selectedSignature });
         }
       };
     }

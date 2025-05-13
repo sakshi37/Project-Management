@@ -20,5 +20,13 @@ namespace HR.Application.Contracts.Persistence
         Task<EmployeeDto> GetEmaployeeByEmail(string email);
         Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto);
 
+        Task<int> ReadCurrentEmpCounter();
+
+
+
+        Task IncrCurrentEmpCounter();
+
+
+
     }
 }

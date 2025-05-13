@@ -28,6 +28,7 @@ BEGIN
 
     INSERT INTO Tbl_CountryMaster (CountryName, CountryCode, CountryStatus, CreatedBy, CreatedDate)
     VALUES (@CountryName, @CountryCode, 1, @CreatedBy, GETDATE());
+
 END
 GO
 

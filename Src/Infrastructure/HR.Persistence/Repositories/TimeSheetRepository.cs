@@ -43,13 +43,18 @@ namespace HR.Persistence.Repositories
         }
 
 
-
         public async Task<List<GetAllTimeSheetListDto>> GetAllTimeSheetList()
         {
             return await _DbContext.timeSheetListDtos.FromSqlRaw("EXEC SP_TimeSheetGetAll").ToListAsync();
         }
 
+        public async Task punchIn(int empId, DateTime startDateTime)
 
+        {
+            string sql = "EXEC dbo.SP_AttendanceInsert  @Fk_EmpId={0}, @StartDate={1}";
+            await _DbContext.Database.ExecuteSqlRawAsync(sql, empId, startDateTime);
+
+        }
 
     }
 }
