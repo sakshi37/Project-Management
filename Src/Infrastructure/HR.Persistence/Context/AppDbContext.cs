@@ -8,6 +8,8 @@ using HR.Application.Features.Divisions.Query.GetProjectManager;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.EmployeeType.Queries.GetAllEmployeeType;
+using HR.Application.Features.Family.Queries.GetAllFamilyType;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Locations.Dtos;
 using HR.Application.Features.Locations.Queries.GetAllLocation;
@@ -57,6 +59,11 @@ public class AppDbContext : DbContext
 
     public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
+    public DbSet<GetAllEmployeeTypeQueryVm>GetAllEmployeeTypeQueryVms { get; set; }
+    public DbSet<Tbl_Login> Tbl_Login { get; set; }
+    public DbSet<Employee> Tbl_Employee_master { get; set; }
+    public DbSet<GetAllFamilyMemberTypeQueryVm> GetAllFamilyTypeMemberVms { get; set; }
+
 
 
     public DbSet<Counter> Counter { get; set; }
@@ -93,6 +100,13 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<GetAllShiftsVm>().HasNoKey();
         modelBuilder.Entity<GetAllUserGroupQueryVm>().HasNoKey();
+        modelBuilder.Entity<GetAllEmployeeTypeQueryVm>().HasNoKey();
+        modelBuilder.Entity<GetAllFamilyMemberTypeQueryVm>().HasNoKey();
+
+        modelBuilder.Entity<Tbl_Login>().ToTable("Tbl_Login");
+
+        modelBuilder.Entity<Tbl_Login>().HasKey(l => l.pk_LoginId);
+
 
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
