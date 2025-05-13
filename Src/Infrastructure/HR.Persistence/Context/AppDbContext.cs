@@ -36,10 +36,10 @@ public class AppDbContext : DbContext
     public DbSet<TotalValue> TotalValues { get; set; }
     public DbSet<EmployeeDto> Employees { get; set; }
 
-    //public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
+   // public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
 
     public DbSet<Employee> Tbl_Employee_master { get; set; }
-    public DbSet<GetAllLocationDto> dtos { get; set; }
+    public DbSet<LocationDto> dtos { get; set; }
 
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
