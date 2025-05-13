@@ -101,7 +101,7 @@ if (response.firstLogin) {
         
         // alert("Invalid email or password. Please try again");
         Swal.fire('Login Failed', 'Invalid email or password. Please try again.', 'error');
-        OkButtonColor: '#28a745';
+        OkButtonColor: '#28a745'; 
         this.isLoggingIn = false;
       }
     });
