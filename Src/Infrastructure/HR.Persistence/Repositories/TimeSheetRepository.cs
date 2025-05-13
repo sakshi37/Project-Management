@@ -48,7 +48,7 @@ namespace HR.Persistence.Repositories
             return await _DbContext.timeSheetListDtos.FromSqlRaw("EXEC SP_TimeSheetGetAll").ToListAsync();
         }
 
-        public async Task punchIn(int empId, DateTime startDateTime)
+        public async Task PunchIn(int empId, DateTime startDateTime)
 
         {
             string sql = "EXEC dbo.SP_AttendanceInsert  @Fk_EmpId={0}, @StartDate={1}";
@@ -56,18 +56,26 @@ namespace HR.Persistence.Repositories
 
         }
 
-        public async Task<Attendance> CheckOpenPunchIn(int empId)
+        public async Task<Attendance> GetCurrentSession(int empId)
         {
-            string sql = "EXEC dbo.SP_CheckOpenPunchIn @FK_EmpId={0}";
+            string sql = "EXEC dbo.SP_GetCurrentSession @FK_EmpId={0}";
 
             var openPunchIn = await _DbContext.attendance
                 .FromSqlRaw(sql, empId)
-                .FirstOrDefaultAsync();
+                .AsNoTracking()
+                .ToListAsync();
 
-            return openPunchIn;
+            return openPunchIn.FirstOrDefault();
         }
+
+        public async Task PunchOut(int empId, DateTime endDateTime)
+        {
+            string sql = "EXEC  dbo.SP_AttendanceUpdate @Fk_EmpId={0}, @EndDate={1}";
+            await _DbContext.Database.ExecuteSqlRawAsync(sql, empId, endDateTime);
+        }
+
 
     }
 }
-}
+
 
