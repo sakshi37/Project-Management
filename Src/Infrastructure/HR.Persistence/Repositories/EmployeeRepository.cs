@@ -189,8 +189,6 @@ namespace HR.Persistence.Repositories
         }
 
 
-
-
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
             Console.WriteLine($"[DEBUG] Starting UpdateEmployeeAsync for Code: {dto.Code}");
@@ -203,6 +201,7 @@ namespace HR.Persistence.Repositories
             {
                 try
                 {
+
                     string base64Data = dto.Image.Split(',')[1];
                     imageBytes = Convert.FromBase64String(base64Data);
                 }

@@ -67,6 +67,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('email', response.email);
         localStorage.setItem('userName', response.userName);
         localStorage.setItem('checkFirstLogin', response.firstLogin);
+
         localStorage.setItem('roleName', response.roleName);
         localStorage.setItem('userCheckInTime', response.userCheckInTime);
 

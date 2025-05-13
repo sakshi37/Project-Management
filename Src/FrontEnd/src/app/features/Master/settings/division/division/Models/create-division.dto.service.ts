@@ -5,6 +5,6 @@ export interface CreateDivisionDto {
   manHours:number;
   fk_HolidayId:number;
   divisionStatus:boolean;
-  createdBy: number;
+  createdBy: string;
 }
 
