@@ -18,10 +18,15 @@ namespace HR.Application.Features.TeamCompositions.Queries.GetAllTeamComposition
 
         }
 
+        //public async Task<List<TeamCompositionDto>> Handle(GetAllTeamCompositionQuery request, CancellationToken cancellationToken)
+        //{
+        //    return await _repo.GetAllAsync();
+        //}
         public async Task<List<TeamCompositionDto>> Handle(GetAllTeamCompositionQuery request, CancellationToken cancellationToken)
         {
-            return await _repo.GetAllAsync();
+            return await _repo.GetAllAsync(request.BranchId, request.DivisionId);
         }
+
     }
 
 }

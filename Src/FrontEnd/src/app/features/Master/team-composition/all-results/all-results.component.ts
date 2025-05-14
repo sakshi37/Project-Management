@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { GetTeamCompositionDto } from '../Models/get-team-composition.dto';
 import { TeamCompositionService } from '../../../../services/team-composition.service';
 import { FormsModule } from '@angular/forms';
@@ -12,18 +12,5 @@ import { CommonModule } from '@angular/common';
   styleUrl: './all-results.component.css'
 })
 export class AllResultsComponent {
-  teamCompositions: GetTeamCompositionDto[] = [];
-
-  constructor(private teamService: TeamCompositionService) { }
-
-  ngOnInit(): void {
-    this.loadTeamCompositions();
-  }
-
-  loadTeamCompositions(): void {
-    this.teamService.getAllTeamCompositions().subscribe({
-      next: (data) => this.teamCompositions = data,
-      error: (err) => console.error('Error loading teams', err)
-    });
-  }
+  @Input() teamCompositions: GetTeamCompositionDto[] = [];
 }

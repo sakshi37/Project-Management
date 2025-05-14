@@ -8,6 +8,8 @@ using MediatR;
 
 namespace HR.Application.Features.TeamCompositions.Queries.GetAllTeamCompositions
 {
-    public record GetAllTeamCompositionQuery : IRequest<List<TeamCompositionDto>>;
+    //public record GetAllTeamCompositionQuery : IRequest<List<TeamCompositionDto>>;
+    public record GetAllTeamCompositionQuery(int? BranchId, int? DivisionId) : IRequest<List<TeamCompositionDto>>;
+
 
 }

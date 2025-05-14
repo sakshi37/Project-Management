@@ -14,6 +14,18 @@ import { TopBarComponent } from './top-bar/top-bar.component';
   styleUrl: './team-composition.component.css'
 })
 export class TeamCompositionComponent {
-  
+  teamCompositions: GetTeamCompositionDto[] = [];
 
+  constructor(private teamService: TeamCompositionService) { }
+
+  ngOnInit(): void {
+    this.loadTeamCompositions();
+  }
+  
+  loadTeamCompositions(): void {
+    this.teamService.getAllTeamCompositions(undefined,undefined).subscribe({
+      next: (data) => this.teamCompositions = data,
+      error: (err) => console.error('Error loading teams', err)
+    });
+  }
 }
