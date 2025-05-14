@@ -1,7 +1,40 @@
-/* .bg-light-gray {
-    background-color: #cccccc !important;
-  } */
 
+  .pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    /* padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 8px; */
+  }
+  .form-select{
+    background-color: transparent !important;
+    border: 1px solid #ccc !important;
+
+  }
+  .form-control{
+    background-color: transparent !important;
+    border: 1px solid #ccc !important;
+  }
+  .entries-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    margin-left: 55px;
+    font-weight: bold;
+
+  }
+  .entries-dropdown select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+  }
+  
   table {
     width: 100%;
     height: 100%;
@@ -11,7 +44,6 @@
   table,td,th {
     text-align: center;
     padding: .5rem 0;
-    max-height: 40px !important;
   }
   .head-first,.head-last,.head-other{
     width: 100% !important;
@@ -47,7 +79,6 @@
   tr:hover > td > div{
     transition: all 0.3s ease;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
   /* td:first-child(), th:first-child() {
     border-top-left-radius: 2rem !important;
@@ -91,8 +122,6 @@
   .custom-add-btn{
     background-color: #5b7cfd;
     color: white;
-    margin-right: 50px;
-
   }
   .custom-add-btn:hover{
     box-shadow: #555 0px 0px 10px;
@@ -106,32 +135,7 @@
     margin-left: 40px;
     margin-right: 40px;
   }
-  .entries-dropdown {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    font-size: 14px;
-    margin-left: 55px;
-    font-weight: bold;
-
-  }
-  .entries-dropdown select {
-    padding: 4px 8px;
-    border-radius: 4px;
-    background-color: transparent;
-    border: 1px solid #ccc;
-  }
-  .pagination-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 30px;
-    /* padding: 10px;
-    background-color: #f9f9f9;
-    border-top: 1px solid #e0e0e0;
-    border-radius: 8px; */
-  }
+  
 
   .modal-header{
     background-color: #5b7cfd !important;
@@ -180,4 +184,16 @@
   .btn-success i, .btn-secondary i {
     margin-right: 6px;
   }
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  /* tr.past-holiday {
+    background-color: #f2f2f2;
+    color: gray;
+  } */
+  .past-holiday td > div {
+    background-color: #dfdfdf !important; 
+    color: #817070 !important;            /* Dark red text */
+  }
+  
   
