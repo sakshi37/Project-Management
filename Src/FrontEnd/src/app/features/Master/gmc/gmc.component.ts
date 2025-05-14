@@ -1,87 +1,91 @@
 import { Component, OnInit } from '@angular/core';
-import { Employee, FamilyMember } from '../../../Models/gmc-model';
 import { GmcService } from '../../../services/gmc-service';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { FamilyMember } from '../../../Models/family-member-dto';
+import { Employee } from '../../../Models/gmc-model';
+import { FamilyMemberForm } from '../../../Models/gmc-model';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-gmc',
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './gmc.component.html',
-  
-  styleUrls: ['./gmc.component.css']
+  styleUrls: ['./gmc.component.css'],
 })
 export class GmcComponent implements OnInit {
   employee: Employee = {
-    name: 'Vaishnavi', //read only
-    code: '6189', //read only
-    designation: 'HOD IT', //read only
+    name: '',
+    code: '',
+    address: '',
+    designation: '',
     gender: '',
     pan: '',
     joinDate: '',
     birthDate: '',
     email: '',
-    age: null,
+    age: 0,
     emergencyContact: '',
     aadhar: '',
-    address: ''
+    // fill with all expected fields
   };
-
   family: FamilyMember = {
-    member: '',
-    name: '',
-    birthDate: '',
-    age: null,
-    relation: ''
+    fk_FamilyMemberTypeId: 0,
+    employeeCode: '',
+    familyMemberName: '',
+    birthDate: new Date(),
+    age: 0,
+    relationWithEmployee: '',
+    familyStatus: true,
   };
 
-  familyTypes: string[] = ['Spouse', 'Mother', 'Father', 'Child', 'Other'];
+  familyTypes: { id: number; label: string }[] = [];
+
   familyList: FamilyMember[] = [];
 
   constructor(private gmcService: GmcService) {}
 
   ngOnInit(): void {
+    const code = localStorage.getItem('userName');
+    if (code) {
+      this.family.employeeCode = code;
+    } else {
+      alert('Employee code is missing in local storage!');
+    }
     this.loadFamilyList();
-  }
-
-  saveEmployeeDetails(): void {
-    this.gmcService.saveEmployeeDetails(this.employee).subscribe({
-      next: (response) => {
-        console.log('Employee details saved:', response);
-        alert('Employee details saved successfully!');
-      },
-      error: (err: any) => {
-        console.error('Failed to save employee details:', err);
-        alert('Failed to save employee details.');
-      }
-    });
+    this.loadFamilyTypes();
   }
 
   saveFamilyDetails(): void {
+    if (!this.family.employeeCode) {
+      alert('Employee code missing.');
+      return;
+    }
+
     this.gmcService.saveFamilyMemberDetails(this.family).subscribe({
-      next: (response) => {
-        console.log('Family member saved:', response);
+      next: (res) => {
+        console.log('Saved:', res);
         this.familyList.push({ ...this.family });
         alert('Family member details saved successfully!');
         this.clearFamilyForm();
       },
-      error: (err: any) => {
-        console.error('Failed to save family member:', err);
+      error: (err) => {
+        console.error('Error saving family member:', err);
         alert('Failed to save family member.');
-      }
+      },
     });
   }
 
   clearFamilyForm(): void {
     this.family = {
-      member: '',
-      name: '',
-      birthDate: '',
-      age: null,
-      relation: ''
+      fk_FamilyMemberTypeId: 0,
+      employeeCode: localStorage.getItem('employeeCode') || '',
+      familyMemberName: '',
+      birthDate: new Date(),
+      age: 0,
+      relationWithEmployee: '',
+      familyStatus: true,
     };
   }
 
@@ -90,9 +94,27 @@ export class GmcComponent implements OnInit {
       next: (data) => {
         this.familyList = data;
       },
-      error: (err: any) => {
-        console.error('Failed to load family list:', err);
-      }
+      error: (err) => {
+        console.error('Error loading list:', err);
+      },
     });
+  }
+  loadFamilyTypes(): void {
+    this.gmcService.getAllFamilyMemberType().subscribe({
+      next: (data) => {
+        this.familyTypes = data.map((type) => ({
+          id: type.familyMemberTypeId,
+          label: type.familyMemberTypeName,
+        }));
+      },
+      error: (err) => {
+        console.error('Error loading family member types:', err);
+        alert('Failed to load family member types.');
+      },
+    });
+  }
+
+  saveEmployeeDetails() {
+    // Your form submission logic here
   }
 }

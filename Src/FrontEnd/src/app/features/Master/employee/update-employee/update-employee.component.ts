@@ -1,18 +1,31 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, FormsModule } from '@angular/forms';
+import { ActivatedRoute,Router } from '@angular/router';
 import { DesignationService } from '../../../../services/designation.service';
 import { GetDesignationDto } from '../../settings/designation/Models/get-designation.dto';
 import { UpdateService } from '../../../../services/update-service';
 import { BranchService } from '../../../../services/branch-service';
 import { Branch } from '../../../../Models/branch-model';
 import { UserGroup } from '../../../../Models/get-user-group-dto';
-import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
+import { Shift } from '../../../../Models/get-shift-dto';
+import { CommonModule } from '@angular/common';
+import { Employee } from '../../../../Models/gmc-model';
+import { EmployeeType } from '../../../../Models/get-employee-type-dto';
+import { GetCityDto } from '../../settings/city/Models/get-city.dto';
+import { CityService } from '../../../../services/city.service';
+import { CityComponent } from '../../settings/city/city.component';
+import { GetCountryDto } from '../../settings/country/Models/get-country.dto';
+import { CountryService } from '../../../../services/country.service.service';
+import { StateService } from '../../../../services/state.service';
+import { GetStateDto } from '../../settings/state/Models/get-state.dto';
+import { NgxPaginationModule } from 'ngx-pagination';
+
+//import { LocationService } from '../../../../services/location.service';
 
 @Component({
   selector: 'app-update-employee',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule  ],
   templateUrl: './update-employee.component.html',
   styleUrl: './update-employee.component.css'
 })
@@ -22,38 +35,57 @@ export class UpdateEmployeeComponent implements OnInit {
   designations: GetDesignationDto[] = [];
   imageBase64: string = '';
   signatureBase64: string = '';
-  locations = [];
-  shifts = [];
-  employeeTypes = [];
+  //locations:GetLocationDto[] =[];
+  shifts : Shift[]=[];
+  employeeTypes :EmployeeType[]=[];
   branches: Branch[] = [];
   divisions = [];
   userGroups: UserGroup[] = [];
+  //divisions: GetDivisionDto[] = [];
+  cities: GetCityDto[] = [];
+  countries: GetCountryDto[] = [];
+  states:GetStateDto[]=[];
+  filteredStates: GetStateDto[] = [];
+  filteredCities: any[] = [];
+
+
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
+    private router: Router,
     private branchService: BranchService,
     private designationService: DesignationService,
-    private updateService: UpdateService
+    private updateService: UpdateService,
+    //private locationService:LocationService,
+    // private divisionService: DivisionService 
+    private cityService:CityService,
+    private countryService:CountryService,
+    private stateService:StateService
   ) {
     this.employeeForm = this.fb.group({
-      mobileNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      skypeId: ['', [Validators.required, Validators.minLength(16), Validators.maxLength(32)]],
-      email: ['', [Validators.required, Validators.email]],
+      address:[''],
+      mobileNo: ['', [ Validators.pattern(/^\d{10}$/)]],
+      skypeId: ['', [Validators.minLength(16), Validators.maxLength(32)]],
+      email: ['', [ Validators.email]],
       bccEmail: ['', [Validators.email]],
-      panNumber: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
-      joinDate: ['', [Validators.required, this.noFutureDateValidator]],
-      birthDate: ['', [Validators.required, this.noFutureDateValidator]],
+      panNumber: ['', [ Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
+      joinDate: ['', [ this.noFutureDateValidator]],
+      birthDate: ['', [ this.noFutureDateValidator]],
+      aadharCardNo: ['', [Validators.pattern(/^\d{12}$/)]],
+      genderId: [''],
+      countryId: [''],
+      stateId: [''],
+      cityId: [''],
       loginStatus: [false],
       leftCompany: [false],
       leaveCompany: ['', [this.noFutureDateValidator]],
-      locationId: [0],
-      designationId: [0],
-      shiftId: [0],
-      employeeTypeId: [0],
-      userGroupId: [0],
-      branchId: [0],
-      divisionId: [0]
+      locationId: [''],
+      designationId: [''],
+      shiftId: [''],
+      employeeTypeId: [''],
+      userGroupId: [''],
+      branchId: [''],
+      divisionId: ['']
     });
   }
 
@@ -64,13 +96,17 @@ export class UpdateEmployeeComponent implements OnInit {
       branches: this.branchService.getBranches(),
       designations: this.designationService.getAllDesignations(),
       userGroups: this.updateService.getAllUserGroups(),
-      // shifts: this.updateService.getShifts(),
-      // employeeTypes: this.updateService.getEmployeeTypes(),
-      // locations: this.updateService.getLocations(),
-    }).subscribe(({ branches, designations, userGroups }) => {
+      shifts: this.updateService.getAllShifts(),
+      employeeTypes: this.updateService.getEmployeeTypes(),
+      cities:this.cityService.getAllCities(),
+      countries:this.countryService.getAllCountries(),
+      states:this.stateService.getAllStates(),
+      // locations: this.locationService.getAllLocations(),
+      //divisions:this.divisionService.getAllDivisions()
+    }).subscribe(({ branches, designations, userGroups,shifts,employeeTypes,cities,countries,states }) => {
       // Filter/map branches
       this.branches = branches
-        .filter(b => b.branchStatus)
+        .filter(b => b.branchStatus==true)
         .map(b => ({
           branchId: b.branchId,
           branchName: b.branchName,
@@ -79,14 +115,25 @@ export class UpdateEmployeeComponent implements OnInit {
           stateName: b.stateName,
           branchStatus: b.branchStatus
         }));
+        this.employeeForm.get('countryId')?.valueChanges.subscribe(() => {
+  this.filterStates();
+});
+this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
+  this.filterCities();
+});
 
       this.designations = designations;
       this.userGroups    = userGroups;
-      // this.shifts = shifts; 
-      // this.employeeTypes = employeeTypes;
+      this.shifts = shifts; 
+      this.employeeTypes = employeeTypes;
       // this.locations = locations;
+      //this.divisions=divisions;
+      this.cities=cities
+      this.countries=countries
+      this.states=states
+      
 
-      // Now that all lists are loaded, patch the form
+      
       if (emp && emp.code) {
         this.selectedEmployeeCode = emp.code;
         this.populateEmployeeForm(emp);
@@ -94,25 +141,8 @@ export class UpdateEmployeeComponent implements OnInit {
         console.warn('No employee data found in navigation state.');
       }
     });
+    
   }
-
-  // loadEmployeeDetails(code: string): void {
-  //   this.http.get<any>('https://localhost:7292/api/Employee/AllEmployees?pageNumber=1&pageSize=1000')
-  //     .subscribe({
-  //       next: (res) => {
-  //         const employee = res.find((emp: any) => emp.code === code);
-  //         console.log('[DEBUG] Employee found:', employee);
-  //         if (employee) {
-  //           this.populateEmployeeForm(employee);
-  //         } else {
-  //           console.error('Employee not found with code:', code);
-  //         }
-  //       },
-  //       error: (err) => {
-  //         console.error('Error fetching employees:', err);
-  //       }
-  //     });
-  // }
 
   populateEmployeeForm(emp: any): void {
     // Simple fields
@@ -150,13 +180,67 @@ export class UpdateEmployeeComponent implements OnInit {
     // etc.
   }
 
-  // ... rest of your component methods ...
+  loadConutries(): void {
+  this.countryService.getAllCountries().subscribe({
+    next: (res) => {
+      this.countries = res.filter(country => country.countryStatus === 1);
+    },
+    error: (err) => console.error('Error loading Countries', err)
+  });
+}
+loadStates(): void {
+  this.stateService.getAllStates().subscribe({
+    next: (res) => {
+      console.log('[DEBUG] Raw state data:', res);
+      this.states = res.filter(state => state.stateStatus === true);
+      this.filterStates(); // call only once after setting this.states
+    },
+    error: (err) => console.error('Error loading States', err)
+  });
+}
 
+ filterStates(): void {
+  const countryId = +this.employeeForm.get('countryId')?.value;
+  console.log('[DEBUG] Selected countryId:', countryId);
+  console.log('[DEBUG] Available states:', this.states);
+
+  this.filteredStates = this.states.filter(
+    state => state.countryId === countryId && state.stateStatus === true
+  );
+
+  console.log('[DEBUG] Filtered states:', this.filteredStates);
+}
+
+
+
+
+   loadCities(): void {
+  this.cityService.getAllCities().subscribe({
+    next: (res) => {
+      this.cities = res.filter(city => city.cityStatus === true);
+    },
+    error: (err) => console.error('Error loading cities', err)
+  });
+}
+filterCities(): void {
+  const stateId = +this.employeeForm.get('stateId')?.value;
+  this.filteredCities = this.cities.filter(c => c.stateId === stateId);
+}
+  loadShifts(): void {
+    this.updateService.getAllShifts().subscribe(data => {
+      this.shifts = data;
+    });
+  }
+  loadEmployeeTypes():void{
+    this.updateService.getEmployeeTypes().subscribe(data=>{
+      this.employeeTypes=data;
+    });
+  }
 
   loadDesignations() {
     this.designationService.getAllDesignations().subscribe({
       next: (res) => {
-        this.designations = res;
+        this.designations = res.filter(designation=>designation.designationStatus===true);
       },
       error: (err) => {
         console.error('Error loading designations:', err);
@@ -195,6 +279,32 @@ export class UpdateEmployeeComponent implements OnInit {
     });
   }
 
+  // loadDivisions():void{
+  //   this.divisionService.getAllDivisions().subscribe({
+  //     next: (res) => {
+  //       this.designations = res.filter(division=>division.divisonStatus===true);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error loading division:', err);
+  //     }
+  //   })
+  // }
+
+//   loadLocations(): void {
+//   this.locationService.getAllLocations().subscribe({
+//     next: (res) => {
+//       // Filter here for locationStatus = 1
+//       this.locations = res.filter((location: any) => location.locationStatus === 1);
+//       console.log("Filtered location array:", this.locations);
+//       this.filterLocations();
+//     },
+//     error: (err) => {
+//       console.log(err);
+//     }
+//   });
+// }
+ 
+
   onImageSelected(event: Event): void {
     const file = (event.target as HTMLInputElement)?.files?.[0];
     if (file) {
@@ -224,50 +334,55 @@ export class UpdateEmployeeComponent implements OnInit {
     return date > new Date() ? { futureDate: true } : null;
   }
 
-  onSubmit() {
-    if (this.selectedEmployeeCode) {
-      const formValues = this.employeeForm.value;
-      const updatedEmployee: any = {
-        code: this.selectedEmployeeCode
-      };
-
-      Object.keys(formValues).forEach(key => {
-        const value = formValues[key];
-        if (
-          value !== null &&
-          value !== '' &&
-          !(typeof value === 'number' && value === 0) &&
-          !(typeof value === 'boolean' && value === false)
-        ) {
-          updatedEmployee[key] = value;
-        }
-      });
-
-      if (this.imageBase64) updatedEmployee.image = this.imageBase64;
-      if (this.signatureBase64) updatedEmployee.signature = this.signatureBase64;
-      updatedEmployee.loginStatus = formValues.loginStatus === true || formValues.loginStatus === 'true';
-
-      console.log('Payload:', updatedEmployee);
-
-      this.updateService.updateEmployee(updatedEmployee).subscribe({
-        next: (res) => {
-          console.log('Employee updated successfully', res);
-          alert('Employee updated successfully');
-        },
-        error: (err) => {
-          console.error('Error updating employee:', err);
-          if (err.error && err.error.errors) {
-            console.error('Validation errors:', err.error.errors);
-          }
-          alert('Failed to update employee');
-        }
-      });
-    } else {
-      alert('Please select an employee to update.');
-    }
+ onSubmit() {
+  if (this.employeeForm.invalid) {
+    this.employeeForm.markAllAsTouched();
+    return;
   }
 
+  if (this.selectedEmployeeCode) {
+    const formValues = this.employeeForm.value;
+    const updatedEmployee: any = {
+      code: this.selectedEmployeeCode
+    };
+
+    Object.keys(formValues).forEach(key => {
+      const value = formValues[key];
+      if (
+        value !== null &&
+        value !== '' &&
+        !(typeof value === 'number' && value === 0) &&
+        !(typeof value === 'boolean' && value === false)
+      ) {
+        updatedEmployee[key] = value;
+      }
+    });
+
+    // Attach base64 image and signature if selected
+    if (this.imageBase64) updatedEmployee.image = this.imageBase64;
+    if (this.signatureBase64) updatedEmployee.signature = this.signatureBase64;
+
+    // Ensure boolean fields are explicitly set (since false might be filtered out above)
+    updatedEmployee.loginStatus = formValues.loginStatus;
+    updatedEmployee.leftCompany = formValues.leftCompany;
+
+    // Submit the update (assuming updateService has updateEmployee method)
+    this.updateService.updateEmployee(updatedEmployee).subscribe({
+      next: () => {
+        alert('Employee details updated successfully.');
+        this.router.navigate(['/employee']); // adjust route as needed
+      },
+      error: (err) => {
+        console.error('Update failed:', err);
+        alert('Failed to update employee. Please try again.');
+      }
+    });
+  }
+}
+
+
   cancel() {
-    // Implement navigation or form reset logic if needed
+   this.employeeForm.reset();
+  this.router.navigate(['/employee']); 
   }
 }

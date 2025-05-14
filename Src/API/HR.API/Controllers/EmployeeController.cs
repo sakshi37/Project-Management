@@ -111,10 +111,12 @@ namespace HR.API.Controllers
                 return Ok("Employee updated successfully");
             }
 
+
             Console.WriteLine($"[WARN] Update failed for {dto.Code}");
             return BadRequest("Failed to update employee");
 
 
         }
+
     }
 }
