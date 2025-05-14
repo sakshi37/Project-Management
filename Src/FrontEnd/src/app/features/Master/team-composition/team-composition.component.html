@@ -52,7 +52,7 @@
               <div class="col-md-12">
                 <label class="form-label">Branch:</label>
                 <select class="form-select" formControlName="fk_BranchId">
-                  <option value="" disabled selected>Select Branch</option>
+                  <option [value] = "" selected>All Branches</option>
                   <option *ngFor="let branch of branches" [value]="branch.branchId">
                     {{ branch.branchName }}
                   </option>
@@ -62,7 +62,8 @@
               <div class="col-md-12">
                 <label class="form-label">Division:</label>
                 <select class="form-select" formControlName="fk_DivisionId">
-                  <option value="" disabled selected>Select Division</option>
+                   <option [value] = "" selected>All Divisions</option>
+
                   <option *ngFor="let division of divisions" [value]="division.divisionId">
                     {{ division.divisionName }}
                   </option>
@@ -76,7 +77,9 @@
               <div class="col-md-12">
                 <label for="teamLeader" class="form-label">Team Leader</label>
                 <select id="teamLeader" class="form-select" formControlName="fk_TeamLeaderId">
-                  <option value="" disabled selected>Select Team Leader</option>
+                   <option [value] = "" selected>All TeamLeaders</option>
+
+                  <!-- <option value="" disabled selected>Select Team Leader</option> -->
                   <!-- <option [value]="''" selected>All</option> -->
                   <option *ngFor="let leader of teamLeaders" [value]="leader.id">
                     {{ leader.name }}
