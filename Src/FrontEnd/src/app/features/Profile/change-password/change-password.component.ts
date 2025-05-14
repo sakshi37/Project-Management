@@ -1,52 +1,9 @@
-// import { Component } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
-// import { CommonModule } from '@angular/common';
-
-// @Component({
-//   selector: 'app-change-password',
-//   imports: [ FormsModule,CommonModule],
-//   templateUrl: './change-password.component.html',
-//   styleUrl: './change-password.component.css'
-// })
-// export class ChangePasswordComponent {
-//   passwordData = {
-//     oldPassword: '',
-//     newPassword: '',
-//     confirmPassword: ''
-//   };
-//   //password show
- 
-//     showOldPassword = false;
-//     showNewPassword = false;
-//     showConfirmPassword = false;
-//   onChangePassword() {
-//     if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-//       alert("New passwords do not match.");
-//       return;
-//     }
-   
-//     console.log("Password change request submitted:", this.passwordData);
-//     alert("Password changed successfully (demo only).");
-  
-//     // Optionally reset the form
-//     this.passwordData = {
-//       oldPassword: '',
-//       newPassword: '',
-//       confirmPassword: ''
-//     };
-//   }
-// }
-
-//=======================================================================================================
-
 import { Component } from '@angular/core';
-// import { NgForm } from '@angular/forms';
-import { UserService } from '../../../services/user.service';  
-// import {   } from '@angular/forms';
+import { UserService } from '../../../services/user.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-change-password',
@@ -60,26 +17,35 @@ export class ChangePasswordComponent {
     newPassword: '',
     confirmPassword: ''
   };
- 
 
   showOldPassword = true;
   showNewPassword = true;
   showConfirmPassword = true;
- 
+
   constructor(private userService: UserService) {}
 
-  togglePasswordVisibility() {
+  toggleOldPasswordVisibility() {
     this.showOldPassword = !this.showOldPassword;
+  }
+
+  toggleNewPasswordVisibility() {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   onChangePassword(form: NgForm) {
     if (!form.valid) {
-      alert('Please fill in all fields.');
+      // alert('Please fill in all fields.');
+      Swal.fire('Validation Error', 'Please fill in all fields.', 'warning');
       return;
     }
 
     if (this.passwordModel.newPassword !== this.passwordModel.confirmPassword) {
-      alert('New passwords do not match.');
+      // alert('New passwords do not match.');
+      Swal.fire('Mismatch', 'New passwords do not match.', 'error');
       return;
     }
 
@@ -89,23 +55,24 @@ export class ChangePasswordComponent {
       newPassword: this.passwordModel.newPassword,
       confirmPassword: this.passwordModel.confirmPassword
     };
+
     console.log(requestData);
-    
+
     this.userService.updatePasswords(requestData).subscribe({
-      next:(res:string) => {
-        alert('Password updated successfully!');
+      next: (res: string) => {
+        // alert('Password updated successfully!');
+        Swal.fire('Success', 'Password updated successfully!', 'success');
         form.resetForm();
       },
       error: (err) => {
         console.error(err);
-        if(err.status == 200)
-        {
-          alert('Password Updated Successfully.');
+        if (err.status == 200) {
+          // alert('Password Updated Successfully.');
+          Swal.fire('Success', 'Password updated successfully!', 'success');
           form.resetForm();
-        }
-        else
-        {
-          alert('Error updating password.');
+        } else {
+          // alert('Error updating password.');
+          Swal.fire('Error', 'Error updating password.', 'error');
         }
       }
     });

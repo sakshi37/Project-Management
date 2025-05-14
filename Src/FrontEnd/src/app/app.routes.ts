@@ -21,9 +21,13 @@ import { UpdateEmployeeComponent } from './features/Master/employee/update-emplo
 import { TopBarComponent } from './features/Master/team-composition/top-bar/top-bar.component';
 
 export const routes: Routes = [
-  { path: '', component: LoginComponent},
-  { path: 'sidebar', component: LefSideNavComponent},
-  { path: 'team-composition', component: TeamCompositionComponent ,canActivate: [AuthGuard]},
+  { path: '', component: LoginComponent },
+  { path: 'sidebar', component: LefSideNavComponent },
+  {
+    path: 'team-composition',
+    component: TeamCompositionComponent,
+    canActivate: [AuthGuard],
+  },
 
   { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard]},
   { path: 'settings', component: SettingsComponent,canActivate: [AuthGuard] },
@@ -31,20 +35,27 @@ export const routes: Routes = [
   { path: 'state', component: StateComponent,canActivate: [AuthGuard] },
   {path: 'top-bar', component: TopBarComponent,canActivate: [AuthGuard]},
   { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard]},
-
-  { path: 'changePassword', component: ChangePasswordComponent,canActivate: [AuthGuard] },
-  { path: 'gmc', component: GmcComponent ,canActivate: [AuthGuard]},
+  {
+    path: 'changePassword',
+    component: ChangePasswordComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: 'gmc', component: GmcComponent, canActivate: [AuthGuard] },
 
   { path: 'timesheetupdate', component: TimesheetUpdateComponent,canActivate: [AuthGuard] },
   { path: 'team-compositions', component: TeamCompositionComponent},
 
   { path: 'employee', component: EmployeeComponent },
-  { path: 'employee-registration', component: EmployeeRegistrationComponent},
+  {
+    path: 'employee-registration',
+    component: EmployeeRegistrationComponent,
+    // canActivate: [AuthGuard],
+  },
   {
     path: 'update-employee',
-    component: UpdateEmployeeComponent
+    component: UpdateEmployeeComponent,
   },
   { path: 'otp', component: OtpComponent },
-  { path: 'sidebar', component: LefSideNavComponent,canActivate: [AuthGuard] },
+  { path: 'sidebar', component: LefSideNavComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
 ];
