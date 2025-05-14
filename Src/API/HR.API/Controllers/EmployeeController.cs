@@ -9,6 +9,7 @@ using HR.Application.Features.Employees.Queries;
 
 
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.LoginMaster.Commands.InsertLogin;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -122,6 +123,16 @@ namespace HR.API.Controllers
 
 
         }
-       
+        [HttpGet("{code}")]
+        public async Task<IActionResult> GetEmployeeBasicDetailsByCode(string code)
+        {
+            var result = await _mediator.Send(new GetEmployeeBasicDetailsByCodeQuery(code));
+
+            if (result == null)
+                return NotFound($"Employee with code '{code}' not found.");
+
+            return Ok(result);
+        }
+
     }
 }

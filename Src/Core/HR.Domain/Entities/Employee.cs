@@ -35,5 +35,10 @@
         public int BranchId { get; set; }
         public int DivisionId { get; set; }
 
+        public int GenderId { get; set; }
+        public int Age { get; set; }
+        public string EmergencyNo { get; set; }
+        public string AadharCardNo { get; set; }
+
     }
 }

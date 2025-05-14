@@ -7,9 +7,12 @@ using HR.Application.Features.Divisions.Query.GetAllQuery;
 using HR.Application.Features.Divisions.Query.GetProjectManager;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.EmployeeType.Queries.GetAllEmployeeType;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
+using HR.Application.Features.Gender.Queries.GetAllGender;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Locations.Dtos;
 using HR.Application.Features.Locations.Queries.GetAllLocation;
@@ -58,11 +61,11 @@ public class AppDbContext : DbContext
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
     public DbSet<GetAllEmployeeTypeQueryVm>GetAllEmployeeTypeQueryVms { get; set; }
     public DbSet<Tbl_Login> Tbl_Login { get; set; }
-    public DbSet<Employee> Tbl_Employee_master { get; set; }
     public DbSet<GetAllFamilyMemberTypeQueryVm> GetAllFamilyTypeMemberVms { get; set; }
+    public DbSet<GetEmployeeBasicDetailsByCodeQueryVm> EmployeeBasicDetails { get; set; }
+    public DbSet<InsertEmployeeDetailsGmcCommandDto> EmployeesGmc { get; set; } 
 
-
-
+    public DbSet<GetAllGenderQueryVm> GetAllGenderQueryVms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -105,9 +108,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
 
-
-
-
+        modelBuilder.Entity<GetEmployeeBasicDetailsByCodeQueryVm>().HasNoKey();
+        modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
+        modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
 
 
 

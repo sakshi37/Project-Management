@@ -77,7 +77,7 @@ namespace HR.API
 
             app.MapControllers();
 
-            app.Run();
+                    app.Run();
         }
     }
 }

@@ -20,4 +20,9 @@ export interface UpdateEmployeeDto {
     userGroupId: number;
     branchId: number;
     divisionId: number;
+    cityId:number;
+    countryId:number;
+    stateId:number;
+    genderId:number;
+    aadharCardNo:string
   }
