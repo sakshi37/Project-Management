@@ -23,6 +23,9 @@ using HR.Application.Features.Locations.Queries.GetAllLocation;
 using HR.Application.Features.States.Commands.CreateState;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.States.Commands.UpdateState;
+using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
+using HR.Application.Features.TeamCompositions.Commands.Dtos;
+using HR.Application.Features.TeamCompositions.Commands.UpdateTeamComposition;
 using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
 using HR.Domain.Entities;
 
@@ -70,8 +73,11 @@ public class MappingProfile : Profile
         CreateMap<CreateHolidayDto, Holiday>();
         CreateMap<UpdateHolidayDto, Holiday>();
         CreateMap<Holiday, HolidayDto>();
+        CreateMap<CreateTeamCompositionDto, TeamComposition>();
+        CreateMap<UpdateTeamCompositionDto, TeamComposition>();
+        CreateMap<TeamComposition, TeamCompositionDto>().ReverseMap();
 
-           CreateMap<Branch, BranchDto>();
+        CreateMap<Branch, BranchDto>();
         CreateMap<CreateBranchDto, Branch>();
 
         CreateMap<UpdateEmployeeCommandDto, Employee>();
