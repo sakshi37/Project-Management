@@ -1,5 +1,5 @@
 import { Component, Renderer2, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard.component';
 import { ProfileService, UserProfile } from '../../services/profile-services';
@@ -13,6 +13,13 @@ import { CommonModule } from '@angular/common';
   imports: [RouterLink, HeaderComponent,CommonModule],
 })
 export class LefSideNavComponent {
+  logout() {
+    
+    // Clear session or token
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['login']);
+  }
   user: UserProfile = {
     image: '',
     name: '',
@@ -25,7 +32,7 @@ export class LefSideNavComponent {
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
 
-  constructor(private renderer: Renderer2,private profileService: ProfileService) {}
+  constructor(private renderer: Renderer2,private profileService: ProfileService, private router:Router) {}
 
 ngOnInit(): void {
   const code = localStorage.getItem('userName');  // Changed empId to code

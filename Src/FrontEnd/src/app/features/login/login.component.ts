@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
   isLoggingIn = false;
 
 
+
   loginForm = new FormControl({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
@@ -70,23 +71,36 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('email', response.email);
         localStorage.setItem('userName', response.userName);
         localStorage.setItem('checkFirstLogin', response.firstLogin);
+        // localStorage.setItem('roleName', response.roleName);
+        localStorage.setItem('loginStatus', String(response.loginStatus));
+        localStorage.setItem('roleName', response.roleName);
+        localStorage.setItem('userCheckInTime', response.userCheckInTime);
+
+        console.log(response.loginStatus);
+
+        console.log(localStorage.getItem('userName'));
+
+
+        if (!response.loginStatus) {
+          Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
+          this.isLoggingIn = false;
+          return;
+        }
+         localStorage.setItem('checkFirstLogin', response.firstLogin);
 
         localStorage.setItem('roleName', response.roleName);
         localStorage.setItem('userCheckInTime', response.userCheckInTime);
 
         console.log(localStorage.getItem('userName'));
 
-        if (response.firstLogin) {
+        if (response.firstLogin) 
+        {
           const modalElement = document.getElementById('otpModal');
           const otpModal = new bootstrap.Modal(modalElement);
           otpModal.show();
         }
-        // } else {
-        //   this.router.navigate(['/dashboard']);
-        //   sessionStorage.setItem('isAuthenticated', 'true');
-
-        // }
-        else {
+        else 
+        {
           // this.router.navigate(['/dashboard']);
           this.router.navigate(['/dashboard']).then(() => {
             // Force layout to show immediately
@@ -97,16 +111,14 @@ export class LoginComponent implements OnInit {
           sessionStorage.setItem('isAuthenticated', 'true');
 
         }
-        this.isLoggingIn = false;
+       
       },
       error: (error) => {
         console.error('Login failed!', error);
+
         // alert("Invalid email or password. Please try again");
-        Swal.fire(
-          'Login Failed',
-          'Invalid email or password. Please try again.',
-          'error'
-        );
+        Swal.fire('Login Failed', 'Invalid email or password. Please try again.', 'error');
+        OkButtonColor: '#28a745';
         this.isLoggingIn = false;
       },
     });
@@ -169,32 +181,6 @@ export class LoginComponent implements OnInit {
       prevInput.focus();
     }
   }
-
-  resendOtp() {
-    const email = localStorage.getItem('email');
-    if (!email) {
-      // alert('Email not found. Please login again.');
-      Swal.fire('Error', 'Email not found. Please login again.', 'error');
-      return;
-    }
-
-    const loginUser = new Login(email, '', false);
-
-    // this.userService.resendOtp(loginUser).subscribe({
-    //   next: (response: any) => {
-    //     localStorage.setItem('otp', response.otp);
-    //     // alert('OTP Resent Successfully!');
-    //     Swal.fire('Success', 'OTP Resent Successfully!', 'success');
-    //   },
-    //   error: (error) => {
-    //     console.error('Resend OTP failed!', error);
-    //     // alert('Failed to resend OTP. Please try again.');
-    //     Swal.fire('Failed', 'Failed to resend OTP. Please try again.', 'error');
-    //   }
-    // });
-  }
-
-  // Forgot password logic
   forgotUsername: string = '';
   forgotOtp: string = '';
   newPassword: string = '';
@@ -207,7 +193,9 @@ export class LoginComponent implements OnInit {
       input: 'text',
       inputPlaceholder: 'Enter your username',
       showCancelButton: true,
-      confirmButtonText: 'Submit',
+      confirmButtonText: 'Submit ',
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: 'darkgrey'
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         this.forgotUsername = result.value;

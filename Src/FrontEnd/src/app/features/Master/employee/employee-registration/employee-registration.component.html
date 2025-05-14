@@ -1,303 +1,203 @@
 <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
-  <div class="container mt-5 border rounded p-4 shadow-sm bg-white">
-    <h3 class="mb-4 text-primary">Employee Registration</h3>
+  <div class="container mt-5">
+    <div class="card shadow-lg rounded-4 p-4 border-0">
+      <h3 class="mb-4 text-primary border-bottom pb-2">👤 Employee Registration</h3>
 
-    <!-- 1. Personal Information -->
-    <div class="mb-3">
-      <h5 class="text-secondary">Personal Details</h5>
-      <hr />
-      <div class="row gy-3">
-        <div class="col-md-6">
-          <label class="form-label">Full Name</label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="name"
-            placeholder="Enter name"
-          />
-
-          <div class="text-danger" *ngIf="employeeForm.get('name')?.touched">
-            <div *ngIf="employeeForm.get('name')?.hasError('required')">
-              Name is required.
-            </div>
-            <div *ngIf="employeeForm.get('name')?.hasError('pattern')">
-              Only letters and spaces are allowed.
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Birth Date</label>
-          <input type="date" class="form-control" formControlName="birthDate" />
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.get('birthDate')?.touched &&
-              employeeForm.get('birthDate')?.hasError('required')
-            "
-          >
-            Birth date is required.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. Employment Details -->
-    <div class="mb-3">
-      <h5 class="text-secondary">Employment Details</h5>
-      <hr />
-      <div class="row gy-3">
-        <div class="col-md-6">
-          <label class="form-label">Join Date</label>
-          <input type="date" class="form-control" formControlName="joinDate" />
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.get('joinDate')?.touched &&
-              employeeForm.get('joinDate')?.hasError('required')
-            "
-          >
-            Join date is required.
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">PAN Number</label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="panNumber"
-            placeholder="Enter PAN"
-          />
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.get('panNumber')?.touched &&
-              employeeForm.get('panNumber')?.hasError('required')
-            "
-          >
-            PAN number is required.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. Contact Info -->
-    <div class="mb-3">
-      <h5 class="text-secondary">Contact Information</h5>
-      <hr />
-      <div class="row gy-3">
-        <div class="col-md-6">
-          <label class="form-label">Email</label>
-          <input
-            type="email"
-            class="form-control"
-            formControlName="email"
-            placeholder="Enter Email"
-          />
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.controls['email'].hasError('required') &&
-              employeeForm.controls['email'].touched
-            "
-          >
-            Email is required
-          </div>
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.controls['email'].hasError('email') &&
-              employeeForm.controls['email'].touched
-            "
-          >
-            Enter a valid email address
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Mobile Number</label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="mobileNo"
-            placeholder="Enter Mobile No"
-          />
-          <div
-            class="text-danger"
-            *ngIf="employeeForm.get('mobileNo')?.touched"
-          >
-            <div *ngIf="employeeForm.get('mobileNo')?.hasError('required')">
-              Mobile number is required.
-            </div>
-            <div *ngIf="employeeForm.get('mobileNo')?.hasError('minlength')">
-              Minimum 10 digits required.
-            </div>
-            <div *ngIf="employeeForm.get('mobileNo')?.hasError('maxlength')">
-              Maximum 10 digits allowed.
-            </div>
-            <div *ngIf="employeeForm.get('mobileNo')?.hasError('pattern')">
-              Enter a valid 10-digit mobile number.
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Skype ID</label>
-          <input type="text" class="form-control" formControlName="skypeId" />
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.get('skypeId')?.touched &&
-              employeeForm.get('skypeId')?.hasError('required')
-            "
-          >
-            Skype ID is required.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. Address Details -->
-    <div class="mb-3">
-      <h5 class="text-secondary">Address Information</h5>
-      <hr />
-      <div class="row gy-3">
-        <div class="col-md-6">
-          <label class="form-label">Country</label>
-          <select class="form-select" formControlName="CountryId">
-            <option value="">Select</option>
-            <option *ngFor="let country of countries" [value]="country.id">
-              {{ country.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">State</label>
-          <select class="form-select" formControlName="StateId">
-            <option value="">Select</option>
-            <option *ngFor="let state of states" [value]="state.id">
-              {{ state.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">City</label>
-          <select class="form-select" formControlName="CityId">
-            <option value="">Select</option>
-            <option *ngFor="let city of cities" [value]="city.id">
-              {{ city.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Location</label>
-          <select class="form-select" formControlName="locationId">
-            <option value="">Select</option>
-            <option *ngFor="let loc of locations" [value]="loc.id">
-              {{ loc.name }}
-            </option>
-          </select>
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.get('locationId')?.touched &&
-              employeeForm.get('locationId')?.hasError('required')
-            "
-          >
-            Location is required.
-          </div>
-        </div>
-
-        <div class="col-12">
-          <label class="form-label">Address</label>
-          <textarea
-            rows="2"
-            class="form-control"
-            formControlName="address"
-            placeholder="Enter Address"
-          ></textarea>
-          <div
-            class="text-danger"
-            *ngIf="
-              employeeForm.get('address')?.touched &&
-              employeeForm.get('address')?.hasError('required')
-            "
-          >
-            Address is required.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. Login & Files -->
-    <div class="mb-3">
-      <h5 class="text-secondary">Login & Attachments</h5>
-      <hr />
-      <div class="row gy-3">
-        <div class="col-md-6">
-          <div class="form-check mt-2">
+      <!-- 1. Personal Information -->
+      <div class="mb-4">
+        <h5 class="text-secondary">📝 Personal Details</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name</label>
             <input
-              class="form-check-input"
-              type="checkbox"
-              formControlName="loginStatus"
-              id="loginStatus"
+              type="text"
+              class="form-control rounded-pill"
+              formControlName="name"
+              placeholder="Enter full name"
             />
-            <label class="form-check-label" for="loginStatus"
-              >Login Active</label
-            >
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('name')?.touched">
+              <div *ngIf="employeeForm.get('name')?.hasError('required')">
+                Name is required.
+              </div>
+              <div *ngIf="employeeForm.get('name')?.hasError('pattern')">
+                Only letters and spaces are allowed.
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="col-md-6">
-          <label class="form-label">Profile Image</label>
-          <input
-            type="file"
-            class="form-control"
-            (change)="onFileChange($event, 'image')"
-            accept="image/*"
-          />
-          <div class="mt-2" *ngIf="employeeForm.value.image">
-            <img
-              [src]="'data:image/jpeg;base64,' + employeeForm.value.image"
-              class="rounded border"
-              style="width: 80px; height: 80px"
-            />
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Signature</label>
-          <input
-            type="file"
-            class="form-control"
-            (change)="onFileChange($event, 'signature')"
-            accept="image/*"
-          />
-          <div class="mt-2" *ngIf="employeeForm.value.signature">
-            <img
-              [src]="'data:image/png;base64,' + employeeForm.value.signature"
-              class="rounded border"
-              style="width: 80px; height: 80px"
-            />
+          <div class="col-md-6">
+            <label class="form-label">Birth Date</label>
+            <input type="date" class="form-control rounded-pill" formControlName="birthDate" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.hasError('required')">
+              Birth date is required.
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      
 
-    <!-- Buttons -->
-    <div class="d-flex justify-content-end mt-4">
-      <button type="submit" class="btn btn-primary btn-lg me-2">Save</button>
-      <button
-        type="button"
-        class="btn btn-outline-secondary btn-lg"
-        (click)="resetForm()"
-      >
-        Reset
-      </button>
+      <!-- 2. Employment Details -->
+      <div class="mb-4">
+        <!-- <h5 class="text-secondary">💼 Employment Details</h5> -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Join Date</label>
+            <input type="date" class="form-control rounded-pill" formControlName="joinDate" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('joinDate')?.touched && employeeForm.get('joinDate')?.hasError('required')">
+              Join date is required.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">PAN Number</label>
+            <input
+              type="text"
+              class="form-control rounded-pill"
+              formControlName="panNumber"
+              placeholder="Enter PAN"
+            />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('panNumber')?.touched && employeeForm.get('panNumber')?.hasError('required')">
+              PAN number is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Contact Info -->
+      <div class="mb-4">
+        <!-- <h5 class="text-secondary">📞 Contact Information</h5> -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control rounded-pill" formControlName="email" placeholder="Enter Email" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('email')?.touched">
+              <div *ngIf="employeeForm.get('email')?.hasError('required')">Email is required.</div>
+              <div *ngIf="employeeForm.get('email')?.hasError('email')">Enter a valid email.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Mobile Number</label>
+            <input
+              type="text"
+              class="form-control rounded-pill"
+              formControlName="mobileNo"
+              placeholder="Enter Mobile No"
+            />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('mobileNo')?.touched">
+              <div *ngIf="employeeForm.get('mobileNo')?.hasError('required')">Mobile number is required.</div>
+              <div *ngIf="employeeForm.get('mobileNo')?.hasError('pattern')">Enter a valid 10-digit mobile number.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Skype ID</label>
+            <input type="text" class="form-control rounded-pill" formControlName="skypeId" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('skypeId')?.touched && employeeForm.get('skypeId')?.hasError('required')">
+              Skype ID is required.
+            </div>
+          </div>
+        </div>
+      </div>
+            <!-- 5. Login & Files -->
+      <div class="mb-4">
+        <!-- <h5 class="text-secondary">🔐 Login & Attachments</h5> -->
+        <div class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" formControlName="loginStatus" id="loginStatus" />
+              <label class="form-check-label" for="loginStatus">Login Active</label>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Profile Image</label>
+            <input
+              type="file"
+              class="form-control"
+              (change)="onFileChange($event, 'image')"
+              accept="image/*"
+            />
+            <div class="mt-2" *ngIf="employeeForm.value.image">
+              <img [src]="'data:image/jpeg;base64,' + employeeForm.value.image" class="rounded border shadow" style="width: 80px; height: 80px" />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Signature</label>
+            <input
+              type="file"
+              class="form-control"
+              (change)="onFileChange($event, 'signature')"
+              accept="image/*"
+            />
+            <div class="mt-2" *ngIf="employeeForm.value.signature">
+              <img [src]="'data:image/png;base64,' + employeeForm.value.signature" class="rounded border shadow" style="width: 80px; height: 80px" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Address Details -->
+      <div class="mb-4">
+        <h5 class="text-secondary">🏠 Address Information</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Country</label>
+            <select class="form-select" formControlName="CountryId">
+              <option value="">Select</option>
+              <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">State</label>
+            <select class="form-select" formControlName="StateId">
+              <option value="">Select</option>
+              <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">City</label>
+            <select class="form-select" formControlName="CityId">
+              <option value="">Select</option>
+              <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <select class="form-select" formControlName="locationId">
+              <option value="">Select</option>
+              <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
+            </select>
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('locationId')?.touched && employeeForm.get('locationId')?.hasError('required')">
+              Location is required.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Address</label>
+            <textarea rows="2" class="form-control" formControlName="address" placeholder="Enter Address"></textarea>
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('address')?.touched && employeeForm.get('address')?.hasError('required')">
+              Address is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Buttons -->
+      <div class="d-flex justify-content-end mt-4">
+        <button type="submit" class="btn btn-primary btn-lg me-2">
+          <i class="bi bi-save"></i> Save
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-lg" (click)="resetForm()">
+          <i class="bi bi-arrow-repeat"></i> Reset
+        </button>
+      </div>
     </div>
   </div>
 </form>
