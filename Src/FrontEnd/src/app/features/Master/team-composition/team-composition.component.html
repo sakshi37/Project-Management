@@ -1,2 +1,118 @@
-<app-top-bar [loadTeamCompositions]="loadTeamCompositions.bind(this)"></app-top-bar>
-<app-all-results [teamCompositions]="teamCompositions"></app-all-results>
+<div class="container mt-4">
+    <div class="mb-3 row align-items-center">
+      <!-- Branch Dropdown -->
+      <div class="col-md-4">
+        <select (change)="onBranchChange($event)">
+            <option [value] = "" selected>All</option>
+            <option *ngFor="let branch of branches" [value]="branch.branchId">
+              {{ branch.branchName }}
+            </option>
+          </select>
+      </div>
+  
+      <!-- Division Dropdown -->
+      <div class="col-md-4">
+        <select (change)="onDivisionChange($event)">
+            <option [value] = "" selected>All</option>
+
+            <option *ngFor="let division of divisions" [value]="division.divisionId">
+              {{ division.divisionName }}
+            </option>
+          </select>
+      </div>
+  
+      <!-- Add Team Button -->
+      <div class="col-md-4 text-end">
+        <button class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#teamModal" (click)="openAddModal()">
+          + Add Team
+        </button>
+      </div>
+    </div>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="teamModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title">{{ isEditMode ? 'Edit Team' : 'Add New Team' }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+  
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <form [formGroup]="teamForm" (ngSubmit)="onSubmit()" class="row g-3">
+              <div class="col-md-12">
+                <label class="form-label">Team Name:</label>
+                <input type="text" formControlName="teamName" class="form-control" />
+              </div>
+  
+              <div class="col-md-12">
+                <label class="form-label">Branch:</label>
+                <select class="form-select" formControlName="fk_BranchId">
+                  <option value="" disabled selected>Select Branch</option>
+                  <option *ngFor="let branch of branches" [value]="branch.branchId">
+                    {{ branch.branchName }}
+                  </option>
+                </select>
+              </div>
+  
+              <div class="col-md-12">
+                <label class="form-label">Division:</label>
+                <select class="form-select" formControlName="fk_DivisionId">
+                  <option value="" disabled selected>Select Division</option>
+                  <option *ngFor="let division of divisions" [value]="division.divisionId">
+                    {{ division.divisionName }}
+                  </option>
+                </select>
+              </div>
+  
+              <div class="col-md-12">
+                <label class="form-label">Team Leader ID:</label>
+                <input type="number" formControlName="fk_TeamLeaderId" class="form-control" />
+              </div>
+  
+              <div class="col-12 d-flex justify-content-end">
+                <button class="btn btn-success" data-bs-dismiss="modal" type="submit">
+                  {{ isEditMode ? 'Update' : 'Add' }}
+                </button>
+                <button class="btn btn-secondary ms-2" type="button" data-bs-dismiss="modal">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Table -->
+    <div class="container mt-4">
+      <h2>Team Compositions</h2>
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Team ID</th>
+            <th>Team Name</th>
+            <th>Branch</th>
+            <th>Division</th>
+            <th>Team Leader</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let team of teamCompositions">
+            <td>{{ team.teamId }}</td>
+            <td>{{ team.teamName }}</td>
+            <td>{{ team.branchName }}</td>
+            <td>{{ team.divisionName }}</td>
+            <td>{{ team.teamLeaderName }}</td>
+            <td>
+              <span [ngClass]="team.teamStatus ? 'text-success' : 'text-danger'">
+                {{ team.teamStatus ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
