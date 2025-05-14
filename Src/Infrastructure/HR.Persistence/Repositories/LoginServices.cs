@@ -1,4 +1,5 @@
-﻿using HR.Application.Contracts.Models;
+﻿using Dapper;
+using HR.Application.Contracts.Models;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
@@ -6,8 +7,12 @@ using HR.Application.Exceptions;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.Data;
+using System.Data.Common;
+using System.Text;
 
 namespace HR.Identity.Services
 {
@@ -41,6 +46,8 @@ namespace HR.Identity.Services
             }
             Console.WriteLine(user.UserName);
             //var otplogin =await _context.Tbl_LoginMaster.FirstOrDefaultAsync(ol=>ol.FirstLogin==);
+
+            //var status = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(s => s.LoginStatus == loginRequest.LoginStatus);
             if (user.FirstLogin)
             {
                 var otp = GenerateRandomNumber();
@@ -55,10 +62,13 @@ namespace HR.Identity.Services
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
                     FirstLogin = user.FirstLogin,
                     RoleName = user.RoleName,
-                    UserCheckInTime = DateTime.Now
+                    LoginStatus=user.LoginStatus,
+                    UserCheckInTime = DateTime.Now,
+                    fk_EmpId=user.fk_EmpId
 
-                    //EmpId = user.fk_EmpId
-                };
+
+        //EmpId = user.fk_EmpId
+    };
 
                 return response;
             }
@@ -71,7 +81,9 @@ namespace HR.Identity.Services
                     UserName = user.UserName,
                     FirstLogin = user.FirstLogin,
                     RoleName = user.RoleName,
-                    UserCheckInTime = DateTime.Now
+                    LoginStatus = user.LoginStatus,
+                    UserCheckInTime = DateTime.Now,
+                    fk_EmpId = user.fk_EmpId
 
                     //Otp = null,
                     //OtpExpiryTime = DateTime.Now.
@@ -256,5 +268,53 @@ namespace HR.Identity.Services
 
             return true;
         }
+
+        public async Task InsertLoginAsync(int empId, int createdBy)
+        {
+            var employee = await _context.Tbl_Employee_master
+                .Where(e => e.Id == empId)
+                .Select(e => new
+                {
+                    e.Id,
+                    e.Name,
+                    e.Code,
+                    e.Email
+                })
+                .FirstOrDefaultAsync();
+
+            if (employee == null)
+                throw new Exception("Employee not found");
+
+            var userName = employee.Code;
+            var email = employee.Email;
+            var employeeName = employee.Name;
+
+            var last3Code = userName.Length >= 3 ? userName[^3..] : userName;
+            var namePart = employeeName.Length >= 4 ? employeeName.Substring(0, 4) : employeeName;
+            var plainPassword = namePart + "@" + last3Code;
+
+            var encryptedPassword = Encoding.UTF8.GetBytes(plainPassword);
+
+            var maxLoginId = await _context.Tbl_Login.MaxAsync(l => (int?)l.pk_LoginId) ?? 0;
+
+            var login = new Tbl_Login
+            {
+                pk_LoginId = maxLoginId + 1,
+                fk_EmpId = empId,
+                UserName = userName,
+                Password = encryptedPassword,
+                CreatedDate = DateTime.UtcNow,
+                Email = email,
+                FirstLogin = true,
+                RoleName = "User"
+            };
+
+            _context.Tbl_Login.Add(login);
+            await _context.SaveChangesAsync();
+        }
+
+
+
+
     }
 }

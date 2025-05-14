@@ -22,7 +22,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
   [x: string]: any;
   divisionForm!: FormGroup;
   divisions: GetDivisionDto[] = [];
-  filteredDivisions: any[] = [];
+    filteredDivisions: any[] = [];
   projectManagerNames: any[] = [];
 
   isEditMode = false;
@@ -183,66 +183,6 @@ export class DivisionComponent implements OnInit, AfterViewInit {
 
     }
   }
-
-  // onSubmit(): void {
-  //     if (this.divisionForm.invalid) return;
-
-  //     const statusBool = this.divisionForm.value.cityStatus === '1';
-  //     const payload = {
-  //       cityName: this.divisionForm.value.cityName,
-  //       stateId: this.divisionForm.value.stateId,
-  //       cityStatus: statusBool,
-  //     };
-
-  //     const createDto: CreateDivisionDto = {
-  //       divisionName: this.divisionForm.value.cityName,
-  //       projectManagerName: this.divisionForm.value.projectManagerName,
-  //       prefixName:this.divisionForm.value.prefixName,
-  //       manHours:this.divisionForm.value.manHours,
-  //       createdBy: 1,
-  //     };
-
-  //     if (this.isEditMode && this.selectedDivisionId) {
-  //       const updateDto: UpdateDivisionDto = {
-  //         ...payload,
-  //         divisionId: this.selectedDivisionId,
-  //         updatedBy: 1
-  //       };
-
-  //       this.divisionService.updateDivisions(updateDto).subscribe({
-  //         next: () => {
-  //           this.loadCities();
-  //           this.locationModal.hide();
-  //           this.resetForm();
-
-  //           Swal.fire({
-  //             icon: 'success',
-  //             title: 'Updated',
-  //             text: 'City updated successfully!',
-  //             confirmButtonColor: '#3085d6'
-  //           });
-  //         },
-  //         error: (err) => this.errorHandler.handleError(err)
-  //       });
-
-  //     } else {
-  //       this.divisionService.createDivisions(createDto).subscribe({
-  //         next: () => {
-  //           this.loadDivisions();
-  //           this.divisionModal.hide();
-  //           this.resetForm();
-
-  //           Swal.fire({
-  //             icon: 'success',
-  //             title: 'Created',
-  //             text: 'City created successfully!',
-  //             confirmButtonColor: '#3085d6'
-  //           });
-  //         },
-  //         error: (err) => this.errorHandler.handleError(err)
-  //       });
-  //     }
-  // }
 
   resetForm(): void {
     this.divisionForm.reset({ divisionName: '', status: '1' });

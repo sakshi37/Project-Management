@@ -1,10 +1,14 @@
+/* .login-background::-webkit-scrollbar{
+  display: none; 
+} */
 .login-background {
-  /* background: url('') no-repeat center center; */
-  background-size: cover;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: url(../../../assets/images/homeimg.webp) no-repeat center;
+  background-size: cover;
+  
 }
 
 .login-card {
@@ -14,6 +18,8 @@
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   text-align: center;
+   
+ 
 }
 
 .logo {
@@ -143,7 +149,7 @@ footer {
 
 /* Modal Header */
 #forgotPasswordModal .modal-header {
-  background: linear-gradient(135deg, #00a78e, #00d4ff);
+  background: linear-gradient(135deg, royalblue, royalblue);
   color: white;
   font-size: 1.5rem;
   font-weight: bold;
@@ -197,6 +203,7 @@ footer {
   border-radius: 8px;
 }
 
+
 #forgotPasswordModal .modal-footer button:hover {
   background-color: #008e77;
 }
@@ -208,7 +215,7 @@ footer {
 
 /* Close Button */
 #forgotPasswordModal .btn-close {
-  background-color: #ff4d4d;
+  background-color: #5e5e5e;
   padding: 8px 12px;
   font-size: 1.1rem;
 }
@@ -242,4 +249,31 @@ footer {
   #forgotPasswordModal input {
     width: 90%;
   }
+}
+.password-input-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.password-input {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-input input {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.validation-message {
+  margin-top: 4px;
 }

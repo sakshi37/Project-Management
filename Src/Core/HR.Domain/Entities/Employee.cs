@@ -26,7 +26,6 @@
 
         public bool? LeftCompany { get; set; }
         public DateTime? LeftDate { get; set; }
-        public int CountryId { get; set; }
         public int LocationId { get; set; }
         public int DesignationId { get; set; }
         public int ShiftId { get; set; }
@@ -34,6 +33,10 @@
         public int UserGroupId { get; set; }
         public int BranchId { get; set; }
         public int DivisionId { get; set; }
+        public int CountryId { get; set; }
+        public int StateId { get; set; }
+        public int CityId { get; set; }
+        public int GenderId { get; set; }
 
     }
 }

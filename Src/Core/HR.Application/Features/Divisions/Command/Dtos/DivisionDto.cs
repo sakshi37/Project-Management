@@ -9,10 +9,10 @@ namespace HR.Application.Features.Divisions.Command.Dtos
    public class DivisionDto
     {
         public int DivisionId { get; set; }
-        public int DivisionName { get; set; }
-        public int ProjectManagerName { get; set; }
+        public string DivisionName { get; set; }
+        public string ProjectManagerName { get; set; }
         public string PrefixName { get; set; }
-        public float ManHours { get; set; }
+        public double ManHours { get; set; }
         public bool DivisionStatus { get; set; }
     }
 }
