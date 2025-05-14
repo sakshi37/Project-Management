@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   formSubmitted = false;
   isLoggingIn = false;
+  
 
   loginForm = new FormControl({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -63,11 +64,12 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('userName', response.userName);
         localStorage.setItem('checkFirstLogin', response.firstLogin);  
         // localStorage.setItem('roleName', response.roleName);
-        localStorage.setItem('loginStatus',String(response.LoginStatus));
+        localStorage.setItem('loginStatus',String(response.loginStatus));
         localStorage.setItem('roleName',response.roleName);
         localStorage.setItem('userCheckInTime',response.userCheckInTime);
 
-
+        console.log(response.loginStatus);
+        
         console.log(localStorage.getItem('userName'));
 
         
@@ -81,12 +83,11 @@ export class LoginComponent implements OnInit {
         //   sessionStorage.setItem('isAuthenticated', 'true');
         // }
 
-        if (!response.LoginStatus) {
-  Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
-  
-  this.isLoggingIn = false;
-  return;
-}
+      if (!response.loginStatus) {
+      Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
+      this.isLoggingIn = false;
+      return;
+    }
 
 if (response.firstLogin) {
   const modalElement = document.getElementById('otpModal');
@@ -162,18 +163,18 @@ if (response.firstLogin) {
     }
   }
 
-  resendOtp() {
-    const email = localStorage.getItem('email');
-    if (!email) {
-      // alert('Email not found. Please login again.');
-      Swal.fire('Error', 'Email not found. Please login again.', 'error');
-      return;
-    }
+  // resendOtp() {
+  //   const email = localStorage.getItem('email');
+  //   if (!email) {
+  //     // alert('Email not found. Please login again.');
+  //     Swal.fire('Error', 'Email not found. Please login again.', 'error');
+  //     return;
+  //   }
   
-    const loginUser = new Login(email, '', false); 
+  //   const loginUser = new Login(email, '', false); 
   
     
-  }
+  // }
 
   // Forgot password logic
   forgotUsername: string = '';

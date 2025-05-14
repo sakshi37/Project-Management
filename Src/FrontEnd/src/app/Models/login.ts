@@ -37,7 +37,7 @@ constructor(
   otpExpiryTime:string,
   public firstLogin:string,
   public roleName:string,
-  public LoginStatus:boolean,
+  public loginStatus:boolean,
   public userCheckInTime: string
 ) { }
 }
