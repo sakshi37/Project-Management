@@ -13,6 +13,8 @@ export class HeaderComponent {
 
   logout() {
     // Clear session or token
+    localStorage.clear();
+    sessionStorage.clear();
     this.router.navigate(['/login']);
   }
   @Output() sidebarToggle = new EventEmitter<void>();

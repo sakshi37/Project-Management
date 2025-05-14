@@ -1,6 +1,7 @@
 ﻿using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
 using HR.Application.Features.TimeSheet.Query;
 using HR.Application.Features.TimeSheets.Commands.PunchIn;
+using HR.Application.Features.TimeSheets.Commands.PunchOut;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,14 @@ namespace HR.API.Controllers
         {
             var currentLogedInEmpId = 1;
             await _mediator.Send(new PunchInCommand(currentLogedInEmpId));
+            return Ok("success");
+        }
+
+        [HttpPost("PunchOut")]
+        public async Task<IActionResult> PunchOut()
+        {
+            var currentLogedInEmpId = 1;
+            await _mediator.Send(new PunchOutCommand(currentLogedInEmpId));
             return Ok("success");
         }
 

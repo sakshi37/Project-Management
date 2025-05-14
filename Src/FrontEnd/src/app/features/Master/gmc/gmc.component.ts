@@ -5,14 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { FamilyMember } from '../../../Models/family-member-dto';
 import { Employee } from '../../../Models/gmc-model';
 import { FamilyMemberForm } from '../../../Models/gmc-model';
-
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-gmc',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './gmc.component.html',
-  styleUrls: ['./gmc.component.css']
+  styleUrls: ['./gmc.component.css'],
 })
 export class GmcComponent implements OnInit {
   employee: Employee = {
@@ -27,7 +27,7 @@ export class GmcComponent implements OnInit {
     email: '',
     age: 0,
     emergencyContact: '',
-    aadhar: ''
+    aadhar: '',
     // fill with all expected fields
   };
   family: FamilyMember = {
@@ -37,11 +37,10 @@ export class GmcComponent implements OnInit {
     birthDate: new Date(),
     age: 0,
     relationWithEmployee: '',
-    familyStatus: true
+    familyStatus: true,
   };
 
-  familyTypes: { id: number, label: string }[] = [];
-
+  familyTypes: { id: number; label: string }[] = [];
 
   familyList: FamilyMember[] = [];
 
@@ -55,7 +54,7 @@ export class GmcComponent implements OnInit {
       alert('Employee code is missing in local storage!');
     }
     this.loadFamilyList();
-    this.loadFamilyTypes()
+    this.loadFamilyTypes();
   }
 
   saveFamilyDetails(): void {
@@ -74,7 +73,7 @@ export class GmcComponent implements OnInit {
       error: (err) => {
         console.error('Error saving family member:', err);
         alert('Failed to save family member.');
-      }
+      },
     });
   }
 
@@ -86,7 +85,7 @@ export class GmcComponent implements OnInit {
       birthDate: new Date(),
       age: 0,
       relationWithEmployee: '',
-      familyStatus: true
+      familyStatus: true,
     };
   }
 
@@ -97,25 +96,25 @@ export class GmcComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading list:', err);
-      }
+      },
     });
   }
   loadFamilyTypes(): void {
-  this.gmcService.getAllFamilyMemberType().subscribe({
-    next: (data) => {
-      this.familyTypes = data.map(type => ({
-        id: type.familyMemberTypeId,
-        label: type.familyMemberTypeName
-      }));
-    },
-    error: (err) => {
-      console.error('Error loading family member types:', err);
-      alert('Failed to load family member types.');
-    }
-  });
-}
+    this.gmcService.getAllFamilyMemberType().subscribe({
+      next: (data) => {
+        this.familyTypes = data.map((type) => ({
+          id: type.familyMemberTypeId,
+          label: type.familyMemberTypeName,
+        }));
+      },
+      error: (err) => {
+        console.error('Error loading family member types:', err);
+        alert('Failed to load family member types.');
+      },
+    });
+  }
 
-   saveEmployeeDetails() {
+  saveEmployeeDetails() {
     // Your form submission logic here
   }
 }

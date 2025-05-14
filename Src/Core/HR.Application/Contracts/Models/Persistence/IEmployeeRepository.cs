@@ -28,5 +28,6 @@ namespace HR.Application.Contracts.Persistence
 
 
 
+
     }
 }
