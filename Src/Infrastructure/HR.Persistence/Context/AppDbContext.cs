@@ -63,6 +63,8 @@ public class AppDbContext : DbContext
 
     //public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
+    public DbSet<TeamLeaderDto> TeamLeaderDtos { get; set; }
+
     public DbSet<GetAllEmployeeTypeQueryVm> GetAllEmployeeTypeQueryVms { get; set; }
     public DbSet<Tbl_Login> Tbl_Login { get; set; }
     public DbSet<Employee> Tbl_Employee_master { get; set; }
@@ -84,6 +86,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<HolidayDto>().HasNoKey();
         modelBuilder.Entity<TotalValue>().HasNoKey();
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
+        modelBuilder.Entity<TeamLeaderDto>().HasNoKey();
+
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
         //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();

@@ -26,6 +26,8 @@ export class TeamCompositionComponent {
 
   branches: any[] = [];
   divisions: any[] = [];
+  teamLeaders: any[] = [];
+
 
   selectedBranchId: number | null = null;
   selectedDivisionId: number | null = null;
@@ -43,6 +45,7 @@ export class TeamCompositionComponent {
     this.initForm();
     this.loadBranches();
     this.loadDivisions();
+    this.fetchTeamLeaders();
     this.loadTeamCompositions();
 
     const modalElement = document.getElementById('teamModal');
@@ -74,7 +77,12 @@ export class TeamCompositionComponent {
       error: (err) => console.error('Error loading divisions', err)
     });
   }
-
+  fetchTeamLeaders(): void {
+    this.teamService.getTeamLeaders().subscribe({
+      next: (data) => this.teamLeaders = data,
+      error: (err) => console.error('Error fetching team leaders', err)
+    });
+  }
   // onBranchChange(branchId: string): void {
   //   this.selectedBranchId = branchId ? +branchId : null;
   //   this.fetchTeamCompositions();

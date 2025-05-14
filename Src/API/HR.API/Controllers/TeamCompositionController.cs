@@ -1,5 +1,6 @@
 ﻿using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
 using HR.Application.Features.TeamCompositions.Queries.GetAllTeamCompositions;
+using HR.Application.Features.TeamCompositions.Queries.GetAllTeamLeaders;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,13 @@ namespace HR.API.Controllers
         public async Task<IActionResult> Get([FromQuery] int? branchId, [FromQuery] int? divisionId)
         {
             var result = await _mediator.Send(new GetAllTeamCompositionQuery(branchId, divisionId));
+            return Ok(result);
+        }
+
+        [HttpGet("team-leaders")]
+        public async Task<IActionResult> GetTeamLeaders()
+        {
+            var result = await _mediator.Send(new GetAllTeamLeaderQuery());
             return Ok(result);
         }
     }

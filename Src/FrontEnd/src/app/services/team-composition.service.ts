@@ -35,6 +35,9 @@ export class TeamCompositionService {
     // Make the GET request with the dynamically constructed params
     return this.http.get<any[]>(`${this.baseUrl}`, { params });
   }
+  getTeamLeaders(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/team-leaders`);
+  }
   
   createTeam(team: CreateTeamCompositionDto): Observable<any> {
     return this.http.post(`${this.baseUrl}/Create`, team);

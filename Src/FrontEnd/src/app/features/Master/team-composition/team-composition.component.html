@@ -2,8 +2,9 @@
     <div class="mb-3 row align-items-center">
       <!-- Branch Dropdown -->
       <div class="col-md-4">
-        <select (change)="onBranchChange($event)">
-            <option [value] = "" selected>All</option>
+        
+        <select class="form-select" (change)="onBranchChange($event)">
+            <option [value] = "" selected>All Branches</option>
             <option *ngFor="let branch of branches" [value]="branch.branchId">
               {{ branch.branchName }}
             </option>
@@ -12,8 +13,8 @@
   
       <!-- Division Dropdown -->
       <div class="col-md-4">
-        <select (change)="onDivisionChange($event)">
-            <option [value] = "" selected>All</option>
+        <select class="form-select"(change)="onDivisionChange($event)">
+            <option [value] = "" selected>All Divisions</option>
 
             <option *ngFor="let division of divisions" [value]="division.divisionId">
               {{ division.divisionName }}
@@ -27,6 +28,7 @@
           + Add Team
         </button>
       </div>
+      
     </div>
   
     <!-- Modal -->
@@ -67,10 +69,21 @@
                 </select>
               </div>
   
-              <div class="col-md-12">
+              <!-- <div class="col-md-12">
                 <label class="form-label">Team Leader ID:</label>
                 <input type="number" formControlName="fk_TeamLeaderId" class="form-control" />
+              </div> -->
+              <div class="col-md-12">
+                <label for="teamLeader" class="form-label">Team Leader</label>
+                <select id="teamLeader" class="form-select" formControlName="fk_TeamLeaderId">
+                  <option value="" disabled selected>Select Team Leader</option>
+                  <!-- <option [value]="''" selected>All</option> -->
+                  <option *ngFor="let leader of teamLeaders" [value]="leader.id">
+                    {{ leader.name }}
+                  </option>
+                </select>
               </div>
+              
   
               <div class="col-12 d-flex justify-content-end">
                 <button class="btn btn-success" data-bs-dismiss="modal" type="submit">
