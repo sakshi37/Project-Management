@@ -18,7 +18,6 @@ import { HolidayComponent } from './features/Master/holiday/holiday.component';
 import { TeamCompositionComponent } from './features/Master/team-composition/team-composition.component';
 import { AuthGuard } from './services/authguard';
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
-import { TopBarComponent } from './features/Master/team-composition/top-bar/top-bar.component';
 import { EmployeeAttendanceReportComponent } from './features/Hr/employee-attendance-report/employee-attendance-report.component';
 
 export const routes: Routes = [
@@ -30,12 +29,18 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
 
-  { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard]},
-  { path: 'settings', component: SettingsComponent,canActivate: [AuthGuard] },
-  { path: 'country', component: CountryComponent,canActivate: [AuthGuard] },
-  { path: 'state', component: StateComponent,canActivate: [AuthGuard] },
-  {path: 'top-bar', component: TopBarComponent,canActivate: [AuthGuard]},
-  { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard]},
+
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+  { path: 'country', component: CountryComponent, canActivate: [AuthGuard] },
+  { path: 'state', component: StateComponent, canActivate: [AuthGuard] },
+  { path: 'holiday', component: HolidayComponent, canActivate: [AuthGuard] },
+
+
   {
     path: 'changePassword',
     component: ChangePasswordComponent,
@@ -43,8 +48,10 @@ export const routes: Routes = [
   },
   { path: 'gmc', component: GmcComponent, canActivate: [AuthGuard] },
 
-  { path: 'timesheetupdate', component: TimesheetUpdateComponent,canActivate: [AuthGuard] },
-  { path: 'team-compositions', component: TeamCompositionComponent},
+  {
+    path: 'timesheetupdate',
+    component: TimesheetUpdateComponent /*canActivate: [AuthGuard] */,
+  },
 
   { path: 'employee', component: EmployeeComponent },
   {
