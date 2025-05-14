@@ -24,13 +24,19 @@ namespace HR.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllTeamCompositions")]
-        public async Task<IActionResult> GetAllTeamCompositions()
+        //[HttpGet("GetAllTeamCompositions")]
+        //public async Task<IActionResult> GetAllTeamCompositions()
+        //{
+        //    var result = await _mediator.Send(new GetAllTeamCompositionQuery());
+        //    return Ok(result);
+        //}
+        //[Route("{branchId?}/{divisionId?}")]
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] int? branchId, [FromQuery] int? divisionId)
         {
-            var result = await _mediator.Send(new GetAllTeamCompositionQuery());
+            var result = await _mediator.Send(new GetAllTeamCompositionQuery(branchId, divisionId));
             return Ok(result);
         }
-
     }
 
 }

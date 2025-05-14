@@ -20,7 +20,6 @@ namespace HR.Persistence
             services.AddScoped<IHolidayRepository, HolidayRepository>();
             services.AddScoped<ITimeSheetRepository, TimeSheetRepository>();
             services.AddScoped<IEmployeeMasterRepository, EmployeeRepository>();
-            services.AddScoped<ILocationMasterRepository, LocationMasterRepository>();
             services.AddScoped<IStateRepository, StateRepository>();
             services.AddScoped<IBranchRepository, BranchRepository>();
             services.AddScoped<ITeamCompositionRepository, TeamCompositionRepository>();
@@ -28,6 +27,16 @@ namespace HR.Persistence
             services.AddScoped<IShiftRepository, ShiftRepository>();
 
             services.AddScoped<IUserGroupRepository, UserGroupRepository>();
+
+            services.AddScoped<IEmployeeTypeRepository, EmployeeTypeRepository>();
+            services.AddScoped<IFamilyRepository, FamilyRepository>();
+
+            services.AddScoped<IDivisionRepositry, DivisionRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+
+
+
+
 
 
 

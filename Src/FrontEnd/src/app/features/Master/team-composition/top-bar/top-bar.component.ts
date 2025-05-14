@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TeamCompositionService } from '../../../../services/team-composition.service';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,7 @@ import { BranchService } from '../../../../services/branch-service';
   styleUrl: './top-bar.component.css'
 })
 export class TopBarComponent {
+  @Input() loadTeamCompositions!: () => void;
   teamForm!: FormGroup;
   submitted = false;
   isEditMode = false;
@@ -22,19 +23,19 @@ export class TopBarComponent {
   branches: any[] = [];
   
   ngOnInit(): void {
+    this.initForm();
     this.loadBranches();
   }
 
   constructor(private fb: FormBuilder, private teamService: TeamCompositionService,private branchService: BranchService,
   ) {
-    this.createForm();
   }
   openAddModal(): void {
     this.isEditMode = false;
     this.modal.show();
   }
 
-  createForm() {
+  initForm() {
     this.teamForm = this.fb.group({
       teamName: ['', Validators.required],
       fk_BranchId: [null, Validators.required],
@@ -71,10 +72,12 @@ export class TopBarComponent {
         this.successMessage = 'Team created successfully!';
         this.teamForm.reset();
         this.submitted = false;
+        this.loadTeamCompositions();
       },
       error: (err) => {
         console.error('Error creating team', err);
       }
+
     });
   }
 }

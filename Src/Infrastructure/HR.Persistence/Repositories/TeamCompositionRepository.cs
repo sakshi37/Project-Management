@@ -8,6 +8,7 @@ using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace HR.Persistence.Repositories
@@ -41,11 +42,24 @@ namespace HR.Persistence.Repositories
                 TeamStatus = true
             };
         }
-        public async Task<List<TeamCompositionDto>> GetAllAsync()
-        {
-            string sql = "EXEC SP_TeamCompositionGetAll";
-            return await _context.TeamCompositionDtos.FromSqlRaw(sql).ToListAsync();
-        }
+        //public async Task<List<TeamCompositionDto>> GetAllAsync()
+        //{
+        //    string sql = "EXEC SP_TeamCompositionGetAll";
+        //    return await _context.TeamCompositionDtos.FromSqlRaw(sql).ToListAsync();
+        //}
 
+        public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
+            new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
+        };
+
+            string sql = "EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId";
+            return await _context.TeamCompositionDtos
+                .FromSqlRaw(sql, parameters)
+                .ToListAsync();
+        }
     }
 }
