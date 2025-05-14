@@ -7,6 +7,8 @@ using HR.Application.Features.Employees.Commands.UpdateEmployee;
 
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetEmployeeByDesignation;
+using HR.Application.Features.LoginMaster.Commands.InsertLogin;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -79,6 +81,15 @@ namespace HR.API.Controllers
 
             return Ok(employeeProfile);
         }
+
+        [HttpGet("EmployeeByDesignation")]
+        public async Task<IActionResult> GetEmployeeByDesignationId(int did)
+        {
+            var query = new GetEmployeeByDesignationQuery(did);
+            var employees = await _mediator.Send(query);
+            return Ok(employees);
+        }
+
         [HttpPost("Inactivate/{code}")]
         public async Task<IActionResult> InactivateEmployee(string code)
         {
