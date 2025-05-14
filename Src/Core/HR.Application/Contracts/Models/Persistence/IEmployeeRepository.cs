@@ -16,7 +16,7 @@ namespace HR.Application.Contracts.Persistence
         Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize);
         //Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(int id);
         Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(string Code);
-
+        Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did);
         Task<EmployeeDto> GetEmaployeeByEmail(string email);
         Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto);
 

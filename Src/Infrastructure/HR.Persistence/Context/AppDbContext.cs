@@ -45,6 +45,10 @@ public class AppDbContext : DbContext
 
     public DbSet<Employee> TblEmployeeMaster { get; set; }
     public DbSet<LocationDto> dtos { get; set; }
+    
+
+    public DbSet<Employee> Tbl_Employee_master { get; set; }
+    public DbSet<LocationDto> Locationdtos { get; set; }
 
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
@@ -67,7 +71,7 @@ public class AppDbContext : DbContext
 
     public DbSet<GetAllEmployeeTypeQueryVm> GetAllEmployeeTypeQueryVms { get; set; }
     public DbSet<Tbl_Login> Tbl_Login { get; set; }
-    public DbSet<Employee> Tbl_Employee_master { get; set; }
+    public DbSet<Employee> TblEmployeemaster { get; set; }
     public DbSet<GetAllFamilyMemberTypeQueryVm> GetAllFamilyTypeMemberVms { get; set; }
 
 

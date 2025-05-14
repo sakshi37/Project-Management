@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EmployeeModel, EmployeeResponse } from '../Models/employee-model';
+import { EmployeeFull, EmployeeModel, EmployeeResponse } from '../Models/employee-model';
 import { CreateModel } from '../Models/create-model';
 import { API_URL } from '../../constant';
 
@@ -32,6 +32,9 @@ export class EmployeeService {
   }
   createEmployee(employee: CreateModel): Observable<any> {
     return this.http.post(this.url + '/Employee', employee);
+  }
+  getTeamLeaders() : Observable<any[]> {
+    return this.http.get<any[]>(this.url + '/Employee/EmployeeByDesignation?did=6');
   }
 
   getAllLocation() {

@@ -46,6 +46,8 @@ namespace HR.Identity.Services
             }
             Console.WriteLine(user.UserName);
             //var otplogin =await _context.Tbl_LoginMaster.FirstOrDefaultAsync(ol=>ol.FirstLogin==);
+
+            //var status = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(s => s.LoginStatus == loginRequest.LoginStatus);
             if (user.FirstLogin)
             {
                 var otp = GenerateRandomNumber();
@@ -60,10 +62,13 @@ namespace HR.Identity.Services
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
                     FirstLogin = user.FirstLogin,
                     RoleName = user.RoleName,
-                    UserCheckInTime = DateTime.Now
+                    LoginStatus=user.LoginStatus,
+                    UserCheckInTime = DateTime.Now,
+                    fk_EmpId=user.fk_EmpId
 
-                    //EmpId = user.fk_EmpId
-                };
+
+        //EmpId = user.fk_EmpId
+    };
 
                 return response;
             }
@@ -76,7 +81,9 @@ namespace HR.Identity.Services
                     UserName = user.UserName,
                     FirstLogin = user.FirstLogin,
                     RoleName = user.RoleName,
-                    UserCheckInTime = DateTime.Now
+                    LoginStatus = user.LoginStatus,
+                    UserCheckInTime = DateTime.Now,
+                    fk_EmpId = user.fk_EmpId
 
                     //Otp = null,
                     //OtpExpiryTime = DateTime.Now.
