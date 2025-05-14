@@ -58,11 +58,12 @@ namespace HR.Identity.Services
                     FirstLogin = user.FirstLogin,
                     RoleName = user.RoleName,
                     LoginStatus=user.LoginStatus,
-                    UserCheckInTime = DateTime.Now
+                    UserCheckInTime = DateTime.Now,
+                    fk_EmpId=user.fk_EmpId
 
 
-                    //EmpId = user.fk_EmpId
-                };
+        //EmpId = user.fk_EmpId
+    };
 
                 return response;
             }
@@ -76,7 +77,8 @@ namespace HR.Identity.Services
                     FirstLogin = user.FirstLogin,
                     RoleName = user.RoleName,
                     LoginStatus = user.LoginStatus,
-                    UserCheckInTime = DateTime.Now
+                    UserCheckInTime = DateTime.Now,
+                    fk_EmpId = user.fk_EmpId
 
                     //Otp = null,
                     //OtpExpiryTime = DateTime.Now.

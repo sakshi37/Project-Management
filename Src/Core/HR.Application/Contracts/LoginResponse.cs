@@ -16,6 +16,7 @@ namespace HR.Application.Contracts.Models
         public string RoleName { get; set; }
         public bool LoginStatus { get; set; }
         public DateTime UserCheckInTime { get; set; }
+        public int fk_EmpId { get; set; }
 
 
         //public int EmpId { get; set; }

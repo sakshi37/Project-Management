@@ -38,7 +38,7 @@ constructor(
   public firstLogin:string,
   public roleName:string,
   public loginStatus:boolean,
-  public userCheckInTime: string
+  public userCheckInTime: string  
 ) { }
 }
 export class VerifyOTPDto {
