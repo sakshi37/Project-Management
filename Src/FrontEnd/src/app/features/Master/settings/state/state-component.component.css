@@ -11,6 +11,7 @@
   table,td,th {
     text-align: center;
     padding: .5rem 0;
+    max-height: 40px !important;
   }
   .head-first,.head-last,.head-other{
     width: 100% !important;

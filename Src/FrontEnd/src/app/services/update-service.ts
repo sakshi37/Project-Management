@@ -3,6 +3,8 @@ import { Observable } from "rxjs";
 import { API_URL } from "../../constant";
 import { Injectable } from "@angular/core";
 import { UserGroup } from "../Models/get-user-group-dto";
+import { Shift } from "../Models/get-shift-dto";
+import { EmployeeType } from "../Models/get-employee-type-dto";
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +20,14 @@ export class UpdateService {
     }
      getAllUserGroups(): Observable<UserGroup[]> {
     return this.http.get<UserGroup[]>(`${this.url}/UserGroup`);
+     }
+
+    getAllShifts():Observable<Shift[]>{
+      return this.http.get<Shift[]>(`${this.url}/Shift`);
+    }
+     getEmployeeTypes():Observable<EmployeeType[]>{
+      return this.http.get<EmployeeType[]>(`${this.url}/EmployeeType`)
+     }
   }
     
-}
+

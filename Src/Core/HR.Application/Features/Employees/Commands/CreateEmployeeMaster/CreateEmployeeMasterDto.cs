@@ -27,4 +27,9 @@
     public int UserGroupId { get; set; }
     public int BranchId { get; set; }
     public int DivisionId { get; set; }
+    public int CountryId { get; set; }
+    public int StateId { get; set; }
+    public int CityId { get; set; }
+    public int GenderId { get; set; }
 }
+

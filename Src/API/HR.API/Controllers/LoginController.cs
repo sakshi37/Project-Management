@@ -2,6 +2,8 @@
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
+using HR.Application.Features.LoginMaster.Commands.InsertLogin;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +14,14 @@ namespace HR.API.Controllers
     public class LoginController : ControllerBase
     {
         readonly ILoginService _loginService;
-        public LoginController(ILoginService loginService)
+        private readonly IMediator _mediator;
+
+
+        public LoginController(ILoginService loginService, IMediator mediator)
         {
             _loginService = loginService;
+            _mediator = mediator;
+
         }
 
 
@@ -87,6 +94,17 @@ namespace HR.API.Controllers
                 return BadRequest("Password update failed. Check your input and try again.");
             }
             return Ok("Password Updated Successfully");
+        }
+
+
+       
+
+        [HttpPost("insert-login")]
+       
+        public async Task<IActionResult> InsertLogin([FromBody] InsertLoginCommand command)
+        {
+            await _mediator.Send(command);
+            return Ok("Login inserted successfully.");
         }
     }
 }

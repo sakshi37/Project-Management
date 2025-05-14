@@ -18,11 +18,23 @@ namespace HR.Application.Features.Employee.Commands.CreateEmployeeMaster
 
         public async Task<CreateEmployeeMasterDto> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
         {
-
+            request.newEmployee.Code = await GenerateEmpCode();
             var employee = await _employeeRepository.AddEmployee(request.newEmployee);
-
+            await _employeeRepository.IncrCurrentEmpCounter();
 
             return _mapper.Map<CreateEmployeeMasterDto>(employee);
+        }
+
+        private async Task<string> GenerateEmpCode()
+        {
+            var currCount = await _employeeRepository.ReadCurrentEmpCounter();
+            var codePrefix = "NS";
+            var maxEmpDigit = 3;
+            var paddedNumber = currCount.ToString().PadLeft(maxEmpDigit, '0');
+            var empCode = $"{codePrefix}{paddedNumber}";
+
+            return empCode;
+
         }
     }
 }

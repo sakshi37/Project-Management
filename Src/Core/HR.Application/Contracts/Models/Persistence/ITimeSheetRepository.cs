@@ -8,5 +8,10 @@ namespace HR.Application.Contracts.Persistence
     {
         Task<TimeSheet> AddTimeSheet(CreateTimeSheetDto timeSheetDto);
         Task<List<GetAllTimeSheetListDto>> GetAllTimeSheetList();
+
+        Task PunchIn(int empId, DateTime startDateTime);
+        Task<Attendance> GetCurrentSession(int empId);
+
+        Task PunchOut(int empId, DateTime enddateTime);
     }
 }
