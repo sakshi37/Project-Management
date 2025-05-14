@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, Injector } from '@angular/core';
 import { FormControl, FormsModule, NgForm, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthResponseModel, Login, VerifyOTPDto } from '../../Models/login';
 import { UserService } from '../../services/user.service';
 import { Otp } from '../../Models/otp';
 import Swal from 'sweetalert2';
+import { AppComponent } from '../../app.component';
 
 declare var bootstrap: any;
 
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   formSubmitted = false;
   isLoggingIn = false;
 
+
   loginForm = new FormControl({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
@@ -37,8 +39,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private ngZone: NgZone
-  ) {}
+    private ngZone: NgZone,
+    private injector: Injector
+  ) { }
 
   passwordModel = {
     oldPassword: '',
@@ -49,7 +52,7 @@ export class LoginComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   loginUser(loginForm: NgForm) {
     this.login = loginForm.value;
@@ -77,11 +80,23 @@ export class LoginComponent implements OnInit {
           const modalElement = document.getElementById('otpModal');
           const otpModal = new bootstrap.Modal(modalElement);
           otpModal.show();
-        } else {
-          this.router.navigate(['/dashboard']);
-          sessionStorage.setItem('isAuthenticated', 'true');
         }
+        // } else {
+        //   this.router.navigate(['/dashboard']);
+        //   sessionStorage.setItem('isAuthenticated', 'true');
 
+        // }
+        else {
+          // this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard']).then(() => {
+            // Force layout to show immediately
+            const appRef = this.injector.get(AppComponent);
+            appRef.hideLayout = false;
+            appRef.isSidebarVisible = true;
+          });
+          sessionStorage.setItem('isAuthenticated', 'true');
+
+        }
         this.isLoggingIn = false;
       },
       error: (error) => {
