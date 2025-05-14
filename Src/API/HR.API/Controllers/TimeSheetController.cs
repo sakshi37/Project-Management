@@ -33,18 +33,18 @@ namespace HR.API.Controllers
         }
 
         [HttpPost("PunchIn")]
-        public async Task<IActionResult> PunchIn()
+        public async Task<IActionResult> PunchIn([FromBody] AttendanceDto attendanceDto)
         {
-            var currentLogedInEmpId = 1;
-            await _mediator.Send(new PunchInCommand(currentLogedInEmpId));
+            var currentLoggedInEmpId = attendanceDto.EmpId;
+            await _mediator.Send(new PunchInCommand(currentLoggedInEmpId));
             return Ok("success");
         }
 
         [HttpPost("PunchOut")]
-        public async Task<IActionResult> PunchOut()
+        public async Task<IActionResult> PunchOut([FromBody] AttendanceDto attendanceDto)
         {
-            var currentLogedInEmpId = 1;
-            await _mediator.Send(new PunchOutCommand(currentLogedInEmpId));
+            var currentLoggedInEmpId = attendanceDto.EmpId;
+            await _mediator.Send(new PunchOutCommand(currentLoggedInEmpId));
             return Ok("success");
         }
 

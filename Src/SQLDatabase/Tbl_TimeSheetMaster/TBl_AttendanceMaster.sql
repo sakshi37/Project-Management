@@ -1,4 +1,3 @@
-drop table dbo.Tbl_AttendanceMaster
 create table dbo.Tbl_AttendanceMaster(
 	
 	Id int identity(1,1),

@@ -33,17 +33,20 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard],
   },
-  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
-  { path: 'country', component: CountryComponent, canActivate: [AuthGuard] },
-  { path: 'state', component: StateComponent, canActivate: [AuthGuard] },
-  { path: 'holiday', component: HolidayComponent, canActivate: [AuthGuard] },
+  {
+    path: 'settings',
+    component: SettingsComponent /*canActivate: [AuthGuard]*/,
+  },
+  { path: 'country', component: CountryComponent /*canActivate: [AuthGuard]*/ },
+  { path: 'state', component: StateComponent /*canActivate: [AuthGuard]*/ },
+  { path: 'holiday', component: HolidayComponent /*canActivate: [AuthGuard]*/ },
 
   {
     path: 'changePassword',
     component: ChangePasswordComponent,
     canActivate: [AuthGuard],
   },
-  { path: 'gmc', component: GmcComponent, canActivate: [AuthGuard] },
+  { path: 'gmc', component: GmcComponent /*canActivate: [AuthGuard] */ },
 
   {
     path: 'timesheetupdate',
@@ -61,6 +64,9 @@ export const routes: Routes = [
     component: UpdateEmployeeComponent,
   },
   { path: 'otp', component: OtpComponent },
-  { path: 'sidebar', component: LefSideNavComponent, canActivate: [AuthGuard] },
+  {
+    path: 'sidebar',
+    component: LefSideNavComponent /*canActivate: [AuthGuard] */,
+  },
   { path: '**', redirectTo: '' },
 ];

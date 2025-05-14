@@ -1,11 +1,15 @@
-create procedure dbo.SP_AttendanceEnd
-@Fk_Emp int,
+create procedure dbo.SP_AttendanceUpdate
+@Fk_EmpId int,
 @EndDate DateTime2
 
 As
 Begin
 
-insert into dbo.Tbl_AttendanceMaster(Fk_EmpId, EndDate)
-values (@Fk_Emp, @EndDate)
+update dbo.Tbl_AttendanceMaster
+
+	set EndDate = @EndDate
+	where Fk_EmpId = @Fk_EmpId and EndDate is null
 
 end
+
+select * from Tbl_AttendanceMaster
