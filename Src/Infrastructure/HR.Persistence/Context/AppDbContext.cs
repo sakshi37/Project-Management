@@ -18,7 +18,6 @@ using HR.Application.Features.TeamCompositions.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
-using HR.Application.Features.Location.Query;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
@@ -61,7 +60,7 @@ public class AppDbContext : DbContext
     public DbSet<GetAllDivisionDto> GetAllDivisionQueryDtos { get; set; }
     public DbSet<GetAllProjectManagerDto> GetAllProjectManagerDtos { get; set; }
 
-    public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
+    //public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
     public DbSet<GetAllEmployeeTypeQueryVm> GetAllEmployeeTypeQueryVms { get; set; }
     public DbSet<Tbl_Login> Tbl_Login { get; set; }
