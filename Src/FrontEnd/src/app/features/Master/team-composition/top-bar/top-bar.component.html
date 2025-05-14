@@ -1,0 +1,107 @@
+<div class="container mt-4">
+    <div class="mb-3 row align-items-center">
+        <!-- Holiday List Type Dropdown -->
+            <div class="col-md-3">
+                <select  class="form-select" formControlName="" (change)="onBranchChange()">
+                    <option value="" selected>Select Branch</option>
+                    <option *ngFor="let branch of branches" [value]="branch.branchId">{{ branch.branchName }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option value="">Select Holiday List Type</option>
+                    <option value="1">US Holiday List</option>
+                    <option value="0">Non-US Holiday List</option>
+                </select>
+            </div>
+
+            <!-- Search Input -->
+            <div class="col-md-2">
+                <button class="btn btn-secondary w-100">Search</button>
+
+            </div>
+
+            <!-- Search Button -->
+            <div class="col-md-2 text-end">
+                <button class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#teamModal"
+                    (click)="openAddModal()">
+                    + Add Holiday
+                </button>
+            </div>
+    </div>
+
+    <!-- <h3>Create New Team</h3>
+  
+    <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="teamName" class="form-label">Team Name</label>
+        <input type="text" formControlName="teamName" class="form-control" id="teamName" />
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Branch ID</label>
+        <input type="number" formControlName="fk_BranchId" class="form-control" />
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Division ID</label>
+        <input type="number" formControlName="fk_DivisionId" class="form-control" />
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Team Leader ID</label>
+        <input type="number" formControlName="fk_TeamLeaderId" class="form-control" />
+      </div>
+  
+      <button type="submit" class="btn btn-primary" [disabled]="teamForm.invalid">Create</button>
+  
+      <div class="mt-3 text-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+    </form> -->
+    <div class="modal fade" id="teamModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ isEditMode ? 'Edit Team' : 'Add New Team' }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form [formGroup]="teamForm" (ngSubmit)="onSubmit()" class="row g-3">
+                        <div class="col-md-12">
+                            <label for="teamName" class="form-label">Team Name:</label>
+                            <input type="text" id="teamName" class="form-control" formControlName="teamName"
+                                placeholder="Enter Team name" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Branch Id:</label>
+                            <input type="number" class="form-control" formControlName="fk_BranchId" />
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <label class="form-label">Division Id:</label>
+                            <input type="number" class="form-control" formControlName="fk_DivisionId" />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Team Leader ID</label>
+                            <input type="number" formControlName="fk_TeamLeaderId" class="form-control" />
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-end">
+                            <button class="btn btn-success" data-bs-dismiss="modal" type="submit">{{ isEditMode ?
+                                'Update' : 'Add'
+                                }}</button>
+                            <button class="btn btn-secondary ms-2" type="button" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

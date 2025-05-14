@@ -1,0 +1,31 @@
+<div class="container mt-4">
+    <h2>Team Compositions</h2>
+  
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Team ID</th>
+          <th>Team Name</th>
+          <th>Branch ID</th>
+          <th>Division ID</th>
+          <th>Team Leader ID</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let team of teamCompositions">
+          <td>{{ team.teamId }}</td>
+          <td>{{ team.teamName }}</td>
+          <td>{{ team.branchName }}</td>
+          <td>{{ team.divisionName }}</td>
+          <td>{{ team.teamLeaderName }}</td>
+          <td>
+            <span [ngClass]="team.teamStatus ? 'text-success' : 'text-danger'">
+              {{ team.teamStatus ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
