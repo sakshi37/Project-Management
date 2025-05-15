@@ -60,7 +60,7 @@
                   </div>
                   
                   <div class="col-12">
-                    <label for="holidayListType" class="form-label">HolidayList Type:</label>
+                    <label for="holidayListType" class="form-label">HolidayListType:</label>
                     <select id="holidayListType" class="form-select" formControlName="holidayListType">
                       <option value="1">Us-Based</option>
                       <option value="0">Non-UsBased</option>
@@ -107,13 +107,16 @@
                 <div class="head-other sortable">Division <i class="fas" [ngClass]="getSortIcon('divisionName')"></i></div>
               </th>
               <th (click)="sortDivisions('projectManagerName')">
-                <div class="head-other sortable">Project Manager<i class="fas" [ngClass]="getSortIcon('projectManagerName')"></i></div>
+                <div class="head-other sortable">ProjectManager<i class="fas" [ngClass]="getSortIcon('projectManagerName')"></i></div>
               </th>
               <th (click)="sortDivisions('prefixName')">
                 <div class="head-other sortable">Prefix Name<i class="fas" [ngClass]="getSortIcon('prefixName')"></i></div>
               </th>
               <th (click)="sortDivisions('manHours')">
                 <div class="head-other sortable">Man Hours<i class="fas" [ngClass]="getSortIcon('manHours')"></i></div>
+              </th>
+              <th (click)="sortDivisions('manHours')">
+                <div class="head-other sortable">Holiday Type<i class="fas" [ngClass]="getSortIcon('manHours')"></i></div>
               </th>
               <th (click)="sortDivisions('cityStatus')">
                 <div class="head-other sortable">Status</div>
@@ -122,12 +125,14 @@
             </tr>
           </thead>
         <tbody>
-          <tr *ngFor="let division of filteredDivisions | paginate:{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': division.divisionStatus}">
+          <tr *ngFor="let division of filteredDivisions | paginate:{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': !division.divisionStatus}">
             <td><div class="tr-first-child">{{ i + 1 }}</div></td>
             <td><div class="tr-other-child">{{ division.divisionName }}</div></td>
             <td><div class="tr-other-child">{{ division.projectManagerName }}</div></td>
             <td><div class="tr-other-child">{{ division.prefixName }}</div></td>
             <td><div class="tr-other-child">{{ division.manHours }}</div></td>
+            <td *ngIf="division.holidayListType == true"><div class="tr-other-child">US-based</div></td>
+            <td *ngIf="division.holidayListType == false"><div class="tr-other-child">Non US-based</div></td>
 
             <td>
               <div class="tr-other-child">
@@ -147,7 +152,7 @@
           </tr>
         </tbody>
       </table>
-              <div class="pagination-wrapper">
+          <div class="pagination-wrapper">
           <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
         </div>
     </div>

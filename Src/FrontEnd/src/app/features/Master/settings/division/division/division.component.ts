@@ -22,7 +22,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
   [x: string]: any;
   divisionForm!: FormGroup;
   divisions: GetDivisionDto[] = [];
-  filteredDivisions: any[] = [];
+    filteredDivisions: any[] = [];
   projectManagerNames: any[] = [];
 
   isEditMode = false;
@@ -113,9 +113,13 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       projectManagerName: division.projectManagerName,
       prefixName: division.prefixName,
       manHours: division.manHours,
-      status: division.divisionStatus ? '1' : '0'
+      holidayListType: division.holidayListType ? "1" : "0",
+      divisionStatus: division.divisionStatus ? "1" : "0"
     });
+    
     this.selectedDivisionId = division.divisionId;
+    console.log(this.selectedDivisionId, division);
+    
     this.isEditMode = true;
     this.modal.show();
   }
@@ -125,7 +129,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       console.log("hello world")
       return;
     }
-
+    
     const statusBool = this.divisionForm.value.locationStatus === '1' ? true : false;
     const payload = {
       divisionName: this.divisionForm.value.divisionName,
@@ -133,11 +137,13 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       prefixName: this.divisionForm.value.prefixName,
       manHours: this.divisionForm.value.manHours,
       fk_HolidayId: this.divisionForm.value.holidayListType,
-      divisionStatus: Boolean(this.divisionForm.value.divisionStatus)
+      divisionStatus: this.divisionForm.value.divisionStatus == 1 ? true : false
     };
-    if (this.isEditMode && this.selectedDivisionId) {
+    console.log(payload.divisionStatus);
+    
+    if (this.isEditMode) {
       const updateDto: UpdateDivisionDto = {
-        ...payload, divisionId: this.selectedDivisionId, updatedBy: 1,
+        ...payload, divisionId: this.selectedDivisionId != null ? this.selectedDivisionId : 0, updatedBy: "1",
       };
       console.log("payload", updateDto);
       this.divisionService.updateDivisions(updateDto).subscribe({
@@ -150,6 +156,8 @@ export class DivisionComponent implements OnInit, AfterViewInit {
             text: 'Division updated successfully!',
             confirmButtonColor: '#3085d6'
           });
+          console.log(updateDto);
+          
         },
         error: (err) => this.errorHandler.handleError(err)
 
@@ -157,7 +165,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
 
     }
     else {
-      const createDto: CreateDivisionDto = { ...payload, createdBy: 1 };
+      const createDto: CreateDivisionDto = { ...payload, createdBy: '1' };
       console.log(createDto);
       this.divisionService.createDivisions(createDto).subscribe({
         next: (res: DivisionDto) => {
@@ -175,66 +183,6 @@ export class DivisionComponent implements OnInit, AfterViewInit {
 
     }
   }
-
-  // onSubmit(): void {
-  //     if (this.divisionForm.invalid) return;
-
-  //     const statusBool = this.divisionForm.value.cityStatus === '1';
-  //     const payload = {
-  //       cityName: this.divisionForm.value.cityName,
-  //       stateId: this.divisionForm.value.stateId,
-  //       cityStatus: statusBool,
-  //     };
-
-  //     const createDto: CreateDivisionDto = {
-  //       divisionName: this.divisionForm.value.cityName,
-  //       projectManagerName: this.divisionForm.value.projectManagerName,
-  //       prefixName:this.divisionForm.value.prefixName,
-  //       manHours:this.divisionForm.value.manHours,
-  //       createdBy: 1,
-  //     };
-
-  //     if (this.isEditMode && this.selectedDivisionId) {
-  //       const updateDto: UpdateDivisionDto = {
-  //         ...payload,
-  //         divisionId: this.selectedDivisionId,
-  //         updatedBy: 1
-  //       };
-
-  //       this.divisionService.updateDivisions(updateDto).subscribe({
-  //         next: () => {
-  //           this.loadCities();
-  //           this.locationModal.hide();
-  //           this.resetForm();
-
-  //           Swal.fire({
-  //             icon: 'success',
-  //             title: 'Updated',
-  //             text: 'City updated successfully!',
-  //             confirmButtonColor: '#3085d6'
-  //           });
-  //         },
-  //         error: (err) => this.errorHandler.handleError(err)
-  //       });
-
-  //     } else {
-  //       this.divisionService.createDivisions(createDto).subscribe({
-  //         next: () => {
-  //           this.loadDivisions();
-  //           this.divisionModal.hide();
-  //           this.resetForm();
-
-  //           Swal.fire({
-  //             icon: 'success',
-  //             title: 'Created',
-  //             text: 'City created successfully!',
-  //             confirmButtonColor: '#3085d6'
-  //           });
-  //         },
-  //         error: (err) => this.errorHandler.handleError(err)
-  //       });
-  //     }
-  // }
 
   resetForm(): void {
     this.divisionForm.reset({ divisionName: '', status: '1' });
@@ -260,6 +208,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  
   sortDivisions(column: string): void {
     if (this.selectedSortColumn === column) {
       this.sortDirectionAsc = !this.sortDirectionAsc;

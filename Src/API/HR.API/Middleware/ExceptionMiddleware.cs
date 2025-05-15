@@ -37,15 +37,10 @@ namespace ArtSystem.Api.Middleware
                     statusCode = HttpStatusCode.BadRequest;
                     break;
                 case CityValidationException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    break;
                 case StateValidationException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    break;
                 case CountryValidationException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    break;
                 case HolidayValidationException:
+                case PunchInValidationException:
                     statusCode = HttpStatusCode.BadRequest;
                     break;
                 default:

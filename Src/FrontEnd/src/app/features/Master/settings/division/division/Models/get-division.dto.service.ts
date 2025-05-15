@@ -5,5 +5,6 @@ export interface GetDivisionDto {
   divisionStatus: boolean;
   projectManagerName:string;
   prefixName: string;
+  holidayListType: boolean;
   manHours: number;
 }

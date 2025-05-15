@@ -1,11 +1,11 @@
 
 export interface UpdateDivisionDto {
-  divisionName: string;
-  divisionStatus: boolean;
-  updatedBy: number;
   divisionId: number;
+  divisionName: string;
   projectManagerName: string;
   prefixName: string;
   fk_HolidayId: number;
   manHours: number;
+  divisionStatus: boolean;
+  updatedBy: string;
 }

@@ -103,11 +103,17 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Fk_UserGroupId", (object?)employee.UserGroupId ?? DBNull.Value),
     new SqlParameter("@Fk_BranchId", (object?)employee.BranchId ?? DBNull.Value),
     new SqlParameter("@Fk_DivisionId", (object?)employee.DivisionId ?? DBNull.Value),
+     new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
+    new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
+    new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
+    new SqlParameter("@Fk_GenderId", (object?)employee.GenderId ?? DBNull.Value),
+
+
 };
 
 
             await _appDbContext.Database.ExecuteSqlRawAsync(
-                @"EXEC SP_Employee_insert 
+                @"EXEC dbo.SP_EmployeeInsert 
             @Name,
             @Code, 
             
@@ -129,7 +135,11 @@ namespace HR.Persistence.Repositories
             @Fk_EmployeeTypeId, 
             @Fk_UserGroupId,
             @Fk_BranchId,
-            @Fk_DivisionId",
+            @Fk_DivisionId,
+            @Fk_CountryId,
+            @Fk_StateId,
+            @Fk_CityId,
+            @Fk_GenderId",
                 parameters.ToArray()
             );
 
@@ -156,7 +166,11 @@ namespace HR.Persistence.Repositories
                 EmployeeTypeId = employee.EmployeeTypeId,
                 UserGroupId = employee.UserGroupId,
                 BranchId = employee.BranchId,
-                DivisionId = employee.DivisionId
+                DivisionId = employee.DivisionId,
+                CountryId = employee.CountryId,
+                StateId = employee.StateId,
+                CityId = employee.CityId,
+                GenderId = employee.GenderId,
             };
         }
 
@@ -176,6 +190,19 @@ namespace HR.Persistence.Repositories
 
             return employee.FirstOrDefault();
         }
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
+        {
+            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
+            Console.WriteLine($"SQL Query: {sql}", did);
+            var employee = _appDbContext.Employees
+                .FromSqlRaw(sql, did)
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+
+            return employee;
+        }
 
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
@@ -189,6 +216,7 @@ namespace HR.Persistence.Repositories
             {
                 try
                 {
+
                     string base64Data = dto.Image.Split(',')[1];
                     imageBytes = Convert.FromBase64String(base64Data);
                 }
@@ -311,3 +339,37 @@ namespace HR.Persistence.Repositories
 
     }
     }
+        public async Task<int> ReadCurrentEmpCounter()
+        {
+            var result = _appDbContext.Counter
+                .FromSqlRaw("EXEC SP_CounterRead")
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+            return result.FirstOrDefault()!.Id;
+        }
+
+        public async Task IncrCurrentEmpCounter()
+        {
+            await _appDbContext.Database.ExecuteSqlRawAsync("EXEC SP_CounterUpdate");
+        }
+
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
   standalone: true,
   imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule  ],
   templateUrl: './gmc.component.html',
-  styleUrls: ['./gmc.component.css']
+  styleUrls: ['./gmc.component.css'],
 })
 export class GmcComponent implements OnInit {
   employee: Employee = {
@@ -43,7 +43,7 @@ export class GmcComponent implements OnInit {
     birthDate: new Date(),
     age: 0,
     relationWithEmployee: '',
-    familyStatus: true
+    familyStatus: true,
   };
 
   familyTypes: { id: number, label: string }[] = [];
@@ -104,7 +104,7 @@ loadGenders():void{
       error: (err) => {
         console.error('Error saving family member:', err);
         alert('Failed to save family member.');
-      }
+      },
     });
   }
 
@@ -116,7 +116,7 @@ loadGenders():void{
       birthDate: new Date(),
       age: 0,
       relationWithEmployee: '',
-      familyStatus: true
+      familyStatus: true,
     };
   }
 
@@ -127,23 +127,24 @@ loadGenders():void{
       },
       error: (err) => {
         console.error('Error loading list:', err);
-      }
+      },
     });
   }
   loadFamilyTypes(): void {
-  this.gmcService.getAllFamilyMemberType().subscribe({
-    next: (data) => {
-      this.familyTypes = data.map(type => ({
-        id: type.familyMemberTypeId,
-        label: type.familyMemberTypeName
-      }));
-    },
-    error: (err) => {
-      console.error('Error loading family member types:', err);
-      alert('Failed to load family member types.');
-    }
-  });
-}
+    this.gmcService.getAllFamilyMemberType().subscribe({
+      next: (data) => {
+        this.familyTypes = data.map((type) => ({
+          id: type.familyMemberTypeId,
+          label: type.familyMemberTypeName,
+        }));
+      },
+      error: (err) => {
+        console.error('Error loading family member types:', err);
+        alert('Failed to load family member types.');
+      },
+    });
+  }
+
 
    saveEmployeeDetails(): void {
   const payload: EmployeeSaveDto = {
@@ -169,6 +170,7 @@ loadGenders():void{
     }
   });
 }
+
 
 
 }

@@ -1,249 +1,116 @@
 <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
   <div class="container mt-5">
-    <div class="row g-4">
-      <!-- Employee Card -->
-      <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
-          <h5 class="text-muted mb-3">Employee Info</h5>
+    <div class="card shadow-lg rounded-4 p-4 border-0">
+      <h3 class="mb-4 text-primary border-bottom pb-2">👤 Employee Registration</h3>
 
-          <!-- Name -->
-          <div class="mb-3">
-            <label class="form-label">Employee Name</label>
+      <!-- 1. Personal Information -->
+      <div class="mb-4">
+        <h5 class="text-secondary">📝 Personal Details</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name</label>
             <input
               type="text"
-              class="form-control"
+              class="form-control rounded-pill"
               formControlName="name"
-              placeholder="Enter Name"
+              placeholder="Enter full name"
             />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('name')?.touched &&
-                employeeForm.get('name')?.hasError('required')
-              "
-            >
-              Name is required.
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('name')?.touched">
+              <div *ngIf="employeeForm.get('name')?.hasError('required')">
+                Name is required.
+              </div>
+              <div *ngIf="employeeForm.get('name')?.hasError('pattern')">
+                Only letters and spaces are allowed.
+              </div>
             </div>
           </div>
 
-          <!-- Code -->
-          <div class="mb-3">
-            <label class="form-label">Employee Code</label>
-            <input
-              type="text"
-              [disabled]="isDisable"
-              class="form-control"
-              formControlName="code"
-              placeholder="Enter Code"
-            />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('code')?.touched &&
-                employeeForm.get('code')?.hasError('required')
-              "
-            >
-              Code is required.
-            </div>
-          </div>
-
-          <!-- Email -->
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input
-              type="email"
-              class="form-control"
-              formControlName="email"
-              placeholder="Enter Email"
-            />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.controls['email'].hasError('required') &&
-                employeeForm.controls['email'].touched
-              "
-            >
-              Email is required
-            </div>
-            <div
-              *ngIf="
-                employeeForm.controls['email'].hasError('email') &&
-                employeeForm.controls['email'].touched
-              "
-            >
-              Please enter a valid email address
-            </div>
-          </div>
-
-          <!-- Mobile No -->
-          <div class="mb-3">
-            <label class="form-label">Mobile No</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="mobileNo"
-              placeholder="Enter Mobile No"
-            />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('mobileNo')?.touched &&
-                employeeForm.get('mobileNo')?.hasError('required')
-              "
-            >
-              Mobile number is required.
+          <div class="col-md-6">
+            <label class="form-label">Birth Date</label>
+            <input type="date" class="form-control rounded-pill" formControlName="birthDate" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.hasError('required')">
+              Birth date is required.
             </div>
           </div>
         </div>
       </div>
+      
 
-      <!-- Agreement Card -->
-      <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
-          <h5 class="text-muted mb-3">Agreement</h5>
-
-          <!-- Join Date -->
-          <div class="mb-3">
+      <!-- 2. Employment Details -->
+      <div class="mb-4">
+        <!-- <h5 class="text-secondary">💼 Employment Details</h5> -->
+        <div class="row g-3">
+          <div class="col-md-6">
             <label class="form-label">Join Date</label>
-            <input
-              type="date"
-              class="form-control"
-              formControlName="joinDate"
-            />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('joinDate')?.touched &&
-                employeeForm.get('joinDate')?.hasError('required')
-              "
-            >
+            <input type="date" class="form-control rounded-pill" formControlName="joinDate" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('joinDate')?.touched && employeeForm.get('joinDate')?.hasError('required')">
               Join date is required.
             </div>
           </div>
 
-          <!-- Birth Date -->
-          <div class="mb-3">
-            <label class="form-label">Birth Date</label>
-            <input
-              type="date"
-              class="form-control"
-              formControlName="birthDate"
-            />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('birthDate')?.touched &&
-                employeeForm.get('birthDate')?.hasError('required')
-              "
-            >
-              Birth date is required.
-            </div>
-          </div>
-
-          <!-- PAN Number -->
-          <div class="mb-3">
+          <div class="col-md-6">
             <label class="form-label">PAN Number</label>
             <input
               type="text"
-              class="form-control"
+              class="form-control rounded-pill"
               formControlName="panNumber"
               placeholder="Enter PAN"
             />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('panNumber')?.touched &&
-                employeeForm.get('panNumber')?.hasError('required')
-              "
-            >
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('panNumber')?.touched && employeeForm.get('panNumber')?.hasError('required')">
               PAN number is required.
             </div>
           </div>
-
-          <!-- Location -->
-          <div class="mb-3">
-            <label class="form-label">Location</label>
-            <select class="form-select" formControlName="locationId">
-              <option value="">Select</option>
-              <option *ngFor="let loc of locations" [value]="loc.id">
-                {{ loc.name }}
-              </option>
-            </select>
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('locationId')?.touched &&
-                employeeForm.get('locationId')?.hasError('required')
-              "
-            >
-              Location is required.
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- Payment / Misc -->
-      <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
-          <h5 class="text-muted mb-3">Miscellaneous</h5>
+      <!-- 3. Contact Info -->
+      <div class="mb-4">
+        <!-- <h5 class="text-secondary">📞 Contact Information</h5> -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control rounded-pill" formControlName="email" placeholder="Enter Email" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('email')?.touched">
+              <div *ngIf="employeeForm.get('email')?.hasError('required')">Email is required.</div>
+              <div *ngIf="employeeForm.get('email')?.hasError('email')">Enter a valid email.</div>
+            </div>
+          </div>
 
-          <!-- Skype ID -->
-          <div class="mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Mobile Number</label>
+            <input
+              type="text"
+              class="form-control rounded-pill"
+              formControlName="mobileNo"
+              placeholder="Enter Mobile No"
+            />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('mobileNo')?.touched">
+              <div *ngIf="employeeForm.get('mobileNo')?.hasError('required')">Mobile number is required.</div>
+              <div *ngIf="employeeForm.get('mobileNo')?.hasError('pattern')">Enter a valid 10-digit mobile number.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
             <label class="form-label">Skype ID</label>
-            <input type="text" class="form-control" formControlName="skypeId" />
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('skypeId')?.touched &&
-                employeeForm.get('skypeId')?.hasError('required')
-              "
-            >
+            <input type="text" class="form-control rounded-pill" formControlName="skypeId" />
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('skypeId')?.touched && employeeForm.get('skypeId')?.hasError('required')">
               Skype ID is required.
             </div>
           </div>
-
-          <!-- Address -->
-          <div class="mb-3">
-            <label class="form-label">Address</label>
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="address"
-              placeholder="Enter Address"
-            ></textarea>
-            <div
-              class="text-danger"
-              *ngIf="
-                employeeForm.get('address')?.touched &&
-                employeeForm.get('address')?.hasError('required')
-              "
-            >
-              Address is required.
+        </div>
+      </div>
+            <!-- 5. Login & Files -->
+      <div class="mb-4">
+        <!-- <h5 class="text-secondary">🔐 Login & Attachments</h5> -->
+        <div class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" formControlName="loginStatus" id="loginStatus" />
+              <label class="form-check-label" for="loginStatus">Login Active</label>
             </div>
           </div>
 
-          <!-- Login Status -->
-          <div class="form-check mb-2">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              formControlName="loginStatus"
-              id="loginStatus"
-            />
-            <label class="form-check-label" for="loginStatus"
-              >Login Active</label
-            >
-          </div>
-        </div>
-      </div>
-
-      <!-- Profile Upload -->
-      <div class="col-md-6">
-        <div class="card shadow-sm rounded border-0 bg-white p-4">
-          <h5 class="text-muted mb-3">Profile & Signature</h5>
-
-          <!-- Profile Image -->
-          <div class="mb-3">
+          <div class="col-md-6">
             <label class="form-label">Profile Image</label>
             <input
               type="file"
@@ -251,17 +118,12 @@
               (change)="onFileChange($event, 'image')"
               accept="image/*"
             />
-          </div>
-          <div *ngIf="employeeForm.value.image">
-            <img
-              [src]="'data:image/jpeg;base64,' + employeeForm.value.image"
-              class="rounded"
-              style="width: 80px; height: 80px"
-            />
+            <div class="mt-2" *ngIf="employeeForm.value.image">
+              <img [src]="'data:image/jpeg;base64,' + employeeForm.value.image" class="rounded border shadow" style="width: 80px; height: 80px" />
+            </div>
           </div>
 
-          <!-- Signature -->
-          <div class="mb-3 mt-3">
+          <div class="col-md-6">
             <label class="form-label">Signature</label>
             <input
               type="file"
@@ -269,26 +131,71 @@
               (change)="onFileChange($event, 'signature')"
               accept="image/*"
             />
-          </div>
-          <div *ngIf="employeeForm.value.signature">
-            <img
-              [src]="'data:image/png;base64,' + employeeForm.value.signature"
-              class="rounded"
-              style="width: 80px; height: 80px"
-            />
+            <div class="mt-2" *ngIf="employeeForm.value.signature">
+              <img [src]="'data:image/png;base64,' + employeeForm.value.signature" class="rounded border shadow" style="width: 80px; height: 80px" />
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Submit Button -->
-      <div class="col-12 d-flex justify-content-end">
-        <button type="submit" class="btn btn-dark btn-lg me-2">Save</button>
-        <button
-          type="button"
-          class="btn btn-outline-secondary btn-lg"
-          (click)="resetForm()"
-        >
-          Reset
+      <!-- 4. Address Details -->
+      <div class="mb-4">
+        <h5 class="text-secondary">🏠 Address Information</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Country</label>
+            <select class="form-select" formControlName="CountryId">
+              <option value="">Select</option>
+              <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">State</label>
+            <select class="form-select" formControlName="StateId">
+              <option value="">Select</option>
+              <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">City</label>
+            <select class="form-select" formControlName="CityId">
+              <option value="">Select</option>
+              <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <select class="form-select" formControlName="locationId">
+              <option value="">Select</option>
+              <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
+            </select>
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('locationId')?.touched && employeeForm.get('locationId')?.hasError('required')">
+              Location is required.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Address</label>
+            <textarea rows="2" class="form-control" formControlName="address" placeholder="Enter Address"></textarea>
+            <div class="text-danger small mt-1" *ngIf="employeeForm.get('address')?.touched && employeeForm.get('address')?.hasError('required')">
+              Address is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Buttons -->
+      <div class="d-flex justify-content-end mt-4">
+        <button type="submit" class="btn btn-primary btn-lg me-2">
+          <i class="bi bi-save"></i> Save
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-lg" (click)="resetForm()">
+          <i class="bi bi-arrow-repeat"></i> Reset
         </button>
       </div>
     </div>
