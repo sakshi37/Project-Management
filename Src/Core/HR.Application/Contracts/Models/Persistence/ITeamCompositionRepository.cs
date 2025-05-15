@@ -15,6 +15,8 @@ namespace HR.Application.Contracts.Models.Persistence
         Task<TeamComposition> CreateAsync(CreateTeamCompositionDto dto);
         //Task<List<TeamCompositionDto>> GetAllAsync();
         Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null);
+        Task<List<TeamLeaderDto>> GetTeamLeadersAsync();
+
 
 
     }

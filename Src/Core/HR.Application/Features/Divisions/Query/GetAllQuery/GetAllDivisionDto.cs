@@ -8,8 +8,8 @@ namespace HR.Application.Features.Divisions.Query.GetAllQuery
 {
    public  class GetAllDivisionDto
     {
-        public int DivisionId { get; set; }
-        public string? DivisionName { get; set; }
+            public int DivisionId { get; set; }
+            public string? DivisionName { get; set; }
             public string? ProjectManagerName { get; set; }
 
 

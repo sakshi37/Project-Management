@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,12 +55,18 @@ namespace HR.Persistence.Repositories
             {
             new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
             new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
-        };
+             };
 
             string sql = "EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId";
             return await _context.TeamCompositionDtos
                 .FromSqlRaw(sql, parameters)
                 .ToListAsync();
         }
+        public async Task<List<TeamLeaderDto>> GetTeamLeadersAsync()
+        {
+            string sql = "EXEC SP_GetTeamLeaders";
+            return await _context.TeamLeaderDtos.FromSqlRaw(sql).ToListAsync();
+        }
+
     }
 }
