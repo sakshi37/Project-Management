@@ -4,7 +4,6 @@ using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
-
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
@@ -129,6 +128,10 @@ namespace HR.API.Controllers
 
 
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b3c9d8bcac7adcd5c8350bcedb8c5607cfe2caca
         [HttpGet("{code}")]
         public async Task<IActionResult> GetEmployeeBasicDetailsByCode(string code)
         {
@@ -139,6 +142,7 @@ namespace HR.API.Controllers
 
             return Ok(result);
         }
+
 
     }
 }

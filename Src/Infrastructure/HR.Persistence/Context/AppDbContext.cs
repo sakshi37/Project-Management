@@ -74,14 +74,18 @@ public class AppDbContext : DbContext
 
     public DbSet<GetAllEmployeeTypeQueryVm> GetAllEmployeeTypeQueryVms { get; set; }
     public DbSet<Tbl_Login> Tbl_Login { get; set; }
+
     public DbSet<Employee> TblEmployeemaster { get; set; }
+
     public DbSet<GetAllFamilyMemberTypeQueryVm> GetAllFamilyTypeMemberVms { get; set; }
     public DbSet<GetEmployeeBasicDetailsByCodeQueryVm> EmployeeBasicDetails { get; set; }
     public DbSet<InsertEmployeeDetailsGmcCommandDto> EmployeesGmc { get; set; } 
 
     public DbSet<GetAllGenderQueryVm> GetAllGenderQueryVms { get; set; }
 
+
     public DbSet<Attendance> attendance { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

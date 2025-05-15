@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GmcService } from '../../../services/gmc-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FamilyMember } from '../../../Models/family-member-dto';
+import { FamilyMember } from '../../../Models/family-member-dto'; b3c9d8bcac7adcd5c8350bcedb8c5607cfe2caca
 import { Employee, EmployeeSaveDto } from '../../../Models/gmc-model';
 
 import { Gender } from '../../../Models/get-gender-dto';
@@ -33,8 +33,10 @@ export class GmcComponent implements OnInit {
     email: '',
     age: 0,
     emergencyContact: '',
+
     aadhar: ''
     
+
   };
   family: FamilyMember = {
     fk_FamilyMemberTypeId: 0,
@@ -46,9 +48,12 @@ export class GmcComponent implements OnInit {
     familyStatus: true,
   };
 
+
   familyTypes: { id: number, label: string }[] = [];
 
   genders: Gender[] = [];
+
+
 
   familyList: FamilyMember[] = [];
 
@@ -64,8 +69,10 @@ export class GmcComponent implements OnInit {
       alert('Employee code is missing in local storage!');
     }
     this.loadFamilyList();
+
     this.loadFamilyTypes()
     this.loadGenders();
+
   }
 
   fetchEmployeeDetails(code: string): void {
@@ -144,7 +151,6 @@ loadGenders():void{
       },
     });
   }
-
 
    saveEmployeeDetails(): void {
   const payload: EmployeeSaveDto = {

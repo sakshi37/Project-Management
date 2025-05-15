@@ -22,13 +22,12 @@ namespace HR.Application.Contracts.Persistence
         Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did);
         Task<EmployeeDto> GetEmaployeeByEmail(string email);
         Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto);
-<<<<<<< HEAD
+
         Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code);
         // IEmployeeMasterRepository.cs
         Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee);
         Task<bool> EmployeeExistsAsync(string code);
        
-=======
 
         Task<int> ReadCurrentEmpCounter();
 
@@ -36,9 +35,5 @@ namespace HR.Application.Contracts.Persistence
 
         Task IncrCurrentEmpCounter();
 
-
-
-
->>>>>>> 5c4477f200147b42a25bb1220ffccced37edc415
     }
 }

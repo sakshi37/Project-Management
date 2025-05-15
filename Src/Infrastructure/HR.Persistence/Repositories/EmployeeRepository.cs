@@ -302,6 +302,32 @@ namespace HR.Persistence.Repositories
                 .FirstOrDefault();
         }
 
+        public async Task<int> ReadCurrentEmpCounter()
+        {
+            var result = _appDbContext.Counter
+                .FromSqlRaw("EXEC SP_CounterRead")
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+            return result.FirstOrDefault()!.Id;
+        }
+
+        public async Task IncrCurrentEmpCounter()
+        {
+            await _appDbContext.Database.ExecuteSqlRawAsync("EXEC SP_CounterUpdate");
+        }
+
+
+
+    }
+
+
+}
+
+
+
+
 
         public async Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee)
         {
@@ -337,39 +363,7 @@ namespace HR.Persistence.Repositories
         }
 
 
-    }
-    }
-        public async Task<int> ReadCurrentEmpCounter()
-        {
-            var result = _appDbContext.Counter
-                .FromSqlRaw("EXEC SP_CounterRead")
-                .AsNoTracking()
-                .AsEnumerable()
-                .ToList();
-
-            return result.FirstOrDefault()!.Id;
-        }
-
-        public async Task IncrCurrentEmpCounter()
-        {
-            await _appDbContext.Database.ExecuteSqlRawAsync("EXEC SP_CounterUpdate");
-        }
-
-
 
     }
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
+    }
 
