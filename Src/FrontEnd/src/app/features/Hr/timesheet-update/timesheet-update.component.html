@@ -138,6 +138,11 @@
       <p class="card-text"></p>
     </div>
   </div>
-  <button (click)="punchIn()">PunchIn</button>
-  <button (click)="punchOut()">PunchOut</button>
+
+  <button [disabled]="sessionStatus != null" (click)="punchIn()">
+    PunchIn
+  </button>
+  <button [disabled]="sessionStatus == null" (click)="punchOut()">
+    PunchOut
+  </button>
 </div>

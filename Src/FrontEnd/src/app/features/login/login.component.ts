@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, Injector } from '@angular/core';
 import { FormControl, FormsModule, NgForm, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthResponseModel, Login, VerifyOTPDto } from '../../Models/login';
 import { UserService } from '../../services/user.service';
 import { Otp } from '../../Models/otp';
 import Swal from 'sweetalert2';
+import { AppComponent } from '../../app.component';
 
 declare var bootstrap: any;
 
@@ -37,7 +38,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private injector: Injector
   ) {}
 
   passwordModel = {
@@ -63,9 +65,30 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(this.login).subscribe({
       next: (response: AuthResponseModel) => {
+        console.log(response);
+        localStorage.setItem('empId', response.fk_EmpId.toString());
         localStorage.setItem('otp', response.otp);
         localStorage.setItem('email', response.email);
         localStorage.setItem('userName', response.userName);
+        localStorage.setItem('checkFirstLogin', response.firstLogin);
+        // localStorage.setItem('roleName', response.roleName);
+        localStorage.setItem('loginStatus', String(response.loginStatus));
+        localStorage.setItem('roleName', response.roleName);
+        localStorage.setItem('userCheckInTime', response.userCheckInTime);
+
+        console.log(response.loginStatus);
+
+        console.log(localStorage.getItem('userName'));
+
+        if (!response.loginStatus) {
+          Swal.fire(
+            'Access Denied',
+            'Your login has been disabled. Please contact HR.',
+            'error'
+          );
+          this.isLoggingIn = false;
+          return;
+        }
         localStorage.setItem('checkFirstLogin', response.firstLogin);
 
         localStorage.setItem('roleName', response.roleName);
@@ -86,12 +109,14 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         console.error('Login failed!', error);
+
         // alert("Invalid email or password. Please try again");
         Swal.fire(
           'Login Failed',
           'Invalid email or password. Please try again.',
           'error'
         );
+        OkButtonColor: '#28a745';
         this.isLoggingIn = false;
       },
     });
@@ -154,32 +179,6 @@ export class LoginComponent implements OnInit {
       prevInput.focus();
     }
   }
-
-  resendOtp() {
-    const email = localStorage.getItem('email');
-    if (!email) {
-      // alert('Email not found. Please login again.');
-      Swal.fire('Error', 'Email not found. Please login again.', 'error');
-      return;
-    }
-
-    const loginUser = new Login(email, '', false);
-
-    // this.userService.resendOtp(loginUser).subscribe({
-    //   next: (response: any) => {
-    //     localStorage.setItem('otp', response.otp);
-    //     // alert('OTP Resent Successfully!');
-    //     Swal.fire('Success', 'OTP Resent Successfully!', 'success');
-    //   },
-    //   error: (error) => {
-    //     console.error('Resend OTP failed!', error);
-    //     // alert('Failed to resend OTP. Please try again.');
-    //     Swal.fire('Failed', 'Failed to resend OTP. Please try again.', 'error');
-    //   }
-    // });
-  }
-
-  // Forgot password logic
   forgotUsername: string = '';
   forgotOtp: string = '';
   newPassword: string = '';
@@ -192,7 +191,9 @@ export class LoginComponent implements OnInit {
       input: 'text',
       inputPlaceholder: 'Enter your username',
       showCancelButton: true,
-      confirmButtonText: 'Submit',
+      confirmButtonText: 'Submit ',
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: 'darkgrey',
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         this.forgotUsername = result.value;

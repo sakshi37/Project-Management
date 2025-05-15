@@ -4,10 +4,10 @@ using MediatR;
 
 namespace HR.Application.Features.TimeSheets.Commands.PunchIn
 {
-    public class PunchInHandler : IRequestHandler<PunchInCommand>
+    public class PunchInCommandHandler : IRequestHandler<PunchInCommand>
     {
         readonly ITimeSheetRepository _timeSheetRepository;
-        public PunchInHandler(ITimeSheetRepository timeSheetRepository)
+        public PunchInCommandHandler(ITimeSheetRepository timeSheetRepository)
         {
 
             _timeSheetRepository = timeSheetRepository;

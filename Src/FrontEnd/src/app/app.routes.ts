@@ -18,7 +18,8 @@ import { HolidayComponent } from './features/Master/holiday/holiday.component';
 import { TeamCompositionComponent } from './features/Master/team-composition/team-composition.component';
 import { AuthGuard } from './services/authguard';
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
-
+import { TopBarComponent } from './features/Master/team-composition/top-bar/top-bar.component';
+import { ActivityTimesheetComponent } from './features/Dashboard/activity-timesheet/activity-timesheet.component';
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'sidebar', component: LefSideNavComponent },
@@ -33,20 +34,17 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard],
   },
-  {
-    path: 'settings',
-    component: SettingsComponent /*canActivate: [AuthGuard]*/,
-  },
-  { path: 'country', component: CountryComponent /*canActivate: [AuthGuard]*/ },
-  { path: 'state', component: StateComponent /*canActivate: [AuthGuard]*/ },
-  { path: 'holiday', component: HolidayComponent /*canActivate: [AuthGuard]*/ },
-
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+  { path: 'country', component: CountryComponent, canActivate: [AuthGuard] },
+  { path: 'state', component: StateComponent, canActivate: [AuthGuard] },
+  { path: 'top-bar', component: TopBarComponent, canActivate: [AuthGuard] },
+  { path: 'holiday', component: HolidayComponent, canActivate: [AuthGuard] },
   {
     path: 'changePassword',
     component: ChangePasswordComponent,
     canActivate: [AuthGuard],
   },
-  { path: 'gmc', component: GmcComponent /*canActivate: [AuthGuard] */ },
+  { path: 'gmc', component: GmcComponent, canActivate: [AuthGuard] },
 
   {
     path: 'timesheetupdate',
@@ -57,16 +55,14 @@ export const routes: Routes = [
   {
     path: 'employee-registration',
     component: EmployeeRegistrationComponent,
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'update-employee',
     component: UpdateEmployeeComponent,
   },
   { path: 'otp', component: OtpComponent },
-  {
-    path: 'sidebar',
-    component: LefSideNavComponent /*canActivate: [AuthGuard] */,
-  },
+  { path: 'activity-timesheet', component: ActivityTimesheetComponent },
+
   { path: '**', redirectTo: '' },
 ];
