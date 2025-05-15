@@ -56,7 +56,7 @@ namespace HR.Persistence.Repositories
 
         }
 
-        public async Task<Attendance> GetCurrentSession(int empId)
+        public async Task<Attendance?> GetCurrentSession(int empId)
         {
             string sql = "EXEC dbo.SP_GetCurrentSession @FK_EmpId={0}";
 

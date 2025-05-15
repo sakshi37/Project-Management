@@ -1,9 +1,10 @@
 ﻿using HR.Application.Contracts.Persistence;
+using HR.Domain.Entities;
 using MediatR;
 
 namespace HR.Application.Features.TimeSheets.Queries
 {
-    public class GetSessionByEmpHandler : IRequestHandler<GetSessionByEmpQuery>
+    public class GetSessionByEmpHandler : IRequestHandler<GetSessionByEmpQuery, Attendance?>
     {
         readonly ITimeSheetRepository _timeSheetRepository;
         public GetSessionByEmpHandler(ITimeSheetRepository timeSheetRepository)
@@ -11,9 +12,9 @@ namespace HR.Application.Features.TimeSheets.Queries
             _timeSheetRepository = timeSheetRepository;
         }
 
-        public async Task Handle(GetSessionByEmpQuery request, CancellationToken cancellationToken)
+        public async Task<Attendance?> Handle(GetSessionByEmpQuery request, CancellationToken cancellationToken)
         {
-            await _timeSheetRepository.GetCurrentSession(request.EmpId);
+            return await _timeSheetRepository.GetCurrentSession(request.EmpId);
 
         }
     }

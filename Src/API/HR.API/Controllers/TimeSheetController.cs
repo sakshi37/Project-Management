@@ -48,13 +48,14 @@ namespace HR.API.Controllers
             await _mediator.Send(new PunchOutCommand(currentLoggedInEmpId));
             return Ok("success");
         }
-        [HttpGet("empId")]
+        [HttpGet("{empId}")]
         public async Task<IActionResult> getSessionByEmpId(int empId)
         {
             var currentLoggedIn = empId;
-            await _mediator.Send(new GetSessionByEmpQuery(currentLoggedIn));
-            return Ok("success");
+            var session = await _mediator.Send(new GetSessionByEmpQuery(currentLoggedIn));
+            return Ok(session);
         }
+
 
 
     }

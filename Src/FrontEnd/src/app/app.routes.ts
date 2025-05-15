@@ -48,10 +48,8 @@ export const routes: Routes = [
 
   {
     path: 'timesheetupdate',
-    component: TimesheetUpdateComponent,
-    canActivate: [AuthGuard],
+    component: TimesheetUpdateComponent /*canActivate: [AuthGuard] */,
   },
-  { path: 'team-compositions', component: TeamCompositionComponent },
 
   { path: 'employee', component: EmployeeComponent },
   {

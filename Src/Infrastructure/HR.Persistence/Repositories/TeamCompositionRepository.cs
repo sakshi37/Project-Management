@@ -1,5 +1,6 @@
-﻿using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
+using HR.Application.Features.TeamCompositions.Commands.Dtos;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,11 @@ namespace HR.Persistence.Repositories
                 CreatedDate = DateTime.UtcNow,
                 TeamStatus = true
             };
+        }
+
+        public Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
+        {
+            throw new NotImplementedException();
         }
         //public async Task<List<TeamCompositionDto>> GetAllAsync()
         //{
