@@ -38,7 +38,7 @@ namespace HR.API.Controllers
         {
             var currentLoggedInEmpId = attendanceDto.EmpId;
             await _mediator.Send(new PunchInCommand(currentLoggedInEmpId));
-            return Ok("success");
+            return Ok();
         }
 
         [HttpPost("PunchOut")]
@@ -46,7 +46,7 @@ namespace HR.API.Controllers
         {
             var currentLoggedInEmpId = attendanceDto.EmpId;
             await _mediator.Send(new PunchOutCommand(currentLoggedInEmpId));
-            return Ok("success");
+            return Ok();
         }
         [HttpGet("{empId}")]
         public async Task<IActionResult> getSessionByEmpId(int empId)

@@ -12,20 +12,11 @@ export class TimesheetUpdateComponent {
   constructor(private timeSheetService: TimeSheetService) {}
 
   punchIn() {
-    console.log('punchIn');
-    const empId = localStorage.getItem('empId');
-    if (empId === null || empId === '' || isNaN(Number(empId))) {
-      Swal.fire({
-        title: 'This should never happen',
-        text: 'Employee Id does not exist',
-      });
-      return;
+    const empId = this.getEmpId();
+    if (empId) {
+      this.timeSheetService.punchIn(empId).subscribe((res) => console.log(res));
     }
-    this.timeSheetService
-      .punchIn(Number(empId))
-      .subscribe((res) => console.log(res));
   }
-
   punchOut() {
     const empId = this.getEmpId();
     if (empId) {
@@ -40,7 +31,7 @@ export class TimesheetUpdateComponent {
     if (empId === null || empId === '' || isNaN(Number(empId))) {
       Swal.fire({
         title: 'This should never happen',
-        text: 'Employee Id does not exist',
+        text: 'Employee Id does not exist. Please logout and login again',
       });
       return;
     }
