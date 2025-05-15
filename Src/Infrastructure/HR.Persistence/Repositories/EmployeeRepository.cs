@@ -187,19 +187,7 @@ namespace HR.Persistence.Repositories
 
             return employee.FirstOrDefault();
         }
-        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
-        {
-            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
-            Console.WriteLine($"SQL Query: {sql}", did);
-            var employee = _appDbContext.Employees
-                .FromSqlRaw(sql, did)
-                .AsNoTracking()
-                .AsEnumerable()
-                .ToList();
-
-
-            return employee;
-        }
+       
 
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
@@ -288,6 +276,7 @@ namespace HR.Persistence.Repositories
             }
         }
 
+
         public async Task<int> ReadCurrentEmpCounter()
         {
             var result = _appDbContext.Counter
@@ -305,6 +294,32 @@ namespace HR.Persistence.Repositories
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+        //getallteamleader
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
+        {
+            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
+            Console.WriteLine($"SQL Query: {sql}", did);
+            var employee = _appDbContext.Employees
+                .FromSqlRaw(sql, did)
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+
+            return employee;
+        }
 
     }
 
