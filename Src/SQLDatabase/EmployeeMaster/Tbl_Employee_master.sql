@@ -13,7 +13,7 @@ PanNumber varchar(20),
 BirthDate dateTime2,
 Image Image,
 Signature Image,
-LoginStatus bit default 1,
+LoginStatus bit default 0,
 leftCompany bit null,
 leftDate datetime2 null,
 
@@ -39,6 +39,9 @@ foreign key (Fk_DivisionId) references Tbl_DivisionMaster(DivisionId)
 
 ALTER TABLE Tbl_Employee_master
 ADD CONSTRAINT DF_Tbl_Employee_master_LoginStatus DEFAULT 0 FOR LoginStatus;
+
+ALTER TABLE Tbl_Employee_master
+DROP CONSTRAINT DF__Tbl_Emplo__Login__7C6F7215;
 
 
 select * from Tbl_Employee_master

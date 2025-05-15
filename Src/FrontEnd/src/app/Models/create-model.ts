@@ -20,4 +20,6 @@ export interface CreateModel {
   usergroupId: number;
   branchId: number;
   divisionId: number;
+  countryId: number;
+  stateId: number;
 }
