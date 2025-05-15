@@ -10,5 +10,6 @@ namespace HR.Application.Features.LoginMaster.Commands.InsertLogin
     {
         public int EmpId { get; set; }
         public int CreatedBy { get; set; }
+        
     }
 }

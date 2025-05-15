@@ -26,6 +26,7 @@ using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using HR.Application.Features.Employees.Dtos;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : DbContext
@@ -85,6 +86,7 @@ public class AppDbContext : DbContext
 
 
     public DbSet<Attendance> attendance { get; set; }
+    public DbSet<empdetailDto> EmpdetailDtos { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -134,6 +136,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetEmployeeBasicDetailsByCodeQueryVm>().HasNoKey();
         modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
         modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
+        modelBuilder.Entity<empdetailDto>().HasNoKey(); 
 
 
 
