@@ -24,7 +24,7 @@ namespace HR.API.Controllers
         public async Task<IActionResult> AddGmcDetails([FromBody] InsertEmployeeDetailsGmcCommandDto dto)
         {
             var result = await _mediator.Send(new InsertEmployeeDetailsGmcCommand(dto));
-            return result ? Ok("Employee updated.") : NotFound("Employee not found.");
+            return result ? Ok(new { message = "Employee updated." }) : NotFound(new { message = "Employee not found."});
 
         }
 

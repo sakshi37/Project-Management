@@ -2,8 +2,8 @@ export class EmployeeModel {
 }
 export interface Employee {
     photo: string | null;
-    employeeName: string;
-    employeeCode: string;
+    name: string;
+    code: string;
     designationName: string;
     branchName: string;
     divisionName: string;

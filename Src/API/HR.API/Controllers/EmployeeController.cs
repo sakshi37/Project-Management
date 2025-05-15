@@ -128,10 +128,7 @@ namespace HR.API.Controllers
 
 
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> b3c9d8bcac7adcd5c8350bcedb8c5607cfe2caca
         [HttpGet("{code}")]
         public async Task<IActionResult> GetEmployeeBasicDetailsByCode(string code)
         {

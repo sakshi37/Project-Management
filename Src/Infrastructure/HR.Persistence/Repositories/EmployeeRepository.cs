@@ -174,9 +174,6 @@ namespace HR.Persistence.Repositories
             };
         }
 
-
-
-
         public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
         {
             var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
@@ -319,16 +316,6 @@ namespace HR.Persistence.Repositories
         }
 
 
-
-    }
-
-
-}
-
-
-
-
-
         public async Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee)
         {
             await _appDbContext.Database.ExecuteSqlRawAsync(
@@ -362,8 +349,17 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
-
-
-    }
     }
 
+
+}
+
+
+
+
+
+      
+
+
+
+ 

@@ -1,153 +1,217 @@
-<div class="container my-4 p-4 bg-light">
-  <!-- EMPLOYEE DETAILS FORM BOX -->
-  <div class="p-4 border rounded shadow-sm bg-white mb-5">
-    <div class="d-flex justify-content-between align-items-center">
-      <h4 class="mb-3">Add GMC Details</h4>
-      <button class="btn btn-success" type="button">
-        <i class="fas fa-download me-2"></i> Excel
-      </button>
-    </div>
-    <hr>
+  <div class="container my-4 p-4 bg-light">
+    <!-- EMPLOYEE DETAILS FORM BOX -->
+    <div class="p-4 border rounded shadow-sm bg-white mb-5">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-3">Add GMC Details</h4>
+        <button class="btn btn-success" type="button">
+          <i class="fas fa-download me-2"></i> Excel
+        </button>
+      </div>
+      <hr>
 
-    <form (ngSubmit)="saveEmployeeDetails()" #empForm="ngForm">
-  
-      <div class="row g-3">
+      <form (ngSubmit)="saveEmployeeDetails()" #empForm="ngForm">
+    
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label>Employee Name</label>
+            <input type="text" class="form-control" [(ngModel)]="employee.name" name="employeeName" readonly>
+          </div>
+          <div class="col-md-6">
+            <label>Employee Code</label>
+            <input type="text" class="form-control" [(ngModel)]="employee.code" name="employeeCode" readonly>
+          </div>
+    
+          <div class="col-md-6">
+            <label>Address</label>
+            <textarea class="form-control" [(ngModel)]="employees.address" name="address"  required></textarea>
+          </div>
+          <div class="col-md-6">
+            <label>Designation</label>
+            <input type="text" class="form-control" [(ngModel)]="employee.designation" name="designationName" readonly>
+          </div>
+    
         <div class="col-md-6">
-          <label>Employee Name</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.name" name="employeeName" readonly>
-        </div>
-        <div class="col-md-6">
-          <label>Employee Code</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.code" name="employeeCode" readonly>
-        </div>
-  
-        <div class="col-md-6">
-          <label>Address</label>
-          <textarea class="form-control" [(ngModel)]="employee.address" name="address"></textarea>
-        </div>
-        <div class="col-md-6">
-          <label>Designation</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.designation" name="designationName" readonly>
-        </div>
-  
-       <div class="col-md-6">
-          <label for="gender">Gender</label>
-        <select id="gender"  class="form-control" [(ngModel)]="employee.fk_GenderId" name="gender">
-            <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
-         </select>
-        </div>
-        <div class="col-md-6">
-          <label>PAN Number</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.pan" name="panNumber">
-        </div>
-  
-        <div class="col-md-6">
-          <label>Join Date</label>
-          <input type="date" class="form-control" [(ngModel)]="employee.joinDate" name="joinDate">
-        </div>
-        <div class="col-md-6">
-          <label>Birth Date</label>
-          <input type="date" class="form-control" [(ngModel)]="employee.birthDate" name="birthDate">
+            <label for="gender">Gender</label>
+         <select id="gender" class="form-control" [(ngModel)]="employees.fk_GenderId" name="gender" required>
+  <option value="" disabled selected>Select Gender</option>
+  <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
+</select>
+<div *ngIf="empForm.submitted && !employees.fk_GenderId" class="text-danger">
+  Gender is required.
+</div>
+          </div>
+          <div class="col-md-6">
+            <label>PAN Number</label>
+                  <input type="text" class="form-control"
+       [(ngModel)]="employees.panNumber"
+       name="pan"
+       pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"
+       maxlength="10"
+       placeholder="Enter PAN Number"
+       #panRef="ngModel"   required />
+<div *ngIf="panRef.invalid && panRef.touched" class="text-danger">
+  <small *ngIf="panRef.errors?.['pattern']">Invalid PAN format (e.g. ABCDE1234F).</small>
+</div>
+
+          </div>
+    
+          <div class="col-md-6">
+            <label>Join Date</label>
+             <input type="date"
+         class="form-control"
+         [(ngModel)]="employees.joinDate"
+         name="joinDate"
+         [max]="today"
+         required />
+          </div>
+          <div class="col-md-6">
+            <label>Birth Date</label>
+<input type="date" class="form-control"
+  [(ngModel)]="employees.birthDate"
+  name="birthDate"
+  [max]="today"
+  (ngModelChange)="employees.age = calculateAge($event)"
+  placeholder="Birth Date"  required/>
+          </div> 
+    
+          <div class="col-md-6">
+            <label>Personal Email</label>
+                     <input type="email" class="form-control"
+       [(ngModel)]="employees.email"
+       name="email"
+       required
+       email
+       #emailRef="ngModel"
+       placeholder="Enter your email" />
+<div *ngIf="emailRef.invalid && emailRef.touched" class="text-danger">
+  <small *ngIf="emailRef.errors?.['required']">Email is required.</small>
+  <small *ngIf="emailRef.errors?.['email']">Invalid email format.</small>
+</div>
+
+          </div>
+          <div class="col-md-6">
+            <label>Employee Age</label>
+            <input type="number" class="form-control" [(ngModel)]="employees.age" name="age" placeholder="Age"  required />
+          </div>
+    
+          <div class="col-md-6">
+            <label>Emergency Contact No</label>
+
+             <input type="text" class="form-control"
+       [(ngModel)]="employees.emergencyNo"
+       name="emergency"
+       pattern="^\d{10}$"
+       maxlength="10"
+       required
+       #emergencyRef="ngModel"
+       placeholder="Enter 10-digit Contact Number"  required />
+<div *ngIf="emergencyRef.invalid && emergencyRef.touched" class="text-danger">
+  <small *ngIf="emergencyRef.errors?.['pattern']">Contact number must be 10 digits.</small>
+</div>
+
+
+          </div>
+          <div class="col-md-6">
+            <label>Aadhar Card No</label>
+               <input type="text" class="form-control"
+       [(ngModel)]="employees.aadharCardNo"
+       name="aadhar"
+       pattern="^\d{12}$"
+       maxlength="12"
+       required
+       #aadharRef="ngModel"
+       placeholder="Enter 12-digit Aadhar Number"  required />
+<div *ngIf="aadharRef.invalid && aadharRef.touched" class="text-danger">
+  <small *ngIf="aadharRef.errors?.['pattern']">Aadhar must be 12 digits.</small>
+</div>
+
+          </div>
         </div> 
-  
-        <div class="col-md-6">
-          <label>Personal Email</label>
-          <input type="email" class="form-control" [(ngModel)]="employee.email" name="email">
+    
+        <div class="mt-4">
+          <button class="btn btn-success me-2" type="submit">Save Employee Details</button>
+          
         </div>
-        <div class="col-md-6">
-          <label>Employee Age</label>
-          <input type="number" class="form-control" [(ngModel)]="employee.age" name="employeeAge">
-        </div>
-  
-        <div class="col-md-6">
-          <label>Emergency Contact No</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.emergencyContact" name="emergencyContact">
-        </div>
-        <div class="col-md-6">
-          <label>Aadhar Card No</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.aadhar" name="aadharCard">
-        </div>
-      </div> 
-  
-      <div class="mt-4">
-        <button class="btn btn-success me-2" type="submit">Save Employee Details</button>
-        
+
+    
+      </form>
+    </div>
+
+    <!-- FAMILY DETAILS FORM BOX -->
+    <div class="p-4 border rounded shadow-sm bg-white">
+      <h4 class="mb-3">Add GMC Details - Family</h4>
+      <hr class="my-3">
+      <form (ngSubmit)="saveFamilyDetails()" #famForm="ngForm">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>Family Member</label>
+        <select class="form-control" [(ngModel)]="family.fk_FamilyMemberTypeId" name="familyMemberId" placeholder="Select type">
+       <option value="" disabled selected>Select family member type</option>
+          <option *ngFor="let type of familyTypes" [value]="type.id">{{ type.label }}</option>
+        </select>
       </div>
 
-  
-    </form>
-  </div>
+      <div class="col-md-6">
+        <label>Name</label>
+        <input type="text" class="form-control" [(ngModel)]="family.familyMemberName" name="familyName" required placeholder="Enter The Name">
+      </div>
 
-  <!-- FAMILY DETAILS FORM BOX -->
-  <div class="p-4 border rounded shadow-sm bg-white">
-    <h4 class="mb-3">Add GMC Details - Family</h4>
-    <hr class="my-3">
-    <form (ngSubmit)="saveFamilyDetails()" #famForm="ngForm">
-  <div class="row g-3">
-    <div class="col-md-6">
-      <label>Family Member</label>
-      <select class="form-control" [(ngModel)]="family.fk_FamilyMemberTypeId" name="familyMemberId">
-        <option value="">Select</option>
-        <option *ngFor="let type of familyTypes" [value]="type.id">{{ type.label }}</option>
-      </select>
+      <div class="col-md-6">
+        <label>Birth Date</label>
+        <input type="date" class="form-control" [(ngModel)]="family.birthDate" 
+         name="birthDate"
+  [max]="today"
+  (ngModelChange)="family.age = calculateAge($event)"
+  placeholder="Birth Date" required
+  >
+      </div>
+
+      <div class="col-md-6">
+        <label>Age</label>
+        <input type="number" class="form-control" [(ngModel)]="family.age" name="age" placeholder="Enter The Age" required>
+      </div>
+
+      <div class="col-md-6">
+        <label>Relation With Employee</label>
+        <input type="text" class="form-control" [(ngModel)]="family.relationWithEmployee" name="relationWithEmployee" required placeholder="Relation With Employee">
+      </div>
     </div>
 
-    <div class="col-md-6">
-      <label>Name</label>
-      <input type="text" class="form-control" [(ngModel)]="family.familyMemberName" name="familyName">
+    <div class="mt-4">
+      <button type="submit" class="btn btn-success">Save Family Details</button>
     </div>
+  </form>
 
-    <div class="col-md-6">
-      <label>Birth Date</label>
-      <input type="date" class="form-control" [(ngModel)]="family.birthDate" name="birthDate">
-    </div>
+      
+      
 
-    <div class="col-md-6">
-      <label>Age</label>
-      <input type="number" class="form-control" [(ngModel)]="family.age" name="age">
-    </div>
+      <!-- FAMILY LIST TABLE -->
+      <div class="mt-5">
+        <h5>Added Family Members</h5>
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Sr. No</th>
+              <th>Family Member</th>
+              <th>Name</th>
+              <th>Birth Date</th>
+              <th>Age (years)</th>
+              <th>Relation with Employee</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let member of familyList; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ member.familyMemberName }}</td>
+              <td>{{ member.age }}</td>
+              <td>{{ member.relationWithEmployee }}</td>
 
-    <div class="col-md-6">
-      <label>Relation With Employee</label>
-      <input type="text" class="form-control" [(ngModel)]="family.relationWithEmployee" name="relationWithEmployee">
-    </div>
-  </div>
-
-  <div class="mt-4">
-    <button type="submit" class="btn btn-success">Save Family Details</button>
-  </div>
-</form>
-
-     
-    
-
-    <!-- FAMILY LIST TABLE -->
-    <div class="mt-5">
-      <h5>Added Family Members</h5>
-      <table class="table table-bordered">
-        <thead class="table-light">
-          <tr>
-            <th>Sr. No</th>
-            <th>Family Member</th>
-            <th>Name</th>
-            <th>Birth Date</th>
-            <th>Age (years)</th>
-            <th>Relation with Employee</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let member of familyList; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ member.familyMemberName }}</td>
-             <td>{{ member.age }}</td>
-             <td>{{ member.relationWithEmployee }}</td>
-
-            <td>{{ member.birthDate }}</td>
-            
-            
-          </tr>
-        </tbody>
-      </table>
+              <td>{{ member.birthDate }}</td>
+              
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>

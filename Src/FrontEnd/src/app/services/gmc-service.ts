@@ -15,7 +15,7 @@ export class GmcService {
   constructor(private http: HttpClient) {}
 
   saveEmployeeDetails(employee: EmployeeSaveDto): Observable<any> {
-    return this.http.post(`${this.baseUrl}Gmc/AddGmcDetails`, employee);
+    return this.http.post(`${this.baseUrl}Gmc/AddGmcDetails`, employee, { responseType: 'json' });
   }
 
   saveFamilyMemberDetails(member: FamilyMember): Observable<any> {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GmcService } from '../../../services/gmc-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FamilyMember } from '../../../Models/family-member-dto'; b3c9d8bcac7adcd5c8350bcedb8c5607cfe2caca
+import { FamilyMember } from '../../../Models/family-member-dto'; 
 import { Employee, EmployeeSaveDto } from '../../../Models/gmc-model';
 
 import { Gender } from '../../../Models/get-gender-dto';
@@ -18,26 +18,26 @@ import { NgxPaginationModule } from 'ngx-pagination';
   styleUrls: ['./gmc.component.css'],
 })
 export class GmcComponent implements OnInit {
+  today: string = new Date().toISOString().split('T')[0];
   employee: Employee = {
     name: '',
     code: '',
     designation: '',
-   
+    fk_GenderId:0
   };
-  employeeDto:EmployeeSaveDto={
+employees: EmployeeSaveDto = {
+  code: '',
   address: '',
- fk_GenderId:'',
-    pan: '',
-    joinDate: '',
-    birthDate: '',
-    email: '',
-    age: 0,
-    emergencyContact: '',
+  panNumber: '',
+  aadharCardNo: '',
+  joinDate: '',
+  birthDate: '',
+  email: '',
+  emergencyNo: '',
+  age: 0,
+  fk_GenderId: 0
+};
 
-    aadhar: ''
-    
-
-  };
   family: FamilyMember = {
     fk_FamilyMemberTypeId: 0,
     employeeCode: '',
@@ -57,7 +57,10 @@ export class GmcComponent implements OnInit {
 
   familyList: FamilyMember[] = [];
 
-  constructor(private gmcService: GmcService, private updateService: UpdateService) {}
+  constructor(private gmcService: GmcService, private updateService: UpdateService) {
+      
+
+  }
 
   ngOnInit(): void {
     const code = localStorage.getItem('userName');
@@ -95,6 +98,7 @@ loadGenders():void{
   this.genders = data;
 });   
   }
+
   saveFamilyDetails(): void {
     if (!this.family.employeeCode) {
       alert('Employee code missing.');
@@ -126,6 +130,18 @@ loadGenders():void{
       familyStatus: true,
     };
   }
+  calculateAge(dateString: string): number {
+  if (!dateString) return 0;
+  const today = new Date();
+  const birthDate = new Date(dateString);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 
   loadFamilyList(): void {
     this.gmcService.getFamilyList().subscribe({
@@ -152,27 +168,35 @@ loadGenders():void{
     });
   }
 
-   saveEmployeeDetails(): void {
-  const payload: EmployeeSaveDto = {
-    code: this.employee.code,
-    address: this.employee.address,
-    panNumber: this.employee. panNumber,
-    aadharCardNo: this.employee. aadharCardNo,
-    joinDate: this.employee.joinDate,
-    birthDate: this.employee.birthDate,
-    email: this.employee.email,
-    emergencyNo: this.employee.emergencyContact,
-    age: this.employee.age,
-    fk_GenderId: this.employee.fk_GenderId
-  };
+ saveEmployeeDetails(): void {
+  // Sync values from display-only employee object to the DTO
+  this.employees.code = this.employee.code;
+  this.employees.fk_GenderId = this.employees.fk_GenderId ?? this.employee.fk_GenderId;
 
-  this.gmcService.saveEmployeeDetails(payload).subscribe({
+  // Optional: add validation check
+  if (!this.employees.code || !this.employees.fk_GenderId) {
+    alert('Employee code and gender are required.');
+    return;
+  }
+
+  console.log('Sending employee data to backend:', this.employees);
+
+  this.gmcService.saveEmployeeDetails(this.employees).subscribe({
     next: (res) => {
-      alert('Employee details saved successfully.');
+      alert('Employee saved!');
+      this.employees = {
+        code: '',
+       fk_GenderId: 0,
+      };
     },
     error: (err) => {
       console.error('Error saving employee:', err);
-      alert('Failed to save employee details.');
+      if (err.error?.errors) {
+        console.table(err.error.errors);
+        alert('Validation failed. Check console for details.');
+      } else {
+        alert('Failed to save employee.');
+      }
     }
   });
 }
