@@ -18,4 +18,14 @@ export class TimeSheetService {
   punchOut(empId: number): Observable<any> {
     return this.http.post(`${this.url}/PunchOut`, { EmpId: empId });
   }
+
+  getSession(empId: number) {
+    return this.http.get<PunchInStatus | null>(`${this.url}/${empId}`);
+  }
 }
+export type PunchInStatus = {
+  id: number;
+  fk_EmpId: number;
+  startDate: string;
+  endDate: null;
+};

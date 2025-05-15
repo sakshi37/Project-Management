@@ -9,10 +9,10 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-timesheet-update',
   imports: [],
-  templateUrl: './timesheet-update.component.html',
-  styleUrl: './timesheet-update.component.css',
+  templateUrl: './activity-timesheet.component.html',
+  styleUrl: './activity-timesheet.component.css',
 })
-export class TimesheetUpdateComponent implements OnInit {
+export class ActivityTimesheetComponent implements OnInit {
   sessionStatus: PunchInStatus | null = null;
 
   constructor(private timeSheetService: TimeSheetService) {}

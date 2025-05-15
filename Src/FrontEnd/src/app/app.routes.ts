@@ -19,7 +19,7 @@ import { TeamCompositionComponent } from './features/Master/team-composition/tea
 import { AuthGuard } from './services/authguard';
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
 import { TopBarComponent } from './features/Master/team-composition/top-bar/top-bar.component';
-
+import { ActivityTimesheetComponent } from './features/Dashboard/activity-timesheet/activity-timesheet.component';
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'sidebar', component: LefSideNavComponent },
@@ -62,6 +62,7 @@ export const routes: Routes = [
     component: UpdateEmployeeComponent,
   },
   { path: 'otp', component: OtpComponent },
+  { path: 'activity-timesheet', component: ActivityTimesheetComponent },
 
   { path: '**', redirectTo: '' },
 ];
