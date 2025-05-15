@@ -1,10 +1,13 @@
 ﻿using System.Data;
+using Dapper;
 using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.Data.SqlClient;
@@ -247,34 +250,36 @@ namespace HR.Persistence.Repositories
         new SqlParameter("@Email", dto.Email ?? (object)DBNull.Value),
         new SqlParameter("@BccEmail", dto.BccEmail ?? (object)DBNull.Value),
         new SqlParameter("@PanNumber", dto.PanNumber ?? (object)DBNull.Value),
-        new SqlParameter("@AadharCardNo", dto.AadharCardNo ?? (object)DBNull.Value), // ✅ Added
+        new SqlParameter("@AadharCardNo", dto.AadharCardNo ?? (object)DBNull.Value),
         new SqlParameter("@BirthDate", (object?)dto.BirthDate ?? DBNull.Value),
         new SqlParameter("@Image", SqlDbType.VarBinary) { Value = (object?)imageBytes ?? DBNull.Value },
         new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
         new SqlParameter("@LoginStatus", (object?)dto.LoginStatus ?? DBNull.Value),
         new SqlParameter("@LeftCompany", (object?)dto.LeftCompany ?? DBNull.Value),
         new SqlParameter("@LeftDate", (object?)dto.LeaveCompany ?? DBNull.Value),
-        new SqlParameter("@Fk_CountryId", (object?)dto.CountryId ?? DBNull.Value),     // ✅ Added
-        new SqlParameter("@Fk_StateId", (object?)dto.StateId ?? DBNull.Value),         // ✅ Added
-        new SqlParameter("@Fk_CityId", (object?)dto.CityId ?? DBNull.Value),           // ✅ Added
         new SqlParameter("@Fk_LocationId", (object?)dto.LocationId ?? DBNull.Value),
         new SqlParameter("@Fk_DesignationId", (object?)dto.DesignationId ?? DBNull.Value),
         new SqlParameter("@Fk_ShiftId", (object?)dto.ShiftId ?? DBNull.Value),
         new SqlParameter("@Fk_EmployeeTypeId", (object?)dto.EmployeeTypeId ?? DBNull.Value),
         new SqlParameter("@Fk_UserGroupId", (object?)dto.UserGroupId ?? DBNull.Value),
         new SqlParameter("@Fk_BranchId", (object?)dto.BranchId ?? DBNull.Value),
+        new SqlParameter("@Fk_CountryId", (object?)dto.CountryId ?? DBNull.Value),
+        new SqlParameter("@Fk_StateId", (object?)dto.StateId ?? DBNull.Value),
+        new SqlParameter("@Fk_CityId", (object?)dto.CityId ?? DBNull.Value),
         new SqlParameter("@Fk_DivisionId", (object?)dto.DivisionId ?? DBNull.Value),
-        new SqlParameter("@Fk_GenderId", (object?)dto.GenderId ?? DBNull.Value)        // ✅ Added
+        new SqlParameter("@Fk_GenderId", (object?)dto.GenderId ?? DBNull.Value),
+
+
     };
 
             try
             {
                 var result = await _appDbContext.Database.ExecuteSqlRawAsync(
                     @"EXEC SP_Employee_update 
-              @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber, @AadharCardNo, @BirthDate, 
+              @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber,@AadharCardNo, @BirthDate, 
               @Image, @Signature, @LoginStatus, @LeftCompany, @LeftDate, 
-              @Fk_CountryId, @Fk_StateId, @Fk_CityId, @Fk_LocationId, @Fk_DesignationId, 
-              @Fk_ShiftId, @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId, @Fk_GenderId",
+              @Fk_LocationId, @Fk_DesignationId, 
+              @Fk_ShiftId, @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId,@Fk_CountryId,@Fk_StateId,@Fk_CityId,@Fk_GenderId",
                     parameters.ToArray()
                 );
 
@@ -286,6 +291,15 @@ namespace HR.Persistence.Repositories
                 Console.WriteLine($"[ERROR] Exception in UpdateEmployeeAsync: {ex.Message}");
                 return false;
             }
+        }
+
+        public async Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code)
+        {
+            return _appDbContext.EmployeeBasicDetails
+                .FromSqlRaw("EXEC dbo.SP_GetEmployeeBasicDetailsByCode @Code = {0}", code)
+                .AsNoTracking()
+                .AsEnumerable()
+                .FirstOrDefault();
         }
 
         public async Task<int> ReadCurrentEmpCounter()
@@ -315,10 +329,41 @@ namespace HR.Persistence.Repositories
 
 
 
+        public async Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee)
+        {
+            await _appDbContext.Database.ExecuteSqlRawAsync(
+    "EXEC [dbo].[SP_InsertEmployeeDetails] @p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8 ,@p9",
+    employee.Code,
+    employee.Address,
+    employee.PanNumber,
+    employee.AadharCardNo,
+    employee.JoinDate,
+    employee.BirthDate,
+    employee.Email,
+    employee.EmergencyNo,
+    employee.Age,
+    employee.Fk_GenderId
+
+);
+
+            return true;
+
+        }
 
 
 
+        public async Task<bool> EmployeeExistsAsync(string code)
+        {
+            var result = await _appDbContext
+                .Employees
+                .FromSqlRaw("SELECT Code FROM HR_Module.dbo.Tbl_Employee_master WHERE Code = {0}", code)
+                .AnyAsync();
+
+            return result;
+        }
 
 
 
+    }
+    }
 

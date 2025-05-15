@@ -27,6 +27,10 @@ namespace HR.API.Helper
             dto.UserGroupId = dto.UserGroupId == 0 ? null : dto.UserGroupId;
             dto.BranchId = dto.BranchId == 0 ? null : dto.BranchId;
             dto.DivisionId = dto.DivisionId == 0 ? null : dto.DivisionId;
+            dto.CountryId = dto.CountryId == 0 ? null : dto.CountryId;
+            dto.StateId=dto.StateId==0 ? null : dto.StateId;
+            dto.CityId=dto.CityId == 0 ? null :dto.CityId;
+            dto.GenderId=dto.GenderId==0 ? null : dto.GenderId;
         }
 
         private static string? CleanString(string? value)
