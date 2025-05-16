@@ -40,6 +40,7 @@ public class AppDbContext : DbContext
     public DbSet<HolidayDto> HolidayDtos { get; set; }
     public DbSet<TotalValue> TotalValues { get; set; }
     public DbSet<EmployeeDto> Employees { get; set; }
+    public DbSet<DailyReport> DailyReport {  get; set; }
 
     // public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
 

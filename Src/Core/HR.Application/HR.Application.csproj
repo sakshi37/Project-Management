@@ -22,6 +22,8 @@
 		<Folder Include="Features\Branches\Commands\DeleteBranch\" />
 		<Folder Include="Features\Branches\Commands\Dtos\" />
 		<Folder Include="Features\Branches\Queries\" />
+		<Folder Include="Features\DailyReport\Commands\" />
+		<Folder Include="Features\DailyReport\Dtos\" />
 	</ItemGroup>
 
 </Project>
