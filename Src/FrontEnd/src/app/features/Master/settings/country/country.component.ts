@@ -228,6 +228,11 @@ export class CountryComponent implements OnInit, AfterViewInit {
           this.resetForm();
           this.countryModal?.hide();
           Swal.fire({
+            toast: true,
+            position: 'top',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
             icon: 'success',
             title: 'Updated',
             text: 'Country updated successfully!',
@@ -248,6 +253,11 @@ export class CountryComponent implements OnInit, AfterViewInit {
           this.resetForm();
           this.countryModal?.hide();
           Swal.fire({
+            toast: true,
+            position: 'top',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
             icon: 'success',
             title: 'Created',
             text: 'Country created successfully!',
