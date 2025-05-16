@@ -18,6 +18,7 @@ namespace HR.Persistence
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("HrConnString")));
             services.AddScoped<ILoginService, LoginServices>();
+            services.AddScoped<IDailyReport, DailyReportRepository>();
 
 
 

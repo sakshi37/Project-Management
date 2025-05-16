@@ -9,6 +9,6 @@ namespace HR.Application.Contracts.Models.Persistence
 {
     public interface IDailyReport
     {
-        Task<DailyReportResponse> GetAllDailyreport(DailyReportrequest request);
+        Task<List<DailyReportResponse>>GetAllDailyreport(DailyReportrequest request);
     }
 }

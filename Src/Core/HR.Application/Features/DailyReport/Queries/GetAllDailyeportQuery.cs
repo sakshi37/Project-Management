@@ -9,6 +9,7 @@ using MediatR;
 
 namespace HR.Application.Features.DailyReport.Queries
 {
-    public record GetAllDailyReportQuery:IRequest<List<DailyReportResponse>>;
-   
+    public record GetAllDailyReportQuery(DailyReportrequest Request):IRequest<List<DailyReportResponse>>;
+    
+
 }

@@ -8,7 +8,7 @@ using HR.Application.Contracts.Models.Persistence;
 using MediatR;
 using MediatR.Pipeline;
 
-namespace HR.Application.Features.DailyReport.Queries
+namespace HR.Application.Features.DailyReport.Queries 
 {
     public class GetAllDailyReportHandler : IRequestHandler<GetAllDailyReportQuery, List<DailyReportResponse>>
     {
@@ -20,7 +20,7 @@ namespace HR.Application.Features.DailyReport.Queries
         }
         public async Task<List<DailyReportResponse>> Handle(GetAllDailyReportQuery request, CancellationToken cancellationToken)
         {
-            return await _dailyReport.GetAllDailyreport();
+            return await _dailyReport.GetAllDailyreport(request.Request);
         }
     }
 }

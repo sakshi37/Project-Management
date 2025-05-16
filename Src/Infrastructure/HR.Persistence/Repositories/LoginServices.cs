@@ -192,6 +192,7 @@ namespace HR.Identity.Services
             return true;
         }
 
+        //change password module 
         public async Task<bool> ChangePassword(ChangePassword changePasswordRequest)
         {
             var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(cp => cp.UserName == changePasswordRequest.UserName);
@@ -233,7 +234,7 @@ namespace HR.Identity.Services
         }
 
 
-
+        //forogot password module
         public async Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
         {
             var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == updatePasswordRequest.UserName);

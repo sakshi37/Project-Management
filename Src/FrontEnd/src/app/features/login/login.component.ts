@@ -138,7 +138,7 @@ export class LoginComponent implements OnInit {
           otp: enteredOtp,
         };
         console.log(OtpRequest);
-        this.userService.verifyOtp(OtpRequest).subscribe({
+        this.userService.verifyOtp(OtpRequest).subscribe({ 
           next: (res: AuthResponseModel) => {
             // alert('OTP Verified Successfully!');
             Swal.fire('Success', 'OTP Verified Successfully!', 'success');
@@ -151,8 +151,8 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/dashboard']);
           },
           error: (error) => {
-            console.error('Otp Failed', error.error);
-            // alert('Incorrect OTP. Please try again.');
+            console.error('Otp Failed', error.error); 
+            // alert('Incorrect OTP. Please try again.'); 
             Swal.fire(
               'Invalid OTP',
               'Incorrect OTP. Please try again.',
@@ -184,7 +184,7 @@ export class LoginComponent implements OnInit {
   forgotUsername: string = '';
   forgotOtp: string = '';
   newPassword: string = '';
-  confirmNewPassword: string = '';
+  confirmNewPassword: string = ''; 
 
   openForgotPasswordModal() {
     Swal.fire({
