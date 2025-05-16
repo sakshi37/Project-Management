@@ -1,6 +1,16 @@
+<<<<<<< .merge_file_W3BWjb
+=======
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+>>>>>>> .merge_file_eMAj3L
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
+using HR.Application.Features.TeamCompositions.Commands.UpdateTeamComposition;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +57,7 @@ namespace HR.Persistence.Repositories
         //    return await _context.TeamCompositionDtos.FromSqlRaw(sql).ToListAsync();
         //}
 
+<<<<<<< .merge_file_W3BWjb
         //public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
         //{
         //    var parameters = new[]
@@ -60,5 +71,50 @@ namespace HR.Persistence.Repositories
         //        .FromSqlRaw(sql, parameters)
         //        .ToListAsync();
         //}
+=======
+        public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
+            new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
+             };
+
+            string sql = "EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId";
+            return await _context.TeamCompositionDtos
+                .FromSqlRaw(sql, parameters)
+                .ToListAsync();
+        }
+        public async Task<List<TeamLeaderDto>> GetTeamLeadersAsync()
+        {
+            string sql = "EXEC SP_GetTeamLeaders";
+            return await _context.TeamLeaderDtos.FromSqlRaw(sql).ToListAsync();
+        }
+
+        public async Task<TeamComposition> UpdateAsync(UpdateTeamCompositionDto team)
+        {
+            string sql = "EXEC SP_TeamCompositionUpdate @TeamId={0}, @TeamName={1}, @Fk_BranchId={2}, @Fk_DivisionId={3}, @Fk_TeamLeaderId={4}, @TeamStatus={5}, @UpdatedBy={6}";
+            await _context.Database.ExecuteSqlRawAsync(sql,
+                team.TeamId,
+                team.TeamName,
+                team.Fk_BranchId,
+                team.Fk_DivisionId,
+                team.Fk_TeamLeaderId,
+                team.TeamStatus,
+                team.UpdatedBy);
+
+            return new TeamComposition
+            {
+                TeamId = team.TeamId,
+                TeamName = team.TeamName,
+                Fk_BranchId = team.Fk_BranchId,
+                Fk_DivisionId = team.Fk_DivisionId,
+                Fk_TeamLeaderId = team.Fk_TeamLeaderId,
+                UpdatedBy = team.UpdatedBy,
+                UpdatedDate = DateTime.UtcNow,
+                TeamStatus = team.TeamStatus
+            };
+        }
+>>>>>>> .merge_file_eMAj3L
     }
 }

@@ -117,7 +117,7 @@ export class EmployeeComponent implements OnInit {
 
   onSearch() {
     this.employeeService
-      .getPagedEmployees(this.pageNumber, this.pageSize)
+      .getPagedEmployees(this.pageNumber, this.pageSize , this.searchText.trim())
       .subscribe((res) => {
         const search = this.searchText?.toLowerCase().trim();
 

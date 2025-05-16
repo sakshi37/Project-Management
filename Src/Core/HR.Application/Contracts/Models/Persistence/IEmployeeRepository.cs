@@ -1,9 +1,12 @@
 ﻿using HR.Application.Contracts.Models.Common;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Domain.Entities;
+using System.Threading.Tasks;
 
 namespace HR.Application.Contracts.Persistence
 {
@@ -16,18 +19,21 @@ namespace HR.Application.Contracts.Persistence
         Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize);
         //Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(int id);
         Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(string Code);
-
+        Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did);
         Task<EmployeeDto> GetEmaployeeByEmail(string email);
         Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto);
+
+        Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code);
+        // IEmployeeMasterRepository.cs
+        Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee);
+        Task<bool> EmployeeExistsAsync(string code);
+       
 
         Task<int> ReadCurrentEmpCounter();
 
 
 
         Task IncrCurrentEmpCounter();
-
-
-
 
     }
 }

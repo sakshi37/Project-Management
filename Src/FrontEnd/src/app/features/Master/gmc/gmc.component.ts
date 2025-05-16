@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-gmc',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './gmc.component.html',
   styleUrls: ['./gmc.component.css'],
 })

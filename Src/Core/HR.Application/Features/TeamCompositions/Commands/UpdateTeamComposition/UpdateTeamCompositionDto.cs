@@ -13,6 +13,7 @@ namespace HR.Application.Features.TeamCompositions.Commands.UpdateTeamCompositio
         public int Fk_BranchId { get; set; }
         public int Fk_DivisionId { get; set; }
         public int Fk_TeamLeaderId { get; set; }
+        public bool TeamStatus { get; set; }
         public int UpdatedBy { get; set; }
     }
 

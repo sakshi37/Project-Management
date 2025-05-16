@@ -1,3 +1,4 @@
+
 <div class="container mt-4">
   <div class="card shadow p-4">
     <h5 class="border-bottom pb-2 mb-4 font-weight-bold">Edit Details</h5>
@@ -128,10 +129,7 @@
   <div class="col-md-6 form-group">
        <label for="gender">Gender</label>
         <select id="gender" class="form-control" formControlName="gender">
-            <option value="">Select Gender</option>
-             <option value="Male">Male</option>
-             <option value="Female">Female</option>
-             <option value="Other">Other</option>
+            <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
          </select>
      </div>
        <div class="col-md-6 form-group">
@@ -183,8 +181,8 @@
         <div class="col-md-6 form-group">
           <label for="loginStatus">Login Status</label>
           <select id="loginStatus" class="form-control" formControlName="loginStatus">
-            <option [value]="true">Active</option>
-            <option [value]="false">Inactive</option>
+             <option  [ngValue]="true">Active</option>
+            <option  [ngValue]="false">Inactive</option>
           </select>
         </div>
 
@@ -241,10 +239,10 @@
           </div>
          <div class="col-md-6 form-group">
           <label for="locationId">Location</label>
-          <!-- <select id="locationId" class="form-control" formControlName="locationId">
+          <select id="locationId" class="form-control" formControlName="locationId">
             <option value="">Select Location</option>
-            <option *ngFor="let loc of locations" [value]="locationId">{{ locationName }}</option>
-          </select> -->
+            <option *ngFor="let loc of locations" [value]="loc.locationId">{{ loc.locationName }}</option>
+          </select>
         </div>
         
       </div>
@@ -291,17 +289,17 @@
             <option *ngFor="let ug of userGroups" [value]="ug.userGroupId">{{ ug.userGroupName }}</option>
           </select>
         </div>
-        
-      </div>
-
-      <div class="form-row">
-        <!-- <div class="col-md-6 form-group">
+        <div class="col-md-6 form-group">
           <label for="divisionId">Division</label>
           <select id="divisionId" class="form-control" formControlName="divisionId">
             <option value="">Select Division</option>
-            <option *ngFor="let d of divisions" [value]="d.id">{{ d.divisionName }}</option>
+            <option *ngFor="let d of divisions" [value]="d.divisionId">{{ d.divisionName }}</option>
           </select>
-        </div> -->
+        </div>
+      </div>
+
+      <div class="form-row">
+        
       </div>
 
       <!-- Save and Cancel Buttons -->
