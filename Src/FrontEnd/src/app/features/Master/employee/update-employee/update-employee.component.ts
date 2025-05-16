@@ -187,11 +187,6 @@ this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
       this.employeeForm.get('branchId')!.setValue(br.branchId);
     }
 
-    // Repeat for other dropdowns if needed:
-    // const des = this.designations.find(d => d.designationName === emp.designationName);
-    // if (des) this.employeeForm.get('designationId')!.setValue(des.designationId);
-
-    // etc.
   }
 
   loadConutries(): void {

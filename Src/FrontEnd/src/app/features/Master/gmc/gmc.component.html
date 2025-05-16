@@ -91,7 +91,7 @@
           </div>
           <div class="col-md-6">
             <label>Employee Age</label>
-            <input type="number" class="form-control" [(ngModel)]="employees.age" name="age" placeholder="Age"  required />
+            <input type="number" class="form-control" [(ngModel)]="employees.age" name="age" placeholder="Age"  required  readonly />
           </div>
     
           <div class="col-md-6">
@@ -168,7 +168,7 @@
 
       <div class="col-md-6">
         <label>Age</label>
-        <input type="number" class="form-control" [(ngModel)]="family.age" name="age" placeholder="Enter The Age" required>
+        <input type="number" class="form-control" [(ngModel)]="family.age" name="age" placeholder="Enter The Age" required readonly>
       </div>
 
       <div class="col-md-6">
@@ -182,8 +182,6 @@
     </div>
   </form>
 
-      
-      
 
       <!-- FAMILY LIST TABLE -->
       <div class="mt-5">
@@ -202,13 +200,12 @@
           <tbody>
             <tr *ngFor="let member of familyList; let i = index">
               <td>{{ i + 1 }}</td>
-              <td>{{ member.familyMemberName }}</td>
-              <td>{{ member.age }}</td>
-              <td>{{ member.relationWithEmployee }}</td>
+            <td>{{ member.fk_FamilyMemberTypeId }}</td>
+            <td>{{ member.familyMemberName }}</td>
+            <td>{{ member.birthDate }}</td>
+            <td>{{ member.age }}</td>
+            <td>{{ member.relationWithEmployee }}</td>
 
-              <td>{{ member.birthDate }}</td>
-              
-              
             </tr>
           </tbody>
         </table>
