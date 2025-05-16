@@ -24,6 +24,9 @@ export class EmployeeService {
     if (search) {
       params.search = search;
     }
+    if (search && search.trim() !== '') {
+    params.search = search.trim();
+  }
 
     return this.http.get<any>(
       `${this.url}/Employee/AllEmployees?pageNumber=${page}&pageSize=${size}&search=${search ?? ''}`

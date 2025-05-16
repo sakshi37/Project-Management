@@ -1,35 +1,43 @@
 import { Component, OnInit } from '@angular/core';
 import { GmcService } from '../../../services/gmc-service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { FamilyMember } from '../../../Models/family-member-dto';
-import { Employee } from '../../../Models/gmc-model';
-import { FamilyMemberForm } from '../../../Models/gmc-model';
-import { RouterLink } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FamilyMember } from '../../../Models/family-member-dto'; 
+import { Employee, EmployeeSaveDto } from '../../../Models/gmc-model';
+
+import { Gender } from '../../../Models/get-gender-dto';
+import { UpdateService } from '../../../services/update-service';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 
 @Component({
   selector: 'app-gmc',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule  ],
   templateUrl: './gmc.component.html',
   styleUrls: ['./gmc.component.css'],
 })
 export class GmcComponent implements OnInit {
+  today: string = new Date().toISOString().split('T')[0];
   employee: Employee = {
     name: '',
     code: '',
-    address: '',
     designation: '',
-    gender: '',
-    pan: '',
-    joinDate: '',
-    birthDate: '',
-    email: '',
-    age: 0,
-    emergencyContact: '',
-    aadhar: '',
-    // fill with all expected fields
+    fk_GenderId:0
   };
+employees: EmployeeSaveDto = {
+  code: '',
+  address: '',
+  panNumber: '',
+  aadharCardNo: '',
+  joinDate: '',
+  birthDate: '',
+  email: '',
+  emergencyNo: '',
+  age: 0,
+  fk_GenderId: 0
+};
+
   family: FamilyMember = {
     fk_FamilyMemberTypeId: 0,
     employeeCode: '',
@@ -40,21 +48,55 @@ export class GmcComponent implements OnInit {
     familyStatus: true,
   };
 
-  familyTypes: { id: number; label: string }[] = [];
+
+  familyTypes: { id: number, label: string }[] = [];
+
+  genders: Gender[] = [];
+
+
 
   familyList: FamilyMember[] = [];
 
-  constructor(private gmcService: GmcService) {}
+  constructor(private gmcService: GmcService, private updateService: UpdateService) {
+      
+
+  }
 
   ngOnInit(): void {
     const code = localStorage.getItem('userName');
     if (code) {
       this.family.employeeCode = code;
+      this.fetchEmployeeDetails(code);
+
     } else {
       alert('Employee code is missing in local storage!');
     }
     this.loadFamilyList();
-    this.loadFamilyTypes();
+
+    this.loadFamilyTypes()
+    this.loadGenders();
+
+  }
+
+  fetchEmployeeDetails(code: string): void {
+  this.gmcService.getEmployeeByCode(code).subscribe({
+    next: (res: any) => {
+      this.employee = {
+        name: res.name,
+        code: res.code,
+        designation: res.designationName // mapping API field to model
+      };
+    },
+    error: (err) => {
+      console.error('Failed to fetch employee:', err);
+      alert('Could not fetch employee data.');
+    }
+  });
+}
+loadGenders():void{
+    this.updateService.getAllGenders().subscribe((data: Gender[]) => {
+  this.genders = data;
+});   
   }
 
   saveFamilyDetails(): void {
@@ -88,6 +130,18 @@ export class GmcComponent implements OnInit {
       familyStatus: true,
     };
   }
+  calculateAge(dateString: string): number {
+  if (!dateString) return 0;
+  const today = new Date();
+  const birthDate = new Date(dateString);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 
   loadFamilyList(): void {
     this.gmcService.getFamilyList().subscribe({
@@ -114,7 +168,39 @@ export class GmcComponent implements OnInit {
     });
   }
 
-  saveEmployeeDetails() {
-    // Your form submission logic here
+ saveEmployeeDetails(): void {
+  // Sync values from display-only employee object to the DTO
+  this.employees.code = this.employee.code;
+  this.employees.fk_GenderId = this.employees.fk_GenderId ?? this.employee.fk_GenderId;
+
+  // Optional: add validation check
+  if (!this.employees.code || !this.employees.fk_GenderId) {
+    alert('Employee code and gender are required.');
+    return;
   }
+
+  console.log('Sending employee data to backend:', this.employees);
+
+  this.gmcService.saveEmployeeDetails(this.employees).subscribe({
+    next: (res) => {
+      alert('Employee saved!');
+      this.employees = {
+        code: '',
+       fk_GenderId: 0,
+      };
+    },
+    error: (err) => {
+      console.error('Error saving employee:', err);
+      if (err.error?.errors) {
+        console.table(err.error.errors);
+        alert('Validation failed. Check console for details.');
+      } else {
+        alert('Failed to save employee.');
+      }
+    }
+  });
+}
+
+
+
 }
