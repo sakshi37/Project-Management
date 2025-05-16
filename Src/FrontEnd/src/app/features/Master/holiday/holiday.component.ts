@@ -121,6 +121,7 @@ export class HolidayComponent implements OnInit, AfterViewInit {
     const today = new Date();
     const holiday = new Date(holidayDate);
     // Reset time to ignore time part
+    
     today.setHours(0, 0, 0, 0);
     holiday.setHours(0, 0, 0, 0);
     return holiday < today;
