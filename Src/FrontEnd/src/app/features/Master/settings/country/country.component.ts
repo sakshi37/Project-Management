@@ -38,7 +38,7 @@ export class CountryComponent implements OnInit, AfterViewInit {
   filteredCountries: any[] = [];
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
-  itemsPerPage: number = 5; // default value
+  itemsPerPage: number = 3; // default value
   selectedSortColumn = '';
   sortDirectionAsc = true;
   private countryModal: bootstrap.Modal | undefined;
@@ -77,8 +77,8 @@ export class CountryComponent implements OnInit, AfterViewInit {
   // Initialize the form
   private initForm(): void {
     this.countryForm = this.fb.group({
-      countryName: ['', [Validators.required, Validators.maxLength(100)]],
-      countryCode: ['', [Validators.required, Validators.maxLength(10)]],
+      countryName: ['', [Validators.required, Validators.maxLength(15)]],
+      countryCode: ['', [Validators.required, Validators.maxLength(3)]],
       status: ['1', Validators.required],
     });
   }
@@ -133,19 +133,80 @@ export class CountryComponent implements OnInit, AfterViewInit {
   }
 
   // Submit the form (create or update)
+  // onSubmit(): void {
+  //   if (this.countryForm.invalid) {
+  //     this.countryForm.markAllAsTouched();
+  //     Swal.fire({
+  //       icon: 'error',
+  //       title: 'Invalid',
+  //       text: 'Please fill all details!',
+  //       confirmButtonColor: '#d33',
+  //     });
+  //     return;
+  //   }
+
+  //   const statusValue = this.countryForm.value.status === '1' ? true : false;
+
+  //   const countryDto = {
+  //     countryId: this.selectedCountryId,
+  //     countryName: this.countryForm.value.countryName,
+  //     countryCode: this.countryForm.value.countryCode.toUpperCase(),
+  //     countryStatus: statusValue,
+  //     updatedBy: 1,
+  //   };
+
+  //   if (this.isEditMode && this.selectedCountryId !== null) {
+  //     // Update existing country
+  //     const updateDto: UpdateCountryDto = {
+  //       ...countryDto,
+  //       countryId: this.selectedCountryId as number,
+  //     };
+  //     console.log('Update Payload:', updateDto);
+
+  //     this.countryService.updateCountry(updateDto).subscribe({
+  //       next: () => {
+  //         this.getCountries();
+  //         this.resetForm();
+  //         this.countryModal?.hide();
+  //         Swal.fire({
+  //           icon: 'success',
+  //           title: 'Updated',
+  //           text: 'City updated successfully!',
+  //           confirmButtonColor: '#3085d6',
+  //         });
+  //       },
+  //       error: (err) => this.errorHandler.handleError(err),
+  //     });
+  //   } else {
+  //     // Create new country
+  //     const createDto: CreateCountryDto = {
+  //       ...countryDto,
+  //       createdBy: 1,
+  //     };
+
+  //     this.countryService.createCountry(createDto).subscribe({
+  //       next: () => {
+  //         this.getCountries();
+  //         this.resetForm();
+  //         this.countryModal?.hide();
+  //         Swal.fire({
+  //           icon: 'success',
+  //           title: 'Created',
+  //           text: 'City created successfully!',
+  //           confirmButtonColor: '#3085d6',
+  //         });
+  //       },
+  //       error: (err) => this.errorHandler.handleError(err),
+  //     });
+  //   }
+  // }
   onSubmit(): void {
     if (this.countryForm.invalid) {
-      this.countryForm.markAllAsTouched();
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid',
-        text: 'Please fill all details!',
-        confirmButtonColor: '#d33',
-      });
-      return;
+      this.countryForm.markAllAsTouched(); // Show inline errors only
+      return; // Don't close modal or show SweetAlert
     }
 
-    const statusValue = this.countryForm.value.status === '1' ? true : false;
+    const statusValue = this.countryForm.value.status === '1';
 
     const countryDto = {
       countryId: this.selectedCountryId,
@@ -156,12 +217,10 @@ export class CountryComponent implements OnInit, AfterViewInit {
     };
 
     if (this.isEditMode && this.selectedCountryId !== null) {
-      // Update existing country
       const updateDto: UpdateCountryDto = {
         ...countryDto,
-        countryId: this.selectedCountryId as number,
+        countryId: this.selectedCountryId,
       };
-      console.log('Update Payload:', updateDto);
 
       this.countryService.updateCountry(updateDto).subscribe({
         next: () => {
@@ -171,14 +230,13 @@ export class CountryComponent implements OnInit, AfterViewInit {
           Swal.fire({
             icon: 'success',
             title: 'Updated',
-            text: 'City updated successfully!',
+            text: 'Country updated successfully!',
             confirmButtonColor: '#3085d6',
           });
         },
         error: (err) => this.errorHandler.handleError(err),
       });
     } else {
-      // Create new country
       const createDto: CreateCountryDto = {
         ...countryDto,
         createdBy: 1,
@@ -192,7 +250,7 @@ export class CountryComponent implements OnInit, AfterViewInit {
           Swal.fire({
             icon: 'success',
             title: 'Created',
-            text: 'City created successfully!',
+            text: 'Country created successfully!',
             confirmButtonColor: '#3085d6',
           });
         },
