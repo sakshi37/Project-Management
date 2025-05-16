@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
+using HR.Application.Features.TeamCompositions.Commands.UpdateTeamComposition;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.Data.SqlClient;
@@ -68,5 +69,29 @@ namespace HR.Persistence.Repositories
             return await _context.TeamLeaderDtos.FromSqlRaw(sql).ToListAsync();
         }
 
+        public async Task<TeamComposition> UpdateAsync(UpdateTeamCompositionDto team)
+        {
+            string sql = "EXEC SP_TeamCompositionUpdate @TeamId={0}, @TeamName={1}, @Fk_BranchId={2}, @Fk_DivisionId={3}, @Fk_TeamLeaderId={4}, @TeamStatus={5}, @UpdatedBy={6}";
+            await _context.Database.ExecuteSqlRawAsync(sql,
+                team.TeamId,
+                team.TeamName,
+                team.Fk_BranchId,
+                team.Fk_DivisionId,
+                team.Fk_TeamLeaderId,
+                team.TeamStatus,
+                team.UpdatedBy);
+
+            return new TeamComposition
+            {
+                TeamId = team.TeamId,
+                TeamName = team.TeamName,
+                Fk_BranchId = team.Fk_BranchId,
+                Fk_DivisionId = team.Fk_DivisionId,
+                Fk_TeamLeaderId = team.Fk_TeamLeaderId,
+                UpdatedBy = team.UpdatedBy,
+                UpdatedDate = DateTime.UtcNow,
+                TeamStatus = team.TeamStatus
+            };
+        }
     }
 }

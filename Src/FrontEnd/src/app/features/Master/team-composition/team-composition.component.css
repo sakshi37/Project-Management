@@ -95,6 +95,15 @@
   .custom-add-btn:hover{
     box-shadow: #555 0px 0px 10px;
   }
+  .custom-excel-btn{
+    background-color: #c5edee;
+    color: #59aaa9;
+
+  }
+  .custom-excel-btn:hover{
+    box-shadow: #cccccc 0px 0px 10px;
+    border: #59aaa9 1px solid;
+  }
   
   .edit-btn:hover {
     background-color: #e2e8f0;
