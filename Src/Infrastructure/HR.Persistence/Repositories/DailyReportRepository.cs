@@ -16,7 +16,7 @@ public class DailyReportRepository : IDailyReport
     public async Task<List<DailyReportResponse>> GetAllDailyreport(DailyReportrequest request)
     {
         var reports = await _context.DailyReport
-                 .FromSqlRaw("EXEC sp_GetMissPunchInReport @p0", request.Date)
+                 .FromSqlRaw("SP_GetAllDailyReports", request.Date)
                  .ToListAsync();
 
         if (reports == null || !reports.Any())

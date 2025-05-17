@@ -16,7 +16,7 @@ namespace HR.API.Controllers
             _mediator=mediator;
         }
 
-        [HttpPost("DailyReports")]
+        [HttpGet("DailyReports")]
         public async Task<IActionResult>GetDailyReport(DailyReportrequest request)
         {
             var query=new GetAllDailyReportQuery(request);
