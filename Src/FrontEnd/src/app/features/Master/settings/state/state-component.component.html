@@ -1,6 +1,6 @@
 <div class="container mt-4">
   <!-- Add State Button -->
-  <div class="text-end mb-3">
+  <!-- <div class="text-end mb-3">
     <button type="button" class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#stateModal"
       (click)="openAddModal()">
       + Add State
@@ -19,11 +19,53 @@
       <input type="text" id="search" class="form-control" placeholder="Search State" [(ngModel)]="searchText"
         (ngModelChange)="filterStates()" style="background-color: transparent;">
     </div>
-  </div>
+  </div> -->
+  <div class="row mb-3 align-items-center">
+    <!-- Left Column: Search -->
+    <div class="col-md-2">
+      <div class="entries-dropdown">
+        <label for="entries">Show</label>
+        <select id="entries" [(ngModel)]="itemsPerPage">
+          <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+            {{ option }}
+          </option>
+        </select>
+        <span>Entries</span>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="input-group" style="width: 100%">
+        <span class="input-group-text" style="background-color: transparent">
+          <i class="fas fa-search"></i>
+        </span>
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          placeholder="Search State"
+          [(ngModel)]="searchText"
+          (ngModelChange)="filterStates()"
+          style="background-color: transparent"
+        />
+      </div>
+    </div>
 
+    <!-- Right Column: Add Button -->
+    <div class="col-md-6 text-end">
+      <button
+        type="button"
+        class="btn custom-add-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#stateModal"
+        (click)="openAddModal()"
+      >
+        + Add State
+      </button>
+    </div>
+  </div>
   <!-- State Modal -->
   <div class="modal fade" id="stateModal" tabindex="-1" aria-labelledby="stateModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
@@ -35,7 +77,7 @@
         <div class="modal-body">
           <form [formGroup]="stateForm" (ngSubmit)="onSubmit()" class="row g-3">
             <!-- Country Dropdown -->
-            <div class="col-12">
+            <!-- <div class="col-12">
               <label for="countryId" class="form-label">Country:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
@@ -50,10 +92,10 @@
                 class="text-danger">
                 Country is required.
               </div>
-            </div>
+            </div> -->
 
             <!-- State Name -->
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <label for="stateName" class="form-label">State Name:</label>
               <div class="input-icon-group">
                 <i class="fas fa-map-marked-alt"></i>
@@ -66,10 +108,10 @@
                 <div *ngIf="stateForm.get('stateName')?.errors?.['required']">State Name is required.</div>
                 <div *ngIf="stateForm.get('stateName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
               </div>
-            </div>
+            </div> -->
 
             <!-- State Code -->
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <label for="stateCode" class="form-label">State Code:</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-location-crosshairs"></i>
@@ -81,10 +123,72 @@
                 class="text-danger">
                 <div *ngIf="stateForm.get('stateCode')?.errors?.['required']">State Code is required.</div>
                 <div *ngIf="stateForm.get('stateCode')?.errors?.['maxlength']">Max 10 characters allowed.</div>
-                <!-- <div *ngIf="stateForm.get('stateCode')?.errors?.['pattern']">Only 2–3 uppercase letters allowed (e.g.,
-                  MH, NY).</div> -->
               </div>
-            </div>
+            </div> -->
+<!-- Country Dropdown -->
+<div class="col-12">
+  <label for="countryId" class="form-label">Country:</label>
+  <div class="input-icon-group">
+    <i class="fas fa-globe"></i>
+    <select
+      id="countryId"
+      class="form-select"
+      formControlName="countryId"
+      (change)="onCountryChange($event)"
+      [ngClass]="{
+        'is-invalid': stateForm.get('countryId')?.touched && stateForm.get('countryId')?.invalid
+      }"
+    >
+      <option value="">Select Country</option>
+      <option *ngFor="let country of countries" [value]="country.countryId">
+        {{ country.countryName }}
+      </option>
+    </select>
+  </div>
+  <div *ngIf="stateForm.get('countryId')?.touched && stateForm.get('countryId')?.invalid" class="text-danger">
+    Country is required.
+  </div>
+</div>
+
+<!-- State Name Dropdown -->
+<div class="col-12">
+  <label for="stateName" class="form-label">State Name:</label>
+  <div class="input-icon-group">
+    <i class="fas fa-map-marked-alt"></i>
+    <select
+      id="stateName"
+      class="form-select"
+      formControlName="stateName"
+      (change)="onStateNameChange($event)"
+      [ngClass]="{
+        'is-invalid': stateForm.get('stateName')?.touched && stateForm.get('stateName')?.invalid
+      }"
+    >
+      <option value="">Select State</option>
+      <option *ngFor="let state of validStateList" [value]="state.name">
+        {{ state.name }}
+      </option>
+    </select>
+  </div>
+  <div *ngIf="stateForm.get('stateName')?.touched && stateForm.get('stateName')?.invalid" class="text-danger">
+    State is required.
+  </div>
+</div>
+
+<!-- State Code (Read-only) -->
+<div class="col-12">
+  <label for="stateCode" class="form-label">State Code:</label>
+  <div class="input-icon-group">
+    <i class="fa-solid fa-location-crosshairs"></i>
+    <input
+      type="text"
+      id="stateCode"
+      class="form-control"
+      formControlName="stateCode"
+      readonly
+    />
+  </div>
+</div>
 
 
             <div class="col-12" *ngIf="isEditMode">
@@ -99,7 +203,7 @@
             </div>
 
             <div class="col-12 d-flex justify-content-end">
-              <button type="submit" class="btn btn-success" data-bs-dismiss="modal">{{ isEditMode ? 'Update' : 'Add'
+              <button type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Add'
                 }}</button>
               <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal"
                 (click)="resetForm()">Cancel</button>
