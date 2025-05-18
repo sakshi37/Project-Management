@@ -17,51 +17,79 @@
   <div class="row mb-3 align-items-center">
     <!-- Left Column: Search -->
     <div class="col-md-2">
-
       <div class="entries-dropdown">
         <label for="entries">Show</label>
         <select id="entries" [(ngModel)]="itemsPerPage">
-          <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+          <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+            {{ option }}
+          </option>
         </select>
         <span>Entries</span>
       </div>
     </div>
     <div class="col-md-4">
-
-      <div class="input-group" style="width: 100%;">
-        <span class="input-group-text" style="background-color: transparent;">
+      <div class="input-group" style="width: 100%">
+        <span class="input-group-text" style="background-color: transparent">
           <i class="fas fa-search"></i>
         </span>
-        <input type="text" id="search" class="form-control" placeholder="Search Country" [(ngModel)]="searchText"
-          (ngModelChange)="filterCountries()" style="background-color: transparent;" />
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          placeholder="Search Country"
+          [(ngModel)]="searchText"
+          (ngModelChange)="filterCountries()"
+          style="background-color: transparent"
+        />
       </div>
     </div>
 
     <!-- Right Column: Add Button -->
     <div class="col-md-6 text-end">
-      <button type="button" class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#countryModal"
-        (click)="openAddModal()">
+      <button
+        type="button"
+        class="btn custom-add-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#countryModal"
+        (click)="openAddModal()"
+      >
         + Add Country
       </button>
     </div>
   </div>
 
-
   <!-- Country Modal -->
-  <div class="modal fade" id="countryModal" tabindex="-1" aria-labelledby="countryModalLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="countryModal"
+    tabindex="-1"
+    aria-labelledby="countryModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
-          <h5 class="modal-title" id="countryModalLabel">{{ isEditMode ? 'Edit Country' : 'Add New Country' }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-            (click)="resetForm()"></button>
+          <h5 class="modal-title" id="countryModalLabel">
+            {{ isEditMode ? "Edit Country" : "Add New Country" }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            (click)="resetForm()"
+          ></button>
         </div>
         <!-- Modal Body -->
         <div class="modal-body">
-          <form [formGroup]="countryForm" (ngSubmit)="onSubmit()" class="row g-3">
+          <form
+            [formGroup]="countryForm"
+            (ngSubmit)="onSubmit()"
+            class="row g-3"
+          >
             <!-- Country Name -->
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <label for="countryName" class="form-label">Country Name:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
@@ -74,33 +102,104 @@
                 <div *ngIf="countryForm.get('countryName')?.errors?.['required']">Country Name is required.</div>
                 <div *ngIf="countryForm.get('countryName')?.errors?.['maxlength']">Maximum 15 characters allowed.</div>
               </div>
+            </div> -->
+            <!-- Country Name Dropdown -->
+            <div class="col-md-12">
+              <label for="countryName" class="form-label">Country Name:</label>
+              <div class="input-icon-group">
+                <i class="fas fa-globe"></i>
+                <select
+                  id="countryName"
+                  class="form-select"
+                  formControlName="countryName"
+                  (change)="onCountryChange($event)"
+                  [ngClass]="{
+                    'is-invalid':
+                      countryForm.get('countryName')?.touched &&
+                      countryForm.get('countryName')?.invalid
+                  }"
+                >
+                  <option value="">Select a country</option>
+                  <option
+                    *ngFor="let country of validCountries"
+                    [value]="country.name"
+                  >
+                    {{ country.name }}
+                  </option>
+                </select>
+              </div>
+              <div
+                *ngIf="
+                  countryForm.get('countryName')?.touched &&
+                  countryForm.get('countryName')?.invalid
+                "
+                class="text-danger"
+              >
+                Country Name is required.
+              </div>
             </div>
 
             <!-- Country Code -->
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <label for="countryCode" class="form-label">Country Code:</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-location-crosshairs"></i>
-                <input type="text" id="countryCode" class="form-control"
-                  [ngClass]="{ 'is-invalid': countryForm.get('countryCode')?.touched && countryForm.get('countryCode')?.invalid }"
-                  formControlName="countryCode" />
+                <input
+                  type="text"
+                  id="countryCode"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid':
+                      countryForm.get('countryCode')?.touched &&
+                      countryForm.get('countryCode')?.invalid
+                  }"
+                  formControlName="countryCode"
+                />
               </div>
-              <div *ngIf="countryForm.get('countryCode')?.touched && countryForm.get('countryCode')?.invalid"
-                class="text-danger">
-                <div *ngIf="countryForm.get('countryCode')?.errors?.['required']">Country Code is required.</div>
-                <div *ngIf="countryForm.get('countryCode')?.errors?.['maxlength']">Maximum 3 characters allowed.</div>
-                <!-- <div *ngIf="countryForm.get('countryCode')?.errors?.['pattern']">Enter 2–3 uppercase letters (e.g., IN,
-                  USA).</div> -->
+              <div
+                *ngIf="
+                  countryForm.get('countryCode')?.touched &&
+                  countryForm.get('countryCode')?.invalid
+                "
+                class="text-danger"
+              >
+                <div
+                  *ngIf="countryForm.get('countryCode')?.errors?.['required']"
+                >
+                  Country Code is required.
+                </div>
+                <div
+                  *ngIf="countryForm.get('countryCode')?.errors?.['maxlength']"
+                >
+                  Maximum 3 characters allowed.
+                </div>
+               
               </div>
-            </div>
-
-
+            </div> -->
+<!-- Country Code (Auto-filled) -->
+<div class="col-md-12">
+  <label for="countryCode" class="form-label">Country Code:</label>
+  <div class="input-icon-group">
+    <i class="fa-solid fa-location-crosshairs"></i>
+    <input
+      type="text"
+      id="countryCode"
+      class="form-control"
+      formControlName="countryCode"
+      [disabled]="true"
+    />
+  </div>
+</div>
 
             <div class="col-12" *ngIf="isEditMode">
               <label for="status" class="form-label">Status:</label>
               <div class="input-icon-group">
                 <i class="fas fa-toggle-on"></i>
-                <select id="status" class="form-control" formControlName="status">
+                <select
+                  id="status"
+                  class="form-control"
+                  formControlName="status"
+                >
                   <option value="1">Active</option>
                   <option value="0">Inactive</option>
                 </select>
@@ -117,15 +216,19 @@
             <div class="col-12 d-flex justify-content-end">
               <!-- ✅ Submit button WITHOUT dismiss attribute -->
               <button type="submit" class="btn btn-success">
-                {{ isEditMode ? 'Update' : 'Add' }}
+                {{ isEditMode ? "Update" : "Add" }}
               </button>
 
               <!-- Cancel button still dismisses modal -->
-              <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal" (click)="resetForm()">
+              <button
+                type="button"
+                class="btn btn-secondary ms-2"
+                data-bs-dismiss="modal"
+                (click)="resetForm()"
+              >
                 Cancel
               </button>
             </div>
-
           </form>
         </div>
       </div>
@@ -134,8 +237,6 @@
 
   <div class="row gy-4" *ngIf="countries && countries.length > 0; else noData">
     <div class="col-12">
-
-
       <div>
         <table class="mb-0">
           <thead>
@@ -144,10 +245,16 @@
                 <div class="head-first">Sr. No</div>
               </th>
               <th (click)="sortCountries('countryName')">
-                <div class="head-other">Country Name <i class="fas" [ngClass]="getSortIcon('countryName')"></i></div>
+                <div class="head-other">
+                  Country Name
+                  <i class="fas" [ngClass]="getSortIcon('countryName')"></i>
+                </div>
               </th>
               <th (click)="sortCountries('countryCode')">
-                <div class="head-other">Country Code <i class="fas" [ngClass]="getSortIcon('countryCode')"></i></div>
+                <div class="head-other">
+                  Country Code
+                  <i class="fas" [ngClass]="getSortIcon('countryCode')"></i>
+                </div>
               </th>
               <th>
                 <div class="head-other">Status</div>
@@ -159,10 +266,18 @@
           </thead>
           <tbody>
             <tr
-              *ngFor="let country of filteredCountries | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
-              [ngClass]="{'inactive-row': !country.countryStatus}">
+              *ngFor="
+                let country of filteredCountries
+                  | paginate
+                    : { itemsPerPage: itemsPerPage, currentPage: currentPage };
+                index as i
+              "
+              [ngClass]="{ 'inactive-row': !country.countryStatus }"
+            >
               <td>
-                <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
+                <div class="tr-first-child">
+                  {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+                </div>
               </td>
               <td>
                 <div class="tr-other-child">{{ country.countryName }}</div>
@@ -172,8 +287,11 @@
               </td>
               <td>
                 <div class="tr-other-child">
-                  <span class="badge status-badge " [ngClass]="country.countryStatus ? 'active' : 'inactive'">
-                    {{ country.countryStatus ? 'Active' : 'Inactive' }}
+                  <span
+                    class="badge status-badge"
+                    [ngClass]="country.countryStatus ? 'active' : 'inactive'"
+                  >
+                    {{ country.countryStatus ? "Active" : "Inactive" }}
                   </span>
                 </div>
               </td>
@@ -188,9 +306,11 @@
           </tbody>
         </table>
         <div class="pagination-wrapper">
-          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+          <pagination-controls
+            (pageChange)="currentPage = $event"
+            [autoHide]="true"
+          ></pagination-controls>
         </div>
-
       </div>
     </div>
   </div>
