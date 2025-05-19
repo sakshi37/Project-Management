@@ -7,6 +7,7 @@ import { UserService } from '../../services/user.service';
 import { Otp } from '../../Models/otp';
 import Swal from 'sweetalert2';
 import { AppComponent } from '../../app.component';
+import { jwtDecode } from 'jwt-decode';
 
 declare var bootstrap: any;
 
@@ -17,7 +18,7 @@ declare var bootstrap: any;
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  UserName = '';
+  UserName?:string = '';
   login: Login = new Login('', '', false);
   otpDigits: string[] = ['', '', '', ''];
   isVerifying = false;
@@ -32,8 +33,7 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', [
       Validators.required,
       Validators.pattern(
-        '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'
-      ),
+        '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),
     ]),
   });
 
@@ -67,18 +67,18 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(this.login).subscribe({
       next: (response: AuthResponseModel) => {
-        localStorage.setItem('otp', response.otp);
-        localStorage.setItem('email', response.email);
-        localStorage.setItem('userName', response.userName);
-        localStorage.setItem('checkFirstLogin', response.firstLogin);
-        // localStorage.setItem('roleName', response.roleName);
+        localStorage.setItem('token',response.token);
+        // localStorage.setItem('otp', response.otp);
+        // localStorage.setItem('email', response.email);
+        // localStorage.setItem('userName', response.userName);
+        // localStorage.setItem('checkFirstLogin', response.firstLogin);
         localStorage.setItem('loginStatus', String(response.loginStatus));
-        localStorage.setItem('roleName', response.roleName);
-        localStorage.setItem('userCheckInTime', response.userCheckInTime);
+        // localStorage.setItem('roleName', response.roleName);
+        // localStorage.setItem('userCheckInTime', response.userCheckInTime);
 
-        console.log(response.loginStatus);
-
-        console.log(localStorage.getItem('userName'));
+        const decodedToken = jwtDecode(response.token);
+        console.log(decodedToken);
+        this.UserName = decodedToken.sub;
 
 
         if (!response.loginStatus) {
@@ -86,13 +86,7 @@ export class LoginComponent implements OnInit {
           this.isLoggingIn = false;
           return;
         }
-         localStorage.setItem('checkFirstLogin', response.firstLogin);
-
-        localStorage.setItem('roleName', response.roleName);
-        localStorage.setItem('userCheckInTime', response.userCheckInTime);
-
-        console.log(localStorage.getItem('userName'));
-
+        
         if (response.firstLogin) 
         {
           const modalElement = document.getElementById('otpModal');
@@ -130,8 +124,8 @@ export class LoginComponent implements OnInit {
     setTimeout(() => {
       const enteredOtp = this.otpDigits.join('');
       const storedOtp = localStorage.getItem('otp');
-      if (localStorage.getItem('userName') != null) {
-        let userNaav: string = String(localStorage.getItem('userName'));
+      if (localStorage.getItem('token') != null) {
+        let userNaav: string = this.UserName != null ? this.UserName : 'lol';
         const OtpRequest: VerifyOTPDto = {
           userName: userNaav,
           password: this.login.password,
@@ -152,7 +146,7 @@ export class LoginComponent implements OnInit {
           },
           error: (error) => {
             console.error('Otp Failed', error.error); 
-            // alert('Incorrect OTP. Please try again.'); 
+              
             Swal.fire(
               'Invalid OTP',
               'Incorrect OTP. Please try again.',
