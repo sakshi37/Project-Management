@@ -60,40 +60,40 @@
                         <div class="col-md-12">
                             <label class="form-label">Branch:</label>
                             <select class="form-select" formControlName="fk_BranchId">
-                                <option [value]="" selected>All Branches</option>
+                                <option value="">All Branches</option>
                                 <option *ngFor="let branch of branches" [value]="branch.branchId">
-                                    {{ branch.branchName }}
+                                  {{ branch.branchName }}
                                 </option>
-                            </select>
+                              </select>
                         </div>
 
                         <div class="col-md-12">
                             <label class="form-label">Division:</label>
                             <select class="form-select" formControlName="fk_DivisionId">
-                                <option [value]="" selected>All Divisions</option>
-
+                                <option value="">All Divisions</option>
                                 <option *ngFor="let division of divisions" [value]="division.divisionId">
-                                    {{ division.divisionName }}
+                                  {{ division.divisionName }}
                                 </option>
-                            </select>
+                              </select>
                         </div>
 
-                        <!-- <div class="col-md-12">
-                <label class="form-label">Team Leader ID:</label>
-                <input type="number" formControlName="fk_TeamLeaderId" class="form-control" />
-              </div> -->
                         <div class="col-md-12">
                             <label for="teamLeader" class="form-label">Team Leader</label>
                             <select id="teamLeader" class="form-select" formControlName="fk_TeamLeaderId">
-                                <option [value]="" selected>All TeamLeaders</option>
-
-                                <!-- <option value="" disabled selected>Select Team Leader</option> -->
-                                <!-- <option [value]="''" selected>All</option> -->
+                                <option value="">All Team Leaders</option>
                                 <option *ngFor="let leader of teamLeaders" [value]="leader.id">
-                                    {{ leader.name }}
+                                  {{ leader.name }}
                                 </option>
-                            </select>
-                        </div>
+                              </select>
+                        </div> 
+
+  
+  <!-- Division Dropdown -->
+ 
+  
+  <!-- Team Leader Dropdown -->
+  
+  
                         <div class="col-12" *ngIf="isEditMode">
                             <label for="teamStatus" class="form-label">Status:</label>
                             <div class="input-icon-group">

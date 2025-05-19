@@ -254,6 +254,14 @@ export class StateComponent implements OnInit, AfterViewInit {
     this.stateModal.show();
   }
   
+  private cleanUpModal(): void {
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = 'auto'; // ✅ restore scrolling
+    document.body.style.removeProperty('padding-right');
+  
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach((backdrop) => backdrop.remove());
+  }
 
   onSubmit(): void {
     if (this.stateForm.invalid) {
@@ -284,19 +292,19 @@ export class StateComponent implements OnInit, AfterViewInit {
           this.loadStates();
           this.resetForm();
           this.stateModal?.hide(); // Hide modal first
-          document.body.classList.remove('modal-open');
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach((el) => el.remove());
+          this.cleanUpModal(); // Clean up modal afterwards
           Swal.fire({
                       toast: true,
                       position: 'top',
-                      timer: 3000,
+                      timer: 1000,
                       timerProgressBar: true,
                       showConfirmButton: false,
                       icon: 'success',
                       title: 'Updated',
                       text: 'State updated successfully!',
                       confirmButtonColor: '#3085d6',
+                    }).then(() => {
+                      this.cleanUpModal(); // Clean up modal afterwards
                     });
         },
         error: (err) => this.errorHandler.handleError(err),
@@ -307,19 +315,19 @@ export class StateComponent implements OnInit, AfterViewInit {
           this.loadStates();
           this.resetForm();
           this.stateModal?.hide(); // Hide modal first
-          document.body.classList.remove('modal-open');
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach((el) => el.remove());
+         this.cleanUpModal(); // Clean up modal afterwards
           Swal.fire({
                         toast: true,
                         position: 'top',
-                        timer: 3000,
+                        timer: 1000,
                         timerProgressBar: true,
                         showConfirmButton: false,
                         icon: 'success',
                         title: 'Created',
                         text: 'State created successfully!',
                         confirmButtonColor: '#3085d6',
+                      }).then(() => {
+                        this.cleanUpModal(); // Clean up modal afterwards
                       });
         },
         error: (err) => this.errorHandler.handleError(err),

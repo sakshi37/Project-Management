@@ -63,9 +63,9 @@ export class TeamCompositionComponent {
   initForm() {
     this.teamForm = this.fb.group({
       teamName: ['', Validators.required],
-      fk_BranchId: [null, Validators.required],
-      fk_DivisionId: [null, Validators.required],
-      fk_TeamLeaderId: [null, Validators.required],
+      fk_BranchId: ['', Validators.required],
+      fk_DivisionId: ['', Validators.required],
+      fk_TeamLeaderId: ['', Validators.required],
       teamStatus: ['1', Validators.required]
     });
   }
