@@ -25,6 +25,7 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   formSubmitted = false;
   isLoggingIn = false;
+  
 
 
 
@@ -53,7 +54,9 @@ export class LoginComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  ngOnInit() { }
+  ngOnInit(
+    
+  ) { }
 
   loginUser(loginForm: NgForm) {
     this.login = loginForm.value;
@@ -91,6 +94,7 @@ export class LoginComponent implements OnInit {
         {
           const modalElement = document.getElementById('otpModal');
           const otpModal = new bootstrap.Modal(modalElement);
+          this.startTimer()
           otpModal.show();
         }
         else 
@@ -158,6 +162,35 @@ export class LoginComponent implements OnInit {
 
       this.isVerifying = false;
     }, 1500);
+
+ 
+     
+  }
+  timeLeft: number = 60;
+  txtTimeleft: boolean = false;
+  btnDisabled: boolean = false;
+  interval:  any
+  startTimer() {
+    this.interval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+        this.btnDisabled = true;
+        this.txtTimeleft = true;
+      } else {
+        // this.timeLeft = 60;
+        this.btnDisabled = false;
+        this.txtTimeleft = false;
+        clearInterval(this.interval);
+      }
+    }, 1000);
+  }
+   terminateOtp() {
+    this.isLoggingIn = false;
+    Swal.fire(
+      'Process Terminated',
+      'OTP verification process has been terminated please login again and get.',
+      'info'
+    );
   }
 
   moveToNext(event: any, index: number) {
@@ -180,7 +213,8 @@ export class LoginComponent implements OnInit {
   newPassword: string = '';
   confirmNewPassword: string = ''; 
 
-  openForgotPasswordModal() {
+  openForgotPasswordModal() 
+  {
     Swal.fire({
       title: 'Forgot Password',
       text: 'Please enter your registered username:',

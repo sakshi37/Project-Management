@@ -277,3 +277,16 @@ footer {
 .validation-message {
   margin-top: 4px;
 }
+p {
+  font-family: Lato;
+}
+
+.btn_resend {
+  border: 0;
+  padding: 5px 10px;
+  color: red;
+}
+
+.btn_resend[disabled] {
+  color: blue;
+}
