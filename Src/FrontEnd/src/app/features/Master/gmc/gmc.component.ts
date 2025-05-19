@@ -1,16 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { GmcService } from '../../../services/gmc-service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FamilyMember } from '../../../Models/family-member-dto';
-import { Employee } from '../../../Models/gmc-model';
-import { FamilyMemberForm } from '../../../Models/gmc-model';
+
+import { Employee, EmployeeSaveDto } from '../../../Models/gmc-model';
+
+import { Gender } from '../../../Models/get-gender-dto';
+import { UpdateService } from '../../../services/update-service';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 import { RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-gmc',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+
+  imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule  ],
+
   templateUrl: './gmc.component.html',
   styleUrls: ['./gmc.component.css'],
 })
@@ -18,18 +26,11 @@ export class GmcComponent implements OnInit {
   employee: Employee = {
     name: '',
     code: '',
-    address: '',
     designation: '',
-    gender: '',
-    pan: '',
-    joinDate: '',
-    birthDate: '',
-    email: '',
-    age: 0,
-    emergencyContact: '',
-    aadhar: '',
-    // fill with all expected fields
+
+   
   };
+
   family: FamilyMember = {
     fk_FamilyMemberTypeId: 0,
     employeeCode: '',
@@ -40,23 +41,53 @@ export class GmcComponent implements OnInit {
     familyStatus: true,
   };
 
-  familyTypes: { id: number; label: string }[] = [];
+
+  familyTypes: { id: number, label: string }[] = [];
+
+  genders: Gender[] = [];
+
+
 
   familyList: FamilyMember[] = [];
 
-  constructor(private gmcService: GmcService) {}
+  constructor(private gmcService: GmcService, private updateService: UpdateService) {}
 
   ngOnInit(): void {
     const code = localStorage.getItem('userName');
     if (code) {
       this.family.employeeCode = code;
+      this.fetchEmployeeDetails(code);
+
     } else {
       alert('Employee code is missing in local storage!');
     }
     this.loadFamilyList();
-    this.loadFamilyTypes();
+
+    this.loadFamilyTypes()
+    this.loadGenders();
+
   }
 
+  fetchEmployeeDetails(code: string): void {
+  this.gmcService.getEmployeeByCode(code).subscribe({
+    next: (res: any) => {
+      this.employee = {
+        name: res.name,
+        code: res.code,
+        designation: res.designationName // mapping API field to model
+      };
+    },
+    error: (err) => {
+      console.error('Failed to fetch employee:', err);
+      alert('Could not fetch employee data.');
+    }
+  });
+}
+loadGenders():void{
+    this.updateService.getAllGenders().subscribe((data: Gender[]) => {
+  this.genders = data;
+});   
+  }
   saveFamilyDetails(): void {
     if (!this.family.employeeCode) {
       alert('Employee code missing.');
@@ -114,7 +145,31 @@ export class GmcComponent implements OnInit {
     });
   }
 
-  saveEmployeeDetails() {
-    // Your form submission logic here
-  }
+   saveEmployeeDetails(): void {
+  // const payload: EmployeeSaveDto = {
+  //   code: this.employee.code,
+  //   address: this.employee.address,
+  //   panNumber: this.employee. panNumber,
+  //   aadharCardNo: this.employee. aadharCardNo,
+  //   joinDate: this.employee.joinDate,
+  //   birthDate: this.employee.birthDate,
+  //   email: this.employee.email,
+  //   emergencyNo: this.employee.emergencyContact,
+  //   age: this.employee.age,
+  //   fk_GenderId: this.employee.fk_GenderId
+  // };
+
+  // this.gmcService.saveEmployeeDetails(payload).subscribe({
+  //   next: (res) => {
+  //     alert('Employee details saved successfully.');
+  //   },
+  //   error: (err) => {
+  //     console.error('Error saving employee:', err);
+  //     alert('Failed to save employee details.');
+  //   }
+  // });
+}
+
+
+
 }

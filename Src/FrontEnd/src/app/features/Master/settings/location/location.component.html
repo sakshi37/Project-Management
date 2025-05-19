@@ -41,7 +41,9 @@
               <label for="countryId" class="form-label">Country:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
-              <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId">
+              <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId"
+              [ngClass]="{ 'is-invalid': locationForm.get('countryId')?.touched && locationForm.get('countryId')?.invalid }"
+              >
                 <option value="">Select Country</option>
                 <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}</option>
               </select>
@@ -73,6 +75,10 @@
             <div class="col-md-12">
               <label for="locationName" class="form-label">Location Name:</label>
               <input type="text" class="form-control" formControlName="locationName" id="locationName" />
+              <div *ngIf="locationForm.get('locationName')?.touched && locationForm.get('locationName')?.invalid" class="text-danger">
+                <div *ngIf="locationForm.get('locationName')?.errors?.['required']">Location Name is required.</div>
+                <div *ngIf="locationForm.get('locationName')?.errors?.['maxlength']">Max 20 characters allowed.</div>
+              </div>
             </div>
 
             <div class="col-md-12">

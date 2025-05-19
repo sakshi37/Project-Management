@@ -7,9 +7,12 @@ using HR.Application.Features.Divisions.Query.GetAllQuery;
 using HR.Application.Features.Divisions.Query.GetProjectManager;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.EmployeeType.Queries.GetAllEmployeeType;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
+using HR.Application.Features.Gender.Queries.GetAllGender;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Locations.Dtos;
 using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
@@ -23,6 +26,7 @@ using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using HR.Application.Features.EmployeeAttendanceReports.EmployeeAttendanceReportDtos;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : DbContext
@@ -67,13 +71,25 @@ public class AppDbContext : DbContext
 
     //public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
+    public DbSet<TeamLeaderDto> TeamLeaderDtos { get; set; }
+
     public DbSet<GetAllEmployeeTypeQueryVm> GetAllEmployeeTypeQueryVms { get; set; }
     public DbSet<Tbl_Login> Tbl_Login { get; set; }
+
     public DbSet<Employee> TblEmployeemaster { get; set; }
+
     public DbSet<GetAllFamilyMemberTypeQueryVm> GetAllFamilyTypeMemberVms { get; set; }
+    public DbSet<GetEmployeeBasicDetailsByCodeQueryVm> EmployeeBasicDetails { get; set; }
+    public DbSet<InsertEmployeeDetailsGmcCommandDto> EmployeesGmc { get; set; } 
+
+    public DbSet<GetAllGenderQueryVm> GetAllGenderQueryVms { get; set; }
 
 
     public DbSet<Attendance> attendance { get; set; }
+
+    public DbSet <Department>Department { get; set; }
+
+    public DbSet<EmployeeAttendanceReportDto> attendanceRepoertdtos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +104,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<HolidayDto>().HasNoKey();
         modelBuilder.Entity<TotalValue>().HasNoKey();
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
+        modelBuilder.Entity<TeamLeaderDto>().HasNoKey();
+
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
         //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
@@ -117,11 +135,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
 
+        modelBuilder.Entity<GetEmployeeBasicDetailsByCodeQueryVm>().HasNoKey();
+        modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
+        modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
+
+        modelBuilder.Entity<EmployeeAttendanceReportDto>().HasNoKey();
+    
 
 
 
 
-
-
-    }
+}
 }

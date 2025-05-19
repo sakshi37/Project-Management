@@ -100,7 +100,7 @@ namespace HR.Persistence.Repositories
 
         public async Task<List<GetAllProjectManagerDto>> GetAllPMAsync()
         {
-            string sql = "EXEC GetProjectManager";
+            string sql = "EXEC [remote].[GetProjectManager]";
             var pms = await _context.GetAllProjectManagerDtos.FromSqlRaw(sql).ToListAsync();
             return pms;
         }

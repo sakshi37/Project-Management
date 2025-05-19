@@ -188,6 +188,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
     this.divisionForm.reset({ divisionName: '', status: '1' });
     this.selectedDivisionId = null;
   }
+  
   onStatusChange(division: GetDivisionDto): void {
     const confirmed = confirm(`Are you sure you want to mark "${division.divisionName}" as ${division.divisionStatus ? 'Inactive' : 'Active'}?`);
 

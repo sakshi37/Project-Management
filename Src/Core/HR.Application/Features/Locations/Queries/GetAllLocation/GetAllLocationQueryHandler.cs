@@ -1,4 +1,4 @@
-﻿using HR.Application.Contracts.Persistence;
+﻿    using HR.Application.Contracts.Persistence;
 using HR.Application.Features.Locations.Dtos;
 using MediatR;
 using System;

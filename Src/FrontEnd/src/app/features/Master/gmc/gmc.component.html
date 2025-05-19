@@ -14,7 +14,7 @@
       <div class="row g-3">
         <div class="col-md-6">
           <label>Employee Name</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.name" name="employeeName">
+          <input type="text" class="form-control" [(ngModel)]="employee.name" name="employeeName" readonly>
         </div>
         <div class="col-md-6">
           <label>Employee Code</label>
@@ -23,23 +23,20 @@
   
         <div class="col-md-6">
           <label>Address</label>
-          <textarea class="form-control" [(ngModel)]="employee.address" name="address"></textarea>
+          <!-- <textarea class="form-control" [(ngModel)]="employee.address" name="address"></textarea> -->
         </div>
         <div class="col-md-6">
           <label>Designation</label>
-          <input type="text" class="form-control" [(ngModel)]="employee.designation" name="designation" readonly>
+          <input type="text" class="form-control" [(ngModel)]="employee.designation" name="designationName" readonly>
         </div>
   
-        <div class="col-md-6">
-          <label>Gender</label>
-          <select class="form-control" [(ngModel)]="employee.gender" name="gender">
-            <option value="">Select a Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
+       <div class="col-md-6">
+          <label for="gender">Gender</label>
+        <!-- <select id="gender"  class="form-control" [(ngModel)]="employee.fk_GenderId" name="gender">
+            <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
+         </select> -->
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <label>PAN Number</label>
           <input type="text" class="form-control" [(ngModel)]="employee.pan" name="panNumber">
         </div>
@@ -51,7 +48,7 @@
         <div class="col-md-6">
           <label>Birth Date</label>
           <input type="date" class="form-control" [(ngModel)]="employee.birthDate" name="birthDate">
-        </div>
+        </div> 
   
         <div class="col-md-6">
           <label>Personal Email</label>
@@ -69,8 +66,8 @@
         <div class="col-md-6">
           <label>Aadhar Card No</label>
           <input type="text" class="form-control" [(ngModel)]="employee.aadhar" name="aadharCard">
-        </div>
-      </div>
+        </div> -->
+      </div> 
   
       <div class="mt-4">
         <button class="btn btn-success me-2" type="submit">Save Employee Details</button>

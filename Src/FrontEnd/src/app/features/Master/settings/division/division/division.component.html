@@ -45,7 +45,7 @@
                   <!-- <input type="text" id="fk_ProjectManagerName" class="form-control" formControlName="projectManagerName"> -->
                     <select class="form-select" name="projectManagerName" id="projectManagerName" formControlName="projectManagerName">
                       <option value="" disabled selected>--Select Project Manager--</option>
-                      <option *ngFor="let pm of projectManagerNames" value="{{pm.projectManager}}">{{pm.projectManager}}</option>
+                      <option *ngFor="let pm of projectManagerNames" value="{{pm.projectManager}}">{{pm.projectManagerName}}({{pm.projectManagerId}})</option>
                     </select>
                 </div>
               

@@ -8,6 +8,7 @@ namespace HR.Application.Features.Divisions.Query.GetProjectManager
 {
    public class GetAllProjectManagerDto
     {
-        public string ProjectManager { get; set; }
+        public string? ProjectManagerId { get; set; }
+        public string? ProjectManagerName { get; set; }
     }
 }

@@ -1,9 +1,25 @@
-h3 {
+h4 {
     text-align: center;
+    color: green;
 }
 .container {
     padding: 10px;
 }
 .btn {
     float: right;
+    
 }
+table{
+    width:100%;
+    justify-items: center;
+}
+td {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+th{
+background-color: black;
+color:white;
+
+}
+

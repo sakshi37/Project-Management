@@ -45,7 +45,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
     sortDirectionAsc = true;
     private locationModal!: bootstrap.Modal ;
     private modalElement: ElementRef | undefined;
-    cityForm!:FormGroup;
+    // cityForm!:FormGroup;
     
   ;
 
@@ -80,7 +80,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
       countryId: ['', Validators.required],
       stateId: ['', Validators.required],
       cityId: ['', Validators.required],
-      locationName: ['', Validators.required],
+      locationName: ['', [Validators.required, Validators.maxLength(20)]],
       locationStatus: ['1', Validators.required],
     });   
   }
@@ -187,10 +187,8 @@ onStateChange(): void {
   
 
     onSubmit(): void {
-        if (this.locationForm.invalid) {
-          console.log("hello world")
-          return;
-        }
+        if (this.locationForm.invalid) return;
+        
         
         const statusBool = this.locationForm.value.locationStatus === '1' ? true : false;
         const cityid = +this.locationForm.value.cityId;

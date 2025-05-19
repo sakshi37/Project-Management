@@ -12,7 +12,7 @@ import { DivisionDto } from '../Models/division-dto';
 export class DivisionService {
   private apiUrl= "https://localhost:7292/api/Division";
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient) { }  
   getAllDivisions(): Observable<GetDivisionDto[]> {
       return this.http.get<GetDivisionDto[]>(this.apiUrl);
     }

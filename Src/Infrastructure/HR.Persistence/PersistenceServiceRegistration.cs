@@ -1,5 +1,6 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
+using HR.Domain.Entities;
 using HR.Persistence.Context;
 using HR.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,12 @@ namespace HR.Persistence
 
             services.AddScoped<IDivisionRepositry, DivisionRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IGenderRepository, GenderRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmenRepositoryt>();
+
+            services.AddScoped<IEmployeeAttendanceReportRepository, EmployeeAttendanceReportRepository>();
+
+
 
 
 

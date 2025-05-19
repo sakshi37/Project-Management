@@ -37,6 +37,9 @@
         public int StateId { get; set; }
         public int CityId { get; set; }
         public int GenderId { get; set; }
+        public int Age { get; set; }
+        public string EmergencyNo { get; set; }
+        public string AadharCardNo { get; set; }
 
     }
 }

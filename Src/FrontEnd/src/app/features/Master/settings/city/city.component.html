@@ -111,17 +111,17 @@
 
             <!-- City Name -->
             <div class="col-md-12">
-              <label for="cityName" class="form-label">City Name:</label>
-              <div class="input-icon-group">
-                <i class="fas fa-city"></i>
-                <input type="text" id="cityName" class="form-control" formControlName="cityName"
-                  [ngClass]="{ 'is-invalid': cityForm.get('cityName')?.touched && cityForm.get('cityName')?.invalid }">
+              <label for="cityName" class="form-label">City Name:</label> 
+                <div class="input-icon-group">
+                  <i class="fas fa-city"></i>
+                  <input type="text" id="cityName" class="form-control" formControlName="cityName"
+                    [ngClass]="{ 'is-invalid': cityForm.get('cityName')?.touched && cityForm.get('cityName')?.invalid }">
+                </div>
+                <div *ngIf="cityForm.get('cityName')?.touched && cityForm.get('cityName')?.invalid" class="text-danger">
+                  <div *ngIf="cityForm.get('cityName')?.errors?.['required']">City Name is required.</div>
+                  <div *ngIf="cityForm.get('cityName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
+                </div>
               </div>
-              <div *ngIf="cityForm.get('cityName')?.touched && cityForm.get('cityName')?.invalid" class="text-danger">
-                <div *ngIf="cityForm.get('cityName')?.errors?.['required']">City Name is required.</div>
-                <div *ngIf="cityForm.get('cityName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
-              </div>
-            </div>
 
             <div class="col-md-12">
               <label for="cityStatus" class="form-label"> Status:</label>

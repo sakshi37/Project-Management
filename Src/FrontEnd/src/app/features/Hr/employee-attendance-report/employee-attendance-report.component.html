@@ -1,45 +1,113 @@
 <div class="container">
     <br>
-    <h3>Employee Attendance-wise Report</h3>
+    <h4>Employee Attendance-wise Report</h4>
     <hr>
+    <div class="row">
+    <div class="col-md-6">
         <label class="form-label" for="reportTypes">Select Type</label>
-        <select class="form-select" name="reportTypes" id="reportTypes" [(ngModel)]="reportTypes">
+        <select class="form-select" name="reportTypes" id="reportTypes" [(ngModel)]="reportTypes" (change)="getAttendanceReports()">
             <option value="0" selected disabled>--Select Type--</option>
             <option value="1">All Divisions</option>
             <option value="2">Particular Division</option>
             <option value="3">Team Leader-wise</option>
             <option value="4">Particular Employee</option>
         </select>
-        <div *ngIf="reportTypes == 2">
+        </div>
+        <div *ngIf="reportTypes == 2" class ="col-md-6">
             <label class="form-label" for="particularDivision">Select Particular Division</label>
-            <select class="form-select" name="particularDivision" id="particularDivision">
+            <select class="form-select" name="particularDivision" id="particularDivision" (change)="getEARByDivisionName()" [(ngModel)]="selectedDivisionName">
                 <option value="" selected disabled>--Select Division--</option>
-                <option *ngFor="let d of divisions" value="{{d.divisionId}}">{{d.divisionName}}</option>
+                <option *ngFor="let d of divisions" value="{{d.divisionName}}">{{d.divisionName}}</option>
             </select>
         </div>
-        <div *ngIf="reportTypes == 3">
+        
+        <div *ngIf="reportTypes == 3" class="col-md-6">
             <label class="form-label" for="tlWise">Select Team Leader-wise</label>
             <select class="form-select" name="tlWise" id="tlWise">
                 <option value="" selected disabled>--Select TL--</option>
                 <option *ngFor="let tl of teamLeaders" value="{{tl.code}}">{{tl.name}}</option>
             </select>
         </div>
-        <div *ngIf="reportTypes == 4">
+        <div *ngIf="reportTypes == 4"class="col-md-6">
             <label class="form-label" for="employee">Select Employee</label>
             <select class="form-select" name="employee" id="employee">
                 <option value="" selected disabled>--Select Employee--</option>
                 <option *ngFor="let employee of employees" value="{{employee.code}}">{{employee.name}}</option>
             </select>
         </div>
-        <br>
-        <div>
-            <label  class="DatePicker"for="birthday">From:</label>
-            <input type="date" id="birthday" name="birthday">
-        </div>
-        <div>
-            <label  class ="DatePicker"for="birthday">To:</label>
-            <input type="date" id="birthday" name="birthday">
         </div>
         <br>
-        <div><button class="btn btn-outline-success"><i class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
+        <div class="row">
+        <div class="col-md-3">
+            <label for="From-label">From:</label>
+            <input class="form-control" type="date" id="From" name="From">
+        </div>
+        <div class="col-md-3">
+            <label for="form-label">To:</label>
+            <input class="form-control" type="date" id="From" name="From">
+        </div >
+       
+        <div class ="col-md-6"><button class="btn btn-outline-success"><i class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
+    </div>
 </div>
+<br>
+<!-- table -->
+
+<div class="row gy-4" *ngIf="attendanceReports && attendanceReports.length > 0; else noData">
+    <div class="col-12">
+        <table class="table table-responsive mb-0 text-center">
+          <thead>
+            <tr >
+              <th><div class="head-first">Sr. No</div></th>
+              <th><div class="head-other">Date</div></th>
+              <th><div class="head-other">Division Name</div></th>
+              <th><div class="head-other">Employee Code</div></th>
+              <th><div class="head-other">Employee Name</div></th>
+              <th><div class="head-other">In-Time</div></th>
+              <th><div class="head-last">Out-Time</div></th>
+              
+            </tr>
+          </thead>
+          
+
+          <tbody>
+            <tr
+              *ngFor="let ateendanceReport of attendanceReports | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
+              [ngClass]="{ 'inactive-row': !ateendanceReport.employeeCode }">
+              <td>
+                <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ ateendanceReport.inTime.toString().split('T')[0] }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ ateendanceReport.divisionName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ ateendanceReport.employeeCode }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ ateendanceReport.employeeName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ ateendanceReport.inTime.toString().split('T')[1].split('.')[0] }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ ateendanceReport.outTime != null ? ateendanceReport.outTime.toString().split('T')[1].split('.')[0] : '-'}}</div>
+              </td>
+              
+                
+              
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination-wrapper">
+          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+        </div>
+    </div>
+  </div>
+
+  <!-- nodatatemplate -->
+  <ng-template #noData>
+    <div class="alert alert-info text-center mt-4">No Employee Attendance Reports found.</div>
+  </ng-template>

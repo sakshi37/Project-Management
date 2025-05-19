@@ -7,4 +7,5 @@ export interface GetDivisionDto {
   prefixName: string;
   holidayListType: boolean;
   manHours: number;
+  projectManagerId:Number;
 }
