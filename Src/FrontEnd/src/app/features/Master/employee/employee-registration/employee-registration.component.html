@@ -189,7 +189,17 @@
               (change)="onFileChange($event, 'image')"
               accept="image/*"
             />
-            <div class="mt-2" *ngIf="employeeForm.value.image">
+
+            <!-- Validation error message -->
+            <div *ngIf="fileErrors.image" class="text-danger mt-1">
+              Only JPG and PNG image files are allowed.
+            </div>
+
+            <!-- Preview -->
+            <div
+              class="mt-2"
+              *ngIf="employeeForm.value.image && !fileErrors.image"
+            >
               <img
                 [src]="'data:image/jpeg;base64,' + employeeForm.value.image"
                 class="rounded border shadow"
@@ -206,7 +216,17 @@
               (change)="onFileChange($event, 'signature')"
               accept="image/*"
             />
-            <div class="mt-2" *ngIf="employeeForm.value.signature">
+
+            <!-- Validation error message -->
+            <div *ngIf="fileErrors.signature" class="text-danger mt-1">
+              Only JPG and PNG image files are allowed.
+            </div>
+
+            <!-- Preview -->
+            <div
+              class="mt-2"
+              *ngIf="employeeForm.value.signature && !fileErrors.signature"
+            >
               <img
                 [src]="'data:image/png;base64,' + employeeForm.value.signature"
                 class="rounded border shadow"

@@ -1,4 +1,5 @@
 export interface Employee {
+  emergencyNo: any;
   aadharCardNo: any;
   email: any;
   birthDate: any;

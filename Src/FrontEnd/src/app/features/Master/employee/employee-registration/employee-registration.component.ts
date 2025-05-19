@@ -42,6 +42,10 @@ export class EmployeeRegistrationComponent implements OnInit {
   selectedSignature: string | null = null;
   filteredStates: { id: number; name: string }[] = [];
   today: string = new Date().toISOString().split('T')[0];
+  fileErrors = {
+    image: false,
+    signature: false,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -247,23 +251,29 @@ export class EmployeeRegistrationComponent implements OnInit {
     return newDate.toISOString().split('T')[0];
   }
 
-  onFileChange(event: any, field: 'image' | 'signature'): void {
+  onFileChange(event: any, controlName: 'image' | 'signature') {
     const file = event.target.files[0];
     if (file) {
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        this.fileErrors[controlName] = true;
+        this.employeeForm.patchValue({ [controlName]: null });
+        event.target.value = '';
+        return;
+      }
+      this.fileErrors[controlName] = false;
       const reader = new FileReader();
-      reader.readAsDataURL(file);
       reader.onload = () => {
-        const base64String = (reader.result as string).split(',')[1];
-        if (field === 'image') {
-          this.selectedImage = base64String;
-          this.employeeForm.patchValue({ image: this.selectedImage });
-        } else if (field === 'signature') {
-          this.selectedSignature = base64String;
-          this.employeeForm.patchValue({ signature: this.selectedSignature });
-        }
+        const base64 = (reader.result as string).split(',')[1];
+        this.employeeForm.patchValue({ [controlName]: base64 });
+        // Also update selectedImage / selectedSignature for consistency
+        if (controlName === 'image') this.selectedImage = base64;
+        if (controlName === 'signature') this.selectedSignature = base64;
       };
+      reader.readAsDataURL(file);
     }
   }
+
   cancel() {
     this.employeeForm.reset();
     this.router.navigate(['/employee']);
