@@ -1,4 +1,5 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Exception;
 using HR.Application.Features.Designations.Commands.CreateDesignation;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Designations.Commands.UpdateDesignation;
@@ -21,7 +22,27 @@ namespace HR.Persistence.Repositories
         }
         public async Task<division> CreateAsync(CreateDivisionDto dto)
         {
+            if (dto == null)
+                throw new LocationValidationException("Division data cannot be null.");
 
+            if (string.IsNullOrEmpty(dto.DivisionName))
+                throw new LocationValidationException("Division name is required.");
+
+            if (dto.Fk_HolidayId < 0 && dto.Fk_HolidayId > 1)
+                throw new LocationValidationException("Invalid Holiday ID.");
+
+
+            var existingDivision = await _context.DivisionDtos
+                 .FromSqlRaw("EXEC CheckDivisionDuplicate @DivisionName = {0}", dto.DivisionName)
+                 .AsNoTracking()
+                 .ToListAsync();
+            var foundDivision = existingDivision.FirstOrDefault();
+
+
+            if (foundDivision != null)
+            {
+                throw new LocationValidationException("A Division with the same name already exists.");
+            }
             string sql = "EXEC SP_DivisionInsert @DivisionName={0},@ProjectManagerName={1},@PrefixName={2},@Fk_HolidayId={3},   @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6}";
             await _context.Database.ExecuteSqlRawAsync(sql,
                 dto.DivisionName,

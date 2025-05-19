@@ -1,5 +1,7 @@
 ﻿using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
+using HR.Application.Features.TeamCompositions.Commands.UpdateTeamComposition;
 using HR.Application.Features.TeamCompositions.Queries.GetAllTeamCompositions;
+using HR.Application.Features.TeamCompositions.Queries.GetAllTeamLeaders;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,17 +26,25 @@ namespace HR.API.Controllers
             return Ok(result);
         }
 
-        //[HttpGet("GetAllTeamCompositions")]
-        //public async Task<IActionResult> GetAllTeamCompositions()
-        //{
-        //    var result = await _mediator.Send(new GetAllTeamCompositionQuery());
-        //    return Ok(result);
-        //}
-        //[Route("{branchId?}/{divisionId?}")]
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromBody] UpdateTeamCompositionDto team)
+        {
+            var result = await _mediator.Send(new UpdateTeamCompositionCommand(team));
+            return Ok(result);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int? branchId, [FromQuery] int? divisionId)
         {
             var result = await _mediator.Send(new GetAllTeamCompositionQuery(branchId, divisionId));
+            return Ok(result);
+        }
+
+        [HttpGet("team-leaders")]
+        public async Task<IActionResult> GetTeamLeaders()
+        {
+            var result = await _mediator.Send(new GetAllTeamLeaderQuery());
             return Ok(result);
         }
     }

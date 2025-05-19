@@ -28,6 +28,11 @@ import { CountryService } from '../../../../services/country.service.service';
 import { StateService } from '../../../../services/state.service';
 import { GetStateDto } from '../../settings/state/Models/get-state.dto';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { LocationService } from '../../../../services/location-service';
+import { GetLocationDto } from '../../settings/location/Models/get-location-dto';
+import { DivisionService } from '../../../../services/division.service';
+import { GetDivisionDto } from '../../settings/division/division/Models/get-division.dto.service';
+import { Gender } from '../../../../Models/get-gender-dto';
 
 //import { LocationService } from '../../../../services/location.service';
 
@@ -48,18 +53,18 @@ export class UpdateEmployeeComponent implements OnInit {
   designations: GetDesignationDto[] = [];
   imageBase64: string = '';
   signatureBase64: string = '';
-  //locations:GetLocationDto[] =[];
+  locations: GetLocationDto[] = [];
   shifts: Shift[] = [];
   employeeTypes: EmployeeType[] = [];
   branches: Branch[] = [];
-  divisions = [];
   userGroups: UserGroup[] = [];
-  //divisions: GetDivisionDto[] = [];
+  divisions: GetDivisionDto[] = [];
   cities: GetCityDto[] = [];
   countries: GetCountryDto[] = [];
   states: GetStateDto[] = [];
   filteredStates: GetStateDto[] = [];
   filteredCities: any[] = [];
+  genders: Gender[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -67,8 +72,8 @@ export class UpdateEmployeeComponent implements OnInit {
     private branchService: BranchService,
     private designationService: DesignationService,
     private updateService: UpdateService,
-    //private locationService:LocationService,
-    // private divisionService: DivisionService
+    private locationService: LocationService,
+    private divisionService: DivisionService,
     private cityService: CityService,
     private countryService: CountryService,
     private stateService: StateService
@@ -102,18 +107,19 @@ export class UpdateEmployeeComponent implements OnInit {
 
   ngOnInit(): void {
     const emp = history.state.employee;
-    // Load all dropdown lists in parallel
+
     forkJoin({
       branches: this.branchService.getBranches(),
       designations: this.designationService.getAllDesignations(),
       userGroups: this.updateService.getAllUserGroups(),
       shifts: this.updateService.getAllShifts(),
+      genders: this.updateService.getAllGenders(),
       employeeTypes: this.updateService.getEmployeeTypes(),
       cities: this.cityService.getAllCities(),
       countries: this.countryService.getAllCountries(),
       states: this.stateService.getAllStates(),
-      // locations: this.locationService.getAllLocations(),
-      //divisions:this.divisionService.getAllDivisions()
+      locations: this.locationService.getAllLocations(),
+      divisions: this.divisionService.getAllDivisions(),
     }).subscribe(
       ({
         branches,
@@ -124,6 +130,9 @@ export class UpdateEmployeeComponent implements OnInit {
         cities,
         countries,
         states,
+        locations,
+        divisions,
+        genders,
       }) => {
         // Filter/map branches
         this.branches = branches
@@ -136,35 +145,36 @@ export class UpdateEmployeeComponent implements OnInit {
             stateName: b.stateName,
             branchStatus: b.branchStatus,
           }));
-        this.employeeForm.get('countryId')?.valueChanges.subscribe(() => {
-          this.filterStates();
-        });
-        this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
-          this.filterCities();
-        });
 
         this.designations = designations;
         this.userGroups = userGroups;
         this.shifts = shifts;
         this.employeeTypes = employeeTypes;
-        // this.locations = locations;
-        //this.divisions=divisions;
+        this.locations = locations;
+        this.divisions = divisions;
         this.cities = cities;
         this.countries = countries;
         this.states = states;
+        this.genders = genders;
 
         if (emp && emp.code) {
           this.selectedEmployeeCode = emp.code;
+          this.employeeForm.reset();
           this.populateEmployeeForm(emp);
         } else {
           console.warn('No employee data found in navigation state.');
         }
       }
     );
+    this.employeeForm.get('countryId')?.valueChanges.subscribe(() => {
+      this.filterStates();
+    });
+    this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
+      this.filterCities();
+    });
   }
 
   populateEmployeeForm(emp: any): void {
-    // Simple fields
     this.employeeForm.patchValue({
       address: emp.address || '',
       mobileNo: emp.mobileNo || '',
@@ -183,7 +193,11 @@ export class UpdateEmployeeComponent implements OnInit {
       employeeTypeId: emp.employeeTypeId || 0,
       userGroupId: emp.userGroupId || 0,
       divisionId: emp.divisionId || 0,
-      // note: we’ll set branchId below
+      aadharCardNo: emp.aadharCardNo || '',
+      countryId: emp.countryId || '',
+      stateId: emp.stateId || '',
+      cityId: emp.cityId || '',
+      genderId: emp.genderId || '',
     });
 
     // Map branchName → branchId
@@ -207,6 +221,7 @@ export class UpdateEmployeeComponent implements OnInit {
       error: (err) => console.error('Error loading Countries', err),
     });
   }
+
   loadStates(): void {
     this.stateService.getAllStates().subscribe({
       next: (res) => {
@@ -247,6 +262,13 @@ export class UpdateEmployeeComponent implements OnInit {
       this.shifts = data;
     });
   }
+
+  loadGenders(): void {
+    this.updateService.getAllGenders().subscribe((data: Gender[]) => {
+      this.genders = data;
+    });
+  }
+
   loadEmployeeTypes(): void {
     this.updateService.getEmployeeTypes().subscribe((data) => {
       this.employeeTypes = data;
@@ -280,6 +302,7 @@ export class UpdateEmployeeComponent implements OnInit {
             branchStatus: branch.branchStatus,
           }));
         console.log('[DEBUG] Filtered active branches:', this.branches);
+        console.log('im not working');
       },
       error: (err) => {
         console.error('Error loading branches:', err);
@@ -299,30 +322,35 @@ export class UpdateEmployeeComponent implements OnInit {
     });
   }
 
-  // loadDivisions():void{
-  //   this.divisionService.getAllDivisions().subscribe({
-  //     next: (res) => {
-  //       this.designations = res.filter(division=>division.divisonStatus===true);
-  //     },
-  //     error: (err) => {
-  //       console.error('Error loading division:', err);
-  //     }
-  //   })
-  // }
+  loadDivisions(): void {
+    this.divisionService.getAllDivisions().subscribe({
+      next: (res) => {
+        this.divisions = res.filter(
+          (division) => division.divisionStatus === true
+        );
+      },
+      error: (err) => {
+        console.error('Error loading division:', err);
+      },
+    });
+  }
 
-  //   loadLocations(): void {
-  //   this.locationService.getAllLocations().subscribe({
-  //     next: (res) => {
-  //       // Filter here for locationStatus = 1
-  //       this.locations = res.filter((location: any) => location.locationStatus === 1);
-  //       console.log("Filtered location array:", this.locations);
-  //       this.filterLocations();
-  //     },
-  //     error: (err) => {
-  //       console.log(err);
-  //     }
-  //   });
-  // }
+  loadLocations(): void {
+    this.locationService.getAllLocations().subscribe({
+      next: (res) => {
+        // Filter here for locationStatus = 1
+        this.locations = res.filter(
+          (location: any) => location.locationStatus === 1
+        );
+        console.log('Filtered location array:', this.locations);
+        this.filterLocations();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+  filterLocations() {}
 
   onImageSelected(event: Event): void {
     const file = (event.target as HTMLInputElement)?.files?.[0];

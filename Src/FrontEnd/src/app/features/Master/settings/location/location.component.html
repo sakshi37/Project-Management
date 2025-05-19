@@ -134,8 +134,7 @@
               <td><div class="tr-other-child">{{ location.countryName }}</div></td>
               <td>
                 <div class="tr-other-child">
-                  <span class="badge status-badge"
-                  [ngClass]="location.locationStatus ? 'active' : 'inactive'">
+                  <span class="badge status-badge"[ngClass]="location.locationStatus ? 'active' : 'inactive'">
                     {{ location.locationStatus ? 'Active' : 'Inactive' }}
                   </span>
                 </div>
