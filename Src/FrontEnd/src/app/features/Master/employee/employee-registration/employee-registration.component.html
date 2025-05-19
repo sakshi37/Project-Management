@@ -243,29 +243,26 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Country</label>
-            <select class="form-select" formControlName="CountryId">
-              <option value="">Select</option>
-              <option *ngFor="let country of countries" [value]="country.id">
-                {{ country.name }}
+            <select formControlName="CountryId" class="form-select">
+              <option *ngFor="let c of countries" [value]="c.id">
+                {{ c.name }}
               </option>
             </select>
           </div>
 
           <div class="col-md-6">
             <label class="form-label">State</label>
-            <select class="form-select" formControlName="StateId">
-              <option value="">Select</option>
-              <option *ngFor="let state of states" [value]="state.id">
-                {{ state.name }}
+            <select formControlName="StateId" class="form-select">
+              <option *ngFor="let s of filteredStates" [value]="s.id">
+                {{ s.name }}
               </option>
             </select>
           </div>
 
           <div class="col-md-6">
             <label class="form-label">City</label>
-            <select class="form-select" formControlName="CityId">
-              <option value="">Select</option>
-              <option *ngFor="let city of cities" [value]="city.id">
+            <select formControlName="CityId" class="form-select">
+              <option *ngFor="let city of filteredCities" [value]="city.id">
                 {{ city.name }}
               </option>
             </select>
@@ -323,6 +320,7 @@
         >
           <i class="bi bi-arrow-repeat"></i> Reset
         </button>
+        <button type="button" (click)="cancel()">Cancel</button>
       </div>
     </div>
   </div>
