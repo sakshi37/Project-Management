@@ -1,17 +1,23 @@
 ﻿using Dapper;
+using HR.Application.Contracts;
 using HR.Application.Contracts.Models;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
 using HR.Application.Exceptions;
 using HR.Domain.Entities;
+using HR.Identity.Models;
 using HR.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Data.Common;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace HR.Identity.Services
@@ -21,15 +27,19 @@ namespace HR.Identity.Services
         readonly AppDbContext _context;
         readonly IEmailService _emailService;
         private readonly IMemoryCache _cache;
+        readonly JwtSettings _jwtSettings;
+        //readonly UserManager<ApplicationUser> _userManager;
+        //readonly SignInManager<ApplicationUser> _signInManger;
 
-        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache)
+        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache, IOptions<JwtSettings> jwtOptions/*, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManger*/)
         {
             _context = context;
             _emailService = emailService;
             _cache = cache;
+            _jwtSettings = jwtOptions.Value;
+            //_userManager = userManager;
+            //_signInManger = signInManger;
         }
-
-
 
         public async Task<LoginResponse> Login(Tbl_LoginMasterDto loginRequest)
         {
@@ -45,9 +55,9 @@ namespace HR.Identity.Services
                 throw new UserNotFoundException("Invalid credentials, please try again!!");
             }
             Console.WriteLine(user.UserName);
-            //var otplogin =await _context.Tbl_LoginMaster.FirstOrDefaultAsync(ol=>ol.FirstLogin==);
+            // Generate JWT token on successful login (not first login)
+            var token = GenerateToken(user);
 
-            //var status = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(s => s.LoginStatus == loginRequest.LoginStatus);
             if (user.FirstLogin)
             {
                 var otp = GenerateRandomNumber();
@@ -62,19 +72,17 @@ namespace HR.Identity.Services
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
                     FirstLogin = user.FirstLogin,
                     RoleName = user.RoleName,
-                    LoginStatus=user.LoginStatus,
+                    LoginStatus = user.LoginStatus,
                     UserCheckInTime = DateTime.Now,
-                    fk_EmpId=user.fk_EmpId
-
-
-        //EmpId = user.fk_EmpId
-    };
+                    fk_EmpId = user.fk_EmpId,
+                    Token = token
+                };
 
                 return response;
             }
             else
             {
-                // Return login response without OTP
+
                 var response = new LoginResponse
                 {
                     Email = user.Email,
@@ -83,15 +91,12 @@ namespace HR.Identity.Services
                     RoleName = user.RoleName,
                     LoginStatus = user.LoginStatus,
                     UserCheckInTime = DateTime.Now,
-                    fk_EmpId = user.fk_EmpId
-
-                    //Otp = null,
-                    //OtpExpiryTime = DateTime.Now.
+                    fk_EmpId = user.fk_EmpId,
+                    Token = token
                 };
 
                 return response;
             }
-
         }
 
         public async Task SendOtpMail(string useremail, string otpText, string name)
@@ -176,7 +181,7 @@ namespace HR.Identity.Services
             _cache.Remove(userName);
         }
 
-        //   Send OTP for changing password
+        // Send OTP for changing password
         public async Task<bool> SendChangePasswordOtp(string username)
         {
             var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == username);
@@ -192,7 +197,7 @@ namespace HR.Identity.Services
             return true;
         }
 
-        //change password module 
+        // Change password module 
         public async Task<bool> ChangePassword(ChangePassword changePasswordRequest)
         {
             var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(cp => cp.UserName == changePasswordRequest.UserName);
@@ -219,7 +224,6 @@ namespace HR.Identity.Services
                 throw new Exception("New and Confirm Password must be the same");
             }
 
-
             var hasher = new PasswordHasher<Tbl_LoginMaster>();
             var hashedPassword = hasher.HashPassword(user, changePasswordRequest.NewPassword);
 
@@ -233,8 +237,7 @@ namespace HR.Identity.Services
             return true;
         }
 
-
-        //forogot password module
+        // Forgot password module
         public async Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
         {
             var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == updatePasswordRequest.UserName);
@@ -246,7 +249,6 @@ namespace HR.Identity.Services
             if (user.FirstLogin)
             {
                 throw new Exception("You are New User Try with your Default Password Provided");
-
             }
 
             if (updatePasswordRequest.NewPassword == updatePasswordRequest.OldPassword)
@@ -314,8 +316,31 @@ namespace HR.Identity.Services
             await _context.SaveChangesAsync();
         }
 
+        private string GenerateToken(Tbl_LoginMaster user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
 
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.RoleName ?? "User"),
+                new Claim("sub", user.UserName),
+                new Claim("fk_EmpId", user.fk_EmpId.ToString())
+            };
 
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                Issuer = _jwtSettings.Issuer,
+                Audience = _jwtSettings.Audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            };
 
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
     }
 }

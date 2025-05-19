@@ -17,8 +17,9 @@ namespace HR.Application.Contracts.Models
         public bool LoginStatus { get; set; }
         public DateTime UserCheckInTime { get; set; }
         public int fk_EmpId { get; set; }
+        public string? Token{ get; set; }
 
 
-        //public int EmpId { get; set; }
-    }
+            //public int EmpId { get; set; }
+        }
 }

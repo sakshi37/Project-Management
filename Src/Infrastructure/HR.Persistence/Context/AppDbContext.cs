@@ -18,14 +18,15 @@ using HR.Application.Features.TeamCompositions.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
-//using HR.Application.Features.Location.Query;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using HR.Identity.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HR.Persistence.Context;
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -74,6 +75,9 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // 🚨 Must be called first for Identity to work properly
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
@@ -87,7 +91,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
-        //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
         modelBuilder.Entity<Attendance>().HasNoKey();
 
@@ -96,10 +99,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
 
         modelBuilder.Entity<Counter>().HasNoKey();
-
         modelBuilder.Entity<GetAllDivisionDto>().HasNoKey();
         modelBuilder.Entity<GetAllProjectManagerDto>().HasNoKey();
-
 
         modelBuilder.Entity<GetAllShiftsVm>().HasNoKey();
         modelBuilder.Entity<GetAllUserGroupQueryVm>().HasNoKey();
@@ -107,18 +108,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllFamilyMemberTypeQueryVm>().HasNoKey();
 
         modelBuilder.Entity<Tbl_Login>().ToTable("Tbl_Login");
-
         modelBuilder.Entity<Tbl_Login>().HasKey(l => l.pk_LoginId);
-
 
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
-
-
-
-
-
-
-
     }
+
 }
