@@ -4,18 +4,19 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FamilyMember } from '../../../Models/family-member-dto';
 import { Employee } from '../../../Models/gmc-model';
-import { FamilyMemberForm } from '../../../Models/gmc-model';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-gmc',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  imports: [CommonModule, FormsModule],
   templateUrl: './gmc.component.html',
   styleUrls: ['./gmc.component.css'],
 })
 export class GmcComponent implements OnInit {
+  calculateAge($event: any): any {
+    throw new Error('Method not implemented.');
+  }
   employee: Employee = {
     name: '',
     code: '',
@@ -29,7 +30,8 @@ export class GmcComponent implements OnInit {
     age: 0,
     emergencyContact: '',
     aadhar: '',
-    // fill with all expected fields
+    aadharCardNo: undefined,
+    emergencyNo: undefined,
   };
   family: FamilyMember = {
     fk_FamilyMemberTypeId: 0,
@@ -44,6 +46,8 @@ export class GmcComponent implements OnInit {
   familyTypes: { id: number; label: string }[] = [];
 
   familyList: FamilyMember[] = [];
+  genders: any;
+  today: any;
 
   constructor(private gmcService: GmcService) {}
 

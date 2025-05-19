@@ -31,20 +31,18 @@
           </div>
 
           <div class="col-md-6">
-            <label class="form-label">Birth Date</label>
+            <label class="form-label">Date of Birth</label>
             <input
               type="date"
-              class="form-control rounded-pill"
+              class="form-control"
               formControlName="birthDate"
+              [max]="today"
             />
             <div
               class="text-danger small mt-1"
-              *ngIf="
-                employeeForm.get('birthDate')?.touched &&
-                employeeForm.get('birthDate')?.hasError('required')
-              "
+              *ngIf="employeeForm.get('birthDate')?.hasError('minAge')"
             >
-              Birth date is required.
+              Employee must be at least 18 years old.
             </div>
           </div>
         </div>
@@ -60,6 +58,7 @@
               type="date"
               class="form-control rounded-pill"
               formControlName="joinDate"
+              [max]="today"
             />
             <div
               class="text-danger small mt-1"

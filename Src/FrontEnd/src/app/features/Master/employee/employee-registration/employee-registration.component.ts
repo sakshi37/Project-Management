@@ -5,6 +5,8 @@ import {
   Validators,
   ReactiveFormsModule,
   FormsModule,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CreateModel } from '../../../../Models/create-model';
@@ -39,6 +41,7 @@ export class EmployeeRegistrationComponent implements OnInit {
   selectedImage: string | null = null;
   selectedSignature: string | null = null;
   filteredStates: { id: number; name: string }[] = [];
+  today: string = new Date().toISOString().split('T')[0];
 
   constructor(
     private fb: FormBuilder,
@@ -131,10 +134,16 @@ export class EmployeeRegistrationComponent implements OnInit {
       ],
       skypeId: ['dgcgdecfy'],
       email: ['', [Validators.required, Validators.email]],
-      joinDate: ['', Validators.required],
+      joinDate: [
+        '',
+        [Validators.required, this.noFutureDateValidator.bind(this)],
+      ],
       bccEmail: [''],
       panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
-      birthDate: ['', Validators.required],
+      birthDate: [
+        '',
+        [Validators.required, Validators.required, this.minAgeValidator(18)],
+      ],
       image: [''],
       signature: [''],
       loginStatus: [false],
@@ -204,6 +213,33 @@ export class EmployeeRegistrationComponent implements OnInit {
         });
       },
     });
+  }
+  minAgeValidator(minAge: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const birthDate = new Date(control.value);
+      if (!control.value) return null;
+
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+
+      const isBirthdayPassed =
+        m > 0 || (m === 0 && today.getDate() >= birthDate.getDate());
+      const actualAge = isBirthdayPassed ? age : age - 1;
+
+      return actualAge < minAge
+        ? { minAge: { requiredAge: minAge, actualAge } }
+        : null;
+    };
+  }
+
+  noFutureDateValidator(control: AbstractControl): ValidationErrors | null {
+    const val = control.value;
+    if (!val) return null;
+    const inputDate = new Date(val);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
+    return inputDate > today ? { futureDate: true } : null;
   }
 
   formatDate(date: string | Date): string {
