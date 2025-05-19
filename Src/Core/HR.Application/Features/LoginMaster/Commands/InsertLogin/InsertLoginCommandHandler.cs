@@ -3,12 +3,13 @@ using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using MediatR;
 using System.ComponentModel;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace HR.Application.Features.LoginMaster.Commands.InsertLogin
 {
-    public class InsertLoginCommandHandler : IRequestHandler<InsertLoginCommand, bool>
+    public class InsertLoginCommandHandler : IRequestHandler<InsertLoginCommand,Unit>
     {
 
         private readonly ILoginService _loginService;
@@ -19,34 +20,51 @@ namespace HR.Application.Features.LoginMaster.Commands.InsertLogin
             _loginService = loginService;
                 _emailService = emailService;
             }
-
-        public async Task<bool> Handle(InsertLoginCommand request, CancellationToken cancellationToken)
+        //public async Task<Unit> Handle(InsertLoginCommand request, CancellationToken cancellationToken)
+        //{
+        //    var passwordBytes = Encoding.UTF8.GetBytes(request.Password);
+        //    await _loginService.InsertLogAsync(request.EmpId, request.CreatedBy, passwordBytes);
+        //    return Unit.Value;
+        //}
+        public async Task<Unit> Handle(InsertLoginCommand request, CancellationToken cancellationToken)
         {
-            var employee = await _loginService.GetByIdAsync(request.Dto.EmpId);
-            if (employee == null)
-                throw new System.Exception("Employee not found");
+            // 1. Auto-generate password
+            var generatedPassword = GenerateRandomPassword(12); // you can adjust the length
 
-            var plainPassword = await _loginService.InsertLoginAsync(request.Dto.EmpId, request.Dto.CreatedBy);
+            // 2. Convert to byte array
+            var passwordBytes = Encoding.UTF8.GetBytes(generatedPassword);
 
-            string body = $@"
-            <p>Dear {employee.Name},</p>
-            <p>Your login credentials are:</p>
-            <ul>
-                <li><strong>Username:</strong> {employee.Code}</li>
-                <li><strong>Password:</strong> {plainPassword}</li>
-            </ul>
-            <p>Please login and change your password immediately.</p>";
+            // 3. Save to database
+            await _loginService.InsertLogAsync(request.EmpCode, passwordBytes);
 
-            var mailRequest = new MailRequest
+            // 4. Send password via email
+            var emailRequest = new MailRequest
             {
-                Email = employee.Email,
-                Subject = "Your Login Credentials",
-                EmailBody = body
+                Email = request.Email,
+                Subject = "Your New Login Password",
+                EmailBody = $@"
+        <p>Dear User,</p>
+        <p>Your <strong>Username</strong> is: <strong>{request.EmpCode}</strong></p>
+        <p>Your <strong>Password</strong> is: <strong>{generatedPassword}</strong></p>
+        <p>Please change it after logging in.</p>"
             };
+            await _emailService.SendEmail(emailRequest);
 
-            await _emailService.SendEmail(mailRequest);
+            return Unit.Value;
+        }
 
-            return true;
+        private string GenerateRandomPassword(int length)
+        {
+            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+            var random = new Random();
+            var password = new StringBuilder();
+
+            for (int i = 0; i < length; i++)
+            {
+                password.Append(validChars[random.Next(validChars.Length)]);
+            }
+
+            return password.ToString();
         }
 
 

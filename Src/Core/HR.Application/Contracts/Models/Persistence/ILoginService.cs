@@ -21,8 +21,8 @@ namespace HR.Application.Contracts.Models.Persistence
         Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest);
 
         Task<empdetailDto> GetByIdAsync(int id);
+        Task InsertLogAsync(string empCode, byte[] password);
 
-        Task<string> InsertLoginAsync(int empId, int createdBy);
 
     }
 

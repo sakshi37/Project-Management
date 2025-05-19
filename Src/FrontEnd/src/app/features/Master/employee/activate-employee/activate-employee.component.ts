@@ -21,19 +21,26 @@ export class ActivateEmployeeComponent {
     this.activateEmployeeService.activateEmployee(this.data.code).subscribe({
           next: (res: ActivateEmployeeModel) => {
             Swal.fire({
-                      title: 'Success!',
-                      text: res.message,
-                      icon: 'success',
-                      confirmButtonText: 'Ok'
-                    }).then(()=>{
-            this.dialogRef.close(true);});
+              toast:true,
+              icon: 'success',
+          text: res.message,
+          position: 'top', 
+          timer:3000,
+          showConfirmButton: false 
+  
+  
+}).then(() => {
+  this.dialogRef.close(true);
+});
+
           },
           error: (err) => {
             console.error('Activation Error:', err);
             if (err.error && err.error.message) {
-              alert(`Activation failed: ${err.error.message}`);
+              
             } else {
               alert('Failed to activate employee. Please try again.');
+              
             }
           }
           

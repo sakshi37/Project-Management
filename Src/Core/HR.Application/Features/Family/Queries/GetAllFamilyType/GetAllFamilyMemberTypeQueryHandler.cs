@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.Family.Queries.GetAllFamilyType
 {
-    public class GetAllFamilyMemberTypeQueryHandler:  IRequestHandler<GetAllFamilyMemberTypeQuery, List<GetAllFamilyMemberTypeQueryVm>>
+    public class GetAllFamilyMemberTypeQueryHandler:  IRequestHandler<GetAllFamilyDetailsByCodeVm, List<GetAllFamilyMemberTypeQueryVm>>
     {
         private readonly IFamilyRepository _repo;
         public GetAllFamilyMemberTypeQueryHandler(IFamilyRepository repo)
         {
             _repo = repo;
         }
-        public async Task<List<GetAllFamilyMemberTypeQueryVm>> Handle(GetAllFamilyMemberTypeQuery request, CancellationToken cancellationToken)
+        public async Task<List<GetAllFamilyMemberTypeQueryVm>> Handle(GetAllFamilyDetailsByCodeVm request, CancellationToken cancellationToken)
         {
             return await _repo.GetAllAsync();
         }

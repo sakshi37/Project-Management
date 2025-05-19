@@ -18,6 +18,8 @@ using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Family.Queries.GetAllFamilyType;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
 using HR.Application.Features.Holidays.Commands.CreateHoliday;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Holidays.Commands.UpdateHoliday;
@@ -93,5 +95,8 @@ public class MappingProfile : Profile
         CreateMap<InsertEmployeeDetailsGmcCommandDto, Employee>();
         CreateMap<Employee, InsertEmployeeDetailsGmcCommandDto>();
         CreateMap<Employee, empdetailDto>();
+
+        CreateMap<Family, GetFamilyDetailsByCodeQueryVm>();
+
     }
 }

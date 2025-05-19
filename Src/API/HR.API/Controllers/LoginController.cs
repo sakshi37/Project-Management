@@ -99,15 +99,11 @@ namespace HR.API.Controllers
 
 
 
-        [HttpPost("insert-login")]
-        public async Task<IActionResult> InsertLogin([FromBody] InsertLoginCommandDto dto)
+        [HttpPost("insert-log")]
+        public async Task<IActionResult> InsertLog([FromBody] InsertLoginCommand command)
         {
-            var command = new InsertLoginCommand(dto);
-            var result = await _mediator.Send(command);
-            if (result)
-                return Ok(new { Message = "Login credentials sent successfully." });
-            else
-                return BadRequest(new { Message = "Failed to insert login." });
+            await _mediator.Send(command);
+            return Ok(new { Message = "Login inserted successfully" });
         }
     }
 }

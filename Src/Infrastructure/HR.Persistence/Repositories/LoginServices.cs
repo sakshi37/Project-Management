@@ -285,37 +285,24 @@ namespace HR.Identity.Services
             return result;
         }
 
-
-
-        public async Task<string> InsertLoginAsync(int empId, int createdBy)
+        public async Task InsertLogAsync(string empCode, byte[] password)
         {
-            var employee = await GetByIdAsync(empId);
-            if (employee == null)
-                throw new Exception("Employee not found");
-
-            var userName = employee.Code ?? "";
-            var employeeName = employee.Name ?? "";
-
-            var last3Code = userName.Length >= 3 ? userName[^3..] : userName;
-            var namePart = employeeName.Length >= 4 ? employeeName.Substring(0, 4) : employeeName;
-            var plainPassword = $"{namePart}@{last3Code}";
-
-            var encryptedPassword = Encoding.UTF8.GetBytes(plainPassword);
-
-            var parameters = new[]
+            var empIdParam = new SqlParameter("@EmpCode", empCode);
+            var passwordParam = new SqlParameter("@Password", SqlDbType.VarBinary)
             {
-            new SqlParameter("@EmpId", empId),
-            new SqlParameter("@CreatedBy", createdBy),
-            new SqlParameter("@Password", System.Data.SqlDbType.VarBinary, encryptedPassword.Length)
-            {
-                Value = encryptedPassword
-            }
-        };
+                Value = password
+            };
 
-            await _context.Database.ExecuteSqlRawAsync("EXEC SP_InsertLog @EmpId, @CreatedBy, @Password", parameters);
-
-            return plainPassword;
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC [dbo].[SP_InsertLog] @EmpCode, @Password",
+                empIdParam,
+                passwordParam
+            );
         }
+        
+
+
+
     }
 
 }

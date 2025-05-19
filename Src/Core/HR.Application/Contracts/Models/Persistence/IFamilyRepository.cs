@@ -1,5 +1,6 @@
 ﻿using HR.Application.Features.Family.Commands.AddFamilyDetails;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
 using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace HR.Application.Contracts.Models.Persistence
     {
         Task<bool> AddFamilyMemberAsync(AddFamilyDetailsCommandDto dto);
         Task<List<GetAllFamilyMemberTypeQueryVm>> GetAllAsync();
+        Task<List<GetFamilyDetailsByCodeQueryVm>> GetFamilyDetailsAsync(string code);
 
     }
 }

@@ -3,7 +3,7 @@
     <div class="p-4 border rounded shadow-sm bg-white mb-5">
       <div class="d-flex justify-content-between align-items-center">
         <h4 class="mb-3">Add GMC Details</h4>
-        <button class="btn btn-success" type="button">
+        <button class="btn btn-success" type="button" (click)="exportToExcel()">
           <i class="fas fa-download me-2"></i> Excel
         </button>
       </div>
@@ -23,7 +23,10 @@
     
           <div class="col-md-6">
             <label>Address</label>
-            <textarea class="form-control" [(ngModel)]="employees.address" name="address"  required></textarea>
+            <textarea class="form-control" [(ngModel)]="employees.address" name="address"  required>
+              <small *ngIf="panRef.errors?.['required']">PAN Number is required.</small>
+            </textarea>
+
           </div>
           <div class="col-md-6">
             <label>Designation</label>
@@ -31,15 +34,23 @@
           </div>
     
         <div class="col-md-6">
-            <label for="gender">Gender</label>
-         <select id="gender" class="form-control" [(ngModel)]="employees.fk_GenderId" name="gender" required>
-  <option value="" disabled selected>Select Gender</option>
-  <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
-</select>
-<div *ngIf="empForm.submitted && !employees.fk_GenderId" class="text-danger">
-  Gender is required.
+  <label for="gender">Gender</label>
+  <select
+    id="gender"
+    class="form-select"
+    [(ngModel)]="employees.fk_GenderId"
+    name="gender"
+    required
+  >
+    <option value="">Select Gender</option>
+    <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
+  </select>
+  <!-- Show error message always if no gender selected -->
+  <div *ngIf="!employees.fk_GenderId" class="text-danger">
+    Gender is required.
+  </div>
 </div>
-          </div>
+
           <div class="col-md-6">
             <label>PAN Number</label>
                   <input type="text" class="form-control"
@@ -49,50 +60,70 @@
        maxlength="10"
        placeholder="Enter PAN Number"
        #panRef="ngModel"   required />
-<div *ngIf="panRef.invalid && panRef.touched" class="text-danger">
+<div *ngIf="panRef.invalid" class="text-danger">
   <small *ngIf="panRef.errors?.['pattern']">Invalid PAN format (e.g. ABCDE1234F).</small>
+   <small *ngIf="panRef.errors?.['required']">PAN Number is required.</small>
 </div>
 
           </div>
     
           <div class="col-md-6">
-            <label>Join Date</label>
-             <input type="date"
+  <label>Join Date</label>
+  <input type="date"
          class="form-control"
          [(ngModel)]="employees.joinDate"
          name="joinDate"
          [max]="today"
-         required />
-          </div>
-          <div class="col-md-6">
-            <label>Birth Date</label>
-<input type="date" class="form-control"
-  [(ngModel)]="employees.birthDate"
-  name="birthDate"
-  [max]="today"
-  (ngModelChange)="employees.age = calculateAge($event)"
-  placeholder="Birth Date"  required/>
-          </div> 
-    
+         required
+         (change)="validateAge()" />
+</div>
+
+<div class="col-md-6">
+  <label>Birth Date</label>
+  <input
+    type="date"
+    class="form-control"
+    [(ngModel)]="employees.birthDate"
+    name="birthDate"
+    [max]="today"
+    required
+    (ngModelChange)="onEmployeeBirthDateChange($event)"
+  />
+</div>
+
+<!-- Show error if age is less than 18 -->
+<div class="col-12 text-danger" *ngIf="!isAgeValid && employees.joinDate && employees.birthDate">
+  <small>Employee must be at least 18 years old to join.</small>
+</div>
+
           <div class="col-md-6">
             <label>Personal Email</label>
-                     <input type="email" class="form-control"
+                            <input type="email" class="form-control"
        [(ngModel)]="employees.email"
        name="email"
        required
-       email
+       pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$"
        #emailRef="ngModel"
        placeholder="Enter your email" />
 <div *ngIf="emailRef.invalid && emailRef.touched" class="text-danger">
   <small *ngIf="emailRef.errors?.['required']">Email is required.</small>
-  <small *ngIf="emailRef.errors?.['email']">Invalid email format.</small>
+  <small *ngIf="emailRef.errors?.['pattern']">Invalid email format. Must end with 3-letter domain (e.g., .com)</small>
 </div>
+
 
           </div>
           <div class="col-md-6">
-            <label>Employee Age</label>
-            <input type="number" class="form-control" [(ngModel)]="employees.age" name="age" placeholder="Age"  required  readonly />
-          </div>
+  <label>Employee Age</label>
+  <input
+    type="number"
+    class="form-control"
+    [(ngModel)]="employees.age"
+    name="age"
+    placeholder="Age"
+    required
+    readonly
+  />
+</div>
     
           <div class="col-md-6">
             <label>Emergency Contact No</label>
@@ -100,17 +131,19 @@
              <input type="text" class="form-control"
        [(ngModel)]="employees.emergencyNo"
        name="emergency"
-       pattern="^\d{10}$"
+       pattern="^[6-9]\d{9}$"
        maxlength="10"
        required
        #emergencyRef="ngModel"
-       placeholder="Enter 10-digit Contact Number"  required />
-<div *ngIf="emergencyRef.invalid && emergencyRef.touched" class="text-danger">
-  <small *ngIf="emergencyRef.errors?.['pattern']">Contact number must be 10 digits.</small>
+       placeholder="Enter 10-digit Contact Number" />
+<div *ngIf="emergencyRef.invalid" class="text-danger">
+  <small *ngIf="emergencyRef.errors?.['pattern']">
+    Contact number must start with 6-9 and be exactly 10 digits.
+  </small>
 </div>
 
+</div>
 
-          </div>
           <div class="col-md-6">
             <label>Aadhar Card No</label>
                <input type="text" class="form-control"
@@ -121,7 +154,7 @@
        required
        #aadharRef="ngModel"
        placeholder="Enter 12-digit Aadhar Number"  required />
-<div *ngIf="aadharRef.invalid && aadharRef.touched" class="text-danger">
+<div *ngIf="aadharRef.invalid" class="text-danger">
   <small *ngIf="aadharRef.errors?.['pattern']">Aadhar must be 12 digits.</small>
 </div>
 
@@ -158,18 +191,31 @@
 
       <div class="col-md-6">
         <label>Birth Date</label>
-        <input type="date" class="form-control" [(ngModel)]="family.birthDate" 
-         name="birthDate"
+       <input
+  type="date"
+  class="form-control"
+  [(ngModel)]="family.birthDate"
+  name="birthDate"
   [max]="today"
-  (ngModelChange)="family.age = calculateAge($event)"
-  placeholder="Birth Date" required
-  >
+  (ngModelChange)="onFamilyBirthDateChange($event)"
+  placeholder="Birth Date"
+  required
+/>
       </div>
 
       <div class="col-md-6">
-        <label>Age</label>
-        <input type="number" class="form-control" [(ngModel)]="family.age" name="age" placeholder="Enter The Age" required readonly>
-      </div>
+  <label>Age</label>
+  <input
+    type="number"
+    class="form-control"
+    [(ngModel)]="family.age"
+    name="age"
+    placeholder="Enter The Age"
+    required
+    readonly
+  />
+</div>
+
 
       <div class="col-md-6">
         <label>Relation With Employee</label>
@@ -195,17 +241,25 @@
               <th>Birth Date</th>
               <th>Age (years)</th>
               <th>Relation with Employee</th>
+              <!-- <th>Action
+                <i class="fas fa-edit"></i>
+              </th> -->
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let member of familyList; let i = index">
+            <tr *ngFor="let familylist of familyLists; let i = index">
               <td>{{ i + 1 }}</td>
-            <td>{{ member.fk_FamilyMemberTypeId }}</td>
-            <td>{{ member.familyMemberName }}</td>
-            <td>{{ member.birthDate }}</td>
-            <td>{{ member.age }}</td>
-            <td>{{ member.relationWithEmployee }}</td>
-
+            <td>{{ familylist.familyMemberTypeName }}</td>
+            <td>{{ familylist.familyMemberName }}</td>
+            <td>{{ familylist.birthDate| date: 'yyyy-MM-dd' }}</td>
+            <td>{{ familylist.age }}</td>
+            <td>{{ familylist.relationWithEmployee }}</td>
+            <!-- <td><div class="tr-last-child">
+                  <button class="btn btn-sm edit-btn" 
+                    >
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                </div></td> -->
             </tr>
           </tbody>
         </table>

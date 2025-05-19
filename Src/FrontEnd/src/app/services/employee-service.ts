@@ -43,6 +43,21 @@ export class EmployeeService {
   getAllLocation() {
     return this.http.get<Location[]>(this.url + '/Location');
   }
+ inactivateEmployees(codes: string[]): Observable<{ message: string }> {
+  const payload = {
+    employeeCodes: codes
+  };
+
+  return this.http.post<{ message: string }>(
+    `${this.url}/Employee/Inactivate`,
+    payload,
+    {
+      headers: { 'Content-Type': 'application/json' }
+    }
+  );
+}
+
+
 }
 export type Location = {
   locationId: number;

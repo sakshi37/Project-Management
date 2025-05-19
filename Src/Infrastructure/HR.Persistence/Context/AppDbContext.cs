@@ -27,6 +27,7 @@ using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : DbContext
@@ -51,7 +52,7 @@ public class AppDbContext : DbContext
     public DbSet<LocationDto> dtos { get; set; }
     
 
-    public DbSet<Employee> Tbl_Employee_master { get; set; }
+   
     public DbSet<LocationDto> Locationdtos { get; set; }
 
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
@@ -87,6 +88,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Attendance> attendance { get; set; }
     public DbSet<empdetailDto> EmpdetailDtos { get; set; }
+    public DbSet<GetFamilyDetailsByCodeQueryVm> FamilyDetailsByCodeVms { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -137,6 +139,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
         modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
         modelBuilder.Entity<empdetailDto>().HasNoKey(); 
+        modelBuilder.Entity<GetFamilyDetailsByCodeQueryVm>().HasNoKey();
 
 
 

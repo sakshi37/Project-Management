@@ -23,10 +23,13 @@ export class InactivateEmployeeComponent {
     this.inactiveemployeeService.deactivateEmployee(this.data.code).subscribe({
       next: (res: InactiveEmployeeModel) => {
         Swal.fire({
-          title: 'Success!',
+          toast:true,
+          icon:'success',
           text: res.message,
-          icon: 'success',
-          confirmButtonText: 'Ok'
+          position: 'top', 
+          timer:3000,
+          showConfirmButton: false 
+  
         }).then(()=>{
         this.dialogRef.close(true);
         });
@@ -34,10 +37,11 @@ export class InactivateEmployeeComponent {
       error: (err) => {
         console.error(err);
         Swal.fire({
-          title: 'Fail!',
+          toast:true,
           text: err.message,
-          icon: 'error',
-          confirmButtonText: 'Ok'
+          position: 'top', 
+          showConfirmButton: false 
+          
         })
       }
     });
