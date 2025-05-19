@@ -16,12 +16,15 @@ namespace HR.Application.Features.TimeSheets.Commands.PunchOut
         public async Task Handle(PunchOutCommand request, CancellationToken cancellationToken)
         {
             var attendance = await _timeSheetRepository.GetCurrentSession(request.EmpId);
+
+
             if (attendance == null)
+
             {
 
-                throw new PunchInValidationException("You have already punch-out");
+                throw new PunchInValidationException("You have no current sessions");
             }
-            var endDateTime = DateTime.UtcNow;
+            var endDateTime = DateTime.Now;
             await _timeSheetRepository.PunchOut(request.EmpId, endDateTime);
         }
     }

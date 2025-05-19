@@ -1,6 +1,7 @@
 ﻿using HR.Application.Contracts.Persistence;
 using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
 using HR.Application.Features.TimeSheet.Queries;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -20,22 +21,23 @@ namespace HR.Persistence.Repositories
 
         public async Task<TimeSheet> AddTimeSheet(CreateTimeSheetDto timeSheetDto)
         {
-            string sql = "EXEC SP_TimeSheetInsert  @StartDate = {0}, @EndDate = {1}, @Fk_EmployeeId = {2}, @Sequence = {3}, @Fk_JobId = {4}, @TimeSheetStatus = {5}, @CreatedBy = {6}, @CreatedDate = {7}, @UpdatedBy = {8}, @UpdatedDate = {9}";
-            await _DbContext.Database.ExecuteSqlRawAsync(sql, timeSheetDto.StartDate, timeSheetDto.EndDate, timeSheetDto.EmpId, timeSheetDto.Sequence, timeSheetDto.JobId, timeSheetDto.TimeSheetStatus, timeSheetDto.CreatedBy, timeSheetDto.CreatedDate, timeSheetDto.UpdatedBy, timeSheetDto.UpdatedDate);
+            string sql = "EXEC SP_TimeSheetInsert @Fk_JobId = {0},@Sequence = {1},@Part={2}, @Activity={3}, @Type={4}, @StartTime = {5}, @EndTime = {6},@Hrs={7}, @Min={8}, @Fk_EmployeeId = {9},   @TimeSheetStatus = {10}";
+            await _DbContext.Database.ExecuteSqlRawAsync(sql, timeSheetDto.JobId, timeSheetDto.Sequence, timeSheetDto.Part, timeSheetDto.Activity, timeSheetDto.Type, timeSheetDto.StartTime, timeSheetDto.EndDTime, timeSheetDto.Hrs, timeSheetDto.Min, timeSheetDto.EmpId, timeSheetDto.TimeSheetStatus);
 
             return new TimeSheet
             {
-                StartDate = timeSheetDto.StartDate,
-                EndDate = timeSheetDto.EndDate,
-                EmpId = timeSheetDto.EmpId,
-                Sequence = timeSheetDto.Sequence,
-                JobId = timeSheetDto.JobId,
 
+                JobId = timeSheetDto.JobId,
+                Sequence = timeSheetDto.Sequence,
+                Part = timeSheetDto.Part,
+                Activity = timeSheetDto.Activity,
+                Type = timeSheetDto.Type,
+                StartTime = timeSheetDto.StartTime,
+                EndDTime = timeSheetDto.EndDTime,
+                Hrs = timeSheetDto.Hrs,
+                Min = timeSheetDto.Min,
+                EmpId = timeSheetDto.EmpId,
                 TimeSheetStatus = timeSheetDto.TimeSheetStatus,
-                CreatedBy = timeSheetDto.CreatedBy,
-                CreatedDate = timeSheetDto.CreatedDate,
-                UpdatedBy = timeSheetDto.UpdatedBy,
-                UpdatedDate = timeSheetDto.UpdatedDate,
 
 
             };
@@ -48,6 +50,10 @@ namespace HR.Persistence.Repositories
             return await _DbContext.timeSheetListDtos.FromSqlRaw("EXEC SP_TimeSheetGetAll").ToListAsync();
         }
 
+        public async Task<List<GetAllAttendanceDto>> GetAllAttendance()
+        {
+            return await _DbContext.GetAllAttendanceDtos.FromSqlRaw("EXEC SP_AttendanceGetAll").ToListAsync();
+        }
         public async Task PunchIn(int empId, DateTime startDateTime)
 
         {
@@ -72,6 +78,12 @@ namespace HR.Persistence.Repositories
         {
             string sql = "EXEC  dbo.SP_AttendanceUpdate @Fk_EmpId={0}, @EndDate={1}";
             await _DbContext.Database.ExecuteSqlRawAsync(sql, empId, endDateTime);
+        }
+
+        public async Task UpdateCurrentSession(int empId)
+        {
+            string sql = "EXEC dbo.SP_UpdateCurrentSession @Fk_EmpId={0}";
+            await _DbContext.Database.ExecuteSqlRawAsync(sql, empId);
         }
 
 

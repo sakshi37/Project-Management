@@ -133,11 +133,11 @@ export class EmployeeRegistrationComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       joinDate: ['', Validators.required],
       bccEmail: [''],
-      panNumber: [''],
+      panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
       birthDate: ['', Validators.required],
       image: [''],
       signature: [''],
-      loginStatus: [],
+      loginStatus: [false],
       locationId: [1],
       designationId: [2],
       shiftId: [1],
@@ -227,5 +227,9 @@ export class EmployeeRegistrationComponent implements OnInit {
         }
       };
     }
+  }
+  cancel() {
+    this.employeeForm.reset();
+    this.router.navigate(['/employee']);
   }
 }

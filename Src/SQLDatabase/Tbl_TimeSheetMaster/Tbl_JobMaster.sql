@@ -1,8 +1,10 @@
-create table Tbl_JobMaster(
+drop table Tbl_JobMaster
+create table dbo.Tbl_JobMaster(
 
 	Id int primary key  identity (1,1),
 	Task  varchar(50)
 
 );
 
-select * from Tbl_JobMaster
+insert into dbo.Tbl_JobMaster(Task)
+values('Api');

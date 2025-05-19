@@ -22,10 +22,28 @@ export class TimeSheetService {
   getSession(empId: number) {
     return this.http.get<PunchInStatus | null>(`${this.url}/${empId}`);
   }
+
+  getAllTimeSheet() {
+    return this.http.get<Timesheets[]>(`${this.url}/GetAllTimeSheet`);
+  }
 }
 export type PunchInStatus = {
   id: number;
   fk_EmpId: number;
   startDate: string;
   endDate: null;
+};
+
+export type Timesheets = {
+  jobId: number;
+  sequence: string;
+  part: string;
+  activity: string;
+  type: string;
+  startTime: string;
+  endTime: string;
+  hrs: number;
+  min: number;
+  empId: 1;
+  timeSheetStatus: boolean;
 };

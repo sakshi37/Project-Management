@@ -1,6 +1,7 @@
 ﻿using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
 using HR.Application.Features.TimeSheet.Query;
-using HR.Application.Features.TimeSheets.Commands.PunchIn;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Commands;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchOut;
 using HR.Application.Features.TimeSheets.Queries;
 using MediatR;
@@ -26,10 +27,17 @@ namespace HR.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllTimeSheet")]
         public async Task<IActionResult> GetAllTimeSheet()
         {
             var response = await _mediator.Send(new GetAllTimeSheetListQuery());
+            return Ok(response);
+        }
+
+        [HttpGet("GetAllAttendance")]
+        public async Task<IActionResult> GetAllAttendance()
+        {
+            var response = await _mediator.Send(new GetAllAttendanceListQuery());
             return Ok(response);
         }
 

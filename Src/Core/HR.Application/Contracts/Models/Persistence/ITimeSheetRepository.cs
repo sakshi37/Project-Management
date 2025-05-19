@@ -1,5 +1,6 @@
 ﻿using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
 using HR.Application.Features.TimeSheet.Queries;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Domain.Entities;
 
 namespace HR.Application.Contracts.Persistence
@@ -13,5 +14,11 @@ namespace HR.Application.Contracts.Persistence
         Task<Attendance?> GetCurrentSession(int empId);
 
         Task PunchOut(int empId, DateTime endDateTime);
+
+        Task UpdateCurrentSession(int empId);
+
+
+
+        Task<List<GetAllAttendanceDto>> GetAllAttendance();
     }
 }

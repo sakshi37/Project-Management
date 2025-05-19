@@ -1,3 +1,4 @@
+drop PROCEDURE dbo.SP_GetCurrentSession
 CREATE PROCEDURE dbo.SP_GetCurrentSession
     @Fk_EmpId INT
 AS
@@ -8,9 +9,11 @@ BEGIN
         StartDate,
         EndDate
     FROM Tbl_AttendanceMaster
-    WHERE Fk_EmpId = @Fk_EmpId AND EndDate IS NULL
+    WHERE Fk_EmpId = @Fk_EmpId AND cast(StartDate as date) = CAST (GetDate() as date)
 END
-EXEC sp_helptext 'dbo.SP_CheckOpenPunchIn';
+EXEC dbo.SP_GetCurrentSession @Fk_EmpId = 22;
 
 
 select * from Tbl_AttendanceMaster
+
+delete  from Tbl_AttendanceMaster

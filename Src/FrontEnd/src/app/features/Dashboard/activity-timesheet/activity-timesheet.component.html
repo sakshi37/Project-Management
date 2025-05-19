@@ -1,108 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Activity Time Sheet</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .section-header {
-        font-weight: bold;
-        color: green;
-        padding: 10px 0;
-      }
-      .system-time {
-        font-weight: bold;
-        color: green;
-      }
-      .table-wrapper {
-        border: 1px solid #ddd;
-        padding: 10px;
-        background: #fff;
-      }
-      .btn-custom {
-        margin: 5px 5px 5px 0;
-      }
-      .table th,
-      .table td {
-        vertical-align: middle;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body class="bg-light">
-    <div class="container mt-4">
-      <div class="section-header">ACTIVITY TIME SHEET</div>
+<div class="container mt-4">
+  <div class="section-header">ACTIVITY TIME SHEET</div>
 
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <button class="btn btn-secondary btn-sm btn-custom">🖨️ PRINT</button>
-          <button class="btn btn-secondary btn-sm btn-custom">
-            ✉️ REQUEST FOR BACKDATE
-          </button>
-          <button class="btn btn-secondary btn-sm btn-custom">
-            👁️ BACKDATED VIEW
-          </button>
-        </div>
-        <!-- <div class="system-time">
-          System in Time: <span id="systemTime">65:55:28</span>
-        </div> -->
-      </div>
-
-      <div class="mb-3">
-        <button
-          class="btn btn-primary btn-sm btn-custom"
-          [disabled]="sessionStatus != null"
-          (click)="punchIn()"
-        >
-          Punch-In
-        </button>
-        <button
-          class="btn btn-danger btn-sm btn-custom"
-          [disabled]="sessionStatus == null"
-          (click)="punchOut()"
-        >
-          ✖ Punch-Out
-        </button>
-        <!-- <button class="btn btn-primary btn-sm btn-custom">
-          ➕ Prod. Entry
-        </button>
-        <button class="btn btn-warning btn-sm btn-custom">
-          ➕ Non Prod. Entry
-        </button>
-        <button class="btn btn-info btn-sm btn-custom">
-          ➕ Break Activity
-        </button> -->
-      </div>
-
-      <div class="table-wrapper">
-        <table class="table table-bordered table-sm">
-          <thead class="table-light">
-            <tr>
-              <th>Sr.No</th>
-              <th>Job No</th>
-              <th>Sequence</th>
-              <th>Part</th>
-              <th>Activity</th>
-              <th>Type</th>
-              <th>Start Time</th>
-              <th>End Time</th>
-              <th>Hrs</th>
-              <th>Min</th>
-              <th>Remarks</th>
-              <th>Split</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colspan="13">No Data Found !!!</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <button class="btn btn-secondary btn-sm btn-custom">🖨️ PRINT</button>
+      <button class="btn btn-secondary btn-sm btn-custom">
+        ✉️ REQUEST FOR BACKDATE
+      </button>
+      <button class="btn btn-secondary btn-sm btn-custom">
+        👁️ BACKDATED VIEW
+      </button>
     </div>
-  </body>
-</html>
+  </div>
+
+  <div class="mb-3">
+    <button
+      class="btn btn-primary btn-sm btn-custom"
+      [disabled]="sessionStatus != null"
+      (click)="punchIn()"
+    >
+      Punch-In
+    </button>
+    <button
+      class="btn btn-danger btn-sm btn-custom"
+      [disabled]="sessionStatus == null"
+      (click)="punchOut()"
+    >
+      ✖ Punch-Out
+    </button>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="table table-bordered table-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Sr.No</th>
+          <th>Job No</th>
+          <th>Sequence</th>
+          <th>Part</th>
+          <th>Activity</th>
+          <th>Type</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Hrs</th>
+          <th>Min</th>
+          <th>Remarks</th>
+          <th>Split</th>
+          <th>Edit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="timeSheets.length === 0">
+          <td colspan="13">No Data Found !!!</td>
+        </tr>
+
+        <tr *ngFor="let timesheet of timeSheets; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ timesheet.jobId }}</td>
+          <td>{{ timesheet.sequence }}</td>
+          <td>{{ timesheet.part }}</td>
+          <td>{{ timesheet.activity }}</td>
+          <td>{{ timesheet.type }}</td>
+          <td>{{ timesheet.startTime | date : "short" }}</td>
+          <td>{{ timesheet.endTime | date : "short" }}</td>
+          <td>{{ timesheet.hrs }}</td>
+          <td>{{ timesheet.min }}</td>
+          <td>--</td>
+          <td>
+            <button class="btn btn-warning btn-sm">Split</button>
+          </td>
+          <td>
+            <button class="btn btn-info btn-sm">Edit</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

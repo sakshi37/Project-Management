@@ -1,6 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, FormsModule } from '@angular/forms';
-import { ActivatedRoute,Router } from '@angular/router';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  FormsModule,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DesignationService } from '../../../../services/designation.service';
 import { GetDesignationDto } from '../../settings/designation/Models/get-designation.dto';
 import { UpdateService } from '../../../../services/update-service';
@@ -25,9 +33,14 @@ import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-update-employee',
-  imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule  ],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    FormsModule,
+    NgxPaginationModule,
+  ],
   templateUrl: './update-employee.component.html',
-  styleUrl: './update-employee.component.css'
+  styleUrl: './update-employee.component.css',
 })
 export class UpdateEmployeeComponent implements OnInit {
   employeeForm: FormGroup;
@@ -36,19 +49,17 @@ export class UpdateEmployeeComponent implements OnInit {
   imageBase64: string = '';
   signatureBase64: string = '';
   //locations:GetLocationDto[] =[];
-  shifts : Shift[]=[];
-  employeeTypes :EmployeeType[]=[];
+  shifts: Shift[] = [];
+  employeeTypes: EmployeeType[] = [];
   branches: Branch[] = [];
   divisions = [];
   userGroups: UserGroup[] = [];
   //divisions: GetDivisionDto[] = [];
   cities: GetCityDto[] = [];
   countries: GetCountryDto[] = [];
-  states:GetStateDto[]=[];
+  states: GetStateDto[] = [];
   filteredStates: GetStateDto[] = [];
   filteredCities: any[] = [];
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -57,20 +68,20 @@ export class UpdateEmployeeComponent implements OnInit {
     private designationService: DesignationService,
     private updateService: UpdateService,
     //private locationService:LocationService,
-    // private divisionService: DivisionService 
-    private cityService:CityService,
-    private countryService:CountryService,
-    private stateService:StateService
+    // private divisionService: DivisionService
+    private cityService: CityService,
+    private countryService: CountryService,
+    private stateService: StateService
   ) {
     this.employeeForm = this.fb.group({
-      address:[''],
-      mobileNo: ['', [ Validators.pattern(/^\d{10}$/)]],
+      address: [''],
+      mobileNo: ['', [Validators.pattern(/^\d{10}$/)]],
       skypeId: ['', [Validators.minLength(16), Validators.maxLength(32)]],
-      email: ['', [ Validators.email]],
+      email: ['', [Validators.email]],
       bccEmail: ['', [Validators.email]],
-      panNumber: ['', [ Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
-      joinDate: ['', [ this.noFutureDateValidator]],
-      birthDate: ['', [ this.noFutureDateValidator]],
+      panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
+      joinDate: ['', [this.noFutureDateValidator]],
+      birthDate: ['', [this.noFutureDateValidator]],
       aadharCardNo: ['', [Validators.pattern(/^\d{12}$/)]],
       genderId: [''],
       countryId: [''],
@@ -85,7 +96,7 @@ export class UpdateEmployeeComponent implements OnInit {
       employeeTypeId: [''],
       userGroupId: [''],
       branchId: [''],
-      divisionId: ['']
+      divisionId: [''],
     });
   }
 
@@ -98,77 +109,85 @@ export class UpdateEmployeeComponent implements OnInit {
       userGroups: this.updateService.getAllUserGroups(),
       shifts: this.updateService.getAllShifts(),
       employeeTypes: this.updateService.getEmployeeTypes(),
-      cities:this.cityService.getAllCities(),
-      countries:this.countryService.getAllCountries(),
-      states:this.stateService.getAllStates(),
+      cities: this.cityService.getAllCities(),
+      countries: this.countryService.getAllCountries(),
+      states: this.stateService.getAllStates(),
       // locations: this.locationService.getAllLocations(),
       //divisions:this.divisionService.getAllDivisions()
-    }).subscribe(({ branches, designations, userGroups,shifts,employeeTypes,cities,countries,states }) => {
-      // Filter/map branches
-      this.branches = branches
-        .filter(b => b.branchStatus==true)
-        .map(b => ({
-          branchId: b.branchId,
-          branchName: b.branchName,
-          cityId: b.cityId,
-          cityName: b.cityName,
-          stateName: b.stateName,
-          branchStatus: b.branchStatus
-        }));
+    }).subscribe(
+      ({
+        branches,
+        designations,
+        userGroups,
+        shifts,
+        employeeTypes,
+        cities,
+        countries,
+        states,
+      }) => {
+        // Filter/map branches
+        this.branches = branches
+          .filter((b) => b.branchStatus == true)
+          .map((b) => ({
+            branchId: b.branchId,
+            branchName: b.branchName,
+            cityId: b.cityId,
+            cityName: b.cityName,
+            stateName: b.stateName,
+            branchStatus: b.branchStatus,
+          }));
         this.employeeForm.get('countryId')?.valueChanges.subscribe(() => {
-  this.filterStates();
-});
-this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
-  this.filterCities();
-});
+          this.filterStates();
+        });
+        this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
+          this.filterCities();
+        });
 
-      this.designations = designations;
-      this.userGroups    = userGroups;
-      this.shifts = shifts; 
-      this.employeeTypes = employeeTypes;
-      // this.locations = locations;
-      //this.divisions=divisions;
-      this.cities=cities
-      this.countries=countries
-      this.states=states
-      
+        this.designations = designations;
+        this.userGroups = userGroups;
+        this.shifts = shifts;
+        this.employeeTypes = employeeTypes;
+        // this.locations = locations;
+        //this.divisions=divisions;
+        this.cities = cities;
+        this.countries = countries;
+        this.states = states;
 
-      
-      if (emp && emp.code) {
-        this.selectedEmployeeCode = emp.code;
-        this.populateEmployeeForm(emp);
-      } else {
-        console.warn('No employee data found in navigation state.');
+        if (emp && emp.code) {
+          this.selectedEmployeeCode = emp.code;
+          this.populateEmployeeForm(emp);
+        } else {
+          console.warn('No employee data found in navigation state.');
+        }
       }
-    });
-    
+    );
   }
 
   populateEmployeeForm(emp: any): void {
     // Simple fields
     this.employeeForm.patchValue({
-      address:        emp.address        || '',
-      mobileNo:       emp.mobileNo       || '',
-      skypeId:        emp.skypeId        || '',
-      email:          emp.email          || '',
-      joinDate:       emp.joinDate?.split('T')[0] || '',
-      bccEmail:       emp.bccEmail       || '',
-      panNumber:      emp.panNumber      || '',
-      birthDate:      emp.birthDate?.split('T')[0] || '',
-      loginStatus:    emp.loginStatus    || false,
-      leftCompany:    emp.leftCompany    || false,
-      leaveCompany:   emp.leftDate?.split('T')[0] || '',
-      locationId:     emp.locationId     || 0,
-      designationId:  emp.designationId  || 0,
-      shiftId:        emp.shiftId        || 0,
+      address: emp.address || '',
+      mobileNo: emp.mobileNo || '',
+      skypeId: emp.skypeId || '',
+      email: emp.email || '',
+      joinDate: emp.joinDate?.split('T')[0] || '',
+      bccEmail: emp.bccEmail || '',
+      panNumber: emp.panNumber || '',
+      birthDate: emp.birthDate?.split('T')[0] || '',
+      loginStatus: emp.loginStatus || false,
+      leftCompany: emp.leftCompany || false,
+      leaveCompany: emp.leftDate?.split('T')[0] || '',
+      locationId: emp.locationId || 0,
+      designationId: emp.designationId || 0,
+      shiftId: emp.shiftId || 0,
       employeeTypeId: emp.employeeTypeId || 0,
-      userGroupId:    emp.userGroupId    || 0,
-      divisionId:     emp.divisionId     || 0
+      userGroupId: emp.userGroupId || 0,
+      divisionId: emp.divisionId || 0,
       // note: we’ll set branchId below
     });
 
     // Map branchName → branchId
-    const br = this.branches.find(b => b.branchName === emp.branchName);
+    const br = this.branches.find((b) => b.branchName === emp.branchName);
     if (br) {
       this.employeeForm.get('branchId')!.setValue(br.branchId);
     }
@@ -181,89 +200,90 @@ this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
   }
 
   loadConutries(): void {
-  this.countryService.getAllCountries().subscribe({
-    next: (res) => {
-      this.countries = res.filter(country => country.countryStatus === 1);
-    },
-    error: (err) => console.error('Error loading Countries', err)
-  });
-}
-loadStates(): void {
-  this.stateService.getAllStates().subscribe({
-    next: (res) => {
-      console.log('[DEBUG] Raw state data:', res);
-      this.states = res.filter(state => state.stateStatus === true);
-      this.filterStates(); // call only once after setting this.states
-    },
-    error: (err) => console.error('Error loading States', err)
-  });
-}
+    this.countryService.getAllCountries().subscribe({
+      next: (res) => {
+        this.countries = res.filter((country) => country.countryStatus === 1);
+      },
+      error: (err) => console.error('Error loading Countries', err),
+    });
+  }
+  loadStates(): void {
+    this.stateService.getAllStates().subscribe({
+      next: (res) => {
+        console.log('[DEBUG] Raw state data:', res);
+        this.states = res.filter((state) => state.stateStatus === true);
+        this.filterStates(); // call only once after setting this.states
+      },
+      error: (err) => console.error('Error loading States', err),
+    });
+  }
 
- filterStates(): void {
-  const countryId = +this.employeeForm.get('countryId')?.value;
-  console.log('[DEBUG] Selected countryId:', countryId);
-  console.log('[DEBUG] Available states:', this.states);
+  filterStates(): void {
+    const countryId = +this.employeeForm.get('countryId')?.value;
+    console.log('[DEBUG] Selected countryId:', countryId);
+    console.log('[DEBUG] Available states:', this.states);
 
-  this.filteredStates = this.states.filter(
-    state => state.countryId === countryId && state.stateStatus === true
-  );
+    this.filteredStates = this.states.filter(
+      (state) => state.countryId === countryId && state.stateStatus === true
+    );
 
-  console.log('[DEBUG] Filtered states:', this.filteredStates);
-}
+    console.log('[DEBUG] Filtered states:', this.filteredStates);
+  }
 
-
-
-
-   loadCities(): void {
-  this.cityService.getAllCities().subscribe({
-    next: (res) => {
-      this.cities = res.filter(city => city.cityStatus === true);
-    },
-    error: (err) => console.error('Error loading cities', err)
-  });
-}
-filterCities(): void {
-  const stateId = +this.employeeForm.get('stateId')?.value;
-  this.filteredCities = this.cities.filter(c => c.stateId === stateId);
-}
+  loadCities(): void {
+    this.cityService.getAllCities().subscribe({
+      next: (res) => {
+        this.cities = res.filter((city) => city.cityStatus === true);
+      },
+      error: (err) => console.error('Error loading cities', err),
+    });
+  }
+  filterCities(): void {
+    const stateId = +this.employeeForm.get('stateId')?.value;
+    this.filteredCities = this.cities.filter((c) => c.stateId === stateId);
+  }
   loadShifts(): void {
-    this.updateService.getAllShifts().subscribe(data => {
+    this.updateService.getAllShifts().subscribe((data) => {
       this.shifts = data;
     });
   }
-  loadEmployeeTypes():void{
-    this.updateService.getEmployeeTypes().subscribe(data=>{
-      this.employeeTypes=data;
+  loadEmployeeTypes(): void {
+    this.updateService.getEmployeeTypes().subscribe((data) => {
+      this.employeeTypes = data;
     });
   }
 
   loadDesignations() {
     this.designationService.getAllDesignations().subscribe({
       next: (res) => {
-        this.designations = res.filter(designation=>designation.designationStatus===true);
+        this.designations = res.filter(
+          (designation) => designation.designationStatus === true
+        );
       },
       error: (err) => {
         console.error('Error loading designations:', err);
-      }
+      },
     });
   }
 
   loadBranches() {
     this.branchService.getBranches().subscribe({
       next: (res) => {
-        this.branches = res.filter(branch => branch.branchStatus === true).map(branch => ({
-          branchId: branch.branchId,
-          branchName: branch.branchName,
-          cityId: branch.cityId,
-          cityName: branch.cityName,
-          stateName: branch.stateName,
-          branchStatus: branch.branchStatus
-        }));
+        this.branches = res
+          .filter((branch) => branch.branchStatus === true)
+          .map((branch) => ({
+            branchId: branch.branchId,
+            branchName: branch.branchName,
+            cityId: branch.cityId,
+            cityName: branch.cityName,
+            stateName: branch.stateName,
+            branchStatus: branch.branchStatus,
+          }));
         console.log('[DEBUG] Filtered active branches:', this.branches);
       },
       error: (err) => {
         console.error('Error loading branches:', err);
-      }
+      },
     });
   }
 
@@ -275,7 +295,7 @@ filterCities(): void {
       },
       error: (err) => {
         console.error('Error loading user groups:', err);
-      }
+      },
     });
   }
 
@@ -290,20 +310,19 @@ filterCities(): void {
   //   })
   // }
 
-//   loadLocations(): void {
-//   this.locationService.getAllLocations().subscribe({
-//     next: (res) => {
-//       // Filter here for locationStatus = 1
-//       this.locations = res.filter((location: any) => location.locationStatus === 1);
-//       console.log("Filtered location array:", this.locations);
-//       this.filterLocations();
-//     },
-//     error: (err) => {
-//       console.log(err);
-//     }
-//   });
-// }
- 
+  //   loadLocations(): void {
+  //   this.locationService.getAllLocations().subscribe({
+  //     next: (res) => {
+  //       // Filter here for locationStatus = 1
+  //       this.locations = res.filter((location: any) => location.locationStatus === 1);
+  //       console.log("Filtered location array:", this.locations);
+  //       this.filterLocations();
+  //     },
+  //     error: (err) => {
+  //       console.log(err);
+  //     }
+  //   });
+  // }
 
   onImageSelected(event: Event): void {
     const file = (event.target as HTMLInputElement)?.files?.[0];
@@ -334,55 +353,55 @@ filterCities(): void {
     return date > new Date() ? { futureDate: true } : null;
   }
 
- onSubmit() {
-  if (this.employeeForm.invalid) {
-    this.employeeForm.markAllAsTouched();
-    return;
+  onSubmit() {
+    if (this.employeeForm.invalid) {
+      this.employeeForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.selectedEmployeeCode) {
+      const formValues = this.employeeForm.value;
+      const updatedEmployee: any = {
+        code: this.selectedEmployeeCode,
+      };
+
+      Object.keys(formValues).forEach((key) => {
+        const value = formValues[key];
+        if (
+          value !== null &&
+          value !== '' &&
+          !(typeof value === 'number' && value === 0) &&
+          !(typeof value === 'boolean' && value === false)
+        ) {
+          updatedEmployee[key] = value;
+        }
+      });
+
+      // Attach base64 image and signature if selected
+      if (this.imageBase64) updatedEmployee.image = this.imageBase64;
+      if (this.signatureBase64)
+        updatedEmployee.signature = this.signatureBase64;
+
+      // Ensure boolean fields are explicitly set (since false might be filtered out above)
+      updatedEmployee.loginStatus = formValues.loginStatus;
+      updatedEmployee.leftCompany = formValues.leftCompany;
+
+      // Submit the update (assuming updateService has updateEmployee method)
+      this.updateService.updateEmployee(updatedEmployee).subscribe({
+        next: () => {
+          alert('Employee details updated successfully.');
+          this.router.navigate(['/employee']); // adjust route as needed
+        },
+        error: (err) => {
+          console.error('Update failed:', err);
+          alert('Failed to update employee. Please try again.');
+        },
+      });
+    }
   }
-
-  if (this.selectedEmployeeCode) {
-    const formValues = this.employeeForm.value;
-    const updatedEmployee: any = {
-      code: this.selectedEmployeeCode
-    };
-
-    Object.keys(formValues).forEach(key => {
-      const value = formValues[key];
-      if (
-        value !== null &&
-        value !== '' &&
-        !(typeof value === 'number' && value === 0) &&
-        !(typeof value === 'boolean' && value === false)
-      ) {
-        updatedEmployee[key] = value;
-      }
-    });
-
-    // Attach base64 image and signature if selected
-    if (this.imageBase64) updatedEmployee.image = this.imageBase64;
-    if (this.signatureBase64) updatedEmployee.signature = this.signatureBase64;
-
-    // Ensure boolean fields are explicitly set (since false might be filtered out above)
-    updatedEmployee.loginStatus = formValues.loginStatus;
-    updatedEmployee.leftCompany = formValues.leftCompany;
-
-    // Submit the update (assuming updateService has updateEmployee method)
-    this.updateService.updateEmployee(updatedEmployee).subscribe({
-      next: () => {
-        alert('Employee details updated successfully.');
-        this.router.navigate(['/employee']); // adjust route as needed
-      },
-      error: (err) => {
-        console.error('Update failed:', err);
-        alert('Failed to update employee. Please try again.');
-      }
-    });
-  }
-}
-
 
   cancel() {
-   this.employeeForm.reset();
-  this.router.navigate(['/employee']); 
+    this.employeeForm.reset();
+    this.router.navigate(['/employee']);
   }
 }

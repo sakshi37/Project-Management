@@ -16,10 +16,10 @@ using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
 //using HR.Application.Features.Location.Query;
-using HR.Application.Features.States.Commands.Dtos;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +45,7 @@ public class AppDbContext : DbContext
     public DbSet<Employee> TblEmployeeMaster { get; set; }
     public DbSet<LocationDto> dtos { get; set; }
 
+    public DbSet<GetAllAttendanceDto> GetAllAttendanceDtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
 
@@ -52,7 +53,7 @@ public class AppDbContext : DbContext
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<TeamCompositionDto> TeamCompositionDtos { get; set; }
 
-    public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
+    public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<Counter> Counter { get; set; }
     public DbSet<LocationDto> LocationDtos { get; set; }
     public DbSet<Location> Locations { get; set; }
@@ -98,7 +99,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllDivisionDto>().HasNoKey();
         modelBuilder.Entity<GetAllProjectManagerDto>().HasNoKey();
 
-
+        modelBuilder.Entity<GetAllAttendanceDto>().HasNoKey();
         modelBuilder.Entity<GetAllShiftsVm>().HasNoKey();
         modelBuilder.Entity<GetAllUserGroupQueryVm>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeTypeQueryVm>().HasNoKey();

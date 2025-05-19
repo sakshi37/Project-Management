@@ -1,8 +1,7 @@
 ﻿using HR.Application.Contracts.Persistence;
-using HR.Application.Exception;
 using MediatR;
 
-namespace HR.Application.Features.TimeSheets.Commands.PunchIn
+namespace HR.Application.Features.TimeSheets.Commands.PunchIn.Commands
 {
     public class PunchInCommandHandler : IRequestHandler<PunchInCommand>
     {
@@ -17,10 +16,13 @@ namespace HR.Application.Features.TimeSheets.Commands.PunchIn
             var attendance = await _timeSheetRepository.GetCurrentSession(request.EmpId);
             if (attendance != null)
             {
-                Console.WriteLine($"Employee  has already punched in at: {attendance.StartDate}");
-                throw new PunchInValidationException($"Employee has already punched in:{attendance.StartDate}");
+
+                //
+                await _timeSheetRepository.UpdateCurrentSession(request.EmpId);
+                return;
 
             }
+
             var startDateTime = DateTime.Now;
             await _timeSheetRepository.PunchIn(request.EmpId, startDateTime);
         }

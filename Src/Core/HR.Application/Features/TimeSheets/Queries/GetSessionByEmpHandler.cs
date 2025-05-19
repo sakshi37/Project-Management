@@ -14,7 +14,10 @@ namespace HR.Application.Features.TimeSheets.Queries
 
         public async Task<Attendance?> Handle(GetSessionByEmpQuery request, CancellationToken cancellationToken)
         {
-            return await _timeSheetRepository.GetCurrentSession(request.EmpId);
+            var currentSession = await _timeSheetRepository.GetCurrentSession(request.EmpId);
+            if (currentSession == null) return null;
+            if (currentSession.EndDate == null) return currentSession;
+            return null;
 
         }
     }
