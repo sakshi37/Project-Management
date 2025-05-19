@@ -229,7 +229,14 @@ onEdit(team: GetTeamCompositionDto ): void {
   //   });
   // }
   resetForm(): void {
-    this.teamForm.reset();
+    this.teamForm.reset({
+      teamName: '',
+      fk_BranchId: '',
+      fk_DivisionId: '',
+      fk_TeamLeaderId: '',
+      teamStatus: '1'  
+    });
+    // this.teamForm.reset();
     this.submitted = false;
     this.selectedTeamId = null;
     this.isEditMode = false;
