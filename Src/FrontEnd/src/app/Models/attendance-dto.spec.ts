@@ -1,4 +1,4 @@
-import { TimeSheetDto } from './time-sheet-dto';
+import { TimeSheetDto } from './attendance-dto';
 
 describe('TimeSheetDto', () => {
   it('should create an instance', () => {

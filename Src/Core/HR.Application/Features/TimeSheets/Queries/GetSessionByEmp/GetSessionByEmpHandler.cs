@@ -2,7 +2,7 @@
 using HR.Domain.Entities;
 using MediatR;
 
-namespace HR.Application.Features.TimeSheets.Queries
+namespace HR.Application.Features.TimeSheets.Queries.GetSessionByEmp
 {
     public class GetSessionByEmpHandler : IRequestHandler<GetSessionByEmpQuery, Attendance?>
     {

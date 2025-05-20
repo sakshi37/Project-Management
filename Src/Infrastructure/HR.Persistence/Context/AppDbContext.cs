@@ -9,6 +9,7 @@ using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.EmployeeType.Queries.GetAllEmployeeType;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
@@ -18,8 +19,9 @@ using HR.Application.Features.Locations.Dtos;
 using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
-using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
+using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
+using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
 //using HR.Application.Features.Location.Query;
@@ -42,12 +44,12 @@ public class AppDbContext : DbContext
     public DbSet<HolidayDto> HolidayDtos { get; set; }
     public DbSet<TotalValue> TotalValues { get; set; }
     public DbSet<EmployeeDto> Employees { get; set; }
-
+    public DbSet<GetAllEmployeeByIdNameDto> GetAllEmployeeByIdNameDtos { get; set; }
     // public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
-
+    public DbSet<GetByIdTimeSheetDto> timesheetGetByDto { get; set; }
     public DbSet<Employee> TblEmployeeMaster { get; set; }
     public DbSet<LocationDto> dtos { get; set; }
-    
+
 
     public DbSet<Employee> Tbl_Employee_master { get; set; }
     public DbSet<LocationDto> Locationdtos { get; set; }
@@ -79,7 +81,7 @@ public class AppDbContext : DbContext
 
     public DbSet<GetAllFamilyMemberTypeQueryVm> GetAllFamilyTypeMemberVms { get; set; }
     public DbSet<GetEmployeeBasicDetailsByCodeQueryVm> EmployeeBasicDetails { get; set; }
-    public DbSet<InsertEmployeeDetailsGmcCommandDto> EmployeesGmc { get; set; } 
+    public DbSet<InsertEmployeeDetailsGmcCommandDto> EmployeesGmc { get; set; }
 
     public DbSet<GetAllGenderQueryVm> GetAllGenderQueryVms { get; set; }
 
@@ -95,13 +97,13 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
         modelBuilder.Entity<Employee>().ToTable("Tbl_Employee_master");
-
+        modelBuilder.Entity<GetAllEmployeeByIdNameDto>().HasNoKey();
         modelBuilder.Entity<CityDto>().HasNoKey();
         modelBuilder.Entity<HolidayDto>().HasNoKey();
         modelBuilder.Entity<TotalValue>().HasNoKey();
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
         modelBuilder.Entity<TeamLeaderDto>().HasNoKey();
-
+        modelBuilder.Entity<GetByIdTimeSheetDto>().HasNoKey();
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
         //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();

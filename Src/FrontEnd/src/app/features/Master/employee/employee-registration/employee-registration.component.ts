@@ -92,26 +92,24 @@ export class EmployeeRegistrationComponent implements OnInit {
           Validators.maxLength(10),
         ],
       ],
-      skypeId: ['dgcgdecfy'],
+      skypeId: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z][a-zA-Z0-9._-]{5,31}$'),
+        ],
+      ],
       email: ['', [Validators.required, Validators.email]],
       joinDate: ['', [Validators.required, this.noFutureDateValidator]],
       birthDate: ['', [Validators.required, this.minAgeValidator(18)]],
-      bccEmail: [''],
       panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
       image: [''],
       signature: [''],
-      loginStatus: [false],
-      locationId: [1],
-      designationId: [2],
-      shiftId: [1],
-      employeeTypeId: [1],
-      usergroupId: [1],
-      branchId: [1],
-      divisionId: [1],
-      CountryId: [1],
-      StateId: [1],
-      CityId: [1],
-      GenderId: [1],
+      locationId: [''],
+
+      CountryId: [''],
+      StateId: [''],
+      CityId: [''],
     });
   }
   getLocation() {
@@ -228,9 +226,7 @@ export class EmployeeRegistrationComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.employeeForm.reset({
-      loginStatus: false,
-    });
+    this.employeeForm.reset({});
     this.selectedImage = null;
     this.selectedSignature = null;
     this.filteredStates = [];
@@ -247,6 +243,7 @@ export class EmployeeRegistrationComponent implements OnInit {
       ...this.employeeForm.value,
       birthDate: this.formatDate(this.employeeForm.value.birthDate),
       joinDate: this.formatDate(this.employeeForm.value.joinDate),
+
       image: this.selectedImage || null,
       signature: this.selectedSignature || null,
     };

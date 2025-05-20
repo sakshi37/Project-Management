@@ -6,9 +6,9 @@ using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeeByDesignation;
-using HR.Application.Features.LoginMaster.Commands.InsertLogin;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -139,7 +139,12 @@ namespace HR.API.Controllers
 
             return Ok(result);
         }
-
+        [HttpGet("GetAllEmployeeByIdNmae")]
+        public async Task<IActionResult> GetALLEmployeeByIdName()
+        {
+            var result = await _mediator.Send(new GetAllEmployeesByIdNameQuery());
+            return Ok(result);
+        }
 
     }
 }

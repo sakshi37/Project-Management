@@ -28,3 +28,6 @@ input:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
+option[disabled] {
+  color: #999 !important;
+}

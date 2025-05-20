@@ -1,9 +1,10 @@
 ﻿using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
-using HR.Application.Features.TimeSheet.Query;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Commands;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchOut;
-using HR.Application.Features.TimeSheets.Queries;
+using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
+using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
+using HR.Application.Features.TimeSheets.Queries.GetSessionByEmp;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,7 +65,13 @@ namespace HR.API.Controllers
             return Ok(session);
         }
 
-
+        [HttpGet("timesheet/{id}")]
+        public async Task<IActionResult> TimeSheetMasterGetById(int Id)
+        {
+            var currentLoggedIn = Id;
+            var timesheetByEmpId = await _mediator.Send(new GetByIdTimeSheetQuery(currentLoggedIn));
+            return Ok(timesheetByEmpId);
+        }
 
     }
 }

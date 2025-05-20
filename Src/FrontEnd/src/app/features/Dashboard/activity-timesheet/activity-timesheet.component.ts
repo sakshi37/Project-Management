@@ -72,6 +72,19 @@ export class ActivityTimesheetComponent implements OnInit {
       });
     }
   }
+
+  getAttendance() {
+    const empId = this.getEmpId();
+    if (!empId) return;
+    this.timeSheetService.getByIdTimeSheet(empId).subscribe((data) => {
+      console.log('Received timesheet data:', data);
+      this.timeSheets = Array.isArray(data) ? data : [data];
+      // console.log(data);
+      console.log('After TimeSheets Data:', this.timeSheets);
+
+      // this.timeSheets = data;
+    });
+  }
   private getEmpId() {
     const empId = localStorage.getItem('empId');
 
@@ -83,14 +96,5 @@ export class ActivityTimesheetComponent implements OnInit {
       return;
     }
     return Number(empId);
-  }
-
-  getAttendance() {
-    this.timeSheetService.getAllTimeSheet().subscribe((data) => {
-      console.log(data);
-      console.log('TimeSheets Data:', this.timeSheets);
-
-      this.timeSheets = data;
-    });
   }
 }

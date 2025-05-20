@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { API_URL } from '../../constant';
 import { HttpClient } from '@angular/common/http';
-import { TimeSheetDto } from '../Models/time-sheet-dto';
+import { TimeSheetDto } from '../Models/attendance-dto';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -26,6 +26,14 @@ export class TimeSheetService {
   getAllTimeSheet() {
     return this.http.get<Timesheets[]>(`${this.url}/GetAllTimeSheet`);
   }
+
+  getByIdTimeSheet(empId: number) {
+    return this.http.get<Timesheets[]>(`${this.url}/timesheet/${empId}`);
+  }
+
+  InsertTimesheet(timesheet: Timesheets) {
+    return this.http.post(`${this.url}/TimeSheet`, timesheet);
+  }
 }
 export type PunchInStatus = {
   id: number;
@@ -41,9 +49,9 @@ export type Timesheets = {
   activity: string;
   type: string;
   startTime: string;
-  endTime: string;
+  endTime: string | null;
   hrs: number;
   min: number;
-  empId: 1;
+  empId: number;
   timeSheetStatus: boolean;
 };

@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using HR.Application.Contracts.Persistence;
-using HR.Application.Features.TimeSheet.Queries;
 using MediatR;
 
-namespace HR.Application.Features.TimeSheet.Query
+namespace HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet
 {
     public class GetAllTimeSheetListHandler : IRequestHandler<GetAllTimeSheetListQuery, IEnumerable<GetAllTimeSheetListDto>>
     {

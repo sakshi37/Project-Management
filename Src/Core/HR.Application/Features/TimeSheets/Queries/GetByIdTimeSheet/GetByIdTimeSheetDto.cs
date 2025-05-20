@@ -1,6 +1,6 @@
-﻿namespace HR.Application.Features.TimeSheet.Queries
+﻿namespace HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet
 {
-    public class GetAllTimeSheetListDto
+    public class GetByIdTimeSheetDto
     {
         public int JobId { get; set; }
         public string? Sequence { get; set; }
@@ -12,6 +12,5 @@
         public int Hrs { get; set; }
         public int Min { get; set; }
         public int EmpId { get; set; }
-        public bool? TimeSheetStatus { get; set; }
     }
 }

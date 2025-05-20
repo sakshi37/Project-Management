@@ -1,12 +1,4 @@
-<<<<<<< .merge_file_W3BWjb
-=======
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
->>>>>>> .merge_file_eMAj3L
+
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.TeamCompositions.Commands.CreateTeamComposition;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
@@ -57,7 +49,7 @@ namespace HR.Persistence.Repositories
         //    return await _context.TeamCompositionDtos.FromSqlRaw(sql).ToListAsync();
         //}
 
-<<<<<<< .merge_file_W3BWjb
+
         //public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
         //{
         //    var parameters = new[]
@@ -71,20 +63,20 @@ namespace HR.Persistence.Repositories
         //        .FromSqlRaw(sql, parameters)
         //        .ToListAsync();
         //}
-=======
-        public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
-        {
-            var parameters = new[]
-            {
-            new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
-            new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
-             };
 
-            string sql = "EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId";
-            return await _context.TeamCompositionDtos
-                .FromSqlRaw(sql, parameters)
-                .ToListAsync();
-        }
+        //public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
+        //{
+        //    var parameters = new[]
+        //    {
+        //    new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
+        //    new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
+        //     };
+
+        //    string sql = "EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId";
+        //    return await _context.TeamCompositionDtos
+        //        .FromSqlRaw(sql, parameters)
+        //        .ToListAsync();
+        //}
         public async Task<List<TeamLeaderDto>> GetTeamLeadersAsync()
         {
             string sql = "EXEC SP_GetTeamLeaders";
@@ -115,6 +107,6 @@ namespace HR.Persistence.Repositories
                 TeamStatus = team.TeamStatus
             };
         }
->>>>>>> .merge_file_eMAj3L
+
     }
 }

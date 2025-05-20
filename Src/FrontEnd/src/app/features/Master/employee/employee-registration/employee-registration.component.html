@@ -5,7 +5,7 @@
         👤 Employee Registration
       </h3>
 
-      <!-- 1. Personal Information -->
+      <!-- Personal Details -->
       <div class="mb-4">
         <h5 class="text-secondary">📝 Personal Details</h5>
         <div class="row g-3">
@@ -25,7 +25,7 @@
                 Name is required.
               </div>
               <div *ngIf="employeeForm.get('name')?.hasError('pattern')">
-                Only letters and spaces are allowed.
+                Only letters and spaces allowed.
               </div>
             </div>
           </div>
@@ -34,7 +34,7 @@
             <label class="form-label">Date of Birth</label>
             <input
               type="date"
-              class="form-control"
+              class="form-control rounded-pill"
               formControlName="birthDate"
               [max]="today"
             />
@@ -45,13 +45,7 @@
               Employee must be at least 18 years old.
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 2. Employment Details -->
-      <div class="mb-4">
-        <!-- <h5 class="text-secondary">💼 Employment Details</h5> -->
-        <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Join Date</label>
             <input
@@ -72,43 +66,34 @@
           </div>
 
           <div class="col-md-6">
-            <div class="col-md-6 form-group">
-              <label for="panNumber">PAN Number</label>
-              <input
-                type="text"
-                id="panNumber"
-                class="form-control"
-                formControlName="panNumber"
-                placeholder="Enter PAN number"
-              />
-              <div
-                *ngIf="
-                  employeeForm.get('panNumber')?.invalid &&
-                  (employeeForm.get('panNumber')?.touched ||
-                    employeeForm.get('panNumber')?.dirty)
-                "
-                class="text-danger small"
-              >
-                <div *ngIf="employeeForm.get('panNumber')?.errors?.['pattern']">
-                  PAN must be in format ABCDE1234F.
-                </div>
+            <label class="form-label">PAN Number</label>
+            <input
+              type="text"
+              class="form-control rounded-pill"
+              formControlName="panNumber"
+              placeholder="ABCDE1234F"
+            />
+            <div
+              class="text-danger small mt-1"
+              *ngIf="
+                employeeForm.get('panNumber')?.invalid &&
+                (employeeForm.get('panNumber')?.touched ||
+                  employeeForm.get('panNumber')?.dirty)
+              "
+            >
+              <div *ngIf="employeeForm.get('panNumber')?.errors?.['pattern']">
+                PAN must be in format ABCDE1234F.
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 3. Contact Info -->
-      <div class="mb-4">
-        <!-- <h5 class="text-secondary">📞 Contact Information</h5> -->
-        <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Email</label>
             <input
               type="email"
               class="form-control rounded-pill"
               formControlName="email"
-              placeholder="Enter Email"
+              placeholder="Enter email"
             />
             <div
               class="text-danger small mt-1"
@@ -129,7 +114,7 @@
               type="text"
               class="form-control rounded-pill"
               formControlName="mobileNo"
-              placeholder="Enter Mobile No"
+              placeholder="Enter 10-digit mobile number"
             />
             <div
               class="text-danger small mt-1"
@@ -150,37 +135,26 @@
               type="text"
               class="form-control rounded-pill"
               formControlName="skypeId"
+              placeholder="Enter Skype ID"
             />
             <div
               class="text-danger small mt-1"
-              *ngIf="
-                employeeForm.get('skypeId')?.touched &&
-                employeeForm.get('skypeId')?.hasError('required')
-              "
+              *ngIf="employeeForm.get('skypeId')?.touched"
             >
-              Skype ID is required.
+              <div *ngIf="employeeForm.get('skypeId')?.hasError('required')">
+                Skype ID is required.
+              </div>
+              <div *ngIf="employeeForm.get('skypeId')?.hasError('pattern')">
+                Invalid Skype ID format.
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- 5. Login & Files -->
-      <div class="mb-4">
-        <!-- <h5 class="text-secondary">🔐 Login & Attachments</h5> -->
-        <div class="row g-3 align-items-center">
-          <div class="col-md-6">
-            <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                formControlName="loginStatus"
-                id="loginStatus"
-              />
-              <label class="form-check-label" for="loginStatus"
-                >Login Active</label
-              >
-            </div>
-          </div>
 
+      <!-- File Uploads and Login Status -->
+      <div class="mb-4">
+        <div class="row g-3 align-items-center">
           <div class="col-md-6">
             <label class="form-label">Profile Image</label>
             <input
@@ -189,20 +163,16 @@
               (change)="onFileChange($event, 'image')"
               accept="image/*"
             />
-
-            <!-- Validation error message -->
             <div *ngIf="fileErrors.image" class="text-danger mt-1">
               Only JPG and PNG image files are allowed.
             </div>
-
-            <!-- Preview -->
             <div
               class="mt-2"
               *ngIf="employeeForm.value.image && !fileErrors.image"
             >
               <img
                 [src]="'data:image/jpeg;base64,' + employeeForm.value.image"
-                class="rounded border shadow"
+                class="rounded shadow border"
                 style="width: 80px; height: 80px"
               />
             </div>
@@ -216,20 +186,16 @@
               (change)="onFileChange($event, 'signature')"
               accept="image/*"
             />
-
-            <!-- Validation error message -->
             <div *ngIf="fileErrors.signature" class="text-danger mt-1">
               Only JPG and PNG image files are allowed.
             </div>
-
-            <!-- Preview -->
             <div
               class="mt-2"
               *ngIf="employeeForm.value.signature && !fileErrors.signature"
             >
               <img
                 [src]="'data:image/png;base64,' + employeeForm.value.signature"
-                class="rounded border shadow"
+                class="rounded shadow border"
                 style="width: 80px; height: 80px"
               />
             </div>
@@ -237,13 +203,17 @@
         </div>
       </div>
 
-      <!-- 4. Address Details -->
+      <!-- Address Section -->
       <div class="mb-4">
         <h5 class="text-secondary">🏠 Address Information</h5>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Country</label>
-            <select formControlName="CountryId" class="form-select">
+            <select
+              formControlName="CountryId"
+              class="form-select rounded-pill"
+            >
+              <option value="">Select Country</option>
               <option *ngFor="let c of countries" [value]="c.id">
                 {{ c.name }}
               </option>
@@ -252,7 +222,8 @@
 
           <div class="col-md-6">
             <label class="form-label">State</label>
-            <select formControlName="StateId" class="form-select">
+            <select formControlName="StateId" class="form-select rounded-pill">
+              <option value="">Select State</option>
               <option *ngFor="let s of filteredStates" [value]="s.id">
                 {{ s.name }}
               </option>
@@ -261,7 +232,8 @@
 
           <div class="col-md-6">
             <label class="form-label">City</label>
-            <select formControlName="CityId" class="form-select">
+            <select formControlName="CityId" class="form-select rounded-pill">
+              <option value="">Select City</option>
               <option *ngFor="let city of filteredCities" [value]="city.id">
                 {{ city.name }}
               </option>
@@ -270,8 +242,11 @@
 
           <div class="col-md-6">
             <label class="form-label">Location</label>
-            <select class="form-select" formControlName="locationId">
-              <option value="">Select</option>
+            <select
+              formControlName="locationId"
+              class="form-select rounded-pill"
+            >
+              <option value="">Select Location</option>
               <option *ngFor="let loc of locations" [value]="loc.id">
                 {{ loc.name }}
               </option>
@@ -291,9 +266,9 @@
             <label class="form-label">Address</label>
             <textarea
               rows="2"
-              class="form-control"
+              class="form-control rounded-3"
               formControlName="address"
-              placeholder="Enter Address"
+              placeholder="Enter full address"
             ></textarea>
             <div
               class="text-danger small mt-1"
@@ -308,9 +283,9 @@
         </div>
       </div>
 
-      <!-- Buttons -->
-      <div class="d-flex justify-content-end mt-4">
-        <button type="submit" class="btn btn-primary btn-lg me-2">
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">
           <i class="bi bi-save"></i> Save
         </button>
         <button
@@ -320,7 +295,9 @@
         >
           <i class="bi bi-arrow-repeat"></i> Reset
         </button>
-        <button type="button" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn btn-danger btn-lg" (click)="cancel()">
+          <i class="bi bi-x-circle"></i> Cancel
+        </button>
       </div>
     </div>
   </div>

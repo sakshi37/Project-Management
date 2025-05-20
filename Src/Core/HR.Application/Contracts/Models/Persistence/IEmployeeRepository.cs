@@ -4,9 +4,9 @@ using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Domain.Entities;
-using System.Threading.Tasks;
 
 namespace HR.Application.Contracts.Persistence
 {
@@ -27,11 +27,11 @@ namespace HR.Application.Contracts.Persistence
         // IEmployeeMasterRepository.cs
         Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee);
         Task<bool> EmployeeExistsAsync(string code);
-       
+
 
         Task<int> ReadCurrentEmpCounter();
 
-
+        Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName();
 
         Task IncrCurrentEmpCounter();
 

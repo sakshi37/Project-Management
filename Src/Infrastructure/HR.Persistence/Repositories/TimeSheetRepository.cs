@@ -1,7 +1,8 @@
 ﻿using HR.Application.Contracts.Persistence;
 using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
-using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
+using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
+using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -85,6 +86,18 @@ namespace HR.Persistence.Repositories
             string sql = "EXEC dbo.SP_UpdateCurrentSession @Fk_EmpId={0}";
             await _DbContext.Database.ExecuteSqlRawAsync(sql, empId);
         }
+
+        public async Task<GetByIdTimeSheetDto> TimeSheetGetById(int empId)
+        {
+            var result = await _DbContext.timesheetGetByDto
+                .FromSqlRaw("EXEC SP_TimeSheetMasterGetById @Fk_EmployeeId = {0}", empId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return result.FirstOrDefault();
+        }
+
+
 
 
     }
