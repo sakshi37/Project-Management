@@ -180,7 +180,6 @@ namespace HR.Identity.Services
         {
             _cache.Remove(userName);
         }
-
         // Send OTP for changing password
         public async Task<bool> SendChangePasswordOtp(string username)
         {
@@ -197,7 +196,7 @@ namespace HR.Identity.Services
             return true;
         }
 
-        // Change password module 
+        // forgot password module
         public async Task<bool> ChangePassword(ChangePassword changePasswordRequest)
         {
             var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(cp => cp.UserName == changePasswordRequest.UserName);
@@ -235,41 +234,50 @@ namespace HR.Identity.Services
             RemoveOtp(user.UserName);
 
             return true;
+
+
+
+           
         }
 
-        // Forgot password module
+        // change password module
+
         public async Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
         {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == updatePasswordRequest.UserName);
-            if (user == null)
-            {
-                throw new UserNotFoundException("user with this username is not exist");
-            }
+            
 
-            if (user.FirstLogin)
-            {
-                throw new Exception("You are New User Try with your Default Password Provided");
-            }
+                var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == updatePasswordRequest.UserName);
+                if (user == null)
+                {
+                    throw new UserNotFoundException("user with this username is not exist");
+                }
 
-            if (updatePasswordRequest.NewPassword == updatePasswordRequest.OldPassword)
-            {
-                throw new Exception("New password Can't be as same as older one ");
-            }
+                if (user.FirstLogin)
+                {
+                    throw new Exception("You are New User Try with your Default Password Provided");
+                }
 
-            if (updatePasswordRequest.OldPassword != user.Password)
-            {
-                throw new Exception("Entered Password should be as nsame as existing Password");
-            }
+                if (updatePasswordRequest.NewPassword == updatePasswordRequest.OldPassword)
+                {
+                    throw new Exception("New password Can't be as same as older one ");
+                }
 
-            if (updatePasswordRequest.NewPassword != updatePasswordRequest.ConfirmPassword)
-            {
-                throw new PasswordNotMatchException("“Old password types are wrong");
-            }
-            user.Password = updatePasswordRequest.NewPassword;
-            _context.Tbl_LoginMaster.Update(user);
-            await _context.SaveChangesAsync();
+                if (updatePasswordRequest.OldPassword != user.Password)
+                {
+                    throw new Exception("Entered Password should be as same as existing Password");
+                }
 
-            return true;
+                if (updatePasswordRequest.NewPassword != updatePasswordRequest.ConfirmPassword)
+                {
+                    throw new PasswordNotMatchException("“Old password types are wrong");
+                }
+                user.Password = updatePasswordRequest.NewPassword;
+                _context.Tbl_LoginMaster.Update(user);
+                await _context.SaveChangesAsync();
+
+                return true;
+            
+           
         }
 
         public async Task InsertLoginAsync(int empId, int createdBy)

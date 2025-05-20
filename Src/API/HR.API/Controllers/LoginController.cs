@@ -6,6 +6,7 @@ using HR.Application.Features.LoginMaster.Commands.InsertLogin;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SharePoint.Client;
 
 namespace HR.API.Controllers
 {
@@ -59,17 +60,36 @@ namespace HR.API.Controllers
         }
 
         // verifying the otp and chnaging the password if the otp is correct
+        private static readonly Dictionary<string, int> _passwordChangeTracker = new();
+        private static readonly int MaxPasswordChangesPerDay = 3;
 
         [HttpPost("verify-otp")]
         public async Task<IActionResult> VerifyOtpAndChangePassword(ChangePassword changePasswordRequest)
         {
             try
             {
+                if (_passwordChangeTracker.ContainsKey(changePasswordRequest.UserName) && _passwordChangeTracker[changePasswordRequest.UserName] >= MaxPasswordChangesPerDay)
+                {
+                    return BadRequest("You have reached the maximum number of password changes allowed for today.");
+                }
 
                 bool isPasswordChanged = await _loginService.ChangePassword(changePasswordRequest);
 
+                foreach (var cookieKey in Request.Cookies.Keys)
+                {
+                    Response.Cookies.Delete(cookieKey);
+                }
                 if (isPasswordChanged)
                 {
+                    if (_passwordChangeTracker.ContainsKey(changePasswordRequest.UserName))
+                    {
+                        _passwordChangeTracker[changePasswordRequest.UserName]++;
+                    }
+                    else 
+                    {
+                        _passwordChangeTracker[changePasswordRequest.UserName] = 1;
+                    }
+                    Console.WriteLine(_passwordChangeTracker[changePasswordRequest.UserName]);
                     return Ok(new { message = "Password changed successfully!!!" });
                 }
                 else
@@ -81,6 +101,7 @@ namespace HR.API.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+           
         }
 
 

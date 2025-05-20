@@ -4,10 +4,9 @@ import { FormControl, FormsModule, NgForm, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthResponseModel, Login, VerifyOTPDto } from '../../Models/login';
 import { UserService } from '../../services/user.service';
-import { Otp } from '../../Models/otp';
+import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { AppComponent } from '../../app.component';
-import { jwtDecode } from 'jwt-decode';
 
 declare var bootstrap: any;
 
@@ -18,23 +17,29 @@ declare var bootstrap: any;
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  UserName?:string = '';
+  UserName?: string = '';
   login: Login = new Login('', '', false);
   otpDigits: string[] = ['', '', '', ''];
   isVerifying = false;
   errorMessage = '';
   formSubmitted = false;
   isLoggingIn = false;
-  
 
+  forgotUsername: string = '';
+  forgotOtp: string = '';
+  newPassword: string = '';
+  confirmNewPassword: string = '';
 
+  showNewPassword: boolean = true;
+  showConfirmPassword: boolean = true;
 
   loginForm = new FormControl({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
       Validators.required,
       Validators.pattern(
-        '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),
+        '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&\\-+=()])(?=\\S+$).{4,10}$'
+      ),
     ]),
   });
 
@@ -43,20 +48,26 @@ export class LoginComponent implements OnInit {
     private userService: UserService,
     private ngZone: NgZone,
     private injector: Injector
-  ) { }
+  ) {}
 
   passwordModel = {
     oldPassword: '',
   };
-  showPassword: boolean = true;
 
+  showPassword: boolean = true;
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
-  ngOnInit(
-    
-  ) { }
+  toggleNewPasswordVisibility(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  ngOnInit() {}
 
   loginUser(loginForm: NgForm) {
     this.login = loginForm.value;
@@ -70,53 +81,34 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(this.login).subscribe({
       next: (response: AuthResponseModel) => {
-        localStorage.setItem('token',response.token);
-        // localStorage.setItem('otp', response.otp);
-        // localStorage.setItem('email', response.email);
-        // localStorage.setItem('userName', response.userName);
-        // localStorage.setItem('checkFirstLogin', response.firstLogin);
+        localStorage.setItem('token', response.token);
         localStorage.setItem('loginStatus', String(response.loginStatus));
-        // localStorage.setItem('roleName', response.roleName);
-        // localStorage.setItem('userCheckInTime', response.userCheckInTime);
-
         const decodedToken = jwtDecode(response.token);
-        console.log(decodedToken);
         this.UserName = decodedToken.sub;
-
 
         if (!response.loginStatus) {
           Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
           this.isLoggingIn = false;
           return;
         }
-        
-        if (response.firstLogin) 
-        {
+
+        if (response.firstLogin) {
           const modalElement = document.getElementById('otpModal');
           const otpModal = new bootstrap.Modal(modalElement);
-          this.startTimer()
+          this.startTimer();
           otpModal.show();
-        }
-        else 
-        {
-          // this.router.navigate(['/dashboard']);
+        } else {
           this.router.navigate(['/dashboard']).then(() => {
-            // Force layout to show immediately
             const appRef = this.injector.get(AppComponent);
             appRef.hideLayout = false;
             appRef.isSidebarVisible = true;
           });
           sessionStorage.setItem('isAuthenticated', 'true');
-
         }
-       
       },
       error: (error) => {
         console.error('Login failed!', error);
-
-        // alert("Invalid email or password. Please try again");
         Swal.fire('Login Failed', 'Invalid email or password. Please try again.', 'error');
-        OkButtonColor: '#28a745';
         this.isLoggingIn = false;
       },
     });
@@ -129,47 +121,37 @@ export class LoginComponent implements OnInit {
       const enteredOtp = this.otpDigits.join('');
       const storedOtp = localStorage.getItem('otp');
       if (localStorage.getItem('token') != null) {
-        let userNaav: string = this.UserName != null ? this.UserName : 'lol';
+        const userNaav: string = this.UserName != null ? this.UserName : 'lol';
         const OtpRequest: VerifyOTPDto = {
           userName: userNaav,
           password: this.login.password,
           otp: enteredOtp,
         };
-        console.log(OtpRequest);
-        this.userService.verifyOtp(OtpRequest).subscribe({ 
+        this.userService.verifyOtp(OtpRequest).subscribe({
           next: (res: AuthResponseModel) => {
-            // alert('OTP Verified Successfully!');
             Swal.fire('Success', 'OTP Verified Successfully!', 'success');
             const modalElement = document.getElementById('otpModal');
-            const otpModal =
-              bootstrap.Modal.getInstance(modalElement) ||
-              new bootstrap.Modal(modalElement);
+            const otpModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
             otpModal.hide();
             sessionStorage.setItem('isAuthenticated', 'true');
             this.router.navigate(['/dashboard']);
           },
           error: (error) => {
-            console.error('Otp Failed', error.error); 
-              
-            Swal.fire(
-              'Invalid OTP',
-              'Incorrect OTP. Please try again.',
-              'error'
-            );
+            console.error('Otp Failed', error.error);
+            Swal.fire('Invalid OTP', 'Incorrect OTP. Please try again.', 'error');
           },
         });
       }
 
       this.isVerifying = false;
     }, 1500);
-
- 
-     
   }
+
   timeLeft: number = 60;
   txtTimeleft: boolean = false;
   btnDisabled: boolean = false;
-  interval:  any
+  interval: any;
+
   startTimer() {
     this.interval = setInterval(() => {
       if (this.timeLeft > 0) {
@@ -177,18 +159,18 @@ export class LoginComponent implements OnInit {
         this.btnDisabled = true;
         this.txtTimeleft = true;
       } else {
-        // this.timeLeft = 60;
         this.btnDisabled = false;
         this.txtTimeleft = false;
         clearInterval(this.interval);
       }
     }, 1000);
   }
-   terminateOtp() {
+
+  terminateOtp() {
     this.isLoggingIn = false;
     Swal.fire(
       'Process Terminated',
-      'OTP verification process has been terminated please login again and get.',
+      'OTP verification process has been terminated. Please login again.',
       'info'
     );
   }
@@ -208,13 +190,8 @@ export class LoginComponent implements OnInit {
       prevInput.focus();
     }
   }
-  forgotUsername: string = '';
-  forgotOtp: string = '';
-  newPassword: string = '';
-  confirmNewPassword: string = ''; 
 
-  openForgotPasswordModal() 
-  {
+  openForgotPasswordModal() {
     Swal.fire({
       title: 'Forgot Password',
       text: 'Please enter your registered username:',
@@ -223,36 +200,22 @@ export class LoginComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Submit ',
       confirmButtonColor: '#28a745',
-      cancelButtonColor: 'darkgrey'
+      cancelButtonColor: 'darkgrey',
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         this.forgotUsername = result.value;
         this.userService.sendForgotPasswordOtp(this.forgotUsername).subscribe({
-          next: (response: any) => {
-            // alert('OTP sent to your registered email.');
-
-            Swal.fire(
-              'Success',
-              'OTP sent to your registered email.',
-              'success'
-            );
-
+          next: () => {
+            Swal.fire('Success', 'OTP sent to your registered email.', 'success');
             setTimeout(() => {
-              const modalElement = document.getElementById(
-                'forgotPasswordModal'
-              );
+              const modalElement = document.getElementById('forgotPasswordModal');
               const forgotPasswordModal = new bootstrap.Modal(modalElement);
               forgotPasswordModal.show();
             }, 2000);
           },
           error: (error) => {
             console.error('Failed to send OTP!', error);
-            // alert('Failed to send OTP. Please check your email and try again.');
-            Swal.fire(
-              'Failed',
-              'Failed to send OTP. Please check your email and try again.',
-              'error'
-            );
+            Swal.fire('Failed', 'Failed to send OTP. Please check your email and try again.', 'error');
           },
         });
       }
@@ -260,24 +223,26 @@ export class LoginComponent implements OnInit {
   }
 
   submitForgotPassword() {
-    if (
-      !this.forgotUsername ||
-      !this.forgotOtp ||
-      !this.newPassword ||
-      !this.confirmNewPassword
-    ) {
-      // alert('Please fill all fields.');
+    if (!this.forgotUsername || !this.forgotOtp || !this.newPassword || !this.confirmNewPassword) {
       Swal.fire('Validation', 'Please fill all fields.', 'warning');
+      return;
+    }
+    
+
+    const passwordPattern =
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&\-+=()])(?=\S+$).{6,12}$/;
+
+    if (!passwordPattern.test(this.newPassword)) {
+      Swal.fire(
+        'Weak Password',
+        'Password must include 6-12 characters, uppercase, lowercase, number, and special character.',
+        'error'
+      );
       return;
     }
 
     if (this.newPassword !== this.confirmNewPassword) {
-      // alert('New Password and Confirm Password do not match.');
-      Swal.fire(
-        'Mismatch',
-        'New Password and Confirm Password do not match.',
-        'error'
-      );
+      Swal.fire('Mismatch', 'New Password and Confirm Password do not match.', 'error');
       return;
     }
 
@@ -289,25 +254,15 @@ export class LoginComponent implements OnInit {
     };
 
     this.userService.resetPassword(resetPasswordData).subscribe({
-      next: (response: any) => {
-        // alert('Password reset successfully! Please login with new password.');
-        Swal.fire(
-          'Success',
-          'Password reset successfully! Please login with new password.',
-          'success'
-        );
+      next: () => {
+        Swal.fire('Success', 'Password reset successfully! Please login with new password.', 'success');
         const modalElement = document.getElementById('forgotPasswordModal');
         const forgotPasswordModal = bootstrap.Modal.getInstance(modalElement);
         forgotPasswordModal.hide();
       },
       error: (error) => {
         console.error('Password reset failed!', error);
-        // alert('Failed to reset password. Please check your OTP and try again.');
-        Swal.fire(
-          'Failed',
-          'Failed to reset password. Please check your OTP and try again.',
-          'error'
-        );
+        Swal.fire('Failed', 'Failed to reset password. Please check your OTP and try again.', 'error');
       },
     });
   }
