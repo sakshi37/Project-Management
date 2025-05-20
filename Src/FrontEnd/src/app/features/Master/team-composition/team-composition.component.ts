@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -13,11 +14,12 @@ import FileSaver from 'file-saver';
 import Swal from 'sweetalert2';
 import { CreateTeamCompositionDto } from './Models/create-team-composition.dto';
 import { UpdateTeamCompositionDto } from './Models/update-team-composition.dto';
+import { ErrorHandlerService } from '../../../services/error-handler.service';
 
 @Component({
   selector: 'app-team-composition',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule,NgSelectModule],
   templateUrl: './team-composition.component.html',
   styleUrl: './team-composition.component.css'
 })
@@ -30,6 +32,7 @@ export class TeamCompositionComponent {
   private modal!: bootstrap.Modal;
 
   branches: any[] = [];
+  employeeList: any[] = [];
   divisions: any[] = [];
   teamLeaders: any[] = [];
   selectedTeamId: number | null = null;
@@ -42,7 +45,9 @@ export class TeamCompositionComponent {
     private fb: FormBuilder,
     private teamService: TeamCompositionService,
     private branchService: BranchService,
-    private divisionService: DivisionService 
+    private divisionService: DivisionService,
+    private errorHandler: ErrorHandlerService
+    
 
   ) {}
 
@@ -69,7 +74,15 @@ export class TeamCompositionComponent {
       teamStatus: ['1', Validators.required]
     });
   }
-
+  formModel = {
+    teamName: '',
+    fk_BranchId: 0,
+    fk_DivisionId: 0,
+    fk_TeamLeaderId: 0,
+    createdBy: 1,
+    employeeIds: [] // store selected employee IDs
+  };
+  
   loadBranches(): void {
     this.branchService.getBranches().subscribe({
       next: (res) => this.branches = res,
@@ -89,19 +102,6 @@ export class TeamCompositionComponent {
       error: (err) => console.error('Error fetching team leaders', err)
     });
   }
-  
-
-  // exportToExcel(): void {
-  //   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.teamCompositions);
-  //   const workbook: XLSX.WorkBook = { Sheets: { 'TeamComposition': worksheet }, SheetNames: ['TeamComposition'] };
-  //   const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  //   this.saveAsExcelFile(excelBuffer, 'TeamCompositionData');
-  // }
-
-  // private saveAsExcelFile(buffer: any, fileName: string): void {
-  //   const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
-  //   FileSaver.saveAs(data, `${fileName}_${new Date().getTime()}.xlsx`);
-  // }
   
   exportToExcel(): void {
     const exportData = this.teamCompositions.map((t, index) => ({
@@ -246,12 +246,6 @@ onEdit(team: GetTeamCompositionDto ): void {
     console.log(this.teamForm.value);
     if (this.teamForm.invalid) {
       this.teamForm.markAllAsTouched();
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Please fill in all required fields.',
-        confirmButtonColor: '#d33'
-      });
       return;
     }
   
@@ -282,13 +276,18 @@ onEdit(team: GetTeamCompositionDto ): void {
           this.loadTeamCompositions();
           this.resetForm();
           Swal.fire({
-            icon: 'success',
-            title: 'Updated',
-            text: 'Team updated successfully!',
-            confirmButtonColor: '#3085d6'
-          });
+                                toast: true,
+                                position: 'top',
+                                timer: 1000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                icon: 'success',
+                                title: 'Updated',
+                                text: 'Holiday updated successfully!',
+                                confirmButtonColor: '#3085d6',
+                              });
         },
-        error: (err) => console.error('Update failed', err)
+        error: (err) => this.errorHandler.handleError(err),
       });
     } else {
       const createDto: CreateTeamCompositionDto = {
@@ -300,13 +299,18 @@ onEdit(team: GetTeamCompositionDto ): void {
           this.loadTeamCompositions();
           this.resetForm();
           Swal.fire({
-            icon: 'success',
-            title: 'Created',
-            text: 'Team created successfully!',
-            confirmButtonColor: '#3085d6'
-          });
+                                toast: true,
+                                position: 'top',
+                                timer: 1000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                icon: 'success',
+                                title: 'Updated',
+                                text: 'Holiday Created successfully!',
+                                confirmButtonColor: '#3085d6',
+                              });
         },
-        error: (err) => console.error('Creation failed', err)
+        error: (err) => this.errorHandler.handleError(err),
       });
     }
   }

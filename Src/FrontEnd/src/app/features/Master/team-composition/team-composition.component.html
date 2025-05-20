@@ -24,10 +24,9 @@
 
         <!-- Add Team Button -->
         <div class="col-md-3 ">
-            <button class="btn custom-excel-btn"
-                (click)="exportToExcel()">
-                <i class="fas fa-file-csv"></i>  
-                 Export to Excel
+            <button class="btn custom-excel-btn" (click)="exportToExcel()">
+                <i class="fas fa-file-csv"></i>
+                Export to Excel
             </button>
         </div>
         <div class="col-md-3 text-end">
@@ -62,19 +61,27 @@
                             <select class="form-select" formControlName="fk_BranchId">
                                 <option value="">All Branches</option>
                                 <option *ngFor="let branch of branches" [value]="branch.branchId">
-                                  {{ branch.branchName }}
+                                    {{ branch.branchName }}
                                 </option>
-                              </select>
+                            </select>
                         </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Branch:</label>
+                            <ng-select class="form-select" [items]="branches" bindLabel="branchName" bindValue="branchId" [multiple]="true"
+                                 placeholder="Select Branches">
+                            </ng-select>
+
+                        </div>
+
 
                         <div class="col-md-12">
                             <label class="form-label">Division:</label>
                             <select class="form-select" formControlName="fk_DivisionId">
                                 <option value="">All Divisions</option>
                                 <option *ngFor="let division of divisions" [value]="division.divisionId">
-                                  {{ division.divisionName }}
+                                    {{ division.divisionName }}
                                 </option>
-                              </select>
+                            </select>
                         </div>
 
                         <div class="col-md-12">
@@ -82,35 +89,37 @@
                             <select id="teamLeader" class="form-select" formControlName="fk_TeamLeaderId">
                                 <option value="">All Team Leaders</option>
                                 <option *ngFor="let leader of teamLeaders" [value]="leader.id">
-                                  {{ leader.name }}
+                                    {{ leader.name }}
                                 </option>
-                              </select>
-                        </div> 
+                            </select>
+                        </div>
 
-  
-  <!-- Division Dropdown -->
- 
-  
-  <!-- Team Leader Dropdown -->
-  
-  
+
+                        <!-- Division Dropdown -->
+
+
+                        <!-- Team Leader Dropdown -->
+
+
                         <div class="col-12" *ngIf="isEditMode">
                             <label for="teamStatus" class="form-label">Status:</label>
                             <div class="input-icon-group">
-                              <i class="fas fa-toggle-on"></i>
-                              <select id="teamStatus" name="teamStatus" class="form-control" formControlName="teamStatus">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                              </select>
+                                <i class="fas fa-toggle-on"></i>
+                                <select id="teamStatus" name="teamStatus" class="form-control"
+                                    formControlName="teamStatus">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
                             </div>
-                          </div>
+                        </div>
 
 
                         <div class="col-12 d-flex justify-content-end">
-                            <button class="btn btn-success" data-bs-dismiss="modal" type="submit">
+                            <button class="btn btn-success" type="submit">
                                 {{ isEditMode ? 'Update' : 'Add' }}
                             </button>
-                            <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()"
+                                data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -152,7 +161,8 @@
                         <!-- <tr
                   *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index"
                   [ngClass]="{ 'inactive-row': !h.holidayStatus }"> -->
-                        <tr *ngFor="let team of teamCompositions; let i = index" [ngClass]="{ 'inactive-row': !team.teamStatus }">
+                        <tr *ngFor="let team of teamCompositions; let i = index"
+                            [ngClass]="{ 'inactive-row': !team.teamStatus }" style="max-height: 40px !important;">
 
                             <td>
                                 <div class="tr-first-child">{{ i + 1 }}</div>
@@ -183,8 +193,8 @@
                             </td>
                             <td>
                                 <div class="tr-last-child">
-                                    <button class="btn btn-sm edit-btn me-2" (click)="onEdit(team)"data-bs-toggle="modal"
-                                        data-bs-target="#teamModal">
+                                    <button class="btn btn-sm edit-btn me-2" (click)="onEdit(team)"
+                                        data-bs-toggle="modal" data-bs-target="#teamModal">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
                                 </div>

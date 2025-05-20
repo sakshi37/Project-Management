@@ -11,8 +11,18 @@
   table,td,th {
     text-align: center;
     padding: .5rem 0;
-    max-height: 30px !important;
+    /* max-height: 30px !important; */
 
+  }
+  ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items{
+    background-color: #edeff3 !important;
+    border-radius: 0.7rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    padding: 1rem !important;
+    font-size: large !important;
+    color: #000 !important;
+    margin-left: -10px !important;
+    width: 355px !important;
   }
   .head-first,.head-last,.head-other{
     width: 100% !important;
