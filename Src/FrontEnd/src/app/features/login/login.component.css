@@ -127,239 +127,145 @@ footer {
 }
 
 /* iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii */
-
-/* Reset Password Modal */
+/* ========== Forgot Password Modal ========== */
 #forgotPasswordModal .modal-dialog {
-  max-width: 450px;  /* Maximum width of the modal */
-  margin: auto;  /* Center the modal horizontally */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: scale(0.9);
+  max-width: 450px;
+  margin: auto;
+  transform: scale(0.95);
   animation: modalScaleIn 0.3s ease-out forwards;
-  text-align: center;
 }
 
 #forgotPasswordModal .modal-content {
-  background: #ffffff;
-  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  border-radius: 10px; /* Added border-radius for rounded corners */
-}
-
-/* Modal Header */
-#forgotPasswordModal .modal-header {
-  background: linear-gradient(135deg, royalblue, royalblue);
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  padding-bottom: 20px;
-  border-bottom: 3px solid #eaeaea;
-}
-
-#forgotPasswordModal .modal-title {
-  text-transform: uppercase;
-}
-
-/* Modal Body */
-#forgotPasswordModal .modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 15px 0;
-  align-items: center; /* Centering inputs horizontally */
-}
-
-/* Input Fields */
-#forgotPasswordModal input {
-  padding: 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  background-color: #fafafa;
-  transition: all 0.3s ease;
-  width: 70%;  /* Set width to 70% to make inputs narrower */
-  max-width: 500px;
-  border-radius: 10px;
-}
-
-#forgotPasswordModal input:focus {
-  outline: none;
-  border-color: #00a78e;
-  box-shadow: 0 0 8px rgba(0, 167, 142, 0.5);
-}
-
-/* Submit Button */
-#forgotPasswordModal .modal-footer button {
-  width: 80%;
-  padding: 14px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: white;
-  background-color: #00a78e;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 8px;
-}
-
-
-#forgotPasswordModal .modal-footer button:hover {
-  background-color: #008e77;
-}
-
-#forgotPasswordModal .modal-footer button:active {
-  transform: scale(0.98);
-  background-color: #006f59;
-}
-
-/* Close Button */
-#forgotPasswordModal .btn-close {
-  background-color: #5e5e5e;
-  padding: 8px 12px;
-  font-size: 1.1rem;
-}
-
-#forgotPasswordModal .btn-close:hover {
-  background-color: #e60000;
-}
-
-/* Modal Animation */
-@keyframes modalScaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Responsive Styling */
-@media (max-width: 576px) {
-  #forgotPasswordModal .modal-dialog {
-    max-width: 90%;
-  }
-
-  #forgotPasswordModal .modal-body {
-    padding: 10px 0;
-  }
-
-  #forgotPasswordModal input {
-    width: 90%;
-  }
-}
-.password-input-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.password-input {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.password-input input {
-  flex: 1;
-  padding-right: 40px;
-}
-
-.eye-btn {
-  position: absolute;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.validation-message {
-  margin-top: 4px;
-}
-p {
-  font-family: Lato;
-}
-
-.btn_resend {
-  border: 0;
-  padding: 5px 10px;
-  color: red;
-}
-
-.btn_resend[disabled] {
-  color: blue;
-}
-/* Modal general styling */
-#forgotPasswordModal .modal-content {
+  background: #fff;
   border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   padding: 1.5rem;
   font-family: 'Segoe UI', sans-serif;
 }
 
 #forgotPasswordModal .modal-header {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: #fff;
   border-bottom: none;
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  padding: 1rem 1.5rem;
+  border-radius: 1rem 1rem 0 0;
+  padding: 1rem 1.25rem;
+  justify-content: center;
+  text-align: center;
 }
 
 #forgotPasswordModal .modal-title {
-  font-weight: 600;
   font-size: 1.25rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0;
 }
 
+#forgotPasswordModal .btn-close {
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  padding: 0.5rem;
+}
+
+#forgotPasswordModal .btn-close:hover {
+  background-color: #dc3545;
+}
+
+/* Body Layout */
 #forgotPasswordModal .modal-body {
-  padding: 1.5rem;
-}
-
-#forgotPasswordModal .modal-footer {
-  border-top: none;
-  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+  padding: 1.5rem 0;
 }
 
 #forgotPasswordModal input.form-control {
+  width: 70%;
+  max-width: 350px;
   height: 44px;
-  font-size: 0.95rem;
   border-radius: 0.5rem;
   border: 1px solid #ced4da;
+  padding: 0 0.75rem;
+  font-size: 0.95rem;
+  transition: 0.3s ease;
 }
 
 #forgotPasswordModal input.form-control:focus {
   border-color: #0d6efd;
-  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.2);
 }
 
- 
-#forgotPasswordModal .input-group .btn {
-  border-radius: 0 0.5rem 0.5rem 0;
+/* Password Toggle Row */
+.password-input {
+  position: relative;
+  display: flex;
+  width: 70%;
+  max-width: 350px;
 }
 
-#forgotPasswordModal .input-group input {
-  border-right: none;
-  border-radius: 0.5rem 0 0 0.5rem;
+.password-input input {
+  flex-grow: 1;
+  padding-right: 2.5rem;
 }
 
-#forgotPasswordModal .input-group .btn i {
-  font-size: 1.1rem;
+.password-input button {
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #555;
 }
 
- 
+.password-input button:hover {
+  color: #000;
+}
+
+/* Validation */
+.validation-message {
+  width: 70%;
+  max-width: 350px;
+  font-size: 0.85rem;
+  color: red;
+  margin-top: -0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Mismatch password alert */
 .text-danger.small {
-  margin-top: -0.5rem;
-  margin-bottom: 0.75rem;
   font-size: 0.85rem;
 }
 
- 
-#forgotPasswordModal .btn-primary {
-  font-weight: 500;
-  padding: 0.6rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
+/* Footer button */
+#forgotPasswordModal .modal-footer {
+  border-top: none;
+  padding-top: 0;
+  justify-content: center;
 }
 
- 
+#forgotPasswordModal .btn-primary {
+  width: 70%;
+  max-width: 350px;
+  background-color: #00a78e;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+#forgotPasswordModal .btn-primary:hover {
+  background-color: #008e77;
+}
+
+#forgotPasswordModal .btn-primary:active {
+  background-color: #006f59;
+  transform: scale(0.98);
+}
+
+/* Forgot Password trigger link */
 .login-as-customer {
   display: block;
   text-align: center;
@@ -371,4 +277,32 @@ p {
 
 .login-as-customer:hover {
   text-decoration: underline;
+}
+
+/* Modal animation */
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  #forgotPasswordModal .modal-dialog {
+    max-width: 70%;
+  }
+
+  #forgotPasswordModal input.form-control,
+  #forgotPasswordModal .btn-primary {
+    width: 70%;
+  }
+
+  .password-input {
+    width: 70%;
+  }
 }

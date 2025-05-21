@@ -7,6 +7,7 @@ import { UserService } from '../../services/user.service';
 import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { AppComponent } from '../../app.component';
+import { Toast } from 'bootstrap';
 
 declare var bootstrap: any;
 
@@ -165,15 +166,20 @@ export class LoginComponent implements OnInit {
       }
     }, 1000);
   }
+terminateOtp() {
+  this.isLoggingIn = false;
+  Swal.fire({
+    toast: true,
+    position: 'top',
+    icon: 'info',
+    title: 'Process Terminated',
+    text: 'OTP verification process has been terminated. Please login again.',
+    showConfirmButton: false,
+    timer: 4000,
+    timerProgressBar: true
+  });
+}
 
-  terminateOtp() {
-    this.isLoggingIn = false;
-    Swal.fire(
-      'Process Terminated',
-      'OTP verification process has been terminated. Please login again.',
-      'info'
-    );
-  }
 
   moveToNext(event: any, index: number) {
     const input = event.target;
@@ -206,7 +212,15 @@ export class LoginComponent implements OnInit {
         this.forgotUsername = result.value;
         this.userService.sendForgotPasswordOtp(this.forgotUsername).subscribe({
           next: () => {
-            Swal.fire('Success', 'OTP sent to your registered email.', 'success');
+           Swal.fire({
+          toast: true,
+          position: 'top',
+          icon: 'success',
+          title: 'OTP sent to your registered email.',
+          showConfirmButton: false,
+          timer: 4000,
+          timerProgressBar: true});
+
             setTimeout(() => {
               const modalElement = document.getElementById('forgotPasswordModal');
               const forgotPasswordModal = new bootstrap.Modal(modalElement);
