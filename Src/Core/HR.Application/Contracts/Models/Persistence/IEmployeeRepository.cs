@@ -5,6 +5,7 @@ using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
+using HR.Application.Features.Employees.Queries.GetEmployeesAll;
 using HR.Domain.Entities;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ namespace HR.Application.Contracts.Persistence
         Task<string> MakeEmployeeInactiveAsync(string code);
         Task<string> MakeEmployeeActiveAsync(string code);
         Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize);
+        Task<List<GetEmployeeDto>> GetAllEmployeesAsync();
+
         //Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(int id);
         Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(string Code);
         Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did);

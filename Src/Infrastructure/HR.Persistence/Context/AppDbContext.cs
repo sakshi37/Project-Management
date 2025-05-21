@@ -65,6 +65,8 @@ public class AppDbContext : DbContext
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<TeamCompositionDto> TeamCompositionDtos { get; set; }
+    public DbSet<TeamMember> TeamMembers { get; set; }
+
 
     public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
     public DbSet<Counter> Counter { get; set; }
@@ -104,6 +106,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
+
+
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
         modelBuilder.Entity<Employee>().ToTable("Tbl_Employee_master");
@@ -112,7 +116,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<HolidayDto>().HasNoKey();
         modelBuilder.Entity<TotalValue>().HasNoKey();
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
+        modelBuilder.Entity<TeamComposition>().ToTable("Tbl_TeamComposition");
+        //modelBuilder.Entity<TeamComposition>().HasNoKey();
+
+
         modelBuilder.Entity<TeamLeaderDto>().HasNoKey();
+        modelBuilder.Entity<TeamMember>().ToTable("Tbl_TeamMembers");
 
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();

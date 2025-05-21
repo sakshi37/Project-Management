@@ -9,9 +9,12 @@ using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeeByDesignation;
+using HR.Application.Features.Employees.Queries.GetEmployeesAll;
 using HR.Application.Features.LoginMaster.Commands.InsertLogin;
+using HR.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HR.API.Controllers
 {
@@ -20,9 +23,12 @@ namespace HR.API.Controllers
     public class EmployeeController : ControllerBase
     {
         readonly IMediator _mediator;
-        public EmployeeController(IMediator mediator)
+        readonly AppDbContext _appDbContext;
+
+        public EmployeeController(IMediator mediator , AppDbContext appDbContext)
         {
             _mediator = mediator;
+            _appDbContext = appDbContext;
 
         }
 
@@ -69,6 +75,14 @@ namespace HR.API.Controllers
             var result = await _mediator.Send(query);
             return Ok(result);
         }
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetEmployeesAll()
+        {
+            var employees = await _mediator.Send(new GetEmployeesAllQuery());
+
+            return Ok(employees);
+        }
+
         [HttpGet("ProfileDetalis/{code}")]
         public async Task<IActionResult> GetEmployeeProfile(string code)
         {

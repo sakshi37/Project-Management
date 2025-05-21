@@ -121,6 +121,7 @@ export class HolidayComponent implements OnInit, AfterViewInit {
     const today = new Date();
     const holiday = new Date(holidayDate);
     // Reset time to ignore time part
+
     today.setHours(0, 0, 0, 0);
     holiday.setHours(0, 0, 0, 0);
     return holiday < today;
@@ -158,12 +159,6 @@ export class HolidayComponent implements OnInit, AfterViewInit {
   onSubmit(): void {
     if (this.holidayForm.invalid){
       this.holidayForm.markAllAsTouched();
-      Swal.fire({
-              icon: 'error',
-              title: 'Invalid',
-              text: 'Please fill all details!',
-              confirmButtonColor: '#d33'
-            });
       return;
     }
     const listTypeBool = this.holidayForm.value.holidayStatus === '1' ? true : false;
@@ -181,12 +176,18 @@ export class HolidayComponent implements OnInit, AfterViewInit {
         next: () => {
           this.loadHolidays();
           this.modal.hide();
-          Swal.fire({
-            icon: 'success',
-            title: 'Updated',
-            text: 'Holiday updated successfully!',
-            confirmButtonColor: '#3085d6'
-          });
+          
+                    Swal.fire({
+                      toast: true,
+                      position: 'top',
+                      timer: 1000,
+                      timerProgressBar: true,
+                      showConfirmButton: false,
+                      icon: 'success',
+                      title: 'Updated',
+                      text: 'Holiday updated successfully!',
+                      confirmButtonColor: '#3085d6',
+                    });
         },
         error: (err) => this.errorHandler.handleError(err)
       });
@@ -196,12 +197,18 @@ export class HolidayComponent implements OnInit, AfterViewInit {
         next: () => {
           this.loadHolidays();
           this.modal.hide();
-          Swal.fire({
-            icon: 'success',
-            title: 'Created',
-            text: 'Holiday created successfully!',
-            confirmButtonColor: '#3085d6'
-          });
+          
+                    Swal.fire({
+                      toast: true,
+                      position: 'top',
+                      timer: 1000,
+                      timerProgressBar: true,
+                      showConfirmButton: false,
+                      icon: 'success',
+                      title: 'Created',
+                      text: 'Holiday created successfully!',
+                      confirmButtonColor: '#3085d6',
+                    });
         },
         error: (err) => this.errorHandler.handleError(err)
       });

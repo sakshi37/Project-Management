@@ -8,6 +8,7 @@ using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
+using HR.Application.Features.Employees.Queries.GetEmployeesAll;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.Data.SqlClient;
@@ -39,7 +40,32 @@ namespace HR.Persistence.Repositories
             return new PaginatedResult<GetAllEmployeeVm>(pagedData, totalCount, pageNumber, pageSize);
 
         }
+        public async Task<List<GetEmployeeDto>> GetAllEmployeesAsync()
+        {
+            var result = new List<GetEmployeeDto>();
 
+            var connection = _appDbContext.Database.GetDbConnection();
+            await using (connection)
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = "SP_GetEmployeesAll"; // Your stored procedure name
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new GetEmployeeDto
+                    {
+                        Id = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        Email = reader.IsDBNull(2) ? null : reader.GetString(2),
+                    });
+                }
+            }
+
+            return result;
+        }
         public async Task<string> MakeEmployeeActiveAsync(string code)
         {
             var result = await _appDbContext

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace HR.Domain.Entities
 {
     public class TeamComposition
     {
+        [Key]
         public int TeamId { get; set; }
         public string TeamName { get; set; }
         public int Fk_BranchId { get; set; }
@@ -18,6 +20,9 @@ namespace HR.Domain.Entities
         public DateTime? CreatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
+
+        //public ICollection<TeamMember> TeamMembers { get; set; }
+
     }
 
 }

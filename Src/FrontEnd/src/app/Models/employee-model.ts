@@ -18,6 +18,12 @@ export interface Employee {
     pageNumber: number;
     pageSize: number;
   }
+  export interface GetEmployeesAll{
+    id : number;
+    name : string;
+    email : string;
+    isActive : boolean;
+  }
   
   export interface EmployeeFull extends Employee {
   address: string;

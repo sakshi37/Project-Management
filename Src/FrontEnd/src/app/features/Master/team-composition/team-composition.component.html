@@ -24,10 +24,9 @@
 
         <!-- Add Team Button -->
         <div class="col-md-3 ">
-            <button class="btn custom-excel-btn"
-                (click)="exportToExcel()">
-                <i class="fas fa-file-csv"></i>  
-                 Export to Excel
+            <button class="btn custom-excel-btn" (click)="exportToExcel()">
+                <i class="fas fa-file-csv"></i>
+                Export to Excel
             </button>
         </div>
         <div class="col-md-3 text-end">
@@ -60,64 +59,117 @@
                         <div class="col-md-12">
                             <label class="form-label">Branch:</label>
                             <select class="form-select" formControlName="fk_BranchId">
-                                <option [value]="" selected>All Branches</option>
+                                <option value="">All Branches</option>
                                 <option *ngFor="let branch of branches" [value]="branch.branchId">
                                     {{ branch.branchName }}
                                 </option>
                             </select>
                         </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Team Members:</label>
+                            <ng-select class="form-select" [items]="employeeList" bindLabel="name" bindValue="id" [multiple]="true"
+                                 placeholder="Select Employees" formControlName="teamMembers">
+                            </ng-select>
+
+                        </div>
+
 
                         <div class="col-md-12">
                             <label class="form-label">Division:</label>
                             <select class="form-select" formControlName="fk_DivisionId">
-                                <option [value]="" selected>All Divisions</option>
-
+                                <option value="">All Divisions</option>
                                 <option *ngFor="let division of divisions" [value]="division.divisionId">
                                     {{ division.divisionName }}
                                 </option>
                             </select>
                         </div>
 
-                        <!-- <div class="col-md-12">
-                <label class="form-label">Team Leader ID:</label>
-                <input type="number" formControlName="fk_TeamLeaderId" class="form-control" />
-              </div> -->
                         <div class="col-md-12">
                             <label for="teamLeader" class="form-label">Team Leader</label>
                             <select id="teamLeader" class="form-select" formControlName="fk_TeamLeaderId">
-                                <option [value]="" selected>All TeamLeaders</option>
-
-                                <!-- <option value="" disabled selected>Select Team Leader</option> -->
-                                <!-- <option [value]="''" selected>All</option> -->
+                                <option value="">All Team Leaders</option>
                                 <option *ngFor="let leader of teamLeaders" [value]="leader.id">
                                     {{ leader.name }}
                                 </option>
                             </select>
                         </div>
-                        <div class="col-12">
+
+
+                        <!-- Division Dropdown -->
+
+
+                        <!-- Team Leader Dropdown -->
+
+
+                        <div class="col-12" *ngIf="isEditMode">
                             <label for="teamStatus" class="form-label">Status:</label>
                             <div class="input-icon-group">
-                              <i class="fas fa-toggle-on"></i>
-                              <select id="teamStatus" name="teamStatus" class="form-control" formControlName="teamStatus">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                              </select>
+                                <i class="fas fa-toggle-on"></i>
+                                <select id="teamStatus" name="teamStatus" class="form-control"
+                                    formControlName="teamStatus">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
                             </div>
-                          </div>
+                        </div>
 
 
                         <div class="col-12 d-flex justify-content-end">
-                            <button class="btn btn-success" data-bs-dismiss="modal" type="submit">
+                            <button class="btn btn-success" type="submit">
                                 {{ isEditMode ? 'Update' : 'Add' }}
                             </button>
-                            <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()"
+                                data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <!-- View Modal -->
+    <div class="modal fade" id="viewteamModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">View Team Members</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form [formGroup]="viewteamForm" class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Team Name:</label>
+                            <input type="text" formControlName="teamName" class="form-control" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Team Members:</label>
+                            <ng-select class="form-select" [items]="employeeList" bindLabel="name" bindValue="id" [multiple]="true"
+                                 placeholder="No Employees" formControlName="teamMembers">
+                            </ng-select>
+
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="teamLeader" class="form-label">Team Leader</label>
+                            <select id="teamLeader" class="form-select" formControlName="fk_TeamLeaderId" [attr.disabled]="true">
+                                <option value="">All Team Leaders</option>
+                                <option *ngFor="let leader of teamLeaders" [value]="leader.id">
+                                    {{ leader.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-12 d-flex justify-content-end">
+                            <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()"
+                                data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Table -->
     <div class="row gy-4" *ngIf="teamCompositions && teamCompositions.length > 0;">
         <div class="col-12">
@@ -146,13 +198,15 @@
                             <th>
                                 <div class="head-last">Action</div>
                             </th>
+                            
                         </tr>
                     </thead>
                     <tbody>
                         <!-- <tr
                   *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index"
                   [ngClass]="{ 'inactive-row': !h.holidayStatus }"> -->
-                        <tr *ngFor="let team of teamCompositions; let i = index" [ngClass]="{ 'inactive-row': !team.teamStatus }">
+                        <tr *ngFor="let team of teamCompositions; let i = index"
+                            [ngClass]="{ 'inactive-row': !team.teamStatus }" style="max-height: 40px !important;">
 
                             <td>
                                 <div class="tr-first-child">{{ i + 1 }}</div>
@@ -183,9 +237,13 @@
                             </td>
                             <td>
                                 <div class="tr-last-child">
-                                    <button class="btn btn-sm edit-btn me-2" (click)="onEdit(team)"data-bs-toggle="modal"
-                                        data-bs-target="#teamModal">
-                                        <i class="fas fa-edit"></i> Edit
+                                    <button class="ebtn btn-sm edit-btn me-2" (click)="onEdit(team)"
+                                        data-bs-toggle="modal" data-bs-target="#teamModal">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="ebtn btn-sm edit-btn me-2" (click)="onView(team)"
+                                        data-bs-toggle="modal" data-bs-target="#viewteamModal">
+                                        <i class="fas fa-user-tie"></i>
                                     </button>
                                 </div>
                             </td>

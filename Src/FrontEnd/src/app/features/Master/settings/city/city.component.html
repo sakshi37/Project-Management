@@ -1,31 +1,74 @@
 <div class="container mt-4">
   <!-- Add City Button -->
-  <div class="text-end mb-3">
+  <!-- <div class="text-end mb-3">
     <button type="button" class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#cityModal"
       (click)="openAddModal()">
       + Add City
     </button>
-  </div>
+  </div> -->
 
   <!-- show etries -->
-  <div class="entries-dropdown">
+  <!-- <div class="entries-dropdown">
     <label for="entries">Show</label>
     <select id="entries" [(ngModel)]="itemsPerPage">
       <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
     </select>
     <span>Entries</span>
-  </div>
-  <div class="mb-3 row">
+  </div> -->
+  <!-- <div class="mb-3 row">
     <div class="input-group" style="width: 300px;">
       <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
       <input type="text" id="search" class="form-control" placeholder="Search City" [(ngModel)]="searchText"
         (ngModelChange)="filterCities()" style="background-color: transparent;">
     </div>
+  </div> -->
+  <div class="row mb-3 align-items-center">
+    <!-- Left Column: Search -->
+    <div class="col-md-2">
+      <div class="entries-dropdown">
+        <label for="entries">Show</label>
+        <select id="entries" [(ngModel)]="itemsPerPage">
+          <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+            {{ option }}
+          </option>
+        </select>
+        <span>Entries</span>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="input-group" style="width: 100%">
+        <span class="input-group-text" style="background-color: transparent">
+          <i class="fas fa-search"></i>
+        </span>
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          placeholder="Search City"
+          [(ngModel)]="searchText"
+          (ngModelChange)="filterCities()"
+          style="background-color: transparent"
+        />
+      </div>
+    </div>
+
+    <!-- Right Column: Add Button -->
+    <div class="col-md-6 text-end">
+      <button
+        type="button"
+        class="btn custom-add-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#cityModal"
+        (click)="openAddModal()"
+      >
+        + Add City
+      </button>
+    </div>
   </div>
 
   <!-- City Modal -->
-  <div class="modal fade" id="cityModal" tabindex="-1" aria-labelledby="cityModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+  <div #cityModal class="modal fade" id="cityModal" tabindex="-1" aria-labelledby="cityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="modal-header">
@@ -34,49 +77,9 @@
             (click)="resetForm()"></button>
         </div>
         <!-- Modal Body -->
-        <!-- <div class="modal-body">
-          <form [formGroup]="cityForm" (ngSubmit)="onSubmit()" class="row g-3">
-            
-            <div class="col-md-6">
-              <label for="countryId" class="form-label">Country:</label>
-              <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId">
-                <option value="">Select Country</option>
-                <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="stateId" class="form-label">State:</label>
-              <select class="form-select" formControlName="stateId" id="stateId">
-                <option value="">Select State</option>
-                <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="cityName" class="form-label">City Name:</label>
-              <input type="text" class="form-control" formControlName="cityName" id="cityName" />
-            </div>
-
-            <div class="col-md-6">
-              <label for="cityStatus" class="form-label">Status:</label>
-              <select id="cityStatus" class="form-select" formControlName="cityStatus">
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-              </select>
-            </div>
-
-            <div class="col-12 d-flex justify-content-end">
-              <button type="submit" class="btn btn-success" data-bs-dismiss="modal">{{ isEditMode ? 'Update' : 'Add' }}</button>
-              <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal"
-                (click)="resetForm()">Cancel</button>
-            </div>
-          </form>
-        </div> -->
         <div class="modal-body">
           <form [formGroup]="cityForm" (ngSubmit)="onSubmit()" class="row g-3">
 
-            <!-- Country -->
             <div class="col-md-12">
               <label for="countryId" class="form-label">Country:</label>
               <div class="input-icon-group">
@@ -93,13 +96,12 @@
               </div>
             </div>
 
-            <!-- State -->
             <div class="col-md-12">
               <label for="stateId" class="form-label">State:</label>
               <div class="input-icon-group">
                 <i class="fas fa-map-marked-alt"></i>
                 <select id="stateId" class="form-select" formControlName="stateId"
-                  [ngClass]="{ 'is-invalid': cityForm.get('stateId')?.touched && cityForm.get('stateId')?.invalid }">
+                  [ngClass]="{ 'is-invalid': cityForm.get('stateId')?.touched && cityForm.get('stateId')?.invalid }" (change)="onStateChange()">
                   <option value="">Select State</option>
                   <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
                 </select>
@@ -109,8 +111,7 @@
               </div>
             </div>
 
-            <!-- City Name -->
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <label for="cityName" class="form-label">City Name:</label>
               <div class="input-icon-group">
                 <i class="fas fa-city"></i>
@@ -121,9 +122,28 @@
                 <div *ngIf="cityForm.get('cityName')?.errors?.['required']">City Name is required.</div>
                 <div *ngIf="cityForm.get('cityName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
               </div>
+            </div> -->
+            <div class="mb-12">
+              <label for="cityName" class="form-label">City Name</label>
+              <select
+                id="cityName"
+                class="form-select"
+                formControlName="cityName"
+                required
+              >
+                <option value="">-- Select City --</option>
+                <option *ngFor="let city of cityDropdownList" [value]="city">
+                  {{ city }}
+                </option>
+              </select>
+              <div *ngIf="cityForm.get('cityName')?.touched && cityForm.get('cityName')?.invalid" class="text-danger">
+                <div *ngIf="cityForm.get('cityName')?.errors?.['required']">City Name is required.</div>
+                <div *ngIf="cityForm.get('cityName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
+              </div>
             </div>
+            
 
-            <div class="col-md-12">
+            <div class="col-md-12" *ngIf="isEditMode">
               <label for="cityStatus" class="form-label"> Status:</label>
               <div class="input-icon-group">
                 <i class="fas fa-toggle-on"></i>
@@ -135,7 +155,7 @@
             </div>
 
             <div class="col-12 d-flex justify-content-end">
-              <button type="submit" class="btn btn-success" data-bs-dismiss="modal">
+              <button type="submit" class="btn btn-success">
                 <i class="fas fa-check-circle"></i> {{ isEditMode ? 'Update' : 'Add' }}
               </button>
               <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal" (click)="resetForm()">
