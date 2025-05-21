@@ -30,9 +30,9 @@
         </div>
         <div *ngIf="reportTypes == 4"class="col-md-6">
             <label class="form-label" for="employee">Select Employee</label>
-            <select class="form-select" name="employee" id="employee">
+            <select class="form-select" name="employee" id="employee"(change)="getEAREmployeeName()" [(ngModel)]="selectedEmployeeName">
                 <option value="" selected disabled>--Select Employee--</option>
-                <option *ngFor="let employee of employees" value="{{employee.code}}">{{employee.name}}</option>
+                <option *ngFor="let employee of employees" value="{{employee.name}}">{{employee.name}}_[{{employee.code}}]</option>
             </select>
         </div>
         </div>
@@ -40,27 +40,28 @@
         <div class="row">
         <div class="col-md-3">
             <label for="From-label">From:</label>
-            <input class="form-control" type="date" id="From" name="From">
+            <input class="form-control" type="date" id="From" name="From" [(ngModel)]="fromDate">
         </div>
         <div class="col-md-3">
             <label for="form-label">To:</label>
-            <input class="form-control" type="date" id="From" name="From">
+            <input class="form-control" type="date" id="From" name="To"  [(ngModel)]="toDate" (change)="filterByDate()">
         </div >
        
-        <div class ="col-md-6"><button class="btn btn-outline-success"><i class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
+        <div class ="col-md-6"><button (click)="exportToExcel()" class="btn btn-outline-success"><i class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
     </div>
 </div>
 <br>
 <!-- table -->
 
-<div class="row gy-4" *ngIf="attendanceReports && attendanceReports.length > 0; else noData">
+<div class="row gy-4" *ngIf="filteredattendanceReports && filteredattendanceReports.length > 0; else noData">
     <div class="col-12">
-        <table class="table table-responsive mb-0 text-center">
+        <table class="table table-responsive mb-0 text-center" id ="Table_id">
           <thead>
-            <tr >
+            <tr  >
               <th><div class="head-first">Sr. No</div></th>
               <th><div class="head-other">Date</div></th>
               <th><div class="head-other">Division Name</div></th>
+              <th><div class="head-other">Department Name</div></th>
               <th><div class="head-other">Employee Code</div></th>
               <th><div class="head-other">Employee Name</div></th>
               <th><div class="head-other">In-Time</div></th>
@@ -72,7 +73,7 @@
 
           <tbody>
             <tr
-              *ngFor="let ateendanceReport of attendanceReports | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
+              *ngFor="let ateendanceReport of filteredattendanceReports | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
               [ngClass]="{ 'inactive-row': !ateendanceReport.employeeCode }">
               <td>
                 <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
@@ -82,6 +83,9 @@
               </td>
               <td>
                 <div class="tr-other-child">{{ ateendanceReport.divisionName }}</div>
+              </td>
+                <td>
+                <div class="tr-other-child">{{ ateendanceReport.departmentName }}</div>
               </td>
               <td>
                 <div class="tr-other-child">{{ ateendanceReport.employeeCode }}</div>
@@ -109,5 +113,5 @@
 
   <!-- nodatatemplate -->
   <ng-template #noData>
-    <div class="alert alert-info text-center mt-4">No Employee Attendance Reports found.</div>
+    <div class="alert alert-info text-center mt-4">Select Data From Above Drop Down.</div>
   </ng-template>

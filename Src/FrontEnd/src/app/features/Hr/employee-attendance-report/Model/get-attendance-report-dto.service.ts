@@ -5,5 +5,6 @@ employeeName:string;
 inTime:Date;
 outTime:Date;
 divisionName:string;
+departmentName:string;
 
 }
