@@ -7,3 +7,12 @@ export interface FamilyMember {
   relationWithEmployee: string;
   familyStatus: boolean;
 }
+
+
+export interface FamilyList{
+  familyMemberTypeName:string,
+  familyMemberName:string,
+  birthDate:Date,
+  age:number,
+  relationWithEmployee:string
+}

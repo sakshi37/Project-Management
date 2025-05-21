@@ -64,11 +64,17 @@ export class EmployeeComponent implements OnInit {
       });
   }
 
+  get totalPages(): number {
+  return Math.ceil(this.totalCount / this.pageSize);
+}
+  
   onPageChange(newPage: number) {
-    if (newPage < 1 || newPage > Math.ceil(this.totalCount / this.pageSize))
-      return;
-    this.pageNumber = newPage;
-    this.loadEmployees();
+     const maxPage = Math.ceil(this.totalCount / this.pageSize);
+  if (newPage < 1 || newPage > maxPage) {
+    return; // do nothing, outside valid page range
+  }
+  this.pageNumber = newPage;
+  this.loadEmployees();
   }
 
  editEmployee(emp: any): void {
@@ -115,30 +121,29 @@ export class EmployeeComponent implements OnInit {
       });
   }
 
-  onSearch() {
-    this.employeeService
-      .getPagedEmployees(this.pageNumber, this.pageSize , this.searchText.trim())
-      .subscribe((res) => {
-        const search = this.searchText?.toLowerCase().trim();
+onSearch() {
+  const search = this.searchText?.toLowerCase().trim();
 
-        this.employees = res.data.filter(
-          (emp: {
-            code: string;
-            name: string;
-            branchName: string;
-            designationName: string;
-            divisionName: string;
-          }) =>
-            emp.code?.toLowerCase().includes(search) ||
-            emp.name?.toLowerCase().includes(search) ||
-            emp.branchName?.toLowerCase().includes(search) ||
-            emp.designationName?.toLowerCase().includes(search) ||
-            emp.divisionName?.toLowerCase().includes(search)
+  this.employeeService
+    .getPagedEmployees(this.pageNumber, this.pageSize, search)
+    .subscribe((res) => {
+      this.employees = res.data.filter((emp: any) => {
+        const statusText = emp.loginStatus ? 'active' : 'inactive';
+
+        return (
+          emp.code?.toLowerCase().includes(search) ||
+          emp.name?.toLowerCase().includes(search) ||
+          emp.branchName?.toLowerCase().includes(search) ||
+          emp.designationName?.toLowerCase().includes(search) ||
+          emp.divisionName?.toLowerCase().includes(search) ||
+          statusText.includes(search)
         );
-
-        this.totalCount = this.employees.length;
       });
-  }
+
+      this.totalCount = this.employees.length;
+    });
+}
+
 
   exportexceldata(): void {
     const exceldata = this.employees.map((emp, i) => {
@@ -253,4 +258,58 @@ export class EmployeeComponent implements OnInit {
       /^[A-Za-z0-9+/=]+$/.test(str)
     );
   }
+
+getSelectedEmployees(): any[] {
+  return this.employees.filter(emp => emp.selected);
+}
+// Check if all rows are selected
+areAllSelected(): boolean {
+  return this.employees.length > 0 && this.employees.every(emp => emp.selected);
+}
+
+// Select/Deselect all
+toggleSelectAll(event: Event): void {
+  const checked = (event.target as HTMLInputElement).checked;
+  this.employees.forEach(emp => emp.selected = checked);
+}
+
+// When an individual checkbox changes
+onCheckboxChange(): void {
+  // If needed, you could update some UI here
+}
+
+// Get selected employees
+selectedEmployees(): any[] {
+  return this.employees.filter(emp => emp.selected && emp.code);
+}
+
+// Delete (inactivate) selected employees
+deleteSelectedEmployees() {
+  const selectedCodes = this.selectedEmployees().map(emp => emp.code);
+
+if (selectedCodes.length === 0) {
+  alert('Please select at least one employee.');
+  return;
+}
+
+if (confirm('Are you sure you want to inactivate selected employees?')) {
+  this.employeeService.inactivateEmployees(selectedCodes).subscribe({
+    next: (response) => {
+      alert(response.message);
+      this.employees.forEach(emp => {
+        if (selectedCodes.includes(emp.code)) {
+          emp.loginStatus = false;
+        }
+        emp.selected = false;
+      });
+    },
+    error: (error) => {
+      console.error('Error:', error);
+      alert('Something went wrong while inactivating employees.');
+    }
+  });
+}
+
+}
+
 }

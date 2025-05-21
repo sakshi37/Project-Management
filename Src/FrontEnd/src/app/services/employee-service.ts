@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EmployeeFull, EmployeeModel, EmployeeResponse, GetEmployeesAll } from '../Models/employee-model';
 import { CreateModel } from '../Models/create-model';
@@ -15,17 +15,17 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) {}
 
-  getPagedEmployees(
-    page: number,
-    size: number,
-    search?: string
-  ): Observable<any> {
-    let params: any = { page, size };
-    if (search) {
-      params.search = search;
-    }
-    if (search && search.trim() !== '') {
-    params.search = search.trim();
+ getPagedEmployees(
+  page: number,
+  size: number,
+  search?: string
+): Observable<any> {
+  let params = new HttpParams()
+    .set('pageNumber', page)
+    .set('pageSize', size);
+
+  if (search && search.trim() !== '') {
+    params = params.set('search', search.trim());
   }
 
     return this.http.get<any>(
@@ -46,6 +46,21 @@ export class EmployeeService {
   getAllLocation() {
     return this.http.get<Location[]>(this.url + '/Location');
   }
+ inactivateEmployees(codes: string[]): Observable<{ message: string }> {
+  const payload = {
+    employeeCodes: codes
+  };
+
+  return this.http.post<{ message: string }>(
+    `${this.url}/Employee/Inactivate`,
+    payload,
+    {
+      headers: { 'Content-Type': 'application/json' }
+    }
+  );
+}
+
+
 }
 export type Location = {
   locationId: number;

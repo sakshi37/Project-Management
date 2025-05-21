@@ -3,6 +3,7 @@ using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
+using HR.Application.Features.Employees.Commands.MakeMultipleEmployeesInactive;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
@@ -154,6 +155,17 @@ namespace HR.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("Inactivate")]
+        public async Task<IActionResult> MakeInactive([FromBody] MakeMultipleEmployeesInactiveDto dto)
+        {
+            var command = new MakeMultipleEmployeesInactiveCommannd
+            {
+                EmployeeCodes = dto.EmployeeCodes
+            };
+
+            var result = await _mediator.Send(command);
+            return Ok(new { message = result });
+        }
 
     }
 }

@@ -97,14 +97,13 @@ namespace HR.API.Controllers
         }
 
 
-       
 
-        [HttpPost("insert-login")]
-       
-        public async Task<IActionResult> InsertLogin([FromBody] InsertLoginCommand command)
+
+        [HttpPost("insert-log")]
+        public async Task<IActionResult> InsertLog([FromBody] InsertLoginCommand command)
         {
             await _mediator.Send(command);
-            return Ok("Login inserted successfully.");
+            return Ok(new { Message = "Login inserted successfully" });
         }
     }
 }
