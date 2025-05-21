@@ -24,14 +24,23 @@ namespace HR.Persistence.Repositories
         }
         public async Task<TeamComposition> CreateAsync(CreateTeamCompositionDto dto)
         {
-            string sql = "EXEC SP_TeamCompositionInsert @TeamName = {0}, @Fk_BranchId = {1}, @Fk_DivisionId = {2}, @Fk_TeamLeaderId = {3}, @CreatedBy = {4}";
+            string teamMemberString = dto.TeamMembers != null && dto.TeamMembers.Any()
+                ? string.Join(",", dto.TeamMembers)
+                : null;
 
-            await _context.Database.ExecuteSqlRawAsync(sql,
-                dto.TeamName,
-                dto.Fk_BranchId,
-                dto.Fk_DivisionId,
-                dto.Fk_TeamLeaderId,
-                dto.CreatedBy);
+            var parameters = new[]
+            {
+        new SqlParameter("@TeamName", dto.TeamName),
+        new SqlParameter("@Fk_BranchId", dto.Fk_BranchId),
+        new SqlParameter("@Fk_DivisionId", dto.Fk_DivisionId),
+        new SqlParameter("@Fk_TeamLeaderId", dto.Fk_TeamLeaderId),
+        new SqlParameter("@TeamMemberIds", (object)teamMemberString ?? DBNull.Value),
+        new SqlParameter("@CreatedBy", dto.CreatedBy),
+    };
+
+            string sql = "EXEC SP_TeamCompositionInsert @TeamName, @Fk_BranchId, @Fk_DivisionId, @Fk_TeamLeaderId, @TeamMemberIds, @CreatedBy";
+
+            await _context.Database.ExecuteSqlRawAsync(sql, parameters);
 
             return new TeamComposition
             {
@@ -41,28 +50,78 @@ namespace HR.Persistence.Repositories
                 Fk_TeamLeaderId = dto.Fk_TeamLeaderId,
                 CreatedBy = dto.CreatedBy,
                 CreatedDate = DateTime.UtcNow,
-                TeamStatus = true
+                TeamStatus = true,
             };
         }
+
         //public async Task<List<TeamCompositionDto>> GetAllAsync()
         //{
         //    string sql = "EXEC SP_TeamCompositionGetAll";
         //    return await _context.TeamCompositionDtos.FromSqlRaw(sql).ToListAsync();
         //}
 
+        //public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
+        //{
+        //    var parameters = new[]
+        //    {
+        //    new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
+        //    new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
+        //     };
+
+        //    string sql = "EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId";
+        //    return await _context.TeamCompositionDtos
+        //        .FromSqlRaw(sql, parameters)
+        //        .ToListAsync();
+        //}
+        //    public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
+        //    {
+        //        var parameters = new[]
+        //        {
+        //    new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
+        //    new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
+        //};
+
+        //        // Step 1: Fetch core team composition data
+        //        var teams = await _context.TeamCompositionDtos
+        //            .FromSqlRaw("EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId", parameters)
+        //            .ToListAsync();
+
+
+
+        //        return teams;
+        //    }
+
         public async Task<List<TeamCompositionDto>> GetAllAsync(int? branchId = null, int? divisionId = null)
         {
             var parameters = new[]
             {
-            new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
-            new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
-             };
+        new SqlParameter("@BranchId", branchId ?? (object)DBNull.Value),
+        new SqlParameter("@DivisionId", divisionId ?? (object)DBNull.Value)
+    };
 
-            string sql = "EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId";
-            return await _context.TeamCompositionDtos
-                .FromSqlRaw(sql, parameters)
+            var results = await _context.TeamCompositionDtos
+                .FromSqlRaw("EXEC SP_TeamCompositionGetAll @BranchId, @DivisionId", parameters)
                 .ToListAsync();
+            foreach (var team in results)
+            {
+                if (!string.IsNullOrWhiteSpace(team.TeamMembers))
+                {
+                    team.TeamMemberIds = team.TeamMembers
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => int.Parse(id.Trim()))
+                        .ToList();
+                }
+                else
+                {
+                    team.TeamMemberIds = new List<int>();
+                }
+            }
+
+
+            return results;
         }
+
+
         public async Task<List<TeamLeaderDto>> GetTeamLeadersAsync()
         {
             string sql = "EXEC SP_GetTeamLeaders";

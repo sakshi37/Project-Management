@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import { CreateTeamCompositionDto } from './Models/create-team-composition.dto';
 import { UpdateTeamCompositionDto } from './Models/update-team-composition.dto';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
+import { EmployeeService } from '../../../services/employee-service';
 
 @Component({
   selector: 'app-team-composition',
@@ -26,6 +27,7 @@ import { ErrorHandlerService } from '../../../services/error-handler.service';
 export class TeamCompositionComponent {
   teamCompositions: GetTeamCompositionDto[] = [];
   teamForm!: FormGroup;
+  viewteamForm!: FormGroup;
   submitted = false;
   isEditMode = false;
   successMessage = '';
@@ -46,7 +48,8 @@ export class TeamCompositionComponent {
     private teamService: TeamCompositionService,
     private branchService: BranchService,
     private divisionService: DivisionService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private employeeService: EmployeeService,
     
 
   ) {}
@@ -55,6 +58,7 @@ export class TeamCompositionComponent {
     this.fetchTeamCompositions();
     this.initForm();
     this.loadBranches();
+    this.loadEmployees();
     this.loadDivisions();
     this.fetchTeamLeaders();
     this.loadTeamCompositions();
@@ -71,17 +75,25 @@ export class TeamCompositionComponent {
       fk_BranchId: ['', Validators.required],
       fk_DivisionId: ['', Validators.required],
       fk_TeamLeaderId: ['', Validators.required],
-      teamStatus: ['1', Validators.required]
+      teamStatus: ['1', Validators.required],
+      teamMembers: [[], Validators.required]
+
+    });
+    this.viewteamForm = this.fb.group({
+      teamName: [{ value: '', disabled: true }, Validators.required],
+      fk_TeamLeaderId: [{ value: '', disabled: true }, Validators.required],
+      teamMembers: [{value:[],disabled:true}, Validators.required]
+
     });
   }
-  formModel = {
-    teamName: '',
-    fk_BranchId: 0,
-    fk_DivisionId: 0,
-    fk_TeamLeaderId: 0,
-    createdBy: 1,
-    employeeIds: [] // store selected employee IDs
-  };
+
+  loadEmployees() {
+    this.employeeService.getAllEmployees().subscribe(data => {
+      this.employeeList = data;
+      console.log('Employee List:', this.employeeList);
+    });
+
+  }
   
   loadBranches(): void {
     this.branchService.getBranches().subscribe({
@@ -89,7 +101,10 @@ export class TeamCompositionComponent {
       error: (err) => console.error('Error loading branches', err)
     });
   }
-
+  getTeamMemberNames(items: any[]): string {
+    return items.map(i => i.name).join(', ');
+  }
+  
   loadDivisions(): void {
     this.divisionService.getAllDivisions().subscribe({
       next: (res) => this.divisions = res,
@@ -178,9 +193,10 @@ export class TeamCompositionComponent {
         this.selectedDivisionId || undefined
       )
       .subscribe({
-        next: (data) => this.teamCompositions = data,
+        next: (data) => {this.teamCompositions = data; console.log(this.teamCompositions);},
         error: (err) => console.error('Error fetching filtered teams', err)
       });
+      // console.log(this.teamCompositions);
   }
   
 
@@ -195,17 +211,39 @@ export class TeamCompositionComponent {
     //   teamStatus: '1'  
     // });
   }
-onEdit(team: GetTeamCompositionDto ): void {
-    this.teamForm.patchValue({
+
+  onView(team: GetTeamCompositionDto ): void {
+    // const teamMem:number[] = Number(team.teamMembers.split(','));
+    this.viewteamForm.patchValue({
       teamName: team.teamName,
       fk_BranchId: team.fk_BranchId,
       fk_DivisionId: team.fk_DivisionId,
       fk_TeamLeaderId: team.fk_TeamLeaderId,
       teamStatus: team.teamStatus ? '1' : '0',
+      teamMembers: team.teamMemberIds || []
     });
     this.selectedTeamId = team.teamId;
     this.isEditMode = true;
     // this.teamModal?.show();
+  }
+onEdit(team: GetTeamCompositionDto ): void {
+    this.selectedTeamId = team.teamId;
+    this.isEditMode = true;
+    // this.teamModal?.show();
+
+    this.loadEmployees(); // ensure dropdown is populated
+
+    setTimeout(() => {
+      this.teamForm.patchValue({
+        teamName: team.teamName,
+        fk_BranchId: team.fk_BranchId,
+        fk_DivisionId: team.fk_DivisionId,
+        fk_TeamLeaderId: team.fk_TeamLeaderId,
+        teamStatus: team.teamStatus ? '1' : '0',
+        teamMembers: team.teamMemberIds || []
+      });
+      
+    }, 200);
   }
   // onSubmit(): void {
   //   this.submitted = true;
@@ -234,6 +272,7 @@ onEdit(team: GetTeamCompositionDto ): void {
       fk_BranchId: '',
       fk_DivisionId: '',
       fk_TeamLeaderId: '',
+      teamMembers: [],
       teamStatus: '1'  
     });
     // this.teamForm.reset();
@@ -264,6 +303,7 @@ onEdit(team: GetTeamCompositionDto ): void {
       fk_BranchId: this.teamForm.value.fk_BranchId,
       fk_DivisionId: this.teamForm.value.fk_DivisionId,
       fk_TeamLeaderId: this.teamForm.value.fk_TeamLeaderId,
+      teamMembers: this.teamForm.value.teamMembers,
     };
   
     if (this.isEditMode && this.selectedTeamId !== null) {
@@ -292,7 +332,7 @@ onEdit(team: GetTeamCompositionDto ): void {
     } else {
       const createDto: CreateTeamCompositionDto = {
                   ...createPayload,
-                  createdBy: 1
+                  createdBy: 1,
                 };
       this.teamService.createTeam(createDto).subscribe({
         next: () => {

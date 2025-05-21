@@ -15,14 +15,38 @@
 
   }
   ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items{
-    background-color: #edeff3 !important;
-    border-radius: 0.7rem !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    background-color: #ffffff !important;
+    border-radius: 10px !important;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important; */
     padding: 1rem !important;
     font-size: large !important;
     color: #000 !important;
+    margin-top: 7px !important;
     margin-left: -10px !important;
     width: 355px !important;
+  }
+  ::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+    white-space: nowrap;
+    background-color: #5b7cfd;
+    padding: 6px;
+    color: white;
+    border-radius: 5px;
+}
+::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+    white-space: nowrap;
+    margin: 1px;
+}
+::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value .ng-value-icon {
+    cursor: pointer;
+    font-size: 20px;
+    margin-right: 5px;
+}
+::ng-deep .ng-select .ng-clear-wrapper .ng-clear{
+    font-size: 25px !important;
+}
+
+  ::ng-deep .ng-dropdown-panel::-webkit-scrollbar-track {
+    background: #5b7cfd; 
   }
   .head-first,.head-last,.head-other{
     width: 100% !important;
@@ -52,6 +76,11 @@
     border-bottom-left-radius: 0.7rem !important;
   }
   .tr-last-child {
+    display: flex;
+    justify-content: center; /* or flex-start / space-around depending on preference */
+    gap: 0.5rem; /* space between buttons */
+    padding: 1rem;
+    background-color: white !important;
     border-top-right-radius: 0.7rem !important;
     border-bottom-right-radius: 0.7rem !important;
   }
@@ -116,7 +145,16 @@
     box-shadow: #cccccc 0px 0px 10px;
     border: #59aaa9 1px solid;
   }
-  
+  .edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* padding: 6px 12px; */
+    border: none;
+    border-radius: 6px;
+    color: #444;
+    transition: background-color 0.2s ease;
+  }
   .edit-btn:hover {
     background-color: #e2e8f0;
     color: #000;
@@ -194,6 +232,11 @@
   .btn {
     border-radius: 8px;
     padding: 8px 16px;
+  }
+  .ebtn{
+    border-radius: 8px;
+    height: 30px;
+
   }
   
   .btn-success i, .btn-secondary i {
