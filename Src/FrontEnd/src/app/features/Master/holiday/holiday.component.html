@@ -75,7 +75,7 @@
       <button class="btn btn-secondary w-100" (click)="filterHolidays()">Search</button>
     </div>
   </div>
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3" >
+  <!-- <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3" >
     <div class="col" *ngFor="let h of filteredResults">
       <div class="card">
         <img [src]="'https://source.unsplash.com/s/photos/?' + h.holidayName" class="card-img-top" [alt]="h.holidayName">
@@ -91,20 +91,8 @@
         </div>
       </div>
     </div>
-  </div>
-  <!-- <div class="row">
-    <div class="col-md-3" *ngFor="let h of filteredResults">
-      <div class="holiday-card shadow-sm rounded text-center p-3 mb-3">
-        <h5 class="holiday-title">{{ h.holidayName }}</h5>
-        <div class="holiday-date">
-          <div class="day">{{ h.formattedDate}}</div>
-          <div class="details">
-            <div class="day-name">{{ h.dayName}}</div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div> -->
+ 
   
   <!-- Holiday List Table -->
   <div class="row gy-4" *ngIf="filteredResults && filteredResults.length > 0; else noData">
