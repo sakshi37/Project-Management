@@ -28,6 +28,10 @@ using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using HR.Application.Features.Employees.Dtos;
 using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
+using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
+using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+using Microsoft.SharePoint.WebControls;
+using HR.Application.Features.Admin.Queries.GetPendingRequest;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : DbContext
@@ -90,6 +94,10 @@ public class AppDbContext : DbContext
     public DbSet<empdetailDto> EmpdetailDtos { get; set; }
     public DbSet<GetFamilyDetailsByCodeQueryVm> FamilyDetailsByCodeVms { get; set; }
 
+    public DbSet<MissPunchOutQueryVm> MissPunchOutQueryVms { get; set; }
+    public DbSet<MissPunchInQueryVm> MissPunchInQueryVms { get; set; }
+    public DbSet<PendingRequestVm> pendingRequestVms { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -140,7 +148,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
         modelBuilder.Entity<empdetailDto>().HasNoKey(); 
         modelBuilder.Entity<GetFamilyDetailsByCodeQueryVm>().HasNoKey();
-
+        modelBuilder.Entity<MissPunchOutQueryVm>().HasNoKey();
+        modelBuilder.Entity<MissPunchInQueryVm>().HasNoKey();
+        modelBuilder.Entity<PendingRequestVm>().HasNoKey();
 
 
     }

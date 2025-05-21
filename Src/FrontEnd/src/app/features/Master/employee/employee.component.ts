@@ -121,30 +121,29 @@ export class EmployeeComponent implements OnInit {
       });
   }
 
-  onSearch() {
-    this.employeeService
-      .getPagedEmployees(this.pageNumber, this.pageSize , this.searchText.trim())
-      .subscribe((res) => {
-        const search = this.searchText?.toLowerCase().trim();
+onSearch() {
+  const search = this.searchText?.toLowerCase().trim();
 
-        this.employees = res.data.filter(
-          (emp: {
-            code: string;
-            name: string;
-            branchName: string;
-            designationName: string;
-            divisionName: string;
-          }) =>
-            emp.code?.toLowerCase().includes(search) ||
-            emp.name?.toLowerCase().includes(search) ||
-            emp.branchName?.toLowerCase().includes(search) ||
-            emp.designationName?.toLowerCase().includes(search) ||
-            emp.divisionName?.toLowerCase().includes(search)
+  this.employeeService
+    .getPagedEmployees(this.pageNumber, this.pageSize, search)
+    .subscribe((res) => {
+      this.employees = res.data.filter((emp: any) => {
+        const statusText = emp.loginStatus ? 'active' : 'inactive';
+
+        return (
+          emp.code?.toLowerCase().includes(search) ||
+          emp.name?.toLowerCase().includes(search) ||
+          emp.branchName?.toLowerCase().includes(search) ||
+          emp.designationName?.toLowerCase().includes(search) ||
+          emp.divisionName?.toLowerCase().includes(search) ||
+          statusText.includes(search)
         );
-
-        this.totalCount = this.employees.length;
       });
-  }
+
+      this.totalCount = this.employees.length;
+    });
+}
+
 
   exportexceldata(): void {
     const exceldata = this.employees.map((emp, i) => {

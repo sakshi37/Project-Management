@@ -42,11 +42,11 @@
     name="gender"
     required
   >
-    <option value="">Select Gender</option>
+    <option value="0" selected disabled>Select Gender</option>
     <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
   </select>
   <!-- Show error message always if no gender selected -->
-  <div *ngIf="!employees.fk_GenderId" class="text-danger">
+  <div *ngIf="!employees.fk_GenderId" class="text-danger"> 
     Gender is required.
   </div>
 </div>
@@ -179,7 +179,7 @@
       <div class="col-md-6">
         <label>Family Member</label>
         <select class="form-control" [(ngModel)]="family.fk_FamilyMemberTypeId" name="familyMemberId" placeholder="Select type">
-       <option value="" disabled selected>Select family member type</option>
+       <option value="0" disabled selected>Select Family Member Type</option>
           <option *ngFor="let type of familyTypes" [value]="type.id">{{ type.label }}</option>
         </select>
       </div>

@@ -19,6 +19,8 @@ import { TeamCompositionComponent } from './features/Master/team-composition/tea
 import { AuthGuard } from './services/authguard';
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
 import { EmployeeAttendanceReportComponent } from './features/Hr/employee-attendance-report/employee-attendance-report.component';
+import { DailyReportComponent } from './features/Hr/daily-report/daily-report.component';
+import { AdminComponent } from './features/super-admin/admin.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -54,6 +56,8 @@ export const routes: Routes = [
     path: 'update-employee',
     component: UpdateEmployeeComponent,
   },
+  {path:'dailyreport',component:DailyReportComponent},
+  {path:'admin',component:AdminComponent},
   { path: 'employee-attendance-report', component: EmployeeAttendanceReportComponent},
   { path: 'otp', component: OtpComponent },
   { path: 'sidebar', component: LefSideNavComponent, canActivate: [AuthGuard] },

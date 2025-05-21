@@ -36,7 +36,7 @@ import Swal from 'sweetalert2';
   styleUrl: './update-employee.component.css'
 })
 export class UpdateEmployeeComponent implements OnInit {
-  employeeForm: FormGroup;
+  employeeForm!: FormGroup;
   selectedEmployeeCode: string = '';
   designations: GetDesignationDto[] = [];
   imageBase64: string = '';
@@ -67,8 +67,13 @@ export class UpdateEmployeeComponent implements OnInit {
     private cityService:CityService,
     private countryService:CountryService,
     private stateService:StateService
-  ) {
-    this.employeeForm = this.fb.group({
+  )
+   {
+   
+  }
+
+  ngOnInit(): void {
+     this.employeeForm = this.fb.group({
       address:[''],
       mobileNo: ['', [Validators.pattern(/^[6-9]\d{9}$/)]],
       skypeId: ['', [Validators.minLength(16), Validators.maxLength(32)]],
@@ -94,9 +99,6 @@ export class UpdateEmployeeComponent implements OnInit {
       divisionId: ['']
       
     }, { validators: this.validateAgeValidator.bind(this) });
-  }
-
-  ngOnInit(): void {
     const emp = history.state.employee;
    
     forkJoin({
@@ -168,12 +170,12 @@ this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
       loginStatus:    emp.loginStatus    || false,
       leftCompany:    emp.leftCompany    || false,
       leaveCompany:   emp.leftDate?.split('T')[0] || '',
-      locationId:     emp.locationId     || 0,
-      designationId:  emp.designationId  || 0,
-      shiftId:        emp.shiftId        || 0,
-      employeeTypeId: emp.employeeTypeId || 0,
-      userGroupId:    emp.userGroupId    || 0,
-      divisionId:     emp.divisionId     || 0,
+      locationId:     emp.locationId     || '',
+      designationId:  emp.designationId  || '',
+      shiftId:        emp.shiftId        || '',
+      employeeTypeId: emp.employeeTypeId || '',
+      userGroupId:    emp.userGroupId    || '',
+      divisionId:     emp.divisionId     || '',
       aadharCardNo: emp.aadharCardNo || '',
       countryId: emp.countryId || '',
       stateId: emp.stateId || '',

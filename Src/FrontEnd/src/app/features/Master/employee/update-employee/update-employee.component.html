@@ -281,7 +281,7 @@
          <div class="col-md-6 form-group">
   <label for="location">Location</label>
   <select id="location" class="form-control" formControlName="locationId">
-    <option value=""  disabled selected>Select Location</option>  <!-- placeholder -->
+    <option value="" >Select Location</option>  <!-- placeholder -->
     <option *ngFor="let loc of locations" [value]="loc.locationId">{{ loc.locationName }}</option>
   </select>
 </div>
@@ -318,6 +318,7 @@
         <div class="col-md-6 form-group">
           <label for="employeeTypeId">Employee Type</label>
           <select id="employeeTypeId" class="form-control" formControlName="employeeTypeId">
+            <option value="">Select Employee Type</option>
             <option *ngFor="let t of employeeTypes" [value]="t.employeeTypeId">{{ t.employeeType }}</option>
           </select>
         </div>

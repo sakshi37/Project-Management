@@ -29,7 +29,7 @@ namespace HR.Application.Features.LoginMaster.Commands.InsertLogin
         public async Task<Unit> Handle(InsertLoginCommand request, CancellationToken cancellationToken)
         {
             // 1. Auto-generate password
-            var generatedPassword = GenerateRandomPassword(12); // you can adjust the length
+            var generatedPassword = GenerateRandomPassword(8); // you can adjust the length
 
             // 2. Convert to byte array
             var passwordBytes = Encoding.UTF8.GetBytes(generatedPassword);

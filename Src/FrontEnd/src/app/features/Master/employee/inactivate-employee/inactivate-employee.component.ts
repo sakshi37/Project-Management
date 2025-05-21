@@ -27,7 +27,7 @@ export class InactivateEmployeeComponent {
           icon:'success',
           text: res.message,
           position: 'top', 
-          timer:3000,
+          timer:2000,
           showConfirmButton: false 
   
         }).then(()=>{

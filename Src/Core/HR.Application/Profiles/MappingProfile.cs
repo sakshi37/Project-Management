@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HR.Application.Dtos;
+using HR.Application.Features.Admin.Commands.RejectRequest;
 using HR.Application.Features.Branches.Commands.CreateBranch;
 using HR.Application.Features.Branches.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.CreateCity;
@@ -97,6 +98,7 @@ public class MappingProfile : Profile
         CreateMap<Employee, empdetailDto>();
 
         CreateMap<Family, GetFamilyDetailsByCodeQueryVm>();
+        CreateMap<RejectRequestDto, RejectRequestCommand>();
 
     }
 }
