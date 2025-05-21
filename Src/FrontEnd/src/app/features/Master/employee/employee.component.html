@@ -15,7 +15,9 @@
         <button class="btn btn-danger me-3" (click)="exportVisibleDataAsPDF()">
           <i class="bi bi-file-earmark-pdf"></i> PDF
         </button>
-     
+     <button *ngIf="selectedEmployees().length > 0" class="btn btn-danger me-2" (click)="deleteSelectedEmployees()">
+  <i class="bi bi-trash"></i> Delete
+</button>
  
       </div>
     </div>
@@ -49,12 +51,21 @@
   <table class="table table-bordered align-middle">
     <thead class="table-light">
       <tr>
-        <th *ngFor="let col of columns">{{ col.label }}</th>
-      </tr>
+  <th>
+    <input type="checkbox" [checked]="areAllSelected()" (change)="toggleSelectAll($event)" />
+  </th>
+  <th *ngFor="let col of columns">{{ col.label }}</th>
+  
+</tr>
+
     </thead>
     <tbody>
       <tr *ngFor="let emp of employees; let i = index">
-        <td *ngFor="let col of columns">
+  <td>
+  <input type="checkbox" [(ngModel)]="emp.selected" />
+</td>
+  <td *ngFor="let col of columns">
+
           <div
             [ngClass]="{
               'tr-first-child': col.key === 'srNo',
@@ -134,15 +145,23 @@
  
  
     <div>
-      <button class="btn btn-sm btn-outline-secondary me-2" (click)="onPageChange(pageNumber - 1)" [disabled]="pageNumber <= 1">
-        <i class="bi bi-chevron-left"></i> Previous
-      </button>
- 
-      <span>Page {{ pageNumber }}</span>
- 
-      <button class="btn btn-sm btn-outline-secondary ms-2" (click)="onPageChange(pageNumber + 1)" [disabled]="(pageNumber * pageSize) >= totalCount">
-        Next <i class="bi bi-chevron-right"></i>
-      </button>
+  <button class="btn btn-sm btn-outline-secondary me-2" 
+          (click)="onPageChange(pageNumber - 1)" 
+          [disabled]="pageNumber <= 1">
+    <i class="bi bi-chevron-left"></i> Previous
+  </button>
+
+  <!-- Show current page out of total pages -->
+  <span>Page {{ pageNumber }} out of {{ totalPages }}</span>
+
+  <button class="btn btn-sm btn-outline-secondary ms-2" 
+          (click)="onPageChange(pageNumber + 1)" 
+          [disabled]="pageNumber >= totalPages">
+    Next <i class="bi bi-chevron-right"></i>
+  </button>
+</div>
+
+
     </div>
   </div>
 </div>

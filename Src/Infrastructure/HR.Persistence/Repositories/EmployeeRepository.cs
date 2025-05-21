@@ -349,6 +349,44 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
+
+        public async Task<string> MakeMultipleEmployeesInactiveAsync(string codes)
+        {
+            try
+            {
+                using (var conn = _appDbContext.Database.GetDbConnection())
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "dbo.SP_MakeMultipleEmployeesInactive";
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        var param = cmd.CreateParameter();
+                        param.ParameterName = "@Codes";
+                        param.Value = codes;
+                        cmd.Parameters.Add(param);
+
+                        if (conn.State != ConnectionState.Open)
+                            await conn.OpenAsync();
+
+                        var result = await cmd.ExecuteScalarAsync();
+                        return result?.ToString() ?? "No response from DB";
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                
+                return $"SQL Error: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                // For other exceptions, you can decide to log and return a friendly message
+                return $"Unexpected Error: {ex.Message}";
+            }
+        }
+
+
     }
 
 

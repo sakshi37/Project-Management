@@ -1,1 +1,39 @@
-<p>daily-report works!</p>
+<div class="row mb-3">
+  <div class="col-md-6">
+    <label class="form-label">Date</label>
+    <input type="date" class="form-control"
+           [(ngModel)]="reportDate"
+           [max]="todayString">
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Absence Type</label>
+    <select class="form-control"
+            [(ngModel)]="absenceType"
+            (change)="fetchData()">
+      <option value="" disabled selected>--Select Type--</option>
+      <option value="missPunchIn">Miss Punch In</option>
+      <option value="missPunchOut">Miss Punch Out</option>
+      <option value="halfDay">Half Day</option>
+    </select>
+  </div>
+</div>
+
+<!-- Display fetched records -->
+<table class="table table-bordered mt-3" *ngIf="records.length">
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Department</th>
+      <th>Start Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let r of records">
+      <td>{{ r.code }}</td>
+      <td>{{ r.name }}</td>
+      <td>{{ r.departmentName }}</td>
+      <td>{{ r.startDate | date: 'short' }}</td>
+    </tr>
+  </tbody>
+</table>

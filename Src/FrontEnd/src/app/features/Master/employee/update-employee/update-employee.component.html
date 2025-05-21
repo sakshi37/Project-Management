@@ -41,7 +41,7 @@
           />
           <div *ngIf="employeeForm.get('mobileNo')?.invalid && (employeeForm.get('mobileNo')?.touched || employeeForm.get('mobileNo')?.dirty)" class="text-danger small">
             <div *ngIf="employeeForm.get('mobileNo')?.errors?.['pattern']">
-               Mobile number must be exactly 10 digits.</div>
+               Mobile number must be exactly 10 digits and start with 6 to 9.</div>
           </div>
         </div>
 
@@ -64,32 +64,33 @@
       <!-- Email & BCC Email -->
       <div class="form-row">
         <div class="col-md-6 form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            class="form-control"
-            formControlName="email"
-            placeholder="Enter email"
-          />
-          <div *ngIf="employeeForm.get('email')?.invalid && (employeeForm.get('email')?.touched || employeeForm.get('email')?.dirty)" class="text-danger small">
-            <div *ngIf="employeeForm.get('email')?.errors?.['email']">Please enter a valid email.</div>
-          </div>
-        </div>
+  <label for="email">Email</label>
+  <input
+    type="email"
+    id="email"
+    class="form-control"
+    formControlName="email"
+    placeholder="Enter email"
+  />
+  <div *ngIf="employeeForm.get('email')?.invalid && (employeeForm.get('email')?.touched || employeeForm.get('email')?.dirty)" class="text-danger small">
+    <div *ngIf="employeeForm.get('email')?.errors?.['pattern']">Please enter a valid email.</div>
+  </div>
+</div>
 
-        <div class="col-md-6 form-group">
-          <label for="bccEmail">BCC Email</label>
-          <input
-            type="email"
-            id="bccEmail"
-            class="form-control"
-            formControlName="bccEmail"
-            placeholder="Enter BCC email"
-          />
-          <div *ngIf="employeeForm.get('bccEmail')?.invalid && (employeeForm.get('bccEmail')?.touched || employeeForm.get('bccEmail')?.dirty)" class="text-danger small">
-            <div *ngIf="employeeForm.get('bccEmail')?.errors?.['email']">Please enter a valid BCC email.</div>
-          </div>
-        </div>
+<div class="col-md-6 form-group">
+  <label for="bccEmail">BCC Email</label>
+  <input
+    type="email"
+    id="bccEmail"
+    class="form-control"
+    formControlName="bccEmail"
+    placeholder="Enter BCC email"
+  />
+  <div *ngIf="employeeForm.get('bccEmail')?.invalid && (employeeForm.get('bccEmail')?.touched || employeeForm.get('bccEmail')?.dirty)" class="text-danger small">
+    <div *ngIf="employeeForm.get('bccEmail')?.errors?.['pattern']">Please enter a valid BCC email.</div>
+  </div>
+</div>
+
       </div>
 
       <!-- PAN Number & Join Date -->
@@ -108,16 +109,16 @@
           </div>
         </div>
           <div class="col-md-6 form-group">
-            <label for="aadhaarNumber">Aadhaar Card Number</label>
+            <label for="aadharCardNo">Aadhaar Card Number</label>
              <input
                type="text"
-                id="aadhaarNumber"
+                id="aadharCardNo"
                class="form-control"
-               formControlName="aadhaarNumber"
+               formControlName="aadharCardNo"
                 placeholder="Enter 12-digit Aadhaar number"
                  />
-          <div *ngIf="employeeForm.get('aadhaarNumber')?.invalid && (employeeForm.get('aadhaarNumber')?.touched || employeeForm.get('aadhaarNumber')?.dirty)" class="text-danger small">
-                <div *ngIf="employeeForm.get('aadhaarNumber')?.errors?.['pattern']">
+          <div *ngIf="employeeForm.get('aadharCardNo')?.invalid && (employeeForm.get('aadharCardNo')?.touched || employeeForm.get('aadhaarNumber')?.dirty)" class="text-danger small">
+                <div *ngIf="employeeForm.get('aadharCardNo')?.errors?.['pattern']">
                    Aadhaar number must be 12 digits.
       </div>
     </div>
@@ -126,23 +127,25 @@
       </div>
       <div class="form-row">
               <!-- Gender -->
-  <div class="col-md-6 form-group">
-       <label for="gender">Gender</label>
-        <select id="gender" class="form-control" formControlName="gender">
-            <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
-         </select>
-     </div>
+      <div class="col-md-6 form-group">
+  <label for="genderId">Gender</label>
+  <select id="genderId" class="form-select" formControlName="genderId">
+    <option value="">Select Gender</option>
+    <option *ngFor="let g of genders" [value]="g.genderId">{{ g.genderType }}</option>
+  </select>
+</div>
+
        <div class="col-md-6 form-group">
           <label for="birthDate">Birth Date</label>
-          <input
-            type="date"
-            id="birthDate"
-            class="form-control"
-            formControlName="birthDate"
-          />
-          <div *ngIf="employeeForm.get('birthDate')?.invalid && (employeeForm.get('birthDate')?.touched || employeeForm.get('birthDate')?.dirty)" class="text-danger small">
-            <div *ngIf="employeeForm.get('birthDate')?.errors?.['futureDate']">Cannot be a future date.</div>
-          </div>
+<input
+  type="date"
+  id="birthDate"
+  class="form-control"
+  formControlName="birthDate"
+/>
+<div *ngIf="employeeForm.get('birthDate')?.invalid && (employeeForm.get('birthDate')?.touched || employeeForm.get('birthDate')?.dirty)" class="text-danger small">
+  <div *ngIf="employeeForm.get('birthDate')?.errors?.['required']">Birth date is required.</div>
+</div>
         </div>
       </div>
 
@@ -151,15 +154,23 @@
         
         <div class="col-md-6 form-group">
           <label for="joinDate">Join Date</label>
-          <input
-            type="date"
-            id="joinDate"
-            class="form-control"
-            formControlName="joinDate"
-          />
-          <div *ngIf="employeeForm.get('joinDate')?.invalid && (employeeForm.get('joinDate')?.touched || employeeForm.get('joinDate')?.dirty)" class="text-danger small">
-            <div *ngIf="employeeForm.get('joinDate')?.errors?.['futureDate']">Cannot be a future date.</div>
-          </div>
+<input
+  type="date"
+  id="joinDate"
+  class="form-control"
+  formControlName="joinDate"
+/>
+<div *ngIf="employeeForm.get('joinDate')?.invalid && (employeeForm.get('joinDate')?.touched || employeeForm.get('joinDate')?.dirty)" class="text-danger small">
+  <div *ngIf="employeeForm.get('joinDate')?.errors?.['required']">Join date is required.</div>
+</div>
+
+<!-- Show errors for the form group -->
+<div *ngIf="employeeForm.errors?.['futureDate'] && (employeeForm.get('birthDate')?.touched || employeeForm.get('joinDate')?.touched)" class="text-danger small">
+  Birth date or Join date cannot be a future date.
+</div>
+<div *ngIf="employeeForm.errors?.['minAgeGap'] && (employeeForm.get('birthDate')?.touched || employeeForm.get('joinDate')?.touched)" class="text-danger small">
+  Join Date must be at least 18 years after Birth Date.
+</div>
         </div>
 
         <div class="col-md-6 form-group">
@@ -197,6 +208,36 @@
 
       <!-- File Uploads -->
       <div class="form-row">
+  <div class="col-md-6 form-group">
+    <label for="imageUpload">Upload Image</label>
+    <input
+      type="file"
+      id="imageUpload"
+      class="form-control"
+      accept="image/*"
+      (change)="onImageSelected($event)"
+    />
+    <div *ngIf="imagePreview">
+      <img [src]="imagePreview" alt="Image Preview" class="img-thumbnail mt-2" style="max-height: 200px;" />
+    </div>
+  </div>
+
+  <div class="col-md-6 form-group">
+    <label for="signatureUpload">Upload Signature</label>
+    <input
+      type="file"
+      id="signatureUpload"
+      class="form-control"
+      accept="image/*"
+      (change)="onSignatureSelected($event)"
+    />
+    <div *ngIf="signaturePreview">
+      <img [src]="signaturePreview" alt="Signature Preview" class="img-thumbnail mt-2" style="max-height: 200px;" />
+    </div>
+  </div>
+</div>
+
+     <!-- <div class="form-row">
         <div class="col-md-6 form-group">
           <label for="imageUpload">Upload Image</label>
           <input type="file" id="imageUpload" class="form-control" (change)="onImageSelected($event)" />
@@ -205,7 +246,7 @@
           <label for="signatureUpload">Upload Signature</label>
           <input type="file" id="signatureUpload" class="form-control" (change)="onSignatureSelected($event)" />
         </div>
-      </div>
+      </div> -->
 
       <!-- Dropdowns: Location, Designation, Shift, etc. -->
        <!-- Country, State, City, Gender, Aadhaar Number -->
@@ -238,12 +279,13 @@
                  </select>
           </div>
          <div class="col-md-6 form-group">
-          <label for="locationId">Location</label>
-          <select id="locationId" class="form-control" formControlName="locationId">
-            <option value="">Select Location</option>
-            <option *ngFor="let loc of locations" [value]="loc.locationId">{{ loc.locationName }}</option>
-          </select>
-        </div>
+  <label for="location">Location</label>
+  <select id="location" class="form-control" formControlName="locationId">
+    <option value="" >Select Location</option>  <!-- placeholder -->
+    <option *ngFor="let loc of locations" [value]="loc.locationId">{{ loc.locationName }}</option>
+  </select>
+</div>
+
         
       </div>
 
@@ -276,6 +318,7 @@
         <div class="col-md-6 form-group">
           <label for="employeeTypeId">Employee Type</label>
           <select id="employeeTypeId" class="form-control" formControlName="employeeTypeId">
+            <option value="">Select Employee Type</option>
             <option *ngFor="let t of employeeTypes" [value]="t.employeeTypeId">{{ t.employeeType }}</option>
           </select>
         </div>

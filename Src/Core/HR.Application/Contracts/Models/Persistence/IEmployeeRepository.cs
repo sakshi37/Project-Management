@@ -27,7 +27,9 @@ namespace HR.Application.Contracts.Persistence
         // IEmployeeMasterRepository.cs
         Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee);
         Task<bool> EmployeeExistsAsync(string code);
-       
+        Task<string> MakeMultipleEmployeesInactiveAsync (string codes);
+
+
 
         Task<int> ReadCurrentEmpCounter();
 
