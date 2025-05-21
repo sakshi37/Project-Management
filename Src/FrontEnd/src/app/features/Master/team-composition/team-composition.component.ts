@@ -281,6 +281,16 @@ onEdit(team: GetTeamCompositionDto ): void {
     this.isEditMode = false;
     this.modal.hide();
   }
+    
+  private cleanUpModal(): void {
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = 'auto'; // ✅ restore scrolling
+    document.body.style.removeProperty('padding-right');
+  
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach((backdrop) => backdrop.remove());
+  }
+
   onSubmit(): void {
     console.log(this.teamForm.value);
     if (this.teamForm.invalid) {
@@ -295,6 +305,7 @@ onEdit(team: GetTeamCompositionDto ): void {
       fk_BranchId: this.teamForm.value.fk_BranchId,
       fk_DivisionId: this.teamForm.value.fk_DivisionId,
       fk_TeamLeaderId: this.teamForm.value.fk_TeamLeaderId,
+      teamMembers: this.teamForm.value.teamMembers,
       teamStatus: statusBool,
     };
   
@@ -315,6 +326,8 @@ onEdit(team: GetTeamCompositionDto ): void {
         next: () => {
           this.loadTeamCompositions();
           this.resetForm();
+          this.modal.hide();
+          this.cleanUpModal();
           Swal.fire({
                                 toast: true,
                                 position: 'top',
@@ -323,8 +336,10 @@ onEdit(team: GetTeamCompositionDto ): void {
                                 showConfirmButton: false,
                                 icon: 'success',
                                 title: 'Updated',
-                                text: 'Holiday updated successfully!',
+                                text: 'Team updated successfully!',
                                 confirmButtonColor: '#3085d6',
+                              }).then(() => {
+                                this.cleanUpModal(); // Clean up modal afterwards
                               });
         },
         error: (err) => this.errorHandler.handleError(err),
@@ -338,6 +353,8 @@ onEdit(team: GetTeamCompositionDto ): void {
         next: () => {
           this.loadTeamCompositions();
           this.resetForm();
+          this.modal.hide();
+          this.cleanUpModal(); 
           Swal.fire({
                                 toast: true,
                                 position: 'top',
@@ -345,10 +362,12 @@ onEdit(team: GetTeamCompositionDto ): void {
                                 timerProgressBar: true,
                                 showConfirmButton: false,
                                 icon: 'success',
-                                title: 'Updated',
-                                text: 'Holiday Created successfully!',
+                                title: 'Created',
+                                text: 'Team Created successfully!',
                                 confirmButtonColor: '#3085d6',
-                              });
+                              }).then(() => {
+                        this.cleanUpModal(); // Clean up modal afterwards
+                      });
         },
         error: (err) => this.errorHandler.handleError(err),
       });

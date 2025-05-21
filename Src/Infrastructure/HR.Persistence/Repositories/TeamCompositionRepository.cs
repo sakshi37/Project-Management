@@ -128,29 +128,62 @@ namespace HR.Persistence.Repositories
             return await _context.TeamLeaderDtos.FromSqlRaw(sql).ToListAsync();
         }
 
-        public async Task<TeamComposition> UpdateAsync(UpdateTeamCompositionDto team)
+        //public async Task<TeamComposition> UpdateAsync(UpdateTeamCompositionDto team)
+        //{
+        //    string sql = "EXEC SP_TeamCompositionUpdate @TeamId={0}, @TeamName={1}, @Fk_BranchId={2}, @Fk_DivisionId={3}, @Fk_TeamLeaderId={4}, @TeamStatus={5}, @UpdatedBy={6}";
+        //    await _context.Database.ExecuteSqlRawAsync(sql,
+        //        team.TeamId,
+        //        team.TeamName,
+        //        team.Fk_BranchId,
+        //        team.Fk_DivisionId,
+        //        team.Fk_TeamLeaderId,
+        //        team.TeamStatus,
+        //        team.UpdatedBy);
+
+        //    return new TeamComposition
+        //    {
+        //        TeamId = team.TeamId,
+        //        TeamName = team.TeamName,
+        //        Fk_BranchId = team.Fk_BranchId,
+        //        Fk_DivisionId = team.Fk_DivisionId,
+        //        Fk_TeamLeaderId = team.Fk_TeamLeaderId,
+        //        UpdatedBy = team.UpdatedBy,
+        //        UpdatedDate = DateTime.UtcNow,
+        //        TeamStatus = team.TeamStatus
+        //    };
+        //}
+        public async Task<TeamComposition> UpdateAsync(UpdateTeamCompositionDto dto)
         {
-            string sql = "EXEC SP_TeamCompositionUpdate @TeamId={0}, @TeamName={1}, @Fk_BranchId={2}, @Fk_DivisionId={3}, @Fk_TeamLeaderId={4}, @TeamStatus={5}, @UpdatedBy={6}";
+            string teamMemberString = dto.TeamMembers != null && dto.TeamMembers.Any()
+                ? string.Join(",", dto.TeamMembers)
+                : null;
+
+            string sql = "EXEC SP_TeamCompositionUpdate " +
+                         "@TeamId = {0}, @TeamName = {1}, @Fk_BranchId = {2}, @Fk_DivisionId = {3}, " +
+                         "@Fk_TeamLeaderId = {4}, @TeamStatus = {5}, @TeamMemberIds = {6}, @UpdatedBy = {7}";
+
             await _context.Database.ExecuteSqlRawAsync(sql,
-                team.TeamId,
-                team.TeamName,
-                team.Fk_BranchId,
-                team.Fk_DivisionId,
-                team.Fk_TeamLeaderId,
-                team.TeamStatus,
-                team.UpdatedBy);
+                dto.TeamId,
+                dto.TeamName,
+                dto.Fk_BranchId,
+                dto.Fk_DivisionId,
+                dto.Fk_TeamLeaderId,
+                dto.TeamStatus,
+                teamMemberString,
+                dto.UpdatedBy);
 
             return new TeamComposition
             {
-                TeamId = team.TeamId,
-                TeamName = team.TeamName,
-                Fk_BranchId = team.Fk_BranchId,
-                Fk_DivisionId = team.Fk_DivisionId,
-                Fk_TeamLeaderId = team.Fk_TeamLeaderId,
-                UpdatedBy = team.UpdatedBy,
-                UpdatedDate = DateTime.UtcNow,
-                TeamStatus = team.TeamStatus
+                TeamId = dto.TeamId,
+                TeamName = dto.TeamName,
+                Fk_BranchId = dto.Fk_BranchId,
+                Fk_DivisionId = dto.Fk_DivisionId,
+                Fk_TeamLeaderId = dto.Fk_TeamLeaderId,
+                TeamStatus = dto.TeamStatus,
+                UpdatedBy = dto.UpdatedBy,
+                UpdatedDate = DateTime.UtcNow
             };
         }
+
     }
 }
