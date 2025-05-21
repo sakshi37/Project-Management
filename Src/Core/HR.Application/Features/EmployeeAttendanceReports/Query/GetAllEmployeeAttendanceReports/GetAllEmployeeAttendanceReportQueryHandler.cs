@@ -3,7 +3,7 @@
 using HR.Application.Features.EmployeeAttendanceReports.EmployeeAttendanceReportDtos;
 using HR.Application.Contracts.Models.Persistence;
 
-namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllByDivisionNames
+namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllEmployeeAttendanceReports
 {
     public class GetAllEmployeeAttendanceReportQueryHandler : IRequestHandler<GetAllEmployeeAttendanceReportQuery, List<EmployeeAttendanceReportDto>>
     {
@@ -16,7 +16,8 @@ namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllByDivisi
 
         public async Task<List<EmployeeAttendanceReportDto>> Handle(GetAllEmployeeAttendanceReportQuery request, CancellationToken cancellationToken)
         {
-            return await _repo.GetAllAsync();        }
+            return await _repo.GetAllAsync();        
+        }
     }
 }
 

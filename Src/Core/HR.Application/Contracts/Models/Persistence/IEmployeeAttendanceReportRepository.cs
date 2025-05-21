@@ -11,5 +11,6 @@ namespace HR.Application.Contracts.Models.Persistence
     {
         Task<List<EmployeeAttendanceReportDto>> GetAllAsync();
         Task<List<EmployeeAttendanceReportDto>> GetAllDivisionName(string divisionName);
+        Task<List<EmployeeAttendanceReportDto>> GetAllEmployeeName(string EmployeeName);
     }
 }

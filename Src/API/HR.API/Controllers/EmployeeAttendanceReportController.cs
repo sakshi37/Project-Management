@@ -1,5 +1,6 @@
 ﻿using HR.Application.Features.EmployeeAttendanceReports.Query;
 using HR.Application.Features.EmployeeAttendanceReports.Query.GetAllByDivisionNames;
+using HR.Application.Features.EmployeeAttendanceReports.Query.GetAllByEmployeeName;
 using HR.Application.Features.EmployeeAttendanceReports.Query.GetAllEmployeeAttendanceReports;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,13 @@ namespace HR.API.Controllers
         {
             var AttendanceReport = await _mediator.Send(new GetAllEARDivisionNameQuery(divisionName));
             return Ok(AttendanceReport);
+        }
+
+        [HttpGet("EmployeeName")]
+        public async Task<IActionResult> GetAllEmployeeName(string employeeName)
+        {
+            var EmployeeName = await _mediator.Send(new GetAllByEmployeeNamequery(employeeName));
+            return Ok(EmployeeName);
         }
     }
 }

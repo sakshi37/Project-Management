@@ -26,5 +26,10 @@ namespace HR.Persistence.Repositories
         {
             return await _appDbContext.attendanceRepoertdtos.FromSqlRaw("Exec [dbo].[GetAttendanceReportByDivisionName] @DivisionName={0}", divisionName).ToListAsync();
         }
+
+        public async Task<List<EmployeeAttendanceReportDto>> GetAllEmployeeName(string employeeName)
+        {
+            return await _appDbContext.attendanceRepoertdtos.FromSqlRaw("Exec [dbo].[GetAttendanceReportByEmployeeName] @EmployeeName={0}", employeeName).ToListAsync();
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllEmployeeAttendanceReports
+namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllByDivisionNames
 {
     public class GetAllEARDivisionNameQueryHandler:IRequestHandler<GetAllEARDivisionNameQuery , List<EmployeeAttendanceReportDto>>
     {

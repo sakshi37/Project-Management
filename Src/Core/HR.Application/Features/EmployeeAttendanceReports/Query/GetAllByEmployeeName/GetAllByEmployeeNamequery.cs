@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllEmployeeAttendanceReports
+namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllByEmployeeName
 {
-    public record GetAllEARDivisionNameQuery(string divisionName) :IRequest<List<EmployeeAttendanceReportDto>>;
+    public record GetAllByEmployeeNamequery(string employeeName):IRequest<List<EmployeeAttendanceReportDto>>;
     
     
 }

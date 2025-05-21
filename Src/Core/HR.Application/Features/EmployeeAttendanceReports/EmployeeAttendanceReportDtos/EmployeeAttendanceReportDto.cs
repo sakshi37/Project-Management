@@ -14,5 +14,9 @@ namespace HR.Application.Features.EmployeeAttendanceReports.EmployeeAttendanceRe
         public DateTime? InTime { get; set; }
         public DateTime? OutTime { get; set; }
         public string? DivisionName { get; set; }
+        public string? DepartmentName { get; set; }
+        public DateTime Duration { get; set; }
+        public string Status { get; set; }
+
     }
 }
