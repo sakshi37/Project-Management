@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HR.Application.Dtos;
+using HR.Application.Features.Admin.Commands.ApproveRequest;
 using HR.Application.Features.Admin.Commands.RejectRequest;
 using HR.Application.Features.Branches.Commands.CreateBranch;
 using HR.Application.Features.Branches.Commands.Dtos;
@@ -99,6 +100,7 @@ public class MappingProfile : Profile
 
         CreateMap<Family, GetFamilyDetailsByCodeQueryVm>();
         CreateMap<RejectRequestDto, RejectRequestCommand>();
+        CreateMap<ApproveRequestDto, ApproveRequestCommand>();
 
     }
 }

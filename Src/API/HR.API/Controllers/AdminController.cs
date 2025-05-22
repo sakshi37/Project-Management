@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HR.Application.Features.Admin.Commands.ApproveRequest;
 using HR.Application.Features.Admin.Commands.RejectRequest;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
 using MediatR;
@@ -23,7 +24,7 @@ namespace HR.API.Controllers
         public async Task<IActionResult> GetRequest()
            => Ok(await _mediator.Send(new PendingRequestQuery()));
 
-        [HttpPost("reject-request")]
+        [HttpPost("rejectrequest")]
         public async Task<IActionResult> RejectRequest([FromBody] RejectRequestDto dto)
         {
             // Map DTO to Command
@@ -34,5 +35,18 @@ namespace HR.API.Controllers
 
             return Ok(new { Message = result });
         }
+
+        [HttpPost("approverequest")]
+        public async Task<IActionResult> ApproveRequest([FromBody] ApproveRequestDto dto)
+        {
+            // Map DTO to Command
+            var command = _mapper.Map<ApproveRequestCommand>(dto);
+
+            // Send command through MediatR
+            var result = await _mediator.Send(command);
+
+            return Ok(new { Message = result });
+        }
+
     }
 }

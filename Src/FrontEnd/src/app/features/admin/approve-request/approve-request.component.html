@@ -1,14 +1,15 @@
+
 <div class="p-3">
-  <h4>Request For Activation Of Employee </h4>
+  <h4>Approve For Activation Of Employee </h4>
   <hr class="my-2">
 
-  <label for="reasonInput">Enter Reason for Activation:</label>
+  <label for="reasonInput">Enter Comment for Approve:</label>
   <textarea
     id="reasonInput"
     class="form-control"
     [(ngModel)]="reason"
     rows="3"
-    placeholder="Type your reason here..."
+    placeholder="Type your comment here..."
   ></textarea>
 
   <p class="mt-3">For Employee: <b>{{ data.name }}</b></p>
@@ -16,7 +17,8 @@
   <hr class="my-2">
 
   <div class="d-flex justify-content-between mt-4">
-    <button class="btn btn-success" (click)="activate()">Send Request</button>
+    <button class="btn btn-success"(click)="send()" >Send</button>
     <button class="btn btn-outline-secondary" (click)="close()">Close</button>
   </div>
 </div>
+

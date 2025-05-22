@@ -20,7 +20,7 @@ import { AuthGuard } from './services/authguard';
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
 import { EmployeeAttendanceReportComponent } from './features/Hr/employee-attendance-report/employee-attendance-report.component';
 import { DailyReportComponent } from './features/Hr/daily-report/daily-report.component';
-import { AdminComponent } from './features/super-admin/admin.component';
+import { AdminComponent } from './features/admin/admin.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
