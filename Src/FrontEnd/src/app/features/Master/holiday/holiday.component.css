@@ -218,7 +218,19 @@
     color: #817070 !important;            /* Dark red text */
   }
   
-  
+  .card{
+    border-radius: 20px !important;
+    box-shadow: 0 50px 56px 0 rgba(0, 0, 0, 0.01);
+    width: 214px;
+    height: 208px;
+  }
+  .card-img, .card-img-top{
+    border-radius: 20px !important;
+  }
+  .card-title{
+    font-size: 22px;
+    color: #a9a9a9;
+  }
 
 
   .holiday-card {

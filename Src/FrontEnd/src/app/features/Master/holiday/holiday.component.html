@@ -12,7 +12,7 @@
     </select>
     <span>Entries</span>
   </div>
-  
+
   <!-- Filters -->
   <!-- <div class="mb-3 row">
     <div class="col-md-4">
@@ -38,29 +38,18 @@
         <span class="input-group-text" style="background-color: transparent;">
           <i class="fas fa-search"></i>
         </span>
-        <input type="text"
-               id="search"
-               class="form-control"
-               placeholder="Search Holiday"
-               [(ngModel)]="searchText"
-               (ngModelChange)="filterHolidaysbyName()"
-               style="background-color: transparent;">
+        <input type="text" id="search" class="form-control" placeholder="Search Holiday" [(ngModel)]="searchText"
+          (ngModelChange)="filterHolidaysbyName()" style="background-color: transparent;">
       </div>
     </div>
-  
+
     <!-- Year Picker -->
     <div class="col-md-3">
-      <p-datepicker [(ngModel)]="filterYear"
-                    view="year"
-                    dateFormat="yy"
-                    (onSelect)="onYearSelect($event)"
-                    showIcon="true"
-                    inputId="year"
-                    placeholder="Select Year"
-                    class="form-control rounded-3 w-100">
+      <p-datepicker [(ngModel)]="filterYear" view="year" dateFormat="yy" (onSelect)="onYearSelect($event)"
+        showIcon="true" inputId="year" placeholder="Select Year" class="form-control rounded-3 w-100">
       </p-datepicker>
     </div>
-  
+
     <!-- Search Input -->
     <div class="col-md-4">
       <select class="form-select" [(ngModel)]="filter.listType">
@@ -69,114 +58,137 @@
         <option value="0">Non-US Holiday List</option>
       </select>
     </div>
-  
+
     <!-- Search Button -->
     <div class="col-md-2 text-end">
       <button class="btn btn-secondary w-100" (click)="filterHolidays()">Search</button>
     </div>
   </div>
-  <!-- <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3" >
-    <div class="col" *ngFor="let h of filteredResults">
-      <div class="card">
-        <img [src]="'https://source.unsplash.com/s/photos/?' + h.holidayName" class="card-img-top" [alt]="h.holidayName">
-        <div class="card-body">
-          <h5 class="card-title">{{h.holidayName}}</h5>
-          <p class="card-text">
-            {{ h.dayName }}
-            <br />
-            {{ h.formattedDate }}
-            <br />
-            {{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div> -->
  
-  
+  <div class="text-end mb-3">
+    <button class="btn btn-outline-primary me-2" (click)="viewMode = 'card'">Card View</button>
+    <button class="btn btn-outline-secondary" (click)="viewMode = 'table'">Table View</button>
+  </div>
+
   <!-- Holiday List Table -->
-  <div class="row gy-4" *ngIf="filteredResults && filteredResults.length > 0; else noData">
-    <div class="col-12">
-      <div>
-        <table class="mb-0">
-          <thead>
-            <tr>
-              <th>
-                <div class="head-first">Sr. No</div>
-              </th>
-              <th>
-                <div class="head-other">Holiday Name</div>
-              </th>
-              <th>
-                <div class="head-other">Day</div>
-              </th>
-              <th>
-                <div class="head-other">Date</div>
-              </th>
-              <th>
-                <div class="head-other">Year</div>
-              </th>
-              <th>
-                <div class="head-other">Holiday List</div>
-              </th>
-              <th>
-                <div class="head-last">Action</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- <tr
+  <div *ngIf="viewMode === 'table'">
+    <div class="row gy-4" *ngIf="filteredResults && filteredResults.length > 0; else noData">
+      <div class="col-12">
+        <div>
+          <table class="mb-0">
+            <thead>
+              <tr>
+                <th>
+                  <div class="head-first">Sr. No</div>
+                </th>
+                <th>
+                  <div class="head-other">Holiday Name</div>
+                </th>
+                <th>
+                  <div class="head-other">Day</div>
+                </th>
+                <th>
+                  <div class="head-other">Date</div>
+                </th>
+                <th>
+                  <div class="head-other">Year</div>
+                </th>
+                <th>
+                  <div class="head-other">Holiday List</div>
+                </th>
+                <th>
+                  <div class="head-last">Action</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- <tr
               *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index"
               [ngClass]="{ 'inactive-row': !h.holidayStatus }"> -->
-            <tr
-              *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index"
-              [ngClass]="{ 'inactive-row': !h.holidayStatus, 'past-holiday': isPastDate(h.holidayDate) }">
+              <tr
+                *ngFor="let h of filteredResults | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index"
+                [ngClass]="{ 'inactive-row': !h.holidayStatus, 'past-holiday': isPastDate(h.holidayDate) }">
 
-              <td>
-                <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ h.holidayName }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ h.dayName }}</div>
-              </td>
-              <!-- <td>
+                <td>
+                  <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
+                </td>
+                <td>
+                  <div class="tr-other-child">{{ h.holidayName }}</div>
+                </td>
+                <td>
+                  <div class="tr-other-child">{{ h.dayName }}</div>
+                </td>
+                <!-- <td>
                 <div class="tr-other-child">{{ h.formattedDate }}</div>
               </td> -->
-              <td>
-                <div class="tr-other-child" [ngClass]="{ 'past-holiday': isPastDate(h.holidayDate) }">
-                  {{ h.formattedDate }}
-                </div>
-              </td>
-              
-              <td>
-                <div class="tr-other-child">{{ getYear(h.holidayDate) }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }}</div>
-              </td>
-              <td>
-                <div class="tr-last-child">
-                  <button class="btn btn-sm edit-btn me-2" (click)="onEdit(h)" data-bs-toggle="modal"
-                    data-bs-target="#holidayModal">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-danger" (click)="onStatusChange(h)">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination-wrapper">
-          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+                <td>
+                  <div class="tr-other-child" [ngClass]="{ 'past-holiday': isPastDate(h.holidayDate) }">
+                    {{ h.formattedDate }}
+                  </div>
+                </td>
+
+                <td>
+                  <div class="tr-other-child">{{ getYear(h.holidayDate) }}</div>
+                </td>
+                <td>
+                  <div class="tr-other-child">{{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }}</div>
+                </td>
+                <td>
+                  <div class="tr-last-child">
+                    <button class="btn btn-sm edit-btn me-2" (click)="onEdit(h)" data-bs-toggle="modal"
+                      data-bs-target="#holidayModal">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="onStatusChange(h)">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination-wrapper">
+            <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- <div *ngIf="viewMode === 'card'" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="col" *ngFor="let h of filteredResults">
+      <div class="card">
+        <img *ngIf="h.imagePath" [src]="'http://127.0.0.1:8080/' + h.imagePath" class="card-img-top" alt="Holiday Image">
+        <div class="card-body">
+          <h5 class="card-title">{{ h.holidayName }}</h5>
+          <p class="card-text">
+            {{ h.dayName }}<br>
+            {{ h.formattedDate }}<br>
+            {{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }}
+          </p>
+          <button class="btn btn-sm btn-outline-primary" (click)="onEdit(h)" data-bs-toggle="modal" data-bs-target="#holidayModal">Edit</button>
+          <button class="btn btn-sm btn-danger ms-2" (click)="onStatusChange(h)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+   <div  *ngIf="viewMode === 'card'" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3" >
+    <div class="col" *ngFor="let h of filteredResults">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{h.holidayName}}</h5>
+          <p class="card-text">
+           
+            {{ h.formattedDate }}<br />
+            {{ h.dayName }}
+            <!-- {{ h.holidayListType ? 'US Holiday List' : 'Non-US Holiday List' }} -->
+          </p>
+        </div>
+        <img *ngIf="h.imagePath" [src]="'http://127.0.0.1:8080/' + h.imagePath" class="card-img-top" alt="Holiday Image">
 
+      </div>
+    </div>
+  </div>
+  
   <!-- No Data Template -->
   <ng-template #noData>
     <div class="alert alert-info text-center mt-4">No holidays found.</div>
@@ -192,7 +204,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
             (click)="resetForm()"></button>
         </div>
-        
+
         <!-- Modal Body -->
         <div class="modal-body">
           <form [formGroup]="holidayForm" (ngSubmit)="onSubmit()" class="row g-3">
@@ -221,8 +233,8 @@
             <div class="col-md-6">
               <label class="form-label">List Type:</label>
               <select class="form-select" formControlName="holidayListType">
-                <option value="1">US Holiday</option>
-                <option value="0">Non-US Holiday</option>
+                <option value="true" selected>US Holiday</option>
+                <option value="false">Non-US Holiday</option>
               </select>
             </div>
 
@@ -233,6 +245,14 @@
                 <option value="0">Inactive</option>
               </select>
             </div> -->
+            <div class="col-md-12">
+              <label class="form-label">Holiday Image:</label>
+              <input type="file" accept="image/*" (change)="onImageChange($event)" class="form-control" />
+              <div *ngIf="imagePreviewUrl" class="mt-2">
+                <img [src]="imagePreviewUrl" alt="Preview" style="max-width: 100%; max-height: 150px;" />
+              </div>
+            </div>
+
 
             <div class="col-12 d-flex justify-content-end">
               <button class="btn btn-success" data-bs-dismiss="modal" type="submit">{{ isEditMode ? 'Update' : 'Add'

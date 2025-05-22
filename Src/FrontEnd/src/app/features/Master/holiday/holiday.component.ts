@@ -10,6 +10,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-holiday',
@@ -31,6 +32,10 @@ export class HolidayComponent implements OnInit, AfterViewInit {
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
   itemsPerPage: number = 5; 
+  selectedImageFile: File | null = null;
+imagePreviewUrl: string | null = null;
+viewMode: 'card' | 'table' = 'table';
+
 
   filter = {
     listType: '',
@@ -43,7 +48,8 @@ export class HolidayComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private holidayService: HolidayService,
     private el: ElementRef,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -147,74 +153,137 @@ export class HolidayComponent implements OnInit, AfterViewInit {
   onEdit(h: GetHolidayDto): void {
     this.holidayForm.patchValue({
       holidayName: h.holidayName,
-      holidayDate: h.holidayDate,
-      holidayListType: h.holidayListType ? '1' : '0',
-      holidayStatus: h.holidayStatus ? '1' : '0'
+      holidayDate: h.holidayDate.split('T')[0],
+      holidayListType: h.holidayListType ? 'true' : 'false',
+      holidayStatus: h.holidayStatus ? 'true' : 'false'
     });
     this.selectedHolidayId = h.holidayId;
     this.isEditMode = true;
+    this.imagePreviewUrl = h.imagePath ? 'http://127.0.0.1:8080/' + h.imagePath : null;
     this.modal.show();
   }
+  handleSuccess(type: string): void {
+    this.loadHolidays();
+    this.modal.hide();
+    Swal.fire({
+      toast: true,
+      position: 'top',
+      timer: 1000,
+      icon: 'success',
+      showConfirmButton: false,
+      title: type,
+      text: `Holiday ${type.toLowerCase()} successfully!`
+    });
+  }
+  onImageChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input?.files?.length) {
+      this.selectedImageFile = input.files[0];
+      const objectUrl = URL.createObjectURL(this.selectedImageFile);
+      this.imagePreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl) as string;
+    }
+  }
+    
 
+  // onSubmit(): void {
+  //   if (this.holidayForm.invalid){
+  //     this.holidayForm.markAllAsTouched();
+  //     return;
+  //   }
+  //   const listTypeBool = this.holidayForm.value.holidayStatus === '1' ? true : false;
+  //   const payload = {
+  //     holidayName: this.holidayForm.value.holidayName,
+  //     holidayDate: this.holidayForm.value.holidayDate,
+  //     holidayListType: this.holidayForm.value.holidayListType === '1',
+  //     holidayStatus: listTypeBool
+  //   };
+
+  //   if (this.isEditMode && this.selectedHolidayId) {
+  //     const dto: UpdateHolidayDto = { ...payload, holidayId: this.selectedHolidayId, updatedBy: 1 };
+      
+  //     this.holidayService.updateHoliday(dto).subscribe({
+  //       next: () => {
+  //         this.loadHolidays();
+  //         this.modal.hide();
+          
+  //                   Swal.fire({
+  //                     toast: true,
+  //                     position: 'top',
+  //                     timer: 1000,
+  //                     timerProgressBar: true,
+  //                     showConfirmButton: false,
+  //                     icon: 'success',
+  //                     title: 'Updated',
+  //                     text: 'Holiday updated successfully!',
+  //                     confirmButtonColor: '#3085d6',
+  //                   });
+  //       },
+  //       error: (err) => this.errorHandler.handleError(err)
+  //     });
+  //   } else {
+  //     const dto: CreateHolidayDto = { ...payload, createdBy: 1 };
+  //     this.holidayService.createHoliday(dto).subscribe({
+  //       next: () => {
+  //         this.loadHolidays();
+  //         this.modal.hide();
+          
+  //                   Swal.fire({
+  //                     toast: true,
+  //                     position: 'top',
+  //                     timer: 1000,
+  //                     timerProgressBar: true,
+  //                     showConfirmButton: false,
+  //                     icon: 'success',
+  //                     title: 'Created',
+  //                     text: 'Holiday created successfully!',
+  //                     confirmButtonColor: '#3085d6',
+  //                   });
+  //       },
+  //       error: (err) => this.errorHandler.handleError(err)
+  //     });
+  //   }
+  // }
   onSubmit(): void {
-    if (this.holidayForm.invalid){
+    if (this.holidayForm.invalid) {
       this.holidayForm.markAllAsTouched();
       return;
     }
-    const listTypeBool = this.holidayForm.value.holidayStatus === '1' ? true : false;
-    const payload = {
-      holidayName: this.holidayForm.value.holidayName,
-      holidayDate: this.holidayForm.value.holidayDate,
-      holidayListType: this.holidayForm.value.holidayListType === '1',
-      holidayStatus: listTypeBool
-    };
-
+  
+    const formData = new FormData();
+    formData.append('holidayName', this.holidayForm.value.holidayName);
+    formData.append('holidayDate', this.holidayForm.value.holidayDate);
+    formData.append('holidayListType', this.holidayForm.value.holidayListType);
+    formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
+  
+    if (this.selectedImageFile) {
+      formData.append('image', this.selectedImageFile);
+    }
+  
     if (this.isEditMode && this.selectedHolidayId) {
-      const dto: UpdateHolidayDto = { ...payload, holidayId: this.selectedHolidayId, updatedBy: 1 };
-      
-      this.holidayService.updateHoliday(dto).subscribe({
-        next: () => {
-          this.loadHolidays();
-          this.modal.hide();
-          
-                    Swal.fire({
-                      toast: true,
-                      position: 'top',
-                      timer: 1000,
-                      timerProgressBar: true,
-                      showConfirmButton: false,
-                      icon: 'success',
-                      title: 'Updated',
-                      text: 'Holiday updated successfully!',
-                      confirmButtonColor: '#3085d6',
-                    });
-        },
-        error: (err) => this.errorHandler.handleError(err)
+      formData.append('holidayId', this.selectedHolidayId.toString());
+      formData.append('updatedBy', '1');
+      this.holidayService.updateHoliday(formData).subscribe({
+        next: () => this.handleSuccess('Updated'),
+        error: err => this.errorHandler.handleError(err)
       });
     } else {
-      const dto: CreateHolidayDto = { ...payload, createdBy: 1 };
-      this.holidayService.createHoliday(dto).subscribe({
-        next: () => {
-          this.loadHolidays();
-          this.modal.hide();
-          
-                    Swal.fire({
-                      toast: true,
-                      position: 'top',
-                      timer: 1000,
-                      timerProgressBar: true,
-                      showConfirmButton: false,
-                      icon: 'success',
-                      title: 'Created',
-                      text: 'Holiday created successfully!',
-                      confirmButtonColor: '#3085d6',
-                    });
-        },
-        error: (err) => this.errorHandler.handleError(err)
+      formData.append('createdBy', '1');
+      this.holidayService.createHoliday(formData).subscribe({
+        next: () => this.handleSuccess('Created'),
+        error: err => this.errorHandler.handleError(err)
       });
     }
   }
-
+  
+  // resetForm(): void {
+  //   this.holidayForm.reset({
+  //     holidayName: '',
+  //     holidayDate: '',
+  //     holidayListType: '1',
+  //     holidayStatus: '1'
+  //   });
+  //   this.selectedHolidayId = null;
+  // }
   resetForm(): void {
     this.holidayForm.reset({
       holidayName: '',
@@ -223,8 +292,10 @@ export class HolidayComponent implements OnInit, AfterViewInit {
       holidayStatus: '1'
     });
     this.selectedHolidayId = null;
+    this.selectedImageFile = null;
+    this.imagePreviewUrl = null;
   }
-
+  
   onStatusChange(holiday: GetHolidayDto): void {
     Swal.fire({
       title: 'Are you sure?',

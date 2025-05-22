@@ -14,6 +14,8 @@ namespace HR.Application.Features.Holidays.Commands.Dtos
         public DateTime HolidayDate { get; set; }
         public bool HolidayListType { get; set; }
         public bool HolidayStatus { get; set; }
+        public string? ImagePath { get; set; }
+
     }
 
 }
