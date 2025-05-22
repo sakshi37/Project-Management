@@ -76,13 +76,23 @@
             </button>
             <!-- <button type="button" class="btn btn-primary" (click)="verifyOtp()">Verify OTP</button> -->
             <!-- <button type="button" class="btn btn-secondary" (click)="resendOtp()">Resend OTP</button> -->
+            <!-- <button class="btn_resend" [disabled]="btnDisabled" (click)="resendOtp()">
+              {{otpButtonMsg}}<span *ngIf="txtTimeleft"> {{ timeLeft }}</span>
+            </button> -->
+           <button class="btn_resend" [disabled]="btnDisabled" (click)="resendOtp()">
+  <ng-container *ngIf="isLoading; else buttonText">
+    <span class="spinner"></span> Sending...
+  </ng-container>
+  <ng-template #buttonText>
+    {{ otpButtonMsg }} <span *ngIf="txtTimeleft"> {{ timeLeft }}</span>
+  </ng-template>
+</button>
           </div>
-          <button class="btn_resend" [disabled]="btnDisabled">
-            OTP Expires in<span *ngIf="txtTimeleft"> {{ timeLeft }}</span>
-          </button>
         </div>
       </div>
     </div>
+
+    
 
 <!-- Forgot Password Modal -->
 <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">

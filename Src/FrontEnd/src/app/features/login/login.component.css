@@ -306,3 +306,39 @@ footer {
     width: 70%;
   }
 }
+.btn_resend {
+  background-color: #007bff; /* Bootstrap primary blue */
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn_resend:hover {
+  background-color: red; /* Darker blue on hover */
+}
+
+.btn_resend:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  color: #666;
+}.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

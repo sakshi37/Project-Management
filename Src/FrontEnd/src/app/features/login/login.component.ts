@@ -19,6 +19,8 @@ declare var bootstrap: any;
 })
 export class LoginComponent implements OnInit {
   UserName?: string = '';
+  UserEmail?: string = '';
+  otpButtonMsg: string = 'OTP Expires in';
   login: Login = new Login('', '', false);
   otpDigits: string[] = ['', '', '', ''];
   isVerifying = false;
@@ -86,7 +88,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('loginStatus', String(response.loginStatus));
         const decodedToken = jwtDecode(response.token);
         this.UserName = decodedToken.sub;
-
+        this.UserEmail = decodedToken.iss;
         if (!response.loginStatus) {
           Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
           this.isLoggingIn = false;
@@ -153,20 +155,28 @@ export class LoginComponent implements OnInit {
   btnDisabled: boolean = false;
   interval: any;
 
-  startTimer() {
-    this.interval = setInterval(() => {
-      if (this.timeLeft > 0) {
-        this.timeLeft--;
-        this.btnDisabled = true;
-        this.txtTimeleft = true;
-      } else {
-        this.btnDisabled = false;
-        this.txtTimeleft = false;
-        clearInterval(this.interval);
-      }
-    }, 1000);
-  }
+ startTimer() {
+  this.timeLeft = 10; // Reset the timer
+  this.btnDisabled = true;
+  this.txtTimeleft = true;
+
+  this.interval = setInterval(() => {
+    if (this.timeLeft > 0) {
+      this.timeLeft--;
+    } else {
+      this.btnDisabled = false;
+      this.txtTimeleft = false;
+      clearInterval(this.interval);
+      this.otpButtonMsg = 'Resend OTP'
+    }
+  }, 1000);
+}
+
 terminateOtp() {
+   clearInterval(this.interval);  
+    this.txtTimeleft = false;
+  this.otpDigits = ['', '', '', ''];
+  this.txtTimeleft = false;
   this.isLoggingIn = false;
   Swal.fire({
     toast: true,
@@ -196,6 +206,43 @@ terminateOtp() {
       prevInput.focus();
     }
   }
+
+//==============================================================resendddddddddddddd======================
+isLoading = false;
+
+resendOtp() {
+  this.isLoading = true;
+  
+    this.userService.resendOtp(this.UserName).subscribe({
+      next: (response: AuthResponseModel) => {
+         this.isLoading = false;
+        // localStorage.setItem('otp', response.otp); 
+        // localStorage.setItem('email',response.token);
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          title:'Resending OTP',
+          text:'OTP Resent Successfully!',
+          icon: 'success'
+        });
+  this.startTimer()
+      },
+      error: (error) => {
+              this.isLoading = false;
+
+        Swal.fire({
+          title:'Resend OTP failed!',
+          text:'Failed to resend OTP. Please try again.'
+        });
+      }
+    });
+  }
+
+  
+   
+  //==============================================================resendddddddddddddd====================
+
+
 
   openForgotPasswordModal() {
     Swal.fire({
