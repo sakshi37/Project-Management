@@ -211,6 +211,11 @@ export class TeamCompositionComponent {
     //   teamStatus: '1'  
     // });
   }
+  getEmployeeName(id: number): string {
+    const emp = this.employeeList.find(e => e.id === id);
+    return emp ? emp.name : 'Unknown';
+  }
+  
 
   onView(team: GetTeamCompositionDto ): void {
     // const teamMem:number[] = Number(team.teamMembers.split(','));

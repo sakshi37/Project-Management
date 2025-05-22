@@ -1,7 +1,7 @@
 <div class="container mt-4">
     <div class="mb-3 row align-items-center">
         <!-- Branch Dropdown -->
-        <div class="col-md-3">
+        <div class="col-md-2">
 
             <select class="form-select" (change)="onBranchChange($event)">
                 <option [value]="" selected>All Branches</option>
@@ -12,7 +12,7 @@
         </div>
 
         <!-- Division Dropdown -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <select class="form-select" (change)="onDivisionChange($event)">
                 <option [value]="" selected>All Divisions</option>
 
@@ -23,12 +23,24 @@
         </div>
 
         <!-- Add Team Button -->
-        <div class="col-md-3 ">
+        <div class="col-md-2 ">
             <button class="btn custom-excel-btn" (click)="exportToExcel()">
                 <i class="fas fa-file-csv"></i>
-                Export to Excel
+                Export
             </button>
         </div>
+        <div class="col-md-3">
+            <div class="input-group">
+              <span class="input-group-text" style="background-color: transparent;">
+                <i class="fas fa-search"></i>
+              </span>
+              <input type="text"
+                     id="search"
+                     class="form-control"
+                     placeholder="Search Team"
+                     style="background-color: transparent;">
+            </div>
+          </div>
         <div class="col-md-3 text-end">
             <button class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#teamModal"
                 (click)="openAddModal()">
@@ -54,6 +66,9 @@
                         <div class="col-md-12">
                             <label class="form-label">Team Name:</label>
                             <input type="text" formControlName="teamName" class="form-control" />
+                            <div class="text-danger" *ngIf="teamForm.get('teamName')?.touched && teamForm.get('teamName')?.hasError('required')">
+                                Team Name is required.
+                              </div>
                         </div>
 
                         <div class="col-md-12">
@@ -64,16 +79,10 @@
                                     {{ branch.branchName }}
                                 </option>
                             </select>
+                            <div class="text-danger" *ngIf="teamForm.get('fk_BranchId')?.touched && teamForm.get('fk_BranchId')?.hasError('required')">
+                                Branch is required.
+                              </div>
                         </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Team Members:</label>
-                            <ng-select class="form-select" [items]="employeeList" bindLabel="name" bindValue="id" [multiple]="true"
-                                 placeholder="Select Employees" formControlName="teamMembers">
-                            </ng-select>
-
-                        </div>
-
-
                         <div class="col-md-12">
                             <label class="form-label">Division:</label>
                             <select class="form-select" formControlName="fk_DivisionId">
@@ -82,6 +91,9 @@
                                     {{ division.divisionName }}
                                 </option>
                             </select>
+                            <div class="text-danger" *ngIf="teamForm.get('fk_DivisionId')?.touched && teamForm.get('fk_DivisionId')?.hasError('required')">
+                                Division is required.
+                              </div>
                         </div>
 
                         <div class="col-md-12">
@@ -92,13 +104,20 @@
                                     {{ leader.name }}
                                 </option>
                             </select>
+                            <div class="text-danger" *ngIf="teamForm.get('fk_TeamLeaderId')?.touched && teamForm.get('fk_TeamLeaderId')?.hasError('required')">
+                                Team Leader is required.
+                              </div>
                         </div>
 
-
-                        <!-- Division Dropdown -->
-
-
-                        <!-- Team Leader Dropdown -->
+                        <div class="col-md-12">
+                            <label class="form-label">Team Members:</label>
+                            <ng-select class="form-select" [items]="employeeList" bindLabel="name" bindValue="id" [multiple]="true"
+                                 placeholder="Select Employees" formControlName="teamMembers">
+                            </ng-select>
+                            <div class="text-danger" *ngIf="teamForm.get('teamMembers')?.touched && teamForm.get('teamMembers')?.hasError('required')">
+                                At least one Team Member is required.
+                              </div>
+                        </div>
 
 
                         <div class="col-12" *ngIf="isEditMode">
@@ -115,7 +134,7 @@
 
 
                         <div class="col-12 d-flex justify-content-end">
-                            <button class="btn btn-success" type="submit">
+                            <button class="btn btn-success" type="submit" [disabled]="teamForm.invalid">
                                 {{ isEditMode ? 'Update' : 'Add' }}
                             </button>
                             <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()"
@@ -144,13 +163,15 @@
                             <input type="text" formControlName="teamName" class="form-control" />
                         </div>
 
-                        <div class="col-md-12">
+                        <!-- <div class="col-md-12">
                             <label class="form-label">Team Members:</label>
                             <ng-select class="form-select" [items]="employeeList" bindLabel="name" bindValue="id" [multiple]="true"
                                  placeholder="No Employees" formControlName="teamMembers">
                             </ng-select>
 
-                        </div>
+                        </div> -->
+                        
+                          
 
                         <div class="col-md-12">
                             <label for="teamLeader" class="form-label">Team Leader</label>
@@ -161,6 +182,20 @@
                                 </option>
                             </select>
                         </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Team Members:</label>
+                            <div *ngIf="viewteamForm.get('teamMembers')?.value?.length > 0; else noMembers">
+                              <ul class="list-group">
+                                <li class="list-group-item" *ngFor="let memberId of viewteamForm.get('teamMembers')?.value">
+                                 <i class="fas fa-user"></i>
+                                  {{ getEmployeeName(memberId) }}
+                                </li>
+                              </ul>
+                            </div>
+                            <ng-template #noMembers>
+                              <p class="text-muted">No team members selected</p>
+                            </ng-template>
+                          </div>
                         <div class="col-12 d-flex justify-content-end">
                             <button class="btn btn-secondary ms-2" type="button" (click)="resetForm()"
                                 data-bs-dismiss="modal">Cancel</button>
