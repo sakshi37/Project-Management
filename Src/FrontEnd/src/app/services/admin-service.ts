@@ -22,11 +22,26 @@ export class AdminService {
     return this.http.get<ActivationRequest[]>(this.apiUrl);
   }
 
-  approveRequest(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Approve/${id}`, null);
-  }
+  rejectRequest(requestId: number, empCode: string, comment: string) {
+  const payload = {
+    requestId,
+    empCode,
+    comment
+  };
 
-  rejectRequest(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Reject/${id}`, null);
-  }
+  return this.http.post<any>(this.apiUrl+'/rejectrequest', payload);
+}
+
+approveRequest(requestId: number, empCode: string, comment: string) {
+  const payload = {
+    requestId,
+    empCode,
+    comment
+  };
+
+  return this.http.post<any>(this.apiUrl+'/approverequest', payload);
+}
+
+
+ 
 }

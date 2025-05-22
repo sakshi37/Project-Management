@@ -42,3 +42,13 @@ tr:hover td {
   display: inline-block;
 }
 
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+   
+  }
+
+

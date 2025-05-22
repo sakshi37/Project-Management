@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.Admin.Commands.RejectRequest
 {
-    public record RejectRequestCommand(int RequestId, string EmpCode) : IRequest<string>;
+    public record RejectRequestCommand(int RequestId, string EmpCode, string Comment) : IRequest<string>;
 
 }
