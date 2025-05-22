@@ -172,10 +172,10 @@
   .entries-dropdown {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 3px;
+    /* margin-bottom: 16px; */
     font-size: 14px;
-    margin-left: 55px;
+    /* margin-left: 55px; */
     font-weight: bold;
 
   }

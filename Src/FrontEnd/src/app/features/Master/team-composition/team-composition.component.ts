@@ -11,6 +11,7 @@ import { GetTeamCompositionDto } from './Models/get-team-composition.dto';
 import * as bootstrap from 'bootstrap';
 import { DivisionService } from '../../../services/division.service';
 import FileSaver from 'file-saver';
+import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import { CreateTeamCompositionDto } from './Models/create-team-composition.dto';
 import { UpdateTeamCompositionDto } from './Models/update-team-composition.dto';
@@ -20,7 +21,7 @@ import { EmployeeService } from '../../../services/employee-service';
 @Component({
   selector: 'app-team-composition',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule,NgSelectModule],
+  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule,NgSelectModule,NgxPaginationModule],
   templateUrl: './team-composition.component.html',
   styleUrl: './team-composition.component.css'
 })
@@ -32,11 +33,17 @@ export class TeamCompositionComponent {
   isEditMode = false;
   successMessage = '';
   private modal!: bootstrap.Modal;
+  searchText: string = '';
 
   branches: any[] = [];
   employeeList: any[] = [];
   divisions: any[] = [];
   teamLeaders: any[] = [];
+  filteredTeams: any[] = [];
+  currentPage: number = 1;
+  itemsPerPageOptions: number[] = [1, 5, 10, 25, 50];
+  itemsPerPage: number = 5; // default value
+
   selectedTeamId: number | null = null;
 
 
@@ -110,6 +117,18 @@ export class TeamCompositionComponent {
       next: (res) => this.divisions = res,
       error: (err) => console.error('Error loading divisions', err)
     });
+  }
+  filterTeams(): void {
+    const search = this.searchText?.trim().toLowerCase();
+
+    if (!search) {
+      this.filteredTeams = [...this.teamCompositions];
+      return;
+    }
+
+    this.filteredTeams = this.teamCompositions.filter((t) =>
+      t.teamName.toLowerCase().includes(search)
+    );
   }
   fetchTeamLeaders(): void {
     this.teamService.getTeamLeaders().subscribe({
@@ -193,12 +212,12 @@ export class TeamCompositionComponent {
         this.selectedDivisionId || undefined
       )
       .subscribe({
-        next: (data) => {this.teamCompositions = data; console.log(this.teamCompositions);},
+        next: (data) => {this.teamCompositions = data; this.filteredTeams =[...data]; console.log(this.teamCompositions);},
         error: (err) => console.error('Error fetching filtered teams', err)
       });
       // console.log(this.teamCompositions);
   }
-  
+
 
   openAddModal(): void {
     this.isEditMode = false;
