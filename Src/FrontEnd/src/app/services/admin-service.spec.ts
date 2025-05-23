@@ -1,4 +1,4 @@
-import { SuperAdminService } from './super-admin-service';
+import { SuperAdminService } from './admin-service';
 
 describe('SuperHrService', () => {
   it('should create an instance', () => {

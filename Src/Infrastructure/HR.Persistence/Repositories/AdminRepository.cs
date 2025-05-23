@@ -19,20 +19,33 @@ namespace HR.Persistence.Repositories
         {
             _appDbContext = appDbContext;
         }
+
+        
         public async Task<List<PendingRequestVm>> GetPendingRequestAsync()
         {
             return await _appDbContext.pendingRequestVms.FromSqlRaw("EXEC SP_GetAllPendingRequest").ToListAsync();
         }
-        public async Task<string> RejectRequestAsync(int requestId, string empCode)
+        public async Task<string> RejectRequestAsync(int requestId, string empCode, string comment)
         {
             var result = await _appDbContext
                 .Database
-                .ExecuteSqlRawAsync("EXEC dbo.SP_RejectRequest @RequestId = {0}, @EmpCode = {1}", requestId, empCode);
+                .ExecuteSqlRawAsync("EXEC dbo.SP_RejectRequest @RequestId = {0}, @EmpCode = {1}, @Comment={2}", requestId, empCode, comment);
             Console.WriteLine($"Affected rows: {result}");
 
-            return result < 0 ? "Request is rejected successfully" : "Failed to reject request";
+            return result < 0 ? "Request is rejected successfully...." : "Failed to reject request";
 
         }
+        public async  Task<string> ApproveRequestAsync(int requestId, string empCode, string comment)
+        {
+            var result = await _appDbContext
+               .Database
+               .ExecuteSqlRawAsync("EXEC dbo.SP_ApproveRequest @RequestId = {0}, @EmpCode = {1}, @Comment={2}", requestId, empCode, comment);
+            Console.WriteLine($"Affected rows: {result}");
+
+            return result < 0 ? "Request is Approved successfully" : "Failed to Approve request";
+        }
+
+
 
     }
 }

@@ -18,7 +18,8 @@ namespace HR.Application.Features.Admin.Commands.RejectRequest
 
         public async Task<string> Handle(RejectRequestCommand request, CancellationToken cancellationToken)
         {
-            return await _adminRepository.RejectRequestAsync(request.RequestId, request.EmpCode);
+            return await _adminRepository.RejectRequestAsync(request.RequestId, request.EmpCode,request.Comment);
+
         }
     }
 }

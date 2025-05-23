@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.Application.Features.Admin.Commands.RejectRequest
+namespace HR.Application.Features.Admin.Commands.ApproveRequest
 {
-    public class RejectRequestDto
+    public class ApproveRequestDto
     {
         public int RequestId { get; set; }
         public string EmpCode { get; set; }
-        public string Comment {  get; set; }
+        public string Comment { get; set; }
     }
 }
