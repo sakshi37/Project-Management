@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { GetAttendanceReportDtoService } from '../features/Hr/employee-attendance-report/Model/get-attendance-report-dto.service';
 import { Observable } from 'rxjs/internal/Observable';
+import { ParticularEmployeeService } from '../features/Hr/employee-attendance-report/Model/particular-employee.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,11 @@ private apiUrl ="https://localhost:7292/api/EmployeeAttendanceReport";
     return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/DivisionName?divisionName=${divisionName}`);
   }
   getEAREmployeeName(employeeName:string):Observable<GetAttendanceReportDtoService[]>{
-    return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/EmployeeName?employeeName=${employeeName}`);
+    return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/Employee?.employeeName=${employeeName}`);
   }
+  getEARByTLName(employeeId: number):Observable<GetAttendanceReportDtoService[]>{
+    return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/Employee?employeeId=${employeeId}`)
+  }
+  
   
 }

@@ -1,8 +1,5 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Exception;
-using HR.Application.Features.Designations.Commands.CreateDesignation;
-using HR.Application.Features.Designations.Commands.Dtos;
-using HR.Application.Features.Designations.Commands.UpdateDesignation;
 using HR.Application.Features.Divisions.Command.CreateLocationCommand;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
@@ -43,7 +40,7 @@ namespace HR.Persistence.Repositories
             {
                 throw new LocationValidationException("A Division with the same name already exists.");
             }
-            string sql = "EXEC SP_DivisionInsert @DivisionName={0},@ProjectManagerName={1},@PrefixName={2},@Fk_HolidayId={3},   @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6}";
+            string sql = "EXEC SP_DivisionInsert @DivisionName={0},@ProjectManagerName={1},@PrefixName={2},@Fk_HolidayId={3},   @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6},@Fk_BranchId={7}";
             await _context.Database.ExecuteSqlRawAsync(sql,
                 dto.DivisionName,
                 dto.ProjectManagerName,
@@ -51,7 +48,8 @@ namespace HR.Persistence.Repositories
                 dto.Fk_HolidayId,
                 dto.ManHours,
                 dto.DivisionStatus,
-                dto.CreatedBy);
+                dto.CreatedBy,
+                dto.Fk_BranchId);
             return new division
             {
                 DivisionName = dto.DivisionName,
@@ -61,6 +59,7 @@ namespace HR.Persistence.Repositories
                 ManHours = dto.ManHours,
                 DivisionStatus = dto.DivisionStatus,
                 CreatedBy = dto.CreatedBy,
+                Fk_BranchId=dto.Fk_BranchId
             };
         }
 

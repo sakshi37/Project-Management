@@ -1,4 +1,5 @@
 export interface CreateDivisionDto {
+
   divisionName: string;
   projectManagerName : String;
   prefixName:string;
@@ -6,5 +7,6 @@ export interface CreateDivisionDto {
   fk_HolidayId:number;
   divisionStatus:boolean;
   createdBy: string;
+  fk_BranchId: number;
 }
 

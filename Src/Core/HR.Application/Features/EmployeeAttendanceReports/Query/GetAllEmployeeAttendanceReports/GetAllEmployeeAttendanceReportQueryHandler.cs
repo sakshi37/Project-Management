@@ -1,7 +1,6 @@
 ﻿using MediatR;
-
-using HR.Application.Features.EmployeeAttendanceReports.EmployeeAttendanceReportDtos;
 using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
 
 namespace HR.Application.Features.EmployeeAttendanceReports.Query.GetAllEmployeeAttendanceReports
 {

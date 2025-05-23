@@ -1,5 +1,6 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
-using HR.Application.Features.EmployeeAttendanceReports.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,6 +31,16 @@ namespace HR.Persistence.Repositories
         public async Task<List<EmployeeAttendanceReportDto>> GetAllEmployeeName(string employeeName)
         {
             return await _appDbContext.attendanceRepoertdtos.FromSqlRaw("Exec [dbo].[GetAttendanceReportByEmployeeName] @EmployeeName={0}", employeeName).ToListAsync();
+        }
+
+        public async Task<List<EmployeeAttendanceReportDto>> GetAllTL(int employeeId)
+        {
+            return await _appDbContext.attendanceRepoertdtos.FromSqlRaw("Exec [dbo].[GetAttendanceReportByTLName] @TLId={0}", employeeId).ToListAsync();
+        }
+
+        public async Task<List<ParticularEmployeeDto>> GetEmployee()
+        {
+            return await _appDbContext.ParticularEmployee.FromSqlRaw("Exec [dbo].[GetParticularEmployee]").ToListAsync();
         }
     }
 }

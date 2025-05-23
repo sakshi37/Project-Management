@@ -26,7 +26,8 @@ using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using HR.Application.Features.EmployeeAttendanceReports.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : DbContext
@@ -90,6 +91,7 @@ public class AppDbContext : DbContext
     public DbSet <Department>Department { get; set; }
 
     public DbSet<EmployeeAttendanceReportDto> attendanceRepoertdtos { get; set; }
+    public DbSet<ParticularEmployeeDto> ParticularEmployee { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -140,10 +142,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
 
         modelBuilder.Entity<EmployeeAttendanceReportDto>().HasNoKey();
-    
+        modelBuilder.Entity<ParticularEmployeeDto>().HasNoKey();
 
 
 
 
-}
+
+    }
 }

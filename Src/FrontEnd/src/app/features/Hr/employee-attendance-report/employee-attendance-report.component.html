@@ -1,117 +1,170 @@
-<div class="container">
-    <br>
-    <h4>Employee Attendance-wise Report</h4>
-    <hr>
-    <div class="row">
+<div class="container mt-4">
+  <br>
+  <h4>Employee Attendance-wise Report</h4>
+  <hr>
+  <div class="row">
     <div class="col-md-6">
-        <label class="form-label" for="reportTypes">Select Type</label>
-        <select class="form-select" name="reportTypes" id="reportTypes" [(ngModel)]="reportTypes" (change)="getAttendanceReports()">
-            <option value="0" selected disabled>--Select Type--</option>
-            <option value="1">All Divisions</option>
-            <option value="2">Particular Division</option>
-            <option value="3">Team Leader-wise</option>
-            <option value="4">Particular Employee</option>
-        </select>
-        </div>
-        <div *ngIf="reportTypes == 2" class ="col-md-6">
-            <label class="form-label" for="particularDivision">Select Particular Division</label>
-            <select class="form-select" name="particularDivision" id="particularDivision" (change)="getEARByDivisionName()" [(ngModel)]="selectedDivisionName">
-                <option value="" selected disabled>--Select Division--</option>
-                <option *ngFor="let d of divisions" value="{{d.divisionName}}">{{d.divisionName}}</option>
-            </select>
-        </div>
-        
-        <div *ngIf="reportTypes == 3" class="col-md-6">
-            <label class="form-label" for="tlWise">Select Team Leader-wise</label>
-            <select class="form-select" name="tlWise" id="tlWise">
-                <option value="" selected disabled>--Select TL--</option>
-                <option *ngFor="let tl of teamLeaders" value="{{tl.code}}">{{tl.name}}</option>
-            </select>
-        </div>
-        <div *ngIf="reportTypes == 4"class="col-md-6">
-            <label class="form-label" for="employee">Select Employee</label>
-            <select class="form-select" name="employee" id="employee"(change)="getEAREmployeeName()" [(ngModel)]="selectedEmployeeName">
-                <option value="" selected disabled>--Select Employee--</option>
-                <option *ngFor="let employee of employees" value="{{employee.name}}">{{employee.name}}_[{{employee.code}}]</option>
-            </select>
-        </div>
-        </div>
-        <br>
-        <div class="row">
-        <div class="col-md-3">
-            <label for="From-label">From:</label>
-            <input class="form-control" type="date" id="From" name="From" [(ngModel)]="fromDate">
-        </div>
-        <div class="col-md-3">
-            <label for="form-label">To:</label>
-            <input class="form-control" type="date" id="From" name="To"  [(ngModel)]="toDate" (change)="filterByDate()">
-        </div >
-       
-        <div class ="col-md-6"><button (click)="exportToExcel()" class="btn btn-outline-success"><i class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
+      <label class="form-label" for="reportTypes">Select Type</label>
+      <select class="form-select" name="reportTypes" id="reportTypes" [(ngModel)]="reportTypes"
+        (change)="getAttendanceReports()">
+        <option value="0" selected disabled>--Select Type--</option>
+        <option value="1">All Divisions</option>
+        <option value="2">Particular Division</option>
+        <option value="3">Team Leader-wise</option>
+        <option value="4">Particular Employee</option>
+      </select>
     </div>
+    <div *ngIf="reportTypes == 2" class="col-md-6">
+      <label class="form-label" for="particularDivision">Select Particular Division</label>
+      <select class="form-select" name="particularDivision" id="particularDivision" (change)="getEARByDivisionName()"
+        [(ngModel)]="selectedDivisionName">
+        <option value="" selected disabled>--Select Division--</option>
+        <option *ngFor="let d of divisions" value="{{d.divisionName}}">{{d.divisionName}}</option>
+      </select>
+    </div>
+
+    <div *ngIf="reportTypes == 3" class="col-md-6">
+      <label class="form-label" for="tlWise">Select Team Leader-wise</label>
+      <select class="form-select" name="tlWise" id="tlWise" (change)="getEARByTLName()"
+        [(ngModel)]="selectedEmployeeId">
+        <option value="" selected disabled>--Select TL--</option>
+        <option *ngFor="let tl of teamLeaders" value="{{tl.id}}">{{tl.name}}</option>
+      </select>
+    </div>
+    <div *ngIf="reportTypes == 4" class="col-md-6">
+      <label class="form-label" for="employee">Select Employee</label>
+      <select class="form-select" name="employee" id="employee" (change)="getEAREmployeeName()"
+        [(ngModel)]="selectedEmployeeName">
+        <option value="" selected disabled>--Select Employee--</option>
+        <option *ngFor="let employee of employees" value="{{employee.name}}">{{employee.name}}_[{{employee.code}}]
+        </option>
+      </select>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-3">
+      <label for="From-label">From:</label>
+      <input class="form-control" type="date" id="From" name="From" [(ngModel)]="fromDate">
+    </div>
+    <div class="col-md-3">
+      <label for="form-label">To:</label>
+      <input class="form-control" type="date" id="From" name="To" [(ngModel)]="toDate">
+    </div>
+    &nbsp;&nbsp;&nbsp;
+    <div class="col-md-1 mt-3">
+      <div class="btn"><button class="btn btn-primary" (click)="filterByDate()">Filter</button></div>
+    </div>
+  </div>
+  <div class="row">
+
+    <div class="col-md-12"><button (click)="exportToExcel()" class="btn btn-outline-success"><i
+          class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
+  </div>
 </div>
+
 <br>
 <!-- table -->
 
 <div class="row gy-4" *ngIf="filteredattendanceReports && filteredattendanceReports.length > 0; else noData">
-    <div class="col-12">
-        <table class="table table-responsive mb-0 text-center" id ="Table_id">
-          <thead>
-            <tr  >
-              <th><div class="head-first">Sr. No</div></th>
-              <th><div class="head-other">Date</div></th>
-              <th><div class="head-other">Division Name</div></th>
-              <th><div class="head-other">Department Name</div></th>
-              <th><div class="head-other">Employee Code</div></th>
-              <th><div class="head-other">Employee Name</div></th>
-              <th><div class="head-other">In-Time</div></th>
-              <th><div class="head-last">Out-Time</div></th>
-              
-            </tr>
-          </thead>
-          
+  <div class="col-12">
+    <div>
+      <table class="mb-0" id="Table_id">
+        <thead>
+          <tr>
+            <th>
+              <div class="head-first">Sr. No</div>
+            </th>
+            <th>
+              <div class="head-other">Date</div>
+            </th>
+            <th>
+              <div class="head-other">Division Name</div>
+            </th>
+            <th>
+              <div class="head-other">Department Name</div>
+            </th>
+            <th>
+              <div class="head-other">Employee Code</div>
+            </th>
+            <th>
+              <div class="head-other">Employee Name</div>
+            </th>
+            <th>
+              <div class="head-other">In-Time</div>
+            </th>
+            <th>
+              <div class="head-other">Out-Time</div>
+            </th>
+            <th>
+              <div class="head-other">Duration</div>
+            </th>
+            <th>
+              <div class="head-other">Status</div>
+            </th>
+            <th>
+              <div class="head-last">Leave</div>
+            </th>
 
-          <tbody>
-            <tr
-              *ngFor="let ateendanceReport of filteredattendanceReports | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
-              [ngClass]="{ 'inactive-row': !ateendanceReport.employeeCode }">
-              <td>
-                <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ ateendanceReport.inTime.toString().split('T')[0] }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ ateendanceReport.divisionName }}</div>
-              </td>
-                <td>
-                <div class="tr-other-child">{{ ateendanceReport.departmentName }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ ateendanceReport.employeeCode }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ ateendanceReport.employeeName }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ ateendanceReport.inTime.toString().split('T')[1].split('.')[0] }}</div>
-              </td>
-              <td>
-                <div class="tr-other-child">{{ ateendanceReport.outTime != null ? ateendanceReport.outTime.toString().split('T')[1].split('.')[0] : '-'}}</div>
-              </td>
-              
-                
-              
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination-wrapper">
-          <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
-        </div>
+
+
+
+
+          </tr>
+        </thead>
+
+
+        <tbody>
+          <tr
+            *ngFor="let ateendanceReport of filteredattendanceReports | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
+            [ngClass]="{ 'inactive-row': !ateendanceReport.employeeCode }">
+            <td>
+              <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.inTime.toString().split('T')[0] }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.divisionName }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.departmentName }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.employeeCode }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.employeeName }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.inTime | date:'shortTime' }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{(ateendanceReport.outTime)?(ateendanceReport.outTime |
+                date:'shortTime'):'-'}}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ (ateendanceReport.duration)?(ateendanceReport.duration): '-' }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.status }}</div>
+            </td>
+            <td>
+              <div class="tr-other-child">{{ ateendanceReport.leave }}</div>
+            </td>
+
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination-wrapper">
+      <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
     </div>
   </div>
+</div>
 
-  <!-- nodatatemplate -->
-  <ng-template #noData>
-    <div class="alert alert-info text-center mt-4">Select Data From Above Drop Down.</div>
-  </ng-template>
+<!-- nodatatemplate -->
+<ng-template #noData>
+  <div class="alert alert-info text-center mt-4">Select Data From Above Drop Down.</div>
+</ng-template>

@@ -34,7 +34,7 @@ export class EmployeeService {
     return this.http.post(this.url + '/Employee', employee);
   }
   getTeamLeaders() : Observable<any[]> {
-    return this.http.get<any[]>(this.url + '/Employee/EmployeeByDesignation?did=6');
+    return this.http.get<any[]>(this.url + '/TeamComposition/team-leaders');
   }
 
   getAllLocation() {

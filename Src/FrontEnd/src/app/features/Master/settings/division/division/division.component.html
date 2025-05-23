@@ -37,6 +37,13 @@
           <div class="modal-body">
             <form [formGroup]="divisionForm" (ngSubmit)="onSubmit()" class="row g-3">
               <div class="col-12">
+                <label for="branchId" class="form-label">Branch:</label>
+                <select class="form-select" formControlName="branchId" id="branchId">
+                  <option value="">Select Branch</option>
+                  <option *ngFor="let b of branches" [value]="b.branchId">{{ b.branchName }}</option>
+                </select>
+              </div>
+              <div class="col-12">
                 <label for="divisionName" class="form-label">Division Name:</label>
                 <input type="text" id="divisionName" class="form-control" formControlName="divisionName">
               </div>

@@ -1,5 +1,5 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
-using HR.Application.Features.EmployeeAttendanceReports.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
 using MediatR;
 using System;
 using System.Collections.Generic;

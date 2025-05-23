@@ -2,24 +2,118 @@ h4 {
     text-align: center;
     color: green;
 }
+
 .container {
     padding: 10px;
 }
+
 .btn {
     float: right;
-    
+
 }
-table{
-    width:100%;
-    justify-items: center;
+ .row{
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+
+table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    border-spacing: 0 30px;
 }
-td {
-    padding-left: 40px;
-    padding-right: 40px;
+
+
+/* table,
+td,
+th {
+    text-align: center;
+    padding: .2rem 0;
 }
-th{
-background-color: black;
-color:white;
+
+.head-first,
+.head-last,
+.head-other {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 1rem;
 
 }
 
+.head-first {
+    border-top-left-radius: 0.7rem !important;
+    border-bottom-left-radius: 0.7rem !important;
+}
+
+.head-last {
+    border-top-right-radius: 0.7rem !important;
+    border-bottom-right-radius: 0.7rem !important;
+}
+
+.tr-first-child,
+.tr-last-child,
+.tr-other-child {
+    width: 100% !important;
+    height: 100% !important;
+    background-color: white !important;
+    padding: 1rem;
+    font-size: large;
+
+}
+
+.tr-first-child {
+    border-top-left-radius: 0.7rem !important;
+    border-bottom-left-radius: 0.7rem !important;
+}
+
+.tr-last-child {
+    border-top-right-radius: 0.7rem !important;
+    border-bottom-right-radius: 0.7rem !important;
+} */
+ 
+  table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    border-spacing: 0 30px;
+  }
+  table,td,th {
+    text-align: center;
+    padding: .5rem 0;
+  }
+  .head-first,.head-last,.head-other{
+    width: 100% !important;
+    height: 100% !important;
+    background-color: #edeff3;
+    padding: 1rem;
+
+  }
+  .head-first{
+    border-top-left-radius: 0.7rem !important;
+    border-bottom-left-radius: 0.7rem !important;
+  }
+  .head-last{
+    border-top-right-radius: 0.7rem !important;
+    border-bottom-right-radius: 0.7rem !important;
+  }
+  .tr-first-child,.tr-last-child,.tr-other-child{
+    width: 100% !important;
+    height: 100% !important;
+    background-color: white !important;
+    padding: 1rem;
+    font-size: large;
+
+  }
+  .tr-first-child {
+    border-top-left-radius: 0.7rem !important;
+    border-bottom-left-radius: 0.7rem !important;
+  }
+  .tr-last-child {
+    border-top-right-radius: 0.7rem !important;
+    border-bottom-right-radius: 0.7rem !important;
+  }
+  tr:hover > td > div{
+    transition: all 0.3s ease;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }

@@ -22,5 +22,7 @@ namespace HR.Domain.Entities
         //public DateTime CreatedDate { get; set; }
         public string? UpdatedBy { get; set; }
         //public DateTime UpdatedDate { get; set; }
+        public int Fk_BranchId { get; set; }
+
     }
 }
