@@ -5,18 +5,20 @@ using HR.Application.Contracts.Models;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Dtos;
 using MediatR;
-
+using Microsoft.Extensions.Configuration;
 namespace HR.Application.Features.LoginMaster.Query
 {
     public class LoginQueryHandler : IRequestHandler<LoginQuery, Tbl_LoginMasterDto>
     {
         readonly ILoginService _loginService;
         readonly IMapper _mapper;
-
-        public LoginQueryHandler(ILoginService loginService, IMapper mapper)
+        readonly IConfiguration _configuration;
+       
+        public LoginQueryHandler(ILoginService loginService, IMapper mapper, IConfiguration configuration)
         {
             _loginService = loginService;
             _mapper = mapper;
+            _configuration = configuration;
         }
         public async Task<Tbl_LoginMasterDto> Handle(LoginQuery request, CancellationToken cancellationToken)
         {

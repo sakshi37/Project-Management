@@ -12,7 +12,7 @@ namespace HR.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class LoginController : ControllerBase 
     {
         readonly ILoginService _loginService;
         private readonly IMediator _mediator;
@@ -35,7 +35,7 @@ namespace HR.API.Controllers
         }
 
         //verfying otp got on mail
-        [HttpPost("otpVerify")]
+        [HttpPost("otpVerify for first login")]
         public async Task<ActionResult<OtpResponse>> VerifyOtp(OtpRequest otpRequest)
         {
             var response = await _loginService.VerifyOtp(otpRequest);
@@ -44,7 +44,7 @@ namespace HR.API.Controllers
 
 
         //again sending otp for changing the password
-        [HttpPost("send-otp")]
+        [HttpPost("send-otp for forgot password")]
         public async Task<IActionResult> SendOtpToEmail(string username)
         {
             try
@@ -63,7 +63,7 @@ namespace HR.API.Controllers
         private static readonly Dictionary<string, int> _passwordChangeTracker = new();
         private static readonly int MaxPasswordChangesPerDay = 3;
 
-        [HttpPost("verify-otp")]
+        [HttpPost("Forgot Password")]
         public async Task<IActionResult> VerifyOtpAndChangePassword(ChangePassword changePasswordRequest)
         {
             try
@@ -106,7 +106,7 @@ namespace HR.API.Controllers
 
 
         //update password
-        [HttpPost("update_password")]
+        [HttpPost("change_password")]
         public async Task<IActionResult> UpdatePasswrd(UpdatePasswordRequest updatePasswordRequest)
         {
             var result = await _loginService.UpdatePassword(updatePasswordRequest);

@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
 		<PackageReference Include="MediatR" Version="12.5.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
 		<PackageReference Include="Microsoft.SharePointOnline.CSOM" Version="16.1.25912.12000" />
 	</ItemGroup>
 

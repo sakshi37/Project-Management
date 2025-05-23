@@ -7,7 +7,7 @@ using HR.Domain.Entities;
 using HR.Persistence;
 using HR.Persistence.Context;
 using HR.Persistence.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer; 
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -39,31 +39,6 @@ namespace HR.API
 
 
             builder.Services.AddMemoryCache();
-
-            // JWT Settings
-            //builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-            //var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
-
-            //builder.Services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //})
-            //.AddJwtBearer(options =>
-            //{
-            //    options.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidateLifetime = true,
-            //        ValidateIssuerSigningKey = true,
-
-            //        ValidIssuer = jwtSettings.Issuer,
-            //        ValidAudience = jwtSettings.Audience,
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
-            //        ClockSkew = TimeSpan.Zero
-            //    };
-            //});
 
             builder.Services.AddPersistenceServices(builder.Configuration);
 

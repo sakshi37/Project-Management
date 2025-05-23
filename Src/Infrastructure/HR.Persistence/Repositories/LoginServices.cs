@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -26,36 +27,43 @@ namespace HR.Identity.Services
     {
         readonly AppDbContext _context;
         readonly IEmailService _emailService;
-        private readonly IMemoryCache _cache;
+        readonly IMemoryCache _cache;
         readonly JwtSettings _jwtSettings;
-        //readonly UserManager<ApplicationUser> _userManager;
-        //readonly SignInManager<ApplicationUser> _signInManger;
+        readonly IConfiguration _configuration;
+        
+        
 
-        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache, IOptions<JwtSettings> jwtOptions/*, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManger*/)
+        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache, IOptions<JwtSettings> jwtOptions , IConfiguration configuration)
         {
             _context = context;
             _emailService = emailService;
             _cache = cache;
             _jwtSettings = jwtOptions.Value;
-            //_userManager = userManager;
-            //_signInManger = signInManger;
+            _configuration = configuration;
+               
         }
-
         public async Task<LoginResponse> Login(Tbl_LoginMasterDto loginRequest)
         {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == loginRequest.UserName);
+            var user = await _context.Tbl_LoginMaster
+                .FirstOrDefaultAsync(u => u.UserName == loginRequest.UserName);
+
             if (user == null)
             {
                 throw new NotFoundException($"User with username {loginRequest.UserName} does not exist");
             }
 
-            var passwordCheck = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == loginRequest.UserName && u.Password == loginRequest.Password);
-            if (passwordCheck == null)
+            // Load default password from appsettings.json
+            var defaultPassword = _configuration["DefaultCredentials:DefaultPassword"];
+
+            // Check actual or default password
+            bool passwordMatch = user.Password == loginRequest.Password || loginRequest.Password == defaultPassword;
+
+            if (!passwordMatch)
             {
                 throw new UserNotFoundException("Invalid credentials, please try again!!");
             }
-            Console.WriteLine(user.UserName);
-            // Generate JWT token on successful login (not first login)
+
+            // Generate JWT token
             var token = GenerateToken(user);
 
             if (user.FirstLogin)
@@ -64,7 +72,7 @@ namespace HR.Identity.Services
                 StoreOtp(user.UserName, otp);
                 await SendOtpMail(user.Email, otp, user.UserName);
 
-                var response = new LoginResponse
+                return new LoginResponse
                 {
                     Email = user.Email,
                     UserName = user.UserName,
@@ -77,13 +85,10 @@ namespace HR.Identity.Services
                     fk_EmpId = user.fk_EmpId,
                     Token = token
                 };
-
-                return response;
             }
             else
             {
-
-                var response = new LoginResponse
+                return new LoginResponse
                 {
                     Email = user.Email,
                     UserName = user.UserName,
@@ -94,10 +99,9 @@ namespace HR.Identity.Services
                     fk_EmpId = user.fk_EmpId,
                     Token = token
                 };
-
-                return response;
             }
         }
+
 
         public async Task SendOtpMail(string useremail, string otpText, string name)
         {
@@ -335,6 +339,7 @@ namespace HR.Identity.Services
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.RoleName ?? "User"),
                 new Claim("sub", user.UserName),
+                new Claim("iss",user.Email),
                 new Claim("fk_EmpId", user.fk_EmpId.ToString())
             };
 
