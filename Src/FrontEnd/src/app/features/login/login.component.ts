@@ -156,7 +156,7 @@ export class LoginComponent implements OnInit {
   interval: any;
 
  startTimer() {
-  this.timeLeft = 10; // Reset the timer
+  this.timeLeft = 60; // Reset the timer
   this.btnDisabled = true;
   this.txtTimeleft = true;
 
