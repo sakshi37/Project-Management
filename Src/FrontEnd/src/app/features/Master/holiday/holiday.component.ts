@@ -31,10 +31,19 @@ export class HolidayComponent implements OnInit, AfterViewInit {
   private modal!: bootstrap.Modal;
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
-  itemsPerPage: number = 5; 
+  itemsPerPage: number = 3; 
   selectedImageFile: File | null = null;
 imagePreviewUrl: string | null = null;
+viewModeToggle: boolean = false; // false = Table, true = Card
+
 viewMode: 'card' | 'table' = 'table';
+activeCardHolidays: GetHolidayDto[] = [];
+pastCardHolidays: GetHolidayDto[] = [];
+
+splitCardHolidays(): void {
+  this.activeCardHolidays = this.filteredResults.filter(h => !this.isPastDate(h.holidayDate));
+  this.pastCardHolidays = this.filteredResults.filter(h => this.isPastDate(h.holidayDate));
+}
 
 
   filter = {
@@ -93,6 +102,7 @@ viewMode: 'card' | 'table' = 'table';
         year: new Date(h.holidayDate).getFullYear()
       }));
       this.filteredResults = [...this.holidays];
+      this.splitCardHolidays();
     }, error => {
       this.errorHandler.handleError(error);
     });
@@ -109,6 +119,7 @@ viewMode: 'card' | 'table' = 'table';
         h.year === +this.filter.year
       );
     }
+    this.splitCardHolidays();
   }
 
   formatHolidayDate(date: string): string {

@@ -142,20 +142,27 @@
   .custom-add-btn{
     background-color: #5b7cfd;
     color: white;
-    margin-right: 50px;
+    /* margin-right: 50px; */
 
   }
   .custom-add-btn:hover{
     box-shadow: #555 0px 0px 10px;
   }
-  
+  .filter-btn{
+    background-color: #f8b249;
+    font-size: medium;
+  }
+  .filter-btn:hover {
+    background-color: #f89809;
+    color: #000;
+  }
   .edit-btn:hover {
     background-color: #e2e8f0;
     color: #000;
   }
   .row{
     margin-left: 40px;
-    margin-right: 40px;
+    margin-right: 20px;
   }
   
 
@@ -221,18 +228,62 @@
   .card{
     border-radius: 20px !important;
     box-shadow: 0 50px 56px 0 rgba(0, 0, 0, 0.01);
-    width: 214px;
-    height: 208px;
+    width: 236px;
+    height: 225px;
+  }
+  .card-body{
+    height: 50%;
   }
   .card-img, .card-img-top{
     border-radius: 20px !important;
+    width: 100% !important;
+    height: 50% !important;
   }
   .card-title{
     font-size: 22px;
+    font-family: 'Inter', sans-serif;
     color: #a9a9a9;
   }
+  .card-text{
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+  .form-switch .form-check-input {
+    width: 3rem;
+    height: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .form-switch .form-check-input:checked {
+    background-color: #5b7cfd;
+    border-color: #5b7cfd;
+  }
+  .form-switch .form-check-input {
+    width: 3rem;
+    height: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .form-check-label {
+    font-size: 1rem;
+    white-space: nowrap;
+    margin-top: 8px;
 
-
+  }
+  .past-card {
+    background-color: #f3f3f3;
+    filter: grayscale(0.6);
+    color: #888;
+    border: 1px solid #ccc;
+  }
+  .past-card .card-title {
+    color: #666;
+  }
+  
+  .past-card .card-img-top {
+    opacity: 0.5;
+  }
   .holiday-card {
     background-color: #fff;
     border-radius: 15px;

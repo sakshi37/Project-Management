@@ -352,6 +352,7 @@ onEdit(team: GetTeamCompositionDto ): void {
           this.resetForm();
           this.modal.hide();
           this.cleanUpModal();
+          this.fetchTeamCompositions();
           Swal.fire({
                                 toast: true,
                                 position: 'top',
@@ -363,7 +364,7 @@ onEdit(team: GetTeamCompositionDto ): void {
                                 text: 'Team updated successfully!',
                                 confirmButtonColor: '#3085d6',
                               }).then(() => {
-                                this.cleanUpModal(); // Clean up modal afterwards
+                                this.cleanUpModal();
                               });
         },
         error: (err) => this.errorHandler.handleError(err),
@@ -379,6 +380,7 @@ onEdit(team: GetTeamCompositionDto ): void {
           this.resetForm();
           this.modal.hide();
           this.cleanUpModal(); 
+          this.fetchTeamCompositions();
           Swal.fire({
                                 toast: true,
                                 position: 'top',
