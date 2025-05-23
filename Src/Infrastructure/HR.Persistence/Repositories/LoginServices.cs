@@ -5,11 +5,11 @@ using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
 using HR.Application.Exceptions;
+using HR.Application.Features.Employee.Dtos;
+using HR.Application.Features.Employees.Dtos;
 using HR.Domain.Entities;
-using HR.Identity.Models;
 using HR.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -30,59 +30,56 @@ namespace HR.Identity.Services
         readonly IMemoryCache _cache;
         readonly JwtSettings _jwtSettings;
         readonly IConfiguration _configuration;
-        
-        
+        private string Code;
 
-        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache, IOptions<JwtSettings> jwtOptions , IConfiguration configuration)
+        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache, IOptions<JwtSettings> jwtOptions, IConfiguration configuration)
         {
             _context = context;
             _emailService = emailService;
             _cache = cache;
             _jwtSettings = jwtOptions.Value;
             _configuration = configuration;
-               
+
         }
         public async Task<LoginResponse> Login(Tbl_LoginMasterDto loginRequest)
         {
-            var user = await _context.Tbl_LoginMaster
-                .FirstOrDefaultAsync(u => u.UserName == loginRequest.UserName);
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
+
+            var user = employees.FirstOrDefault(u => u.Code == loginRequest.UserName);
 
             if (user == null)
-            {
                 throw new NotFoundException($"User with username {loginRequest.UserName} does not exist");
-            }
 
-            // Load default password from appsettings.json
             var defaultPassword = _configuration["DefaultCredentials:DefaultPassword"];
-
-            // Check actual or default password
             bool passwordMatch = user.Password == loginRequest.Password || loginRequest.Password == defaultPassword;
 
             if (!passwordMatch)
-            {
                 throw new UserNotFoundException("Invalid credentials, please try again!!");
-            }
 
-            // Generate JWT token
+            // Null-safe property access
+            if (string.IsNullOrWhiteSpace(user.Email))
+                throw new Exception("Email is missing for this user.");
+
             var token = GenerateToken(user);
 
-            if (user.FirstLogin)
+            if (user.FirstLogin ?? false)
             {
                 var otp = GenerateRandomNumber();
-                StoreOtp(user.UserName, otp);
-                await SendOtpMail(user.Email, otp, user.UserName);
+                StoreOtp(user.Code, otp);
+                await SendOtpMail(user.Email, otp, user.Code);
 
                 return new LoginResponse
                 {
                     Email = user.Email,
-                    UserName = user.UserName,
+                    Code = user.Code,
                     Otp = otp,
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
-                    FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName,
-                    LoginStatus = user.LoginStatus,
+                    FirstLogin = user.FirstLogin ?? false,
+                    UserGroupName = user.UserGroupName ?? "Unknown",
+                    LoginStatus = user.LoginStatus ?? false,
                     UserCheckInTime = DateTime.Now,
-                    fk_EmpId = user.fk_EmpId,
                     Token = token
                 };
             }
@@ -91,16 +88,16 @@ namespace HR.Identity.Services
                 return new LoginResponse
                 {
                     Email = user.Email,
-                    UserName = user.UserName,
-                    FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName,
-                    LoginStatus = user.LoginStatus,
+                    Code = user.Code,
+                    FirstLogin = user.FirstLogin ?? false,
+                    UserGroupName = user.UserGroupName ?? "Unknown",
+                    LoginStatus = user.LoginStatus ?? false,
                     UserCheckInTime = DateTime.Now,
-                    fk_EmpId = user.fk_EmpId,
                     Token = token
                 };
             }
         }
+
 
 
         public async Task SendOtpMail(string useremail, string otpText, string name)
@@ -147,32 +144,40 @@ namespace HR.Identity.Services
 
         public async Task<OtpResponse> VerifyOtp(OtpRequest otpRequest)
         {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == otpRequest.UserName);
+            var user = await _context.employeesDto.FirstOrDefaultAsync(u => u.Code == otpRequest.Code);
             if (user == null)
             {
-                throw new NotFoundException($"User with Username {otpRequest.UserName} does not exist");
+                throw new NotFoundException($"User with Username {otpRequest.Code} does not exist");
             }
 
-            var cacheOtp = GetOtp(user.UserName);
+            var cacheOtp = GetOtp(user.Code);
             if (cacheOtp == null || cacheOtp != otpRequest.Otp)
             {
                 throw new OtpNotFoundException("You have entered an incorrect or expired OTP.");
             }
 
             // Remove the OTP from cache
-            RemoveOtp(user.UserName);
+            RemoveOtp(user.Code);
 
             // Marking user as no longer first-time
-            if (user.FirstLogin)
+            if (user.FirstLogin.HasValue && user.FirstLogin.Value)
             {
                 user.FirstLogin = false;
-                _context.Tbl_LoginMaster.Update(user);
+                var empUser = new employeesDto
+                {
+                    Code = user.Code,
+                    Email = user.Email,
+                    UserGroupName = user.UserGroupName,
+                    LoginStatus = user.LoginStatus,
+                    Password = user.Password
+                };
+                _context.employeesDto.Update(empUser);
                 await _context.SaveChangesAsync();
             }
 
             var response = new OtpResponse
             {
-                UserName = user.UserName,
+                UserName = user.Code,
                 Email = user.Email,
                 OtpExpiryTime = DateTime.Now.AddMinutes(3)
             };
@@ -187,15 +192,15 @@ namespace HR.Identity.Services
         // Send OTP for changing password
         public async Task<bool> SendChangePasswordOtp(string username)
         {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == username);
+            var user = await _context.Employees.FirstOrDefaultAsync(u => u.Code == Code);
             if (user == null)
             {
                 throw new UserNotFoundException("User not found");
             }
 
             var otp = GenerateRandomNumber();
-            StoreOtp(user.UserName, otp);
-            await SendOtpMail(user.Email, otp, user.UserName);
+            StoreOtp(user.Code, otp);
+            await SendOtpMail(user.Email, otp, user.Code);
 
             return true;
         }
@@ -211,7 +216,7 @@ namespace HR.Identity.Services
 
             var otpRequest = new OtpRequest
             {
-                UserName = changePasswordRequest.UserName,
+                Code = changePasswordRequest.UserName,
                 Otp = changePasswordRequest.Otp
             };
 
@@ -241,106 +246,61 @@ namespace HR.Identity.Services
 
 
 
-           
+
         }
 
         // change password module
 
         public async Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
         {
-            
 
-                var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == updatePasswordRequest.UserName);
-                if (user == null)
-                {
-                    throw new UserNotFoundException("user with this username is not exist");
-                }
 
-                if (user.FirstLogin)
-                {
-                    throw new Exception("You are New User Try with your Default Password Provided");
-                }
-
-                if (updatePasswordRequest.NewPassword == updatePasswordRequest.OldPassword)
-                {
-                    throw new Exception("New password Can't be as same as older one ");
-                }
-
-                if (updatePasswordRequest.OldPassword != user.Password)
-                {
-                    throw new Exception("Entered Password should be as same as existing Password");
-                }
-
-                if (updatePasswordRequest.NewPassword != updatePasswordRequest.ConfirmPassword)
-                {
-                    throw new PasswordNotMatchException("“Old password types are wrong");
-                }
-                user.Password = updatePasswordRequest.NewPassword;
-                _context.Tbl_LoginMaster.Update(user);
-                await _context.SaveChangesAsync();
-
-                return true;
-            
-           
-        }
-
-        public async Task InsertLoginAsync(int empId, int createdBy)
-        {
-            var employee = await _context.Tbl_Employee_master
-                .Where(e => e.Id == empId)
-                .Select(e => new
-                {
-                    e.Id,
-                    e.Name,
-                    e.Code,
-                    e.Email
-                })
-                .FirstOrDefaultAsync();
-
-            if (employee == null)
-                throw new Exception("Employee not found");
-
-            var userName = employee.Code;
-            var email = employee.Email;
-            var employeeName = employee.Name;
-
-            var last3Code = userName.Length >= 3 ? userName[^3..] : userName;
-            var namePart = employeeName.Length >= 4 ? employeeName.Substring(0, 4) : employeeName;
-            var plainPassword = namePart + "@" + last3Code;
-
-            var encryptedPassword = Encoding.UTF8.GetBytes(plainPassword);
-
-            var maxLoginId = await _context.Tbl_Login.MaxAsync(l => (int?)l.pk_LoginId) ?? 0;
-
-            var login = new Tbl_Login
+            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == updatePasswordRequest.UserName);
+            if (user == null)
             {
-                pk_LoginId = maxLoginId + 1,
-                fk_EmpId = empId,
-                UserName = userName,
-                Password = encryptedPassword,
-                CreatedDate = DateTime.UtcNow,
-                Email = email,
-                FirstLogin = true,
-                RoleName = "User"
-            };
+                throw new UserNotFoundException("user with this username is not exist");
+            }
 
-            _context.Tbl_Login.Add(login);
+            if (user.FirstLogin)
+            {
+                throw new Exception("You are New User Try with your Default Password Provided");
+            }
+
+            if (updatePasswordRequest.NewPassword == updatePasswordRequest.OldPassword)
+            {
+                throw new Exception("New password Can't be as same as older one ");
+            }
+
+            if (updatePasswordRequest.OldPassword != user.Password)
+            {
+                throw new Exception("Entered Password should be as same as existing Password");
+            }
+
+            if (updatePasswordRequest.NewPassword != updatePasswordRequest.ConfirmPassword)
+            {
+                throw new PasswordNotMatchException("“Old password types are wrong");
+            }
+            user.Password = updatePasswordRequest.NewPassword;
+            _context.Tbl_LoginMaster.Update(user);
             await _context.SaveChangesAsync();
+
+            return true;
+
+
         }
 
-        private string GenerateToken(Tbl_LoginMaster user)
+        private string GenerateToken(employeesDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, user.Code),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.RoleName ?? "User"),
-                new Claim("sub", user.UserName),
+                new Claim(ClaimTypes.Role, Convert.ToString(user.UserGroupName) ?? "User"),
+                new Claim("sub", user.Code),
                 new Claim("iss",user.Email),
-                new Claim("fk_EmpId", user.fk_EmpId.ToString())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor

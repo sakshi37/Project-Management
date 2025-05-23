@@ -25,6 +25,7 @@
 		<Folder Include="Features\Branches\Queries\" />
 		<Folder Include="Features\DailyReport\Commands\" />
 		<Folder Include="Features\DailyReport\Dtos\" />
+		<Folder Include="Features\LoginMaster\Commands\" />
 	</ItemGroup>
 
 </Project>

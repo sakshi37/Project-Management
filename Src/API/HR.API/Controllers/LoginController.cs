@@ -2,7 +2,7 @@
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
-using HR.Application.Features.LoginMaster.Commands.InsertLogin;
+using HR.Application.Features.Employees.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -120,12 +120,12 @@ namespace HR.API.Controllers
 
        
 
-        [HttpPost("insert-login")]
+        //[HttpPost("insert-login")]
        
-        public async Task<IActionResult> InsertLogin([FromBody] InsertLoginCommand command)
-        {
-            await _mediator.Send(command);
-            return Ok("Login inserted successfully.");
-        }
+        //public async Task<IActionResult> InsertLogin([FromBody] InsertLoginCommand command)
+        //{
+        //    await _mediator.Send(command);
+        //    return Ok("Login inserted successfully.");
+        //}
     }
 }

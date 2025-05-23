@@ -27,5 +27,6 @@
         public int ShiftId { get; set; }
         public int EmployeeTypeId { get; set; }
         public int UsergroupId { get; set; }
+        public string Password { get; set; }
     }
 }

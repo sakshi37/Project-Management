@@ -8,7 +8,7 @@ namespace HR.Application.Contracts.Models
 {
     public class OtpRequest
     {
-        public string UserName { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Otp { get; set; }
     }

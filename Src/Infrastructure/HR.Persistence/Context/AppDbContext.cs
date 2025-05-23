@@ -24,6 +24,7 @@ using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using HR.Identity.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using HR.Application.Features.Employees.Dtos;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : IdentityDbContext<ApplicationUser>
@@ -33,6 +34,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<CountryDto> CountryDtos { get; set; }
     public DbSet<State> States { get; set; }
+    public DbSet<employeesDto> employeesDto { get; set; }
+
+
 
     public DbSet<StateDto> StateDtos { get; set; }
     public DbSet<DesignationDto> DesignationDtos { get; set; }
@@ -112,6 +116,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
+        modelBuilder.Entity<employeesDto>().HasNoKey();
     }
 
 }
