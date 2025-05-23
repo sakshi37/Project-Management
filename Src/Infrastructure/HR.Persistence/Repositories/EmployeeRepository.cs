@@ -12,12 +12,14 @@ using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace HR.Persistence.Repositories
 {
     public class EmployeeRepository : IEmployeeMasterRepository
     {
         readonly AppDbContext _appDbContext;
+        private readonly IConfiguration _configuration;
         public EmployeeRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
@@ -69,7 +71,14 @@ namespace HR.Persistence.Repositories
         }
 
         public async Task<Employee> AddEmployee(CreateEmployeeMasterDto employee)
+
         {
+            Console.WriteLine($"Name: {employee.Name}");
+            Console.WriteLine($"Code: {employee.Code}");
+            Console.WriteLine($"MobileNo: {employee.MobileNo}");
+            Console.WriteLine($"JoinDate: {employee.JoinDate}");
+            Console.WriteLine($"Image is null? {employee.Image == null}");
+            Console.WriteLine($"Signature is null? {employee.Signature == null}");
             Console.WriteLine(employee.Image);
 
             byte[] imageBytes = employee.Image != null ? Convert.FromBase64String(employee.Image) : null;
@@ -99,7 +108,6 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
     new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
 
-
 };
 
 
@@ -122,8 +130,7 @@ namespace HR.Persistence.Repositories
            
             @Fk_CountryId,
             @Fk_StateId,
-            @Fk_CityId
-            ",
+            @Fk_CityId",
                 parameters.ToArray()
             );
 

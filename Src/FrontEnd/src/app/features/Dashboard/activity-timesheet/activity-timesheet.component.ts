@@ -21,7 +21,7 @@ export class ActivityTimesheetComponent implements OnInit {
   constructor(private timeSheetService: TimeSheetService) {}
   ngOnInit() {
     this.getSession();
-    this.getAttendance();
+    this.getTimesheetByEmpId();
     this.calculateTimeDifferences();
   }
 
@@ -73,16 +73,14 @@ export class ActivityTimesheetComponent implements OnInit {
     }
   }
 
-  getAttendance() {
+  getTimesheetByEmpId() {
     const empId = this.getEmpId();
     if (!empId) return;
     this.timeSheetService.getByIdTimeSheet(empId).subscribe((data) => {
       console.log('Received timesheet data:', data);
-      this.timeSheets = Array.isArray(data) ? data : [data];
-      // console.log(data);
-      console.log('After TimeSheets Data:', this.timeSheets);
+      this.timeSheets = data;
 
-      // this.timeSheets = data;
+      console.log('After TimeSheets Data:', this.timeSheets);
     });
   }
   private getEmpId() {

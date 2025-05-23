@@ -20,6 +20,7 @@ import { AuthGuard } from './services/authguard';
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
 import { ActivityTimesheetComponent } from './features/Dashboard/activity-timesheet/activity-timesheet.component';
 import { AttendanceComponent } from './features/Master/attendance/attendance/attendance.component';
+import { WorkTimesheetComponent } from './features/Master/work-timesheet/work-timesheet.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -81,5 +82,6 @@ export const routes: Routes = [
     path: 'sidebar',
     component: LefSideNavComponent /*canActivate: [AuthGuard] */,
   },
+  { path: 'work-timesheet', component: WorkTimesheetComponent },
   { path: '**', redirectTo: '' },
 ];

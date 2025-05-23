@@ -31,8 +31,9 @@ export class TimeSheetService {
     return this.http.get<Timesheets[]>(`${this.url}/timesheet/${empId}`);
   }
 
-  InsertTimesheet(timesheet: Timesheets) {
-    return this.http.post(`${this.url}/TimeSheet`, timesheet);
+  InsertTimesheet(timeSheet: { timesheet: Timesheets }) {
+    console.log(timeSheet);
+    return this.http.post(`${this.url}`, timeSheet);
   }
 }
 export type PunchInStatus = {
@@ -44,14 +45,14 @@ export type PunchInStatus = {
 
 export type Timesheets = {
   jobId: number;
-  sequence: string;
-  part: string;
-  activity: string;
-  type: string;
+  sequence: string | null;
+  part: string | null;
+  activity: string | null;
+  type: string | null;
   startTime: string;
   endTime: string | null;
-  hrs: number;
-  min: number;
-  empId: number;
-  timeSheetStatus: boolean;
+  hrs: number | null;
+  min: number | null;
+  empId: number | null;
+  timeSheetStatus: boolean | null;
 };

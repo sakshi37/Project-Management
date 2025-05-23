@@ -9,8 +9,8 @@
         public string Type { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-        public int Hrs { get; set; }
-        public int Min { get; set; }
-        public int EmpId { get; set; }
+        public int? Hrs { get; set; }
+        public int? Min { get; set; }
+        public int? EmpId { get; set; }
     }
 }

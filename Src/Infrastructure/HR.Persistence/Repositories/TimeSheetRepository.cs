@@ -87,14 +87,14 @@ namespace HR.Persistence.Repositories
             await _DbContext.Database.ExecuteSqlRawAsync(sql, empId);
         }
 
-        public async Task<GetByIdTimeSheetDto> TimeSheetGetById(int empId)
+        public async Task<List<GetByIdTimeSheetDto>> TimeSheetGetById(int empId)
         {
             var result = await _DbContext.timesheetGetByDto
                 .FromSqlRaw("EXEC SP_TimeSheetMasterGetById @Fk_EmployeeId = {0}", empId)
                 .AsNoTracking()
                 .ToListAsync();
 
-            return result.FirstOrDefault();
+            return result;
         }
 
 

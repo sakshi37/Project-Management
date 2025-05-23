@@ -128,6 +128,12 @@ namespace HR.API.Controllers
 
 
         }
+        [HttpGet("GetAllEmployeeByIdName")]
+        public async Task<IActionResult> GetALLEmployeeByIdName()
+        {
+            var result = await _mediator.Send(new GetAllEmployeesByIdNameQuery());
+            return Ok(result);
+        }
 
         [HttpGet("{code}")]
         public async Task<IActionResult> GetEmployeeBasicDetailsByCode(string code)
@@ -139,12 +145,7 @@ namespace HR.API.Controllers
 
             return Ok(result);
         }
-        [HttpGet("GetAllEmployeeByIdNmae")]
-        public async Task<IActionResult> GetALLEmployeeByIdName()
-        {
-            var result = await _mediator.Send(new GetAllEmployeesByIdNameQuery());
-            return Ok(result);
-        }
+
 
     }
 }

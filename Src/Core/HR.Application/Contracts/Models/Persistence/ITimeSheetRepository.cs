@@ -19,7 +19,7 @@ namespace HR.Application.Contracts.Persistence
         Task UpdateCurrentSession(int empId);
 
 
-        Task<GetByIdTimeSheetDto> TimeSheetGetById(int empId);
+        Task<List<GetByIdTimeSheetDto>> TimeSheetGetById(int empId);
         Task<List<GetAllAttendanceDto>> GetAllAttendance();
     }
 }

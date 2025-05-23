@@ -2,7 +2,7 @@
 
 namespace HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet
 {
-    public record GetByIdTimeSheetQuery(int empId) : IRequest<GetByIdTimeSheetDto>
+    public record GetByIdTimeSheetQuery(int empId) : IRequest<List<GetByIdTimeSheetDto>>
     {
     }
 }

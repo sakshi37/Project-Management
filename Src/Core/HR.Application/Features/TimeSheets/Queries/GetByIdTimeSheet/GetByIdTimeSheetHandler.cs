@@ -3,7 +3,7 @@ using MediatR;
 
 namespace HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet
 {
-    public class GetByIdTimeSheetHandler : IRequestHandler<GetByIdTimeSheetQuery, GetByIdTimeSheetDto>
+    public class GetByIdTimeSheetHandler : IRequestHandler<GetByIdTimeSheetQuery, List<GetByIdTimeSheetDto>>
     {
         readonly ITimeSheetRepository _timeSheetRepository;
         public GetByIdTimeSheetHandler(ITimeSheetRepository timeSheetRepository)
@@ -12,7 +12,7 @@ namespace HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet
 
         }
 
-        public async Task<GetByIdTimeSheetDto> Handle(GetByIdTimeSheetQuery request, CancellationToken cancellationToken)
+        public async Task<List<GetByIdTimeSheetDto>> Handle(GetByIdTimeSheetQuery request, CancellationToken cancellationToken)
         {
             return await _timeSheetRepository.TimeSheetGetById(request.empId);
         }
