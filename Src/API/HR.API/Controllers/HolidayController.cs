@@ -25,11 +25,14 @@ namespace HR.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateHolidayDto dto)
+        [Consumes("multipart/form-data")]
+
+        public async Task<IActionResult> Create([FromForm] CreateHolidayDto dto)
             => Ok(await _mediator.Send(new CreateHolidayCommand(dto)));
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateHolidayDto dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Update([FromForm] UpdateHolidayDto dto)
             => Ok(await _mediator.Send(new UpdateHolidayCommand(dto)));
 
         [HttpDelete("{id}")]
