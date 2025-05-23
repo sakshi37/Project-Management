@@ -20,9 +20,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class WorkTimesheetComponent implements OnInit {
   currentEmpId: number | undefined;
-  closeAddTaskModal() {
-    throw new Error('Method not implemented.');
-  }
+  sessionStatus: any;
+  // closeAddTaskModal() {
+  //   throw new Error('Method not implemented.');
+  // }
   toggleAddTaskForm(empId: number): void {
     this.addTaskEmpId = this.addTaskEmpId === empId ? null : empId;
   }

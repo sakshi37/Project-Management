@@ -28,7 +28,10 @@
     </div>
 
     <!-- Task List Section -->
-    <div *ngIf="employee.id === openEmpId" class="card-body border-top pt-3">
+    <div
+      *ngIf="employee.id === openEmpId && sessionStatus"
+      class="card-body border-top pt-3"
+    >
       <h6 class="text-secondary mb-3">Task List</h6>
 
       <ng-container *ngFor="let task of taskList">
