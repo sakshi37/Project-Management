@@ -37,6 +37,7 @@ export class CityComponent implements OnInit, AfterViewInit {
   cityForm!: FormGroup;
   countries: GetCountryDto[] = [];
   states: GetStateDto[] = [];
+  filteredCountries: GetCountryDto[] = [];
   filteredStates: GetStateDto[] = [];
   cities: GetCityDto[] = [];
   searchText: string = '';
@@ -103,6 +104,7 @@ export class CityComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (res) => {
           this.countries = res;
+          this.filteredCountries = res.filter(c => c.countryStatus == 1);
           console.log('Countries loaded:', this.countries.length);
         },
         error: (err) => console.error('Error loading countries:', err)
@@ -247,43 +249,102 @@ export class CityComponent implements OnInit, AfterViewInit {
     this.resetForm();
     this.isEditMode = false;
     this.cityModal.show();
+    this.filteredCountries = this.countries.filter(c => c.countryStatus == 1);
+
+  // CLEAR any previously set inactive state dropdown
+  this.filteredStates = [];
   }
 
+  // onEdit(city: GetCityDto): void {
+  //   console.log('Editing city:', city);
+  //   this.selectedCityId = city.cityId;
+  //   this.isEditMode = true;
+
+  //   this.cityForm.patchValue({
+  //     countryId: city.countryId,
+  //     cityStatus: city.cityStatus ? '1' : '0',
+  //   });
+
+  //   setTimeout(() => {
+  //     this.filterStates();
+
+  //     this.cityForm.patchValue({ stateId: city.stateId });
+
+  //     this.loadValidCities();
+
+  //     setTimeout(() => {
+  //       this.cityForm.patchValue({ cityName: city.cityName });
+  //     }, 200); 
+  //   }, 150); 
+
+  //   this.cityModal.show();
+  // }
   onEdit(city: GetCityDto): void {
     console.log('Editing city:', city);
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
-  
-    this.cityForm.patchValue({
-      countryId: city.countryId,
-      cityStatus: city.cityStatus ? '1' : '0',
+
+    this.countryService.getAllCountries().subscribe({
+      next: (res) => {
+        this.countries = res;
+        this.filteredCountries = res.filter(c => c.countryStatus == 1);
+
+
+        const cityCountry = this.countries.find(c => c.countryId === city.countryId);
+        if (cityCountry && !cityCountry.countryStatus) {
+          this.filteredCountries.push(cityCountry);
+        }
+
+
+        // Patch countryId and cityStatus first
+        this.cityForm.patchValue({
+          countryId: city.countryId,
+          cityStatus: city.cityStatus ? '1' : '0',
+        });
+
+        // Do NOT call filterStates here because this.states is not yet loaded
+
+        this.stateService.getAllStates().subscribe({
+          next: (allStates) => {
+            this.states = allStates.filter(s => s.stateStatus === true);
+
+            const cityState = allStates.find(s => s.stateId === city.stateId);
+            if (cityState && !cityState.stateStatus) {
+              this.states.push(cityState);
+            }
+
+            // Now filter states by the patched countryId
+            this.filterStates();
+
+            // Patch stateId AFTER filtering states so dropdown has the option
+            this.cityForm.patchValue({ stateId: city.stateId });
+
+            // Patch cityName immediately (no timeout needed)
+            this.cityForm.patchValue({ cityName: city.cityName });
+
+            // Load other data if needed
+            this.loadValidCities();
+          },
+          error: (err) => console.error('Error loading states:', err),
+        });
+
+        this.cityModal.show();
+      },
+      error: (err) => console.error('Error loading countries:', err),
     });
-  
-    setTimeout(() => {
-      this.filterStates();
-  
-      this.cityForm.patchValue({ stateId: city.stateId });
-  
-      this.loadValidCities();
-  
-      setTimeout(() => {
-        this.cityForm.patchValue({ cityName: city.cityName });
-      }, 200); 
-    }, 150); 
-  
-    this.cityModal.show();
   }
+
 
   private cleanUpModal(): void {
     document.body.classList.remove('modal-open');
     document.body.style.overflow = 'auto'; // ✅ restore scrolling
     document.body.style.removeProperty('padding-right');
-  
+
     const backdrops = document.querySelectorAll('.modal-backdrop');
     backdrops.forEach((backdrop) => backdrop.remove());
   }
-  
-  
+
+
 
   onSubmit(): void {
     if (this.cityForm.invalid) {
@@ -295,10 +356,10 @@ export class CityComponent implements OnInit, AfterViewInit {
     if (!cityName) {
       Swal.fire({
         toast: true,
-                      position: 'top',
-                      timer: 3000,
-                      timerProgressBar: true,
-                      showConfirmButton: false,
+        position: 'top',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
         icon: 'error',
         title: 'Invalid City',
         text: 'Please select a valid city for the selected country and state.',

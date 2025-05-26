@@ -87,7 +87,7 @@
                 <select id="countryId" class="form-select" formControlName="countryId" (change)="onCountryChange()"
                   [ngClass]="{ 'is-invalid': cityForm.get('countryId')?.touched && cityForm.get('countryId')?.invalid }">
                   <option value="">Select Country</option>
-                  <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}
+                  <option *ngFor="let country of filteredCountries" [value]="country.countryId">{{ country.countryName }}
                   </option>
                 </select>
               </div>
