@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { City, State, Country } from 'country-state-city';
 import * as bootstrap from 'bootstrap';
 import { CityService } from '../../../../services/city.service';
 import { CountryService } from '../../../../services/country.service.service';
@@ -47,6 +48,9 @@ export class CityComponent implements OnInit, AfterViewInit {
   itemsPerPage: number = 5; // default value
   selectedSortColumn = '';
   sortDirectionAsc = true;
+  validCities: string[] = [];
+  cityDropdownList: string[] = [];
+
 
   private cityModal!: bootstrap.Modal;
   private modalElement: ElementRef | undefined;
@@ -58,13 +62,21 @@ export class CityComponent implements OnInit, AfterViewInit {
     private countryService: CountryService,
     private el: ElementRef,
     private errorHandler: ErrorHandlerService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadCountries();
     this.loadStates();
     this.loadCities();
+
+    this.cityForm.get('countryId')?.valueChanges.subscribe(() => {
+      this.onCountryChange();
+    });
+
+    this.cityForm.get('stateId')?.valueChanges.subscribe(() => {
+      this.onStateChange();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -88,26 +100,130 @@ export class CityComponent implements OnInit, AfterViewInit {
   loadCountries(): void {
     this.countryService
       .getAllCountries()
-      .subscribe((res) => (this.countries = res));
+      .subscribe({
+        next: (res) => {
+          this.countries = res;
+          console.log('Countries loaded:', this.countries.length);
+        },
+        error: (err) => console.error('Error loading countries:', err)
+      });
   }
 
   loadStates(): void {
-    this.stateService.getAllStates().subscribe((res) => {
-      this.states = res;
-      // console.log('States:', this.states);
-      this.filterStates();
+    this.stateService.getAllStates().subscribe({
+      next: (res) => {
+        this.states = res;
+        console.log('States loaded:', this.states.length);
+        this.filterStates();
+      },
+      error: (err) => console.error('Error loading states:', err)
     });
   }
 
   loadCities(): void {
-    this.cityService.getAllCities().subscribe((data) => {
-      this.cities = data;
-      this.filteredCities = [...data];
+    this.cityService.getAllCities().subscribe({
+      next: (data) => {
+        this.cities = data;
+        this.filteredCities = [...data];
+        console.log('Cities loaded from API:', this.cities.length);
+      },
+      error: (err) => console.error('Error loading cities:', err)
     });
   }
 
+  loadValidCities(): void {
+    console.log('Loading cities from country-state-city package...');
+
+    const countryIdFromForm = this.cityForm.value.countryId;
+    const stateIdFromForm = this.cityForm.value.stateId;
+
+    if (!countryIdFromForm || !stateIdFromForm) {
+      console.log('CountryId or StateId not selected yet.');
+      this.validCities = [];
+      this.cityDropdownList = [];
+      return;
+    }
+
+    const selectedCountry = this.countries.find(
+      (c) => String(c.countryId) === String(countryIdFromForm)
+    );
+
+    const selectedState = this.states.find(
+      (s) => String(s.stateId) === String(stateIdFromForm)
+    );
+
+    if (!selectedCountry || !selectedState) {
+      console.log('Country or State not found:', {
+        countryIdFromForm,
+        stateIdFromForm,
+        selectedCountry,
+        selectedState
+      });
+      this.validCities = [];
+      this.cityDropdownList = [];
+      return;
+    }
+
+    const countryCode = selectedCountry.countryCode.trim();
+    const stateCode = selectedState.stateCode.trim();
+
+    console.log('Fetching cities for:', {
+      countryCode,
+      stateCode,
+      countryName: selectedCountry.countryName,
+      stateName: selectedState.stateName
+    });
+
+    const cities = City.getCitiesOfState(countryCode, stateCode);
+    console.log('Fetched cities:', cities.length);
+
+    if (cities && cities.length > 0) {
+      this.validCities = cities.map((city) => city.name.toLowerCase());
+      this.cityDropdownList = cities.map((city) => city.name);
+      console.log('City dropdown populated with', this.cityDropdownList.length, 'cities');
+    } else {
+      console.log('No cities found for the selected country/state combination');
+      this.validCities = [];
+      this.cityDropdownList = [];
+    }
+  }
+
+
+  onCountryChange(): void {
+    const countryId = this.cityForm.value.countryId;
+    if (!countryId) {
+      this.filteredStates = [];
+      this.cityDropdownList = [];
+      this.validCities = [];
+      return;
+    }
+
+    this.filterStates();
+
+    this.cityForm.patchValue({
+      stateId: '',
+      cityName: ''
+    });
+
+    this.cityDropdownList = [];
+    this.validCities = [];
+  }
+
+  onStateChange(): void {
+    const stateId = this.cityForm.value.stateId;
+    if (!stateId) {
+      this.cityDropdownList = [];
+      this.validCities = [];
+      this.cityForm.patchValue({ cityName: '' });
+      return;
+    }
+
+    this.loadValidCities();
+
+    this.cityForm.patchValue({ cityName: '' });
+  }
+
   filterCities(): void {
-    ``;
     const search = this.searchText?.trim().toLowerCase();
 
     if (!search) {
@@ -122,14 +238,9 @@ export class CityComponent implements OnInit, AfterViewInit {
 
   filterStates(): void {
     const countryId = +this.cityForm.get('countryId')?.value;
-    console.log('Selected CountryId:', countryId);
-    console.log('All States:', this.states);
+    console.log('Filtering states for CountryId:', countryId);
     this.filteredStates = this.states.filter((s) => s.countryId === countryId);
-  }
-
-  onCountryChange(): void {
-    this.filterStates();
-    this.cityForm.patchValue({ stateId: '' });
+    console.log('Filtered states:', this.filteredStates.length);
   }
 
   openAddModal(): void {
@@ -138,74 +249,65 @@ export class CityComponent implements OnInit, AfterViewInit {
     this.cityModal.show();
   }
 
-  // onEdit(city: GetCityDto): void {
-  //   this.cityForm.patchValue({
-  //     countryId: city.countryId,
-  //     stateId: city.stateId,
-  //     cityName: city.cityName,
-  //     status: city.cityStatus ? '1' : '0',
-  //   });
-  //   this.selectedCityId = city.cityId;
-  //   this.isEditMode = true;
-  //   this.filterStates();
-  //   this.cityModal.show();
-  // }
   onEdit(city: GetCityDto): void {
-    this.cityForm.patchValue({
-      countryId: city.countryId,
-      cityName: city.cityName,
-      cityStatus: city.cityStatus ? '1' : '0',
-    });
-
+    console.log('Editing city:', city);
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
-
-    this.filterStates();
-
+  
+    this.cityForm.patchValue({
+      countryId: city.countryId,
+      cityStatus: city.cityStatus ? '1' : '0',
+    });
+  
     setTimeout(() => {
+      this.filterStates();
+  
       this.cityForm.patchValue({ stateId: city.stateId });
-    }, 0);
-
+  
+      this.loadValidCities();
+  
+      setTimeout(() => {
+        this.cityForm.patchValue({ cityName: city.cityName });
+      }, 200); 
+    }, 150); 
+  
     this.cityModal.show();
   }
 
-  // onSubmit(): void {
-  //   if (this.cityForm.invalid) return;
-  //   const statusBool = this.cityForm.value.cityStatus === '1' ? true : false;
+  private cleanUpModal(): void {
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = 'auto'; // ✅ restore scrolling
+    document.body.style.removeProperty('padding-right');
+  
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach((backdrop) => backdrop.remove());
+  }
+  
+  
 
-  //   const payload = {
-  //     cityName: this.cityForm.value.cityName,
-  //     stateId: this.cityForm.value.stateId,
-  //     cityStatus: statusBool,
-
-  //   };
-  //   console.log('City status:', statusBool);
-
-  //   const createcitypayload = {
-  //     cityName: this.cityForm.value.cityName,
-  //     stateId: this.cityForm.value.stateId,
-  //   };
-  //   if (this.isEditMode && this.selectedCityId) {
-  //     const updateDto: UpdateCityDto = { ...payload, cityId: this.selectedCityId, updatedBy: 1 };
-  //     this.cityService.updateCity(updateDto).subscribe(() => {
-  //       this.loadCities();
-  //       // this.cityModal.hide();
-  //       this.resetForm();
-  //     });
-  //   }
-  //    else {
-  //     const createDto: CreateCityDto = { ...createcitypayload, createdBy: 1 };
-  //     this.cityService.createCity(createDto).subscribe(() => {
-  //       this.loadCities();
-  //       // this.cityModal.hide();
-  //       this.resetForm();
-  //     });
-  //   }
-  // }
   onSubmit(): void {
-    if (this.cityForm.invalid) return;
+    if (this.cityForm.invalid) {
+      this.cityForm.markAllAsTouched();
+      return;
+    }
+
+    const cityName = this.cityForm.value.cityName;
+    if (!cityName) {
+      Swal.fire({
+        toast: true,
+                      position: 'top',
+                      timer: 3000,
+                      timerProgressBar: true,
+                      showConfirmButton: false,
+        icon: 'error',
+        title: 'Invalid City',
+        text: 'Please select a valid city for the selected country and state.',
+      });
+      return;
+    }
 
     const statusBool = this.cityForm.value.cityStatus === '1';
+
     const payload = {
       cityName: this.cityForm.value.cityName,
       stateId: this.cityForm.value.stateId,
@@ -229,13 +331,18 @@ export class CityComponent implements OnInit, AfterViewInit {
         next: () => {
           this.loadCities();
           this.cityModal.hide();
+          this.cleanUpModal();
           this.resetForm();
-
           Swal.fire({
+            toast: true,
+            position: 'top',
+            timerProgressBar: true,
             icon: 'success',
-            title: 'Updated',
-            text: 'City updated successfully!',
-            confirmButtonColor: '#3085d6',
+            title: 'City updated successfully',
+            timer: 1000,
+            showConfirmButton: false,
+          }).then(() => {
+            this.cleanUpModal();
           });
         },
         error: (err) => this.errorHandler.handleError(err),
@@ -245,13 +352,21 @@ export class CityComponent implements OnInit, AfterViewInit {
         next: () => {
           this.loadCities();
           this.cityModal.hide();
+          this.cleanUpModal();
           this.resetForm();
 
           Swal.fire({
+            toast: true,
+            position: 'top',
+            timer: 1000,
+            timerProgressBar: true,
+            showConfirmButton: false,
             icon: 'success',
             title: 'Created',
             text: 'City created successfully!',
             confirmButtonColor: '#3085d6',
+          }).then(() => {
+            this.cleanUpModal();
           });
         },
         error: (err) => this.errorHandler.handleError(err),
@@ -267,6 +382,8 @@ export class CityComponent implements OnInit, AfterViewInit {
       cityStatus: '1',
     });
     this.selectedCityId = null;
+    this.cityDropdownList = [];
+    this.validCities = [];
   }
 
   sortCities(column: string) {
@@ -292,18 +409,9 @@ export class CityComponent implements OnInit, AfterViewInit {
     return this.sortDirectionAsc ? 'fa-sort-up' : 'fa-sort-down';
   }
 
-  // onStatusChange(city: GetCityDto): void {
-  //   const confirmed = confirm(`Change status for "${city.cityName}"?`);
-  //   if (confirmed) {
-  //     this.cityService.softDeleteCity(city.cityId, city.cityStatus ? 0 : 1).subscribe(() => {
-  //       this.loadCities();
-  //     });
-  //   }
-  // }
   onStatusChange(city: GetCityDto): void {
     const confirmed = confirm(
-      `Are you sure you want to mark "${city.cityName}" as ${
-        city.cityStatus ? 'Inactive' : 'Active'
+      `Are you sure you want to mark "${city.cityName}" as ${city.cityStatus ? 'Inactive' : 'Active'
       }?`
     );
 

@@ -12,10 +12,14 @@ export class ErrorHandlerService {
     const message = error?.error?.message || 'An unexpected error occurred';
 
     Swal.fire({
+      toast: true,
+      position: 'top',
+      timerProgressBar : true,
+      timer: 3000,
       icon: 'error',
       title: 'Error',
-      text: message,
-      confirmButtonColor: '#d33'
+      showConfirmButton: false,
+      text: message
     });
     console.error(error.error)
   }

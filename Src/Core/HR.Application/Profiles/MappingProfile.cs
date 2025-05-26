@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using HR.Application.Dtos;
+using HR.Application.Features.Admin.Commands.ApproveRequest;
+using HR.Application.Features.Admin.Commands.RejectRequest;
 using HR.Application.Features.Branches.Commands.CreateBranch;
 using HR.Application.Features.Branches.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.CreateCity;
@@ -17,6 +19,9 @@ using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Family.Queries.GetAllFamilyType;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
 using HR.Application.Features.Holidays.Commands.CreateHoliday;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Holidays.Commands.UpdateHoliday;
@@ -91,5 +96,11 @@ public class MappingProfile : Profile
         CreateMap<division, DivisionDto>().ReverseMap();
         CreateMap<InsertEmployeeDetailsGmcCommandDto, Employee>();
         CreateMap<Employee, InsertEmployeeDetailsGmcCommandDto>();
+        CreateMap<Employee, empdetailDto>();
+
+        CreateMap<Family, GetFamilyDetailsByCodeQueryVm>();
+        CreateMap<RejectRequestDto, RejectRequestCommand>();
+        CreateMap<ApproveRequestDto, ApproveRequestCommand>();
+
     }
 }

@@ -26,6 +26,12 @@ using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
+using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
+using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+using Microsoft.SharePoint.WebControls;
+using HR.Application.Features.Admin.Queries.GetPendingRequest;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : DbContext
@@ -50,7 +56,7 @@ public class AppDbContext : DbContext
     public DbSet<LocationDto> dtos { get; set; }
     
 
-    public DbSet<Employee> Tbl_Employee_master { get; set; }
+   
     public DbSet<LocationDto> Locationdtos { get; set; }
 
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
@@ -59,6 +65,8 @@ public class AppDbContext : DbContext
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<TeamCompositionDto> TeamCompositionDtos { get; set; }
+    public DbSet<TeamMember> TeamMembers { get; set; }
+
 
     public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
     public DbSet<Counter> Counter { get; set; }
@@ -85,6 +93,12 @@ public class AppDbContext : DbContext
 
 
     public DbSet<Attendance> attendance { get; set; }
+    public DbSet<empdetailDto> EmpdetailDtos { get; set; }
+    public DbSet<GetFamilyDetailsByCodeQueryVm> FamilyDetailsByCodeVms { get; set; }
+
+    public DbSet<MissPunchOutQueryVm> MissPunchOutQueryVms { get; set; }
+    public DbSet<MissPunchInQueryVm> MissPunchInQueryVms { get; set; }
+    public DbSet<PendingRequestVm> pendingRequestVms { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -92,6 +106,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
+
+
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
         modelBuilder.Entity<Employee>().ToTable("Tbl_Employee_master");
@@ -100,7 +116,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<HolidayDto>().HasNoKey();
         modelBuilder.Entity<TotalValue>().HasNoKey();
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
+        modelBuilder.Entity<TeamComposition>().ToTable("Tbl_TeamComposition");
+        //modelBuilder.Entity<TeamComposition>().HasNoKey();
+
+
         modelBuilder.Entity<TeamLeaderDto>().HasNoKey();
+        modelBuilder.Entity<TeamMember>().ToTable("Tbl_TeamMembers");
 
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
@@ -134,7 +155,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetEmployeeBasicDetailsByCodeQueryVm>().HasNoKey();
         modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
         modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
-
+        modelBuilder.Entity<empdetailDto>().HasNoKey(); 
+        modelBuilder.Entity<GetFamilyDetailsByCodeQueryVm>().HasNoKey();
+        modelBuilder.Entity<MissPunchOutQueryVm>().HasNoKey();
+        modelBuilder.Entity<MissPunchInQueryVm>().HasNoKey();
+        modelBuilder.Entity<PendingRequestVm>().HasNoKey();
 
 
     }
