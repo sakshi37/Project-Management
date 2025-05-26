@@ -1,0 +1,13 @@
+<div class="container">
+  <h2>Notifications</h2>
+
+  <div *ngIf="notification.length === 0">No notifications found.</div>
+
+  <div *ngFor="let item of notification" class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ item.subject }}</h5>
+      <p class="card-text">{{ item.message }}</p>
+    </div>
+  </div>
+</div>
+

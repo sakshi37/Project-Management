@@ -1,4 +1,5 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using HR.Persistence.Context;
@@ -38,6 +39,17 @@ namespace HR.Persistence.Repositories
 
             var result = await _appDbContext.MissPunchOutQueryVms
                 .FromSqlRaw("EXEC SP_GetReportOfMissPunchOut @StartDate", startDateParam)
+                .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<HalfDayQueryVm>> GetHalfDayReportAsync(DateTime startDate)
+        {
+            var startDateParam = new SqlParameter("@StartDate", startDate);
+
+            var result = await _appDbContext.halfDayQueryVms
+                .FromSqlRaw("EXEC SP_GetReportOfHalfDay @StartDate", startDateParam)
                 .ToListAsync();
 
             return result;

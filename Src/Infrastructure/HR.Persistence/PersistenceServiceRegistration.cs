@@ -37,7 +37,7 @@ namespace HR.Persistence
             services.AddScoped<IAttendanceRepository, AttendanceRepository>();
             services.AddScoped<IRequestByHrRepository, RequestByHrRepository>();
             services.AddScoped<IAdminRepository, AdminRepository>();
-
+            services.AddScoped<INotificationRepository, NotificationRepository>();
 
 
             return services;

@@ -42,7 +42,7 @@ namespace HR.Persistence.Repositories
                .ExecuteSqlRawAsync("EXEC dbo.SP_ApproveRequest @RequestId = {0}, @EmpCode = {1}, @Comment={2}", requestId, empCode, comment);
             Console.WriteLine($"Affected rows: {result}");
 
-            return result < 0 ? "Request is Approved successfully" : "Failed to Approve request";
+            return result < 0 ? "Request is Approved successfully Employee Activated" : "Failed to Approve request";
         }
 
 

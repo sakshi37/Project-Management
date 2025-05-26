@@ -36,7 +36,8 @@ reason: string = '';
                 position: 'top',
                 timer: 2000,
                 showConfirmButton: false
-              }).then(() => this.dialogRef.close(true));
+              }).then(() => this.dialogRef.close({ approvedCode: this.data.code }));
+
       
     },
     error: (err) => {
