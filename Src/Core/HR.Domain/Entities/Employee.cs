@@ -37,6 +37,7 @@
         public int StateId { get; set; }
         public int CityId { get; set; }
         public int GenderId { get; set; }
+        public bool FirstLogin { get; set; }
 
     }
 }

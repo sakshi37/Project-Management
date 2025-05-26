@@ -2,6 +2,7 @@
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
+using HR.Application.Exceptions;
 using HR.Application.Features.Employees.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -35,11 +36,39 @@ namespace HR.API.Controllers
         }
 
         //verfying otp got on mail
-        [HttpPost("otpVerify for first login")]
-        public async Task<ActionResult<OtpResponse>> VerifyOtp(OtpRequest otpRequest)
+        [HttpPost("otpVerify-for-first-login")]
+        public async Task<ActionResult<OtpResponse>> VerifyOtp([FromBody] OtpRequest otpRequest)
         {
-            var response = await _loginService.VerifyOtp(otpRequest);
-            return Ok(response);
+            if (otpRequest == null || string.IsNullOrWhiteSpace(otpRequest.Code) || string.IsNullOrWhiteSpace(otpRequest.Otp))
+            {
+                return BadRequest("OTP request is invalid. 'Code' and 'Otp' are required.");
+            }
+
+            try
+            {
+                var response = await _loginService.VerifyOtp(otpRequest);
+                return Ok(response);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (OtpNotFoundException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during OTP verification.", detail = ex.Message });
+            }
+        }
+
+        [HttpPut("FirstLoginUpdatePassword")]
+        public async Task<IActionResult> FirstLoginPasswordUpdate(string Code, string Password)
+        {
+            var result =await _loginService.FirstLoginPasswordUpdate(Code, Password);
+            return Ok(result);
+
         }
 
 

@@ -18,8 +18,7 @@ namespace HR.Application.Contracts.Models.Persistence
         Task<bool> ChangePassword(ChangePassword changePasswordRequest);
 
         Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest);
-
-
+        Task<bool> FirstLoginPasswordUpdate(string Code, string Password);
     }
 
 }
