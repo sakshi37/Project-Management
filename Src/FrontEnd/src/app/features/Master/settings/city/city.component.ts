@@ -241,7 +241,10 @@ export class CityComponent implements OnInit, AfterViewInit {
   filterStates(): void {
     const countryId = +this.cityForm.get('countryId')?.value;
     console.log('Filtering states for CountryId:', countryId);
-    this.filteredStates = this.states.filter((s) => s.countryId === countryId);
+    this.filteredStates = this.states.filter(
+      (s) => s.countryId === countryId && s.stateStatus === true
+    );
+    // this.filteredStates = this.states.filter((s) => s.countryId === countryId);
     console.log('Filtered states:', this.filteredStates.length);
   }
 
@@ -253,6 +256,7 @@ export class CityComponent implements OnInit, AfterViewInit {
 
   // CLEAR any previously set inactive state dropdown
   this.filteredStates = [];
+  
   }
 
   // onEdit(city: GetCityDto): void {
@@ -279,60 +283,124 @@ export class CityComponent implements OnInit, AfterViewInit {
 
   //   this.cityModal.show();
   // }
+  // onEdit(city: GetCityDto): void {
+  //   console.log('Editing city:', city);
+  //   this.selectedCityId = city.cityId;
+  //   this.isEditMode = true;
+
+  //   this.countryService.getAllCountries().subscribe({
+  //     next: (res) => {
+  //       this.countries = res;
+  //       this.filteredCountries = res.filter(c => c.countryStatus == 1);
+
+
+  //       const cityCountry = this.countries.find(c => c.countryId === city.countryId);
+  //       if (cityCountry && !cityCountry.countryStatus) {
+  //         this.filteredCountries.push(cityCountry);
+  //       }
+
+
+  //       // Patch countryId and cityStatus first
+  //       this.cityForm.patchValue({
+  //         countryId: city.countryId,
+  //         cityStatus: city.cityStatus ? '1' : '0',
+  //       });
+
+  //       // Do NOT call filterStates here because this.states is not yet loaded
+
+  //       this.stateService.getAllStates().subscribe({
+  //         next: (allStates) => {
+  //           this.states = allStates.filter(s => s.stateStatus === true);
+
+  //           const cityState = allStates.find(s => s.stateId === city.stateId);
+  //           if (cityState && !cityState.stateStatus) {
+  //             this.states.push(cityState);
+  //           }
+
+  //           // Now filter states by the patched countryId
+  //           this.filterStates();
+
+  //           // Patch stateId AFTER filtering states so dropdown has the option
+  //           this.cityForm.patchValue({ stateId: city.stateId });
+
+  //           // Patch cityName immediately (no timeout needed)
+  //           this.cityForm.patchValue({ cityName: city.cityName });
+
+  //           // Load other data if needed
+  //           this.loadValidCities();
+  //         },
+  //         error: (err) => console.error('Error loading states:', err),
+  //       });
+
+  //       this.cityModal.show();
+  //     },
+  //     error: (err) => console.error('Error loading countries:', err),
+  //   });
+  // }
   onEdit(city: GetCityDto): void {
     console.log('Editing city:', city);
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
-
+  
+    this.cityForm.reset(); // Clear previous values
+  
+    // Fetch countries first
     this.countryService.getAllCountries().subscribe({
-      next: (res) => {
-        this.countries = res;
-        this.filteredCountries = res.filter(c => c.countryStatus == 1);
-
-
-        const cityCountry = this.countries.find(c => c.countryId === city.countryId);
-        if (cityCountry && !cityCountry.countryStatus) {
-          this.filteredCountries.push(cityCountry);
+      next: (countries) => {
+        this.countries = countries;
+        this.filteredCountries = countries.filter(c => c.countryStatus == 1);
+  
+        // If selected country is inactive, add it back to the list
+        const selectedCountry = countries.find(c => c.countryId === city.countryId);
+        if (selectedCountry && !selectedCountry.countryStatus) {
+          this.filteredCountries.push(selectedCountry);
         }
-
-
+  
         // Patch countryId and cityStatus first
+        console.log('CountryId patched:', city.countryId, typeof(city.countryId));
         this.cityForm.patchValue({
           countryId: city.countryId,
           cityStatus: city.cityStatus ? '1' : '0',
         });
-
-        // Do NOT call filterStates here because this.states is not yet loaded
-
+        
+  
+        // Now fetch states
         this.stateService.getAllStates().subscribe({
-          next: (allStates) => {
-            this.states = allStates.filter(s => s.stateStatus === true);
-
-            const cityState = allStates.find(s => s.stateId === city.stateId);
-            if (cityState && !cityState.stateStatus) {
-              this.states.push(cityState);
+          next: (states) => {
+            this.states = states;
+  
+            // If selected state is inactive, add it manually
+            const selectedState = states.find(s => s.stateId === city.stateId);
+            this.filteredStates = states.filter(s =>
+              s.countryId === city.countryId && s.stateStatus === true
+            );
+  
+            if (selectedState && !selectedState.stateStatus) {
+              this.filteredStates.push(selectedState);
             }
+  
+            // Patch stateId
+            // this.cityForm.patchValue({ countryId: city.countryId });
 
-            // Now filter states by the patched countryId
-            this.filterStates();
-
-            // Patch stateId AFTER filtering states so dropdown has the option
             this.cityForm.patchValue({ stateId: city.stateId });
 
-            // Patch cityName immediately (no timeout needed)
-            this.cityForm.patchValue({ cityName: city.cityName });
-
-            // Load other data if needed
+  
+            // Now load valid cities for dropdown
             this.loadValidCities();
+  
+            // Finally, patch city name
+            this.cityForm.patchValue({ cityName: city.cityName });
+  
+            // Show modal
+            this.cityModal.show();
           },
           error: (err) => console.error('Error loading states:', err),
         });
-
-        this.cityModal.show();
       },
       error: (err) => console.error('Error loading countries:', err),
     });
   }
+  
 
 
   private cleanUpModal(): void {
