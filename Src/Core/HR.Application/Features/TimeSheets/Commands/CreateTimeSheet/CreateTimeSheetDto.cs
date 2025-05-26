@@ -3,7 +3,7 @@
     public class CreateTimeSheetDto
     {
 
-        public int JobId { get; set; }
+        public int ProjectId { get; set; }
         public string? Sequence { get; set; }
         public string? Part { get; set; }
         public string? Activity { get; set; }

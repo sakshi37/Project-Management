@@ -7,6 +7,7 @@ import {
 } from '../../../services/employee-service';
 import { CommonModule } from '@angular/common';
 import {
+  ProjectWithStack,
   Timesheets,
   TimeSheetService,
 } from '../../../services/time-sheet.service';
@@ -25,15 +26,15 @@ export class WorkTimesheetComponent implements OnInit {
   //   throw new Error('Method not implemented.');
   // }
   toggleAddTaskForm(empId: number): void {
-    this.addTaskEmpId = this.addTaskEmpId === empId ? null : empId;
+    this.addTaskProjectId = this.addTaskProjectId === empId ? null : empId;
   }
 
   taskForm!: FormGroup;
   employees: EmployeeByIdName[] = [];
   taskList: Timesheets[] = [];
-  openEmpId: number | null = null;
-  addTaskEmpId: number | null = null;
-
+  openProjectId: number | null = null;
+  addTaskProjectId: number | null = null;
+  projects: ProjectWithStack[] = [];
   selectedTaskList: Timesheets[] = [];
 
   constructor(
@@ -48,6 +49,7 @@ export class WorkTimesheetComponent implements OnInit {
       console.log(res);
       this.employees = res;
       this.timeSheet();
+      this.getAllProject();
     });
   }
 
@@ -73,7 +75,7 @@ export class WorkTimesheetComponent implements OnInit {
         console.log(res);
         this.timeSheet();
         this.taskForm.reset();
-        this.addTaskEmpId = null;
+        this.addTaskProjectId = null;
         Swal.fire({
           icon: 'success',
           title: 'Success!',
@@ -83,6 +85,12 @@ export class WorkTimesheetComponent implements OnInit {
       });
   }
 
+  getAllProject() {
+    this.timesheetService.GetAllProject().subscribe((res) => {
+      console.log(res);
+      this.projects = res;
+    });
+  }
   timeSheet() {
     this.timesheetService.getAllTimeSheet().subscribe((res) => {
       console.log(res);
@@ -91,21 +99,21 @@ export class WorkTimesheetComponent implements OnInit {
   }
 
   toggleTaskList(empId: number) {
-    if (empId === this.openEmpId) {
-      this.openEmpId = null;
+    if (empId === this.openProjectId) {
+      this.openProjectId = null;
     } else {
-      this.openEmpId = empId;
+      this.openProjectId = empId;
     }
   }
 
   checkTask(clickedTask: Timesheets) {
     const isChecked = this.selectedTaskList.find(
-      (task) => task.jobId === clickedTask.jobId
+      (task) => task.projectId === clickedTask.projectId
     );
 
     if (isChecked) {
       this.selectedTaskList = this.selectedTaskList.filter(
-        (task) => task.jobId !== clickedTask.jobId
+        (task) => task.projectId !== clickedTask.projectId
       );
     } else {
       this.selectedTaskList.push(clickedTask);

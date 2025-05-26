@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class TimeSheetService {
   private url = `${API_URL}/TimeSheet`;
+  private diffUrl = `${API_URL}/Project`;
   constructor(private http: HttpClient) {}
 
   punchIn(empId: number): Observable<any> {
@@ -35,6 +36,10 @@ export class TimeSheetService {
     console.log(timeSheet);
     return this.http.post(`${this.url}`, timeSheet);
   }
+
+  GetAllProject() {
+    return this.http.get<ProjectWithStack[]>(`${this.diffUrl}`);
+  }
 }
 export type PunchInStatus = {
   id: number;
@@ -44,7 +49,7 @@ export type PunchInStatus = {
 };
 
 export type Timesheets = {
-  jobId: number;
+  projectId: number;
   sequence: string | null;
   part: string | null;
   activity: string | null;
@@ -55,4 +60,10 @@ export type Timesheets = {
   min: number | null;
   empId: number | null;
   timeSheetStatus: boolean | null;
+};
+
+export type ProjectWithStack = {
+  id: number;
+  name: string;
+  stack: { id: number; name: string }[];
 };
