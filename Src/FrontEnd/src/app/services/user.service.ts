@@ -16,7 +16,7 @@ export class UserService {
   }
   verifyOtp(data: VerifyOTPDto): Observable<AuthResponseModel> {
     return this.http.post<AuthResponseModel>(
-      `https://localhost:7292/api/Login/otpVerify for first login`,
+      `https://localhost:7292/api/Login/otpVerify-for-first-login`,
       data
     );
   }
@@ -31,6 +31,9 @@ export class UserService {
     return this.http.post<AuthResponseModel>(`https://localhost:7292/api/Login/send-otp for forgot password?username=${username}`, null);
   }
  
+  FirstLoginPasswordUpdate(Code:string ,Password:string):Observable<boolean>{
+    return this.http.post<boolean>(`https://localhost:7292/api/Login/FirstLoginUpdatePassword?Code=${Code}&Password=${Password}`,null);
+  }
   resetPassword(data: {
     username: string;
     otp: string;

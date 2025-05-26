@@ -116,6 +116,20 @@ export class LoginComponent implements OnInit {
       },
     });
   }
+  FirstLoginPasswordUpdate(code:string,Password:string){
+    this.userService.FirstLoginPasswordUpdate(code,Password).subscribe({
+      next:(res:boolean)=>{
+        if (res) {
+         this.router.navigate(['/dashboard']); 
+        }
+      }, error: (error) => {
+        console.error('Login failed!', error.error);
+        Swal.fire('Password Update Failed', error.error.message, 'error');
+        // this.isLoggingIn = false;
+      }
+    })
+  }
+  
 
   verifyOtp() {
     this.isVerifying = true;
@@ -126,7 +140,7 @@ export class LoginComponent implements OnInit {
       if (localStorage.getItem('token') != null) {
         const userNaav: string = this.UserName != null ? this.UserName : 'lol';
         const OtpRequest: VerifyOTPDto = {
-          userName: userNaav,
+          code: userNaav,
           password: this.login.password,
           otp: enteredOtp,
         };

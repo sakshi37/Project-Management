@@ -44,7 +44,7 @@ constructor(
 }
 export class VerifyOTPDto {
 constructor(
-  public userName:string,
+  public code:string,
   public password:string,
   public otp:string
 ) {}
