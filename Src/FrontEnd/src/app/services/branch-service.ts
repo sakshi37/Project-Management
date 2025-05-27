@@ -26,5 +26,4 @@ export class BranchService {
     return this.http.put<Branch>(`${this.apiUrl}/${branchId}`, payload);
   }
 
-  // Add update/delete methods if needed later
 }
