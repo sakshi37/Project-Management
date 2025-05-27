@@ -39,6 +39,8 @@ export class AppComponent {
   currentRoute: string = '';
   // hideLayout = false;
   isSidebarVisible = true;
+  paddingTop: string = '65px';
+
 
   onSidebarToggled(newState: boolean) {
     this.isSidebarVisible = newState;
@@ -54,6 +56,7 @@ export class AppComponent {
         if (this.hideLayout) {
           this.isSidebarVisible = false;
         }
+        this.paddingTop = this.hideLayout ? '0px' : '65px';
 
       });
   }  

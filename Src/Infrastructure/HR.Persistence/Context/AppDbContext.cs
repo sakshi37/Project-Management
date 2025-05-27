@@ -21,22 +21,31 @@ using HR.Application.Features.TeamCompositions.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
-//using HR.Application.Features.Location.Query;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
-using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
+using HR.Identity.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
+using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
+using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+using Microsoft.SharePoint.WebControls;
+using HR.Application.Features.Admin.Queries.GetPendingRequest;
 
 namespace HR.Persistence.Context;
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<CountryDto> CountryDtos { get; set; }
     public DbSet<State> States { get; set; }
+    public DbSet<employeesDto> employeesDto { get; set; }
+
+
 
     public DbSet<StateDto> StateDtos { get; set; }
     public DbSet<DesignationDto> DesignationDtos { get; set; }
@@ -45,6 +54,7 @@ public class AppDbContext : DbContext
     public DbSet<HolidayDto> HolidayDtos { get; set; }
     public DbSet<TotalValue> TotalValues { get; set; }
     public DbSet<EmployeeDto> Employees { get; set; }
+    public DbSet<DailyReport> DailyReport {  get; set; }
 
     // public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
 
@@ -52,7 +62,7 @@ public class AppDbContext : DbContext
     public DbSet<LocationDto> dtos { get; set; }
     
 
-    public DbSet<Employee> Tbl_Employee_master { get; set; }
+   
     public DbSet<LocationDto> Locationdtos { get; set; }
 
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
@@ -61,6 +71,8 @@ public class AppDbContext : DbContext
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<TeamCompositionDto> TeamCompositionDtos { get; set; }
+    public DbSet<TeamMember> TeamMembers { get; set; }
+
 
     public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
     public DbSet<Counter> Counter { get; set; }
@@ -87,6 +99,12 @@ public class AppDbContext : DbContext
 
 
     public DbSet<Attendance> attendance { get; set; }
+    public DbSet<empdetailDto> EmpdetailDtos { get; set; }
+    public DbSet<GetFamilyDetailsByCodeQueryVm> FamilyDetailsByCodeVms { get; set; }
+
+    public DbSet<MissPunchOutQueryVm> MissPunchOutQueryVms { get; set; }
+    public DbSet<MissPunchInQueryVm> MissPunchInQueryVms { get; set; }
+    public DbSet<PendingRequestVm> pendingRequestVms { get; set; }
 
     public DbSet <Department>Department { get; set; }
 
@@ -95,9 +113,14 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // 🚨 Must be called first for Identity to work properly
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
+
+
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
         modelBuilder.Entity<Employee>().ToTable("Tbl_Employee_master");
@@ -106,11 +129,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<HolidayDto>().HasNoKey();
         modelBuilder.Entity<TotalValue>().HasNoKey();
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
+        modelBuilder.Entity<TeamComposition>().ToTable("Tbl_TeamComposition");
+        //modelBuilder.Entity<TeamComposition>().HasNoKey();
+
+
         modelBuilder.Entity<TeamLeaderDto>().HasNoKey();
+        modelBuilder.Entity<TeamMember>().ToTable("Tbl_TeamMembers");
 
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
-        //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
         modelBuilder.Entity<Attendance>().HasNoKey();
 
@@ -119,10 +146,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
 
         modelBuilder.Entity<Counter>().HasNoKey();
-
         modelBuilder.Entity<GetAllDivisionDto>().HasNoKey();
         modelBuilder.Entity<GetAllProjectManagerDto>().HasNoKey();
-
 
         modelBuilder.Entity<GetAllShiftsVm>().HasNoKey();
         modelBuilder.Entity<GetAllUserGroupQueryVm>().HasNoKey();
@@ -130,12 +155,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetAllFamilyMemberTypeQueryVm>().HasNoKey();
 
         modelBuilder.Entity<Tbl_Login>().ToTable("Tbl_Login");
-
         modelBuilder.Entity<Tbl_Login>().HasKey(l => l.pk_LoginId);
-
 
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
+        modelBuilder.Entity<employeesDto>().HasNoKey();
 
         modelBuilder.Entity<GetEmployeeBasicDetailsByCodeQueryVm>().HasNoKey();
         modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
@@ -146,7 +170,13 @@ public class AppDbContext : DbContext
 
 
 
+        modelBuilder.Entity<empdetailDto>().HasNoKey(); 
+        modelBuilder.Entity<GetFamilyDetailsByCodeQueryVm>().HasNoKey();
+        modelBuilder.Entity<MissPunchOutQueryVm>().HasNoKey();
+        modelBuilder.Entity<MissPunchInQueryVm>().HasNoKey();
+        modelBuilder.Entity<PendingRequestVm>().HasNoKey();
 
 
     }
+
 }

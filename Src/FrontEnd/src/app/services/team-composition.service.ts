@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GetTeamCompositionDto } from '../features/Master/team-composition/Models/get-team-composition.dto';
 import { CreateTeamCompositionDto } from '../features/Master/team-composition/Models/create-team-composition.dto';
+import { UpdateTeamCompositionDto } from '../features/Master/team-composition/Models/update-team-composition.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -42,4 +43,8 @@ export class TeamCompositionService {
   createTeam(team: CreateTeamCompositionDto): Observable<any> {
     return this.http.post(`${this.baseUrl}/Create`, team);
   }
+  updateTeam(team: UpdateTeamCompositionDto): Observable<any> {
+    return this.http.put(`${this.baseUrl}/update`, team);
+  }
+  
 }

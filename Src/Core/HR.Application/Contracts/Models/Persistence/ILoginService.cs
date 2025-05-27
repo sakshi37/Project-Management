@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using HR.Application.Contracts.Models;
 using HR.Application.Dtos;
+using HR.Application.Features.Employees.Dtos;
+using HR.Domain.Entities;
 
 namespace HR.Application.Contracts.Models.Persistence
 {
@@ -17,9 +19,7 @@ namespace HR.Application.Contracts.Models.Persistence
         Task<bool> ChangePassword(ChangePassword changePasswordRequest);
 
         Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest);
-
-        Task InsertLoginAsync(int empId, int createdBy);
-
+        Task<bool> FirstLoginPasswordUpdate(string Code, string Password);
     }
 
 }

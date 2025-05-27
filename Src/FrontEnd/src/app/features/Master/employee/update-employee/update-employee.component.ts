@@ -25,6 +25,7 @@ import { GetLocationDto } from '../../settings/location/Models/get-location-dto'
 import { DivisionService } from '../../../../services/division.service';
 import { GetDivisionDto } from '../../settings/division/division/Models/get-division.dto.service';
 import { Gender } from '../../../../Models/get-gender-dto';
+import Swal from 'sweetalert2';
 
 //import { LocationService } from '../../../../services/location.service';
 
@@ -35,7 +36,7 @@ import { Gender } from '../../../../Models/get-gender-dto';
   styleUrl: './update-employee.component.css'
 })
 export class UpdateEmployeeComponent implements OnInit {
-  employeeForm: FormGroup;
+  employeeForm!: FormGroup;
   selectedEmployeeCode: string = '';
   designations: GetDesignationDto[] = [];
   imageBase64: string = '';
@@ -66,13 +67,18 @@ export class UpdateEmployeeComponent implements OnInit {
     private cityService:CityService,
     private countryService:CountryService,
     private stateService:StateService
-  ) {
-    this.employeeForm = this.fb.group({
+  )
+   {
+   
+  }
+
+  ngOnInit(): void {
+     this.employeeForm = this.fb.group({
       address:[''],
-      mobileNo: ['', [ Validators.pattern(/^\d{10}$/)]],
+      mobileNo: ['', [Validators.pattern(/^[6-9]\d{9}$/)]],
       skypeId: ['', [Validators.minLength(16), Validators.maxLength(32)]],
-      email: ['', [ Validators.email]],
-      bccEmail: ['', [Validators.email]],
+      email: ['', [Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$/)]],
+      bccEmail: ['', [Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$/)]],
       panNumber: ['', [ Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
       joinDate: ['', [ this.noFutureDateValidator]],
       birthDate: ['', [ this.noFutureDateValidator]],
@@ -92,10 +98,7 @@ export class UpdateEmployeeComponent implements OnInit {
       branchId: [''],
       divisionId: ['']
       
-    });
-  }
-
-  ngOnInit(): void {
+    }, { validators: this.validateAgeValidator.bind(this) });
     const emp = history.state.employee;
    
     forkJoin({
@@ -167,12 +170,12 @@ this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
       loginStatus:    emp.loginStatus    || false,
       leftCompany:    emp.leftCompany    || false,
       leaveCompany:   emp.leftDate?.split('T')[0] || '',
-      locationId:     emp.locationId     || 0,
-      designationId:  emp.designationId  || 0,
-      shiftId:        emp.shiftId        || 0,
-      employeeTypeId: emp.employeeTypeId || 0,
-      userGroupId:    emp.userGroupId    || 0,
-      divisionId:     emp.divisionId     || 0,
+      locationId:     emp.locationId     || '',
+      designationId:  emp.designationId  || '',
+      shiftId:        emp.shiftId        || '',
+      employeeTypeId: emp.employeeTypeId || '',
+      userGroupId:    emp.userGroupId    || '',
+      divisionId:     emp.divisionId     || '',
       aadharCardNo: emp.aadharCardNo || '',
       countryId: emp.countryId || '',
       stateId: emp.stateId || '',
@@ -186,13 +189,33 @@ this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
     if (br) {
       this.employeeForm.get('branchId')!.setValue(br.branchId);
     }
-
-    // Repeat for other dropdowns if needed:
-    // const des = this.designations.find(d => d.designationName === emp.designationName);
-    // if (des) this.employeeForm.get('designationId')!.setValue(des.designationId);
-
-    // etc.
+    
+    
   }
+
+  calculateAge(birthDate: Date, joinDate: Date): number {
+  let age = joinDate.getFullYear() - birthDate.getFullYear();
+  const m = joinDate.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && joinDate.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+  validateAgeValidator(group: FormGroup): ValidationErrors | null {
+  const birthDateValue = group.get('birthDate')?.value;
+  const joinDateValue = group.get('joinDate')?.value;
+
+  if (!birthDateValue || !joinDateValue) return null;
+
+  const birthDate = new Date(birthDateValue);
+  const joinDate = new Date(joinDateValue);
+
+  // Use your existing calculateAge method
+  const ageDiff = this.calculateAge(birthDate, joinDate);
+
+  return ageDiff >= 18 ? null : { minAgeGap: true };
+}
 
   loadConutries(): void {
   this.countryService.getAllCountries().subscribe({
@@ -329,29 +352,40 @@ filterCities(): void {
 filterLocations(){
 
 }
- 
+ imagePreview: string | ArrayBuffer | null = null;
+signaturePreview: string | ArrayBuffer | null = null;
 
-  onImageSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement)?.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageBase64 = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
 
-  onSignatureSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement)?.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.signatureBase64 = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
+ onImageSelected(event: Event): void {
+  const file = (event.target as HTMLInputElement)?.files?.[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result;             // For preview
+      this.imageBase64 = reader.result as string;    // For base64
+    };
+    reader.readAsDataURL(file);
+  } else {
+    alert('Please select a valid image file.');
+    (event.target as HTMLInputElement).value = ''; // Clear invalid input
   }
+}
+
+onSignatureSelected(event: Event): void {
+  const file = (event.target as HTMLInputElement)?.files?.[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.signaturePreview = reader.result;             // For preview
+      this.signatureBase64 = reader.result as string;    // For base64
+    };
+    reader.readAsDataURL(file);
+  } else {
+    alert('Please select a valid image file.');
+    (event.target as HTMLInputElement).value = ''; // Clear invalid input
+  }
+}
+
   // Validator to disallow future dates
   noFutureDateValidator(control: AbstractControl): ValidationErrors | null {
     const val = control.value;
@@ -394,14 +428,29 @@ filterLocations(){
 
     // Submit the update (assuming updateService has updateEmployee method)
     this.updateService.updateEmployee(updatedEmployee).subscribe({
-      next: () => {
-        alert('Employee details updated successfully.');
-        this.router.navigate(['/employee']); // adjust route as needed
-      },
-      error: (err) => {
-        console.error('Update failed:', err);
-        alert('Failed to update employee. Please try again.');
-      }
+       next: () => {
+    Swal.fire({
+      toast: true,
+      icon: 'success',
+      text: 'Employee details updated successfully.',
+      position: 'top',
+      timer: 2000,
+      showConfirmButton: false
+    }).then(() => {
+      this.router.navigate(['/employee']); 
+    });
+  },
+  error: (err) => {
+    console.error('Update failed:', err);
+    Swal.fire({
+      toast: true,
+      icon: 'error',
+      text: 'Failed to update employee. Please try again.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false
+    });
+  }
     });
   }
 }

@@ -7,6 +7,7 @@ import { ChangePasswordComponent } from './features/Profile/change-password/chan
 import { LefSideNavComponent } from './shared/lef-side-nav/lef-side-nav.component';
 import { GmcComponent } from './features/Master/gmc/gmc.component';
 
+
 import { TimesheetUpdateComponent } from './features/Hr/timesheet-update/timesheet-update.component';
 
 import { EmployeeComponent } from './features/Master/employee/employee.component';
@@ -17,8 +18,12 @@ import { StateComponent } from './features/Master/settings/state/state-component
 import { HolidayComponent } from './features/Master/holiday/holiday.component';
 import { TeamCompositionComponent } from './features/Master/team-composition/team-composition.component';
 import { AuthGuard } from './services/authguard';
+import { RoleGuard } from './services/role.guard'; 
+
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
 import { EmployeeAttendanceReportComponent } from './features/Hr/employee-attendance-report/employee-attendance-report.component';
+import { DailyReportComponent } from './features/Hr/daily-report/daily-report.component';
+import { AdminComponent } from './features/admin/admin.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -26,14 +31,16 @@ export const routes: Routes = [
   {
     path: 'team-composition',
     component: TeamCompositionComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['HR'] } 
   },
 
   { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard]},
   { path: 'settings', component: SettingsComponent,canActivate: [AuthGuard] },
   { path: 'country', component: CountryComponent,canActivate: [AuthGuard] },
   { path: 'state', component: StateComponent,canActivate: [AuthGuard] },
-  { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard]},
+  { path: 'holiday', component: HolidayComponent,canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['User','HR'] } },
   {
     path: 'changePassword',
     component: ChangePasswordComponent,
@@ -54,6 +61,8 @@ export const routes: Routes = [
     path: 'update-employee',
     component: UpdateEmployeeComponent,
   },
+  {path:'dailyreport',component:DailyReportComponent},
+  {path:'admin',component:AdminComponent},
   { path: 'employee-attendance-report', component: EmployeeAttendanceReportComponent},
   { path: 'otp', component: OtpComponent },
   { path: 'sidebar', component: LefSideNavComponent, canActivate: [AuthGuard] },

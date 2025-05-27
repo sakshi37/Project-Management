@@ -1,7 +1,8 @@
 ﻿using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Family.Commands.AddFamilyDetails;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
-using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -24,7 +25,7 @@ namespace HR.API.Controllers
         public async Task<IActionResult> AddGmcDetails([FromBody] InsertEmployeeDetailsGmcCommandDto dto)
         {
             var result = await _mediator.Send(new InsertEmployeeDetailsGmcCommand(dto));
-            return result ? Ok("Employee updated.") : NotFound("Employee not found.");
+            return result ? Ok(new { message = "Employee updated." }) : NotFound(new { message = "Employee not found."});
 
         }
 
@@ -41,7 +42,14 @@ namespace HR.API.Controllers
         }
         [HttpGet("FamilyMember")]
         public async Task<IActionResult> GetAll()
-          => Ok(await _mediator.Send(new GetAllFamilyMemberTypeQuery()));
+          => Ok(await _mediator.Send(new GetAllFamilyDetailsByCodeVm()));
+
+        [HttpGet("familydetails/{code}")]
+        public async Task<IActionResult> GetFamilyDetails(string code)
+        {
+            var result = await _mediator.Send(new GetFamilyDetailsByCodeQuery(code));
+            return Ok(result);
+        }
     }
 }
 
