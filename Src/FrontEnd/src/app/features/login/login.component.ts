@@ -100,6 +100,7 @@ export class LoginComponent implements OnInit {
           const otpModal = new bootstrap.Modal(modalElement);
           this.startTimer();
           otpModal.show();
+          
         } else {
           this.router.navigate(['/dashboard']).then(() => {
             const appRef = this.injector.get(AppComponent);
@@ -116,6 +117,8 @@ export class LoginComponent implements OnInit {
       },
     });
   }
+
+  // updating password update at first login
   FirstLoginPasswordUpdate(code:string,Password:string){
     this.userService.FirstLoginPasswordUpdate(code,Password).subscribe({
       next:(res:boolean)=>{
@@ -130,7 +133,7 @@ export class LoginComponent implements OnInit {
     })
   }
   
-
+// OTP verifcation at firstlogin
   verifyOtp() {
     this.isVerifying = true;
 
@@ -151,7 +154,7 @@ export class LoginComponent implements OnInit {
             const otpModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
             otpModal.hide();
             sessionStorage.setItem('isAuthenticated', 'true');
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/changePassword']);
           },
           error: (error) => {
             console.error('Otp Failed', error.error);
@@ -164,6 +167,7 @@ export class LoginComponent implements OnInit {
     }, 1500);
   }
 
+  //timer at otp modal=====
   timeLeft: number = 60;
   txtTimeleft: boolean = false;
   btnDisabled: boolean = false;
@@ -186,6 +190,7 @@ export class LoginComponent implements OnInit {
   }, 1000);
 }
 
+// otp termination modal 
 terminateOtp() {
    clearInterval(this.interval);  
     this.txtTimeleft = false;
@@ -221,7 +226,7 @@ terminateOtp() {
     }
   }
 
-//==============================================================resendddddddddddddd======================
+//===resend OTP modal=====
 isLoading = false;
 
 resendOtp() {
@@ -251,13 +256,7 @@ resendOtp() {
       }
     });
   }
-
-  
-   
-  //==============================================================resendddddddddddddd====================
-
-
-
+//forgot password modal
   openForgotPasswordModal() {
     Swal.fire({
       title: 'Forgot Password',
