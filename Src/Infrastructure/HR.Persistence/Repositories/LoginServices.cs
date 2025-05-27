@@ -105,6 +105,7 @@ namespace HR.Identity.Services
             }
         }
 
+        // VERIFYING THE OTP AT FIRST LOGIN
         public async Task<OtpResponse> VerifyOtp(OtpRequest otpRequest)
         {
             var employees = await _context.employeesDto
@@ -133,6 +134,11 @@ namespace HR.Identity.Services
                 OtpExpiryTime = DateTime.Now.AddMinutes(3)
             };
         }
+
+
+
+
+        //UPDATING THE PASSWORD AT FIRSTLOGIN
 
         public async Task<bool> FirstLoginPasswordUpdate(string code, string password)
         {
@@ -169,6 +175,8 @@ namespace HR.Identity.Services
             return true;
         }
 
+
+        // FOROGT PASSWORD MODULE
         public async Task<bool> ChangePassword(ChangePassword changePasswordRequest)
         {
             var employees = await _context.employeesDto
@@ -181,6 +189,7 @@ namespace HR.Identity.Services
 
             if (changePasswordRequest.NewPassword != changePasswordRequest.ConfirmNewPassword)
                 throw new Exception("New and Confirm Password must be the same");
+
 
             var otpRequest = new OtpRequest
             {
@@ -203,6 +212,9 @@ namespace HR.Identity.Services
             return result > 0;
         }
 
+
+
+        // CHANGE PASSWORD MODULE
         public async Task<bool> UpdatePassword(UpdatePasswordRequest request)
         {
             var employees = await _context.employeesDto
@@ -225,11 +237,6 @@ namespace HR.Identity.Services
 
                 return result > 0;
             }
-
-            // Validate old password
-            //var passwordCheck = hasher.VerifyHashedPassword(user.Code, user.Password, request.OldPassword);
-            //if (passwordCheck != PasswordVerificationResult.Success)
-            //    throw new Exception("Entered old password does not match the existing one");
 
             if (request.NewPassword == request.OldPassword)
                 throw new Exception("New password can't be the same as the old one");
@@ -256,7 +263,7 @@ namespace HR.Identity.Services
                 new Claim(ClaimTypes.Name, user.Code),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.UserGroupName ?? "User"),
-                new Claim("jti", Guid.NewGuid().ToString()),
+                new Claim("jti", DateTime.Now.ToString()),
                 new Claim("sub", user.Code),
                 new Claim("iss", user.Email),
             };
