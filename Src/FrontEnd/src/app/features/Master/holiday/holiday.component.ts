@@ -70,7 +70,9 @@ splitCardHolidays(): void {
     this.initForm();
     this.loadHolidays();
     this.userRole = this.roleService.getUserRole();
-
+    if (this.userRole !== 'HR') {
+      this.viewModeToggle = true; 
+    }
   }
 
   ngAfterViewInit(): void {

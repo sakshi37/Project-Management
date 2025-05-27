@@ -5,6 +5,7 @@ import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard
 import { ProfileService, UserProfile } from '../../services/profile-services';
 import { CommonModule } from '@angular/common';
 import { jwtDecode } from 'jwt-decode';
+import { RoleService } from '../../services/role.service';
 
 @Component({
   selector: 'app-lef-side-nav',
@@ -14,6 +15,7 @@ import { jwtDecode } from 'jwt-decode';
   imports: [RouterLink, HeaderComponent,CommonModule],
 })
 export class LefSideNavComponent {
+  userRole:string | null = null; 
   logout() {
     
     // Clear session or token
@@ -33,7 +35,8 @@ export class LefSideNavComponent {
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
 
-  constructor(private renderer: Renderer2,private profileService: ProfileService, private router:Router) {}
+  constructor(private renderer: Renderer2,private profileService: ProfileService, private router:Router,    private roleService: RoleService
+  ) {}
 
 ngOnInit(): void {
   const decodedToken = jwtDecode(String(localStorage.getItem('token')));
@@ -50,6 +53,8 @@ ngOnInit(): void {
     console.error('No code found. User might not be logged in.');
   
   }
+  this.userRole = this.roleService.getUserRole();
+
 }
 
 // sidebarVisible: boolean = true;
