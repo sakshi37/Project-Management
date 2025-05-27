@@ -18,6 +18,7 @@ import { ParticularEmployeeService } from './Model/particular-employee.service';
   templateUrl: './employee-attendance-report.component.html',
   styleUrl: './employee-attendance-report.component.css',
   
+  
 
 })
 export class EmployeeAttendanceReportComponent implements OnInit {
