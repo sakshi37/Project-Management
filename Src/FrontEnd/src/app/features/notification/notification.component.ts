@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationModel } from '../../Models/notification-model';
-import { NotificationService } from '../../services/notification-services';
 import { CommonModule } from '@angular/common';
 import { jwtDecode } from 'jwt-decode';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-notification',

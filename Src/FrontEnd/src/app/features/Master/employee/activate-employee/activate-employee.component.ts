@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivateEmployeeService } from '../../../../services/activate-employee-service';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-activate-employee',
@@ -27,8 +28,9 @@ export class ActivateEmployeeComponent {
       Swal.fire('Missing Reason', 'Please enter a reason.', 'warning');
       return;
     }
-
-    const requestByEmpCode = localStorage.getItem('userName');
+    const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+        const requestByEmpCode = decodedToken.sub;  
+    
     if (!requestByEmpCode) {
       Swal.fire('Missing Info', 'Your employee code is not found in localStorage.', 'error');
       return;

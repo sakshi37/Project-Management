@@ -18,6 +18,17 @@
     <small class="text-white">{{ user.designationName }}</small>
   </div>
 
+   <!-- Notification -->
+<a
+  routerLink="/notification"
+  routerLinkActive="active-link"
+  class="sidebar-link mb-2 position-relative"
+>
+  <i class="fas fa-bell me-2"></i> Notifications
+  <span *ngIf="hasUnreadNotifications" class="green-dot-sidebar"></span>
+</a>
+
+
   <!-- Dashboard -->
   <a
     routerLink="/dashboard"

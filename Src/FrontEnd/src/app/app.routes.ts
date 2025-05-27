@@ -24,6 +24,7 @@ import { UpdateEmployeeComponent } from './features/Master/employee/update-emplo
 import { EmployeeAttendanceReportComponent } from './features/Hr/employee-attendance-report/employee-attendance-report.component';
 import { DailyReportComponent } from './features/Hr/daily-report/daily-report.component';
 import { AdminComponent } from './features/admin/admin.component';
+import { NotificationComponent } from './features/notification/notification.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -77,5 +78,6 @@ export const routes: Routes = [
     data: { roles: ['HR','Admin'] }},
   { path: 'otp', component: OtpComponent },
   { path: 'sidebar', component: LefSideNavComponent, canActivate: [AuthGuard] },
+  {path:'notification',component:NotificationComponent},
   { path: '**', redirectTo: '' },
 ];

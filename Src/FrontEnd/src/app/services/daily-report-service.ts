@@ -2,13 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MissPushOutModel } from '../Models/daily-report';
+import { API_URL } from '../../constant';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class DailyReportService {
-  private apiUrl = 'https://localhost:7292';
+ 
+    private apiUrl = `${API_URL}`;
+  
 
   constructor(private http: HttpClient) {}
 

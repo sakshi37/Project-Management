@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HR.API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class AttendanceController : Controller
     {
         private readonly IMediator _mediator;

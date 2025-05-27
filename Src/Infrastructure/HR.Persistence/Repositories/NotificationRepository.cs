@@ -40,7 +40,7 @@ namespace HR.Persistence.Repositories
             catch (Exception ex)
             {
                 // Handle any other .NET exception
-                throw new ApplicationException("An unexpected error occurred while deleting the notification.", ex);
+                throw new ApplicationException("An unexpected error occurred while getting the notification.", ex);
             }
         }
 
