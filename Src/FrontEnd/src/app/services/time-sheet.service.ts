@@ -38,7 +38,15 @@ export class TimeSheetService {
   }
 
   GetAllProject() {
-    return this.http.get<ProjectWithStack[]>(`${this.diffUrl}`);
+    return this.http.get<ProjectWithStack[]>(`${this.diffUrl}/GetAllProject`);
+  }
+
+  InserProject(project: Project) {
+    return this.http.post<Project>(`${this.diffUrl}`, project);
+  }
+
+  getAllStack() {
+    return this.http.get<Stack[]>(`${this.diffUrl}/GetAllStack`);
   }
 }
 export type PunchInStatus = {
@@ -66,4 +74,15 @@ export type ProjectWithStack = {
   id: number;
   name: string;
   stack: { id: number; name: string }[];
+};
+
+export type Project = {
+  StackIds: number[];
+  Name: string;
+};
+
+export type Stack = {
+  // stack: Stack[];
+  id: number;
+  name: String;
 };

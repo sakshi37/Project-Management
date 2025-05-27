@@ -22,7 +22,7 @@ namespace HR.Persistence.Repositories
 
         public async Task<TimeSheet> AddTimeSheet(CreateTimeSheetDto timeSheetDto)
         {
-            string sql = "EXEC SP_TimeSheetInsert @Fk_ProjectId = {0},@Sequence = {1},@Part={2}, @Activity={3}, @Type={4}, @StartTime = {5}, @EndTime = {6},@Hrs={7}, @Min={8}, @Fk_EmployeeId = {9},   @TimeSheetStatus = {10}";
+            string sql = "EXEC SP_TimeSheetInsert @Fk_ProjectId = {0},@Sequence = {1},@Part={2}, @Activity={3}, @Type={4}, @StartTime = {5}, @EndTime = {6},@Hrs={7}, @Min={8}, @Fk_EmpId = {9},   @TimeSheetStatus = {10}";
             await _DbContext.Database.ExecuteSqlRawAsync(sql, timeSheetDto.ProjectId, timeSheetDto.Sequence, timeSheetDto.Part, timeSheetDto.Activity, timeSheetDto.Type, timeSheetDto.StartTime, timeSheetDto.EndDTime, timeSheetDto.Hrs, timeSheetDto.Min, timeSheetDto.EmpId, timeSheetDto.TimeSheetStatus);
 
             return new TimeSheet
@@ -90,12 +90,14 @@ namespace HR.Persistence.Repositories
         public async Task<List<GetByIdTimeSheetDto>> TimeSheetGetById(int empId)
         {
             var result = await _DbContext.timesheetGetByDto
-                .FromSqlRaw("EXEC SP_TimeSheetMasterGetById @Fk_EmployeeId = {0}", empId)
+                .FromSqlRaw("EXEC SP_TimeSheetMasterGetById @Fk_EmpId = {0}", empId)
                 .AsNoTracking()
                 .ToListAsync();
 
             return result;
         }
+
+        //public async Task<CreateTimeSheetDto> UpdateTimeSheet()
 
 
 

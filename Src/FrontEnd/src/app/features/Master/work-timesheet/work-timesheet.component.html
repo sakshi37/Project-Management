@@ -1,11 +1,92 @@
 <p class="fs-4 fw-bold text-primary">Work Timesheet</p>
 
+<!-- Button to open modal -->
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#projectModal"
+>
+  Add project
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="projectModal"
+  tabindex="-1"
+  aria-labelledby="projectModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="projectForm" (ngSubmit)="onProjectSubmit()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="projectModalLabel">Add New Project</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group mb-3">
+            <label for="stack">Select Stack</label>
+            <ng-select
+              [items]="stacks"
+              bindLabel="name"
+              bindValue="id"
+              [multiple]="true"
+              placeholder="Choose technology stacks"
+              formControlName="StackIds"
+              class="form-control"
+            >
+            </ng-select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="name">Project Name:</label>
+            <input
+              id="name"
+              formControlName="Name"
+              type="text"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="projectForm.invalid"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="container mt-4">
   <div *ngFor="let project of projects" class="card mb-3 shadow-sm">
     <div class="card-body d-flex justify-content-between align-items-center">
       <div>
         <h5 class="card-title mb-1">{{ project.name }}</h5>
         <p class="mb-0 text-muted">Project Id: {{ project.id }}</p>
+        <div *ngFor="let stack of project.stack">
+          {{ stack.name }}
+        </div>
       </div>
 
       <div>
@@ -58,34 +139,22 @@
         class="mt-4"
       >
         <div class="mb-3">
-          <label for="jobId" class="form-label">Job ID</label>
-          <input
-            id="jobId"
-            type="text"
-            class="form-control"
-            formControlName="jobId"
-            required
-          />
-        </div>
-
-        <div class="mb-3">
-          <label for="activity" class="form-label">Project Name</label>
-          <input
-            id="activity"
-            type="text"
-            class="form-control"
-            formControlName="activity"
-            required
-          />
-        </div>
-
-        <div class="mb-3">
           <label for="sequence" class="form-label">Task</label>
           <input
             id="sequence"
             type="text"
             class="form-control"
             formControlName="sequence"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="part" class="form-label">Activity</label>
+          <input
+            id="part"
+            type="text"
+            class="form-control"
+            formControlName="activity"
           />
         </div>
 
@@ -109,10 +178,20 @@
           />
         </div>
 
+        <div class="col-md-6">
+          <label class="form-label">Employee</label>
+          <select formControlName="empId" class="form-select rounded-pill">
+            <option value="">Employee</option>
+            <option *ngFor="let employee of employees" [ngValue]="employee.id">
+              {{ employee.name }}
+            </option>
+          </select>
+        </div>
+
         <button
           type="submit"
-          class="btn btn-primary"
           [disabled]="taskForm.invalid"
+          class="btn btn-primary"
         >
           Add Task
         </button>

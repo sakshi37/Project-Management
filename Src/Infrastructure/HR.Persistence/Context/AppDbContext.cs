@@ -17,6 +17,7 @@ using HR.Application.Features.Gender.Queries.GetAllGender;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Locations.Dtos;
 using HR.Application.Features.ProjectMaster.Query;
+using HR.Application.Features.ProjectMaster.Stack.Query.GetAllStack;
 using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
@@ -39,6 +40,7 @@ public class AppDbContext : DbContext
     public DbSet<State> States { get; set; }
 
     public DbSet<GetAllProjectDto> GetAllProjects { get; set; }
+    public DbSet<GetAllStackDto> GetAllStackDtos { get; set; }
     public DbSet<StateDto> StateDtos { get; set; }
     public DbSet<DesignationDto> DesignationDtos { get; set; }
     public DbSet<City> Cities { get; set; }
@@ -108,6 +110,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetByIdTimeSheetDto>().HasNoKey();
         modelBuilder.Entity<GetAllProjectDto>().HasNoKey();
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
+        modelBuilder.Entity<GetAllStackDto>().HasNoKey();
         //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
         modelBuilder.Entity<Attendance>().HasNoKey();

@@ -32,10 +32,6 @@ namespace HR.Application.Features.ProjectMaster.Query
             })
             .ToList(); ;
 
-
-
-
-
             return result;
         }
     }
