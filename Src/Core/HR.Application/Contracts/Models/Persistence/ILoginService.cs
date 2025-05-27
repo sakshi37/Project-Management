@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HR.Application.Contracts.Models;
 using HR.Application.Dtos;
 using HR.Application.Features.Employees.Dtos;
+using HR.Domain.Entities;
 
 namespace HR.Application.Contracts.Models.Persistence
 {

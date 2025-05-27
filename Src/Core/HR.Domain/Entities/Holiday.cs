@@ -14,6 +14,7 @@ namespace HR.Domain.Entities
         public bool HolidayListType { get; set; } 
         public int Year { get; set; }
         public bool HolidayStatus { get; set; }
+        public string? ImagePath { get; set; }
 
         public int? CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }

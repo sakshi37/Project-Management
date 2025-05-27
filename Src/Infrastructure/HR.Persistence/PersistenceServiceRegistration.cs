@@ -33,11 +33,10 @@ namespace HR.Persistence
 
             services.AddScoped<IDivisionRepositry, DivisionRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
-
-
-
-
-
+            services.AddScoped<IGenderRepository, GenderRepository>();
+            services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+            services.AddScoped<IRequestByHrRepository, RequestByHrRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
 
 
 

@@ -1,7 +1,9 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.Family.Commands.AddFamilyDetails;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
 using HR.Persistence.Context;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,24 +24,54 @@ namespace HR.Persistence.Repositories
 
         public async Task<bool> AddFamilyMemberAsync(AddFamilyDetailsCommandDto dto)
         {
-            var result = await _context.Database.ExecuteSqlRawAsync(
-                "EXEC sp_InsertFamilyMember @Fk_FamilyMemberTypeId = {0}, @EmployeeCode = {1}, @FamilyMemberName = {2}, @BirthDate = {3}, @Age = {4}, @RelationWithEmployee = {5}, @FamilyStatus = {6}",
-                dto.Fk_FamilyMemberTypeId,
-                dto.EmployeeCode,
-                dto.FamilyMemberName,
-                dto.BirthDate,
-                dto.Age,
-                dto.RelationWithEmployee,
-                dto.FamilyStatus
-            );
+            try
+            {
+                var result = await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC sp_InsertFamilyMember @Fk_FamilyMemberTypeId = {0}, @EmployeeCode = {1}, @FamilyMemberName = {2}, @BirthDate = {3}, @Age = {4}, @RelationWithEmployee = {5}, @FamilyStatus = {6}",
+                    dto.Fk_FamilyMemberTypeId,
+                    dto.EmployeeCode,
+                    dto.FamilyMemberName,
+                    dto.BirthDate,
+                    dto.Age,
+                    dto.RelationWithEmployee,
+                    dto.FamilyStatus
+                );
 
-            return result > 0;
+                return result > 0;
+            }
+            catch (SqlException ex)
+            {
+                // Optional: Log the error message
+                Console.WriteLine("SQL Error: " + ex.Message);
+
+                // Handle specific business errors from SQL
+                if (ex.Message.Contains("Invalid Employee Code"))
+                {
+                    throw new InvalidOperationException("The provided employee code is invalid.");
+                }
+                else if (ex.Message.Contains("family member type already exists"))
+                {
+                    throw new InvalidOperationException("This family member type already exists for the employee.");
+                }
+
+                // Re-throw if it's an unexpected SQL error
+                throw;
+            }
         }
 
         public async Task<List<GetAllFamilyMemberTypeQueryVm>> GetAllAsync()
         {
             return await _context.GetAllFamilyTypeMemberVms.FromSqlRaw("EXEC SP_GetFamilyMemberTypes").ToListAsync();
         }
+
+        public async Task<List<GetFamilyDetailsByCodeQueryVm>> GetFamilyDetailsAsync(string code)
+        {
+            return await _context.FamilyDetailsByCodeVms
+             .FromSqlInterpolated($"EXEC SP_GetEmployeeFamilyDetailsByCode @Code = {code}")
+             .ToListAsync();
+        }
+
+
     }
 
 }

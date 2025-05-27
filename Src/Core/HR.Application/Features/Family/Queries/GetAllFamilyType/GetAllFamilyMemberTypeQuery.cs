@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.Family.Queries.GetAllFamilyType
 {
-    public record GetAllFamilyMemberTypeQuery:IRequest<List<GetAllFamilyMemberTypeQueryVm>>;
+    public record GetAllFamilyDetailsByCodeVm:IRequest<List<GetAllFamilyMemberTypeQueryVm>>;
     
 }

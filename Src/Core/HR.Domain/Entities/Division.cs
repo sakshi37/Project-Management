@@ -16,7 +16,7 @@ namespace HR.Domain.Entities
         public int Fk_HolidayId { get; set; }  
         public double ManHours { get; set; }
         public bool DivisionStatus { get; set; }
-        public int CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
         public bool HolidayListType { get; set; }
 
         //public DateTime CreatedDate { get; set; }

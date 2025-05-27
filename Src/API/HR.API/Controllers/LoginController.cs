@@ -16,7 +16,7 @@ namespace HR.API.Controllers
     public class LoginController : ControllerBase 
     {
         readonly ILoginService _loginService;
-        private readonly IMediator _mediator;
+        readonly IMediator _mediator;
 
 
         public LoginController(ILoginService loginService, IMediator mediator)

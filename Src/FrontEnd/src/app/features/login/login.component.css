@@ -1,6 +1,7 @@
 /* .login-background::-webkit-scrollbar{
   display: none; 
 } */
+ 
 .login-background {
   height: 100vh;
   display: flex;

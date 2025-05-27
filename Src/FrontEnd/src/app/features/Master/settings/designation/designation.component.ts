@@ -8,6 +8,7 @@ import { CreateDesignationDto } from './Models/create-designation.dto';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
+import { ErrorHandlerService } from '../../../../services/error-handler.service';
 
 @Component({
   selector: 'app-designation',
@@ -16,6 +17,7 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, ReactiveFormsModule, FormsModule,NgxPaginationModule],
   standalone: true,
 })
+
 export class DesignationComponent implements OnInit, AfterViewInit {
   designationForm!: FormGroup;
   designations: GetDesignationDto[] = [];
@@ -28,11 +30,16 @@ export class DesignationComponent implements OnInit, AfterViewInit {
   itemsPerPage: number = 5; // default value
   private modal!: bootstrap.Modal;
   private modalElement!: ElementRef;
+  
+  
 
   constructor(
     private fb: FormBuilder,
     private designationService: DesignationService,
-    private el: ElementRef
+    private el: ElementRef,
+    private errorHandler: ErrorHandlerService
+    
+
   ) {}
 
   ngOnInit(): void {
@@ -95,12 +102,6 @@ export class DesignationComponent implements OnInit, AfterViewInit {
   onSubmit(): void {
     if (this.designationForm.invalid) {
       this.designationForm.markAllAsTouched();
-      Swal.fire({
-              icon: 'error',
-              title: 'Invalid',
-              text: 'Please fill all details!',
-              confirmButtonColor: '#d33'
-            });
       return;
     }
     const statusBool = this.designationForm.value.designationStatus === '1' ? true : false;
@@ -118,19 +119,50 @@ export class DesignationComponent implements OnInit, AfterViewInit {
 
     if (this.isEditMode && this.selectedDesignationId) {
       const dto: UpdateDesignationDto = { ...payload, designationId: this.selectedDesignationId, updatedBy: 1 };
-      this.designationService.updateDesignation(dto).subscribe(() => {
+      this.designationService.updateDesignation(dto).subscribe({next:() => {
         this.getDesignations();
         this.modal.hide();
         this.resetForm();
-      });
+          document.body.classList.remove('modal-open');
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach((el) => el.remove());
+        Swal.fire({
+                    toast: true,
+                    position: 'top',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    icon: 'success',
+                    title: 'Updated',
+                    text: 'Designation updated successfully!',
+                    confirmButtonColor: '#3085d6',
+                  });
+      },
+      error: (err) => this.errorHandler.handleError(err),});
     } 
     else {
       const dto: CreateDesignationDto = { ...createdesignationpayload, createdBy: 1 };
-      this.designationService.createDesignation(dto).subscribe(() => {
+      this.designationService.createDesignation(dto).subscribe({next: () => {
         this.getDesignations();
         this.modal.hide();
         this.resetForm();
-      });
+          document.body.classList.remove('modal-open');
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach((el) => el.remove());
+        Swal.fire({
+                    toast: true,
+                    position: 'top',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    icon: 'success',
+                    title: 'Created',
+                    text: 'Designation created successfully!',
+                    confirmButtonColor: '#3085d6',
+                  });
+      },
+      error: (err) => this.errorHandler.handleError(err),
+    });
     }
   }
 

@@ -6,6 +6,7 @@ using HR.Application.Features.Locations.Commands.UpdateLoation;
 using HR.Application.Features.Locations.Dtos;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -34,8 +35,9 @@ namespace HR.Persistence.Repositories
             if (dto.CityId <= 0)
                 throw new LocationValidationException("Invalid City ID.");
 
+
             var existingLocation = await _context.Locations
-                 .FromSqlRaw("EXEC dbo.CheckLocationDuplicate @LocationName = {0}, @CityId = {1}", dto.LocationName, dto.CityId)
+                 .FromSqlRaw("EXEC CheckLocationDuplicate @LocationName = {0}", dto.LocationName)
                  .AsNoTracking()
                  .ToListAsync();
             var foundcity = existingLocation.FirstOrDefault();

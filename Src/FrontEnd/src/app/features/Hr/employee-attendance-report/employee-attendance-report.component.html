@@ -1,1 +1,36 @@
-<p>employee-attendance-report works!</p>
+<div class="container">
+    <br>
+    <h3>Employee Attendance-wise Report</h3>
+    <hr>
+        <label class="form-label" for="reportTypes">Select Type</label>
+        <select class="form-select" name="reportTypes" id="reportTypes" [(ngModel)]="reportTypes">
+            <option value="0" selected disabled>--Select Type--</option>
+            <option value="1">All Divisions</option>
+            <option value="2">Particular Division</option>
+            <option value="3">Team Leader-wise</option>
+            <option value="4">Particular Employee</option>
+        </select>
+        <div *ngIf="reportTypes == 2">
+            <label class="form-label" for="particularDivision">Select Particular Division</label>
+            <select class="form-select" name="particularDivision" id="particularDivision">
+                <option value="" selected disabled>--Select Division--</option>
+                <option *ngFor="let d of divisions" value="{{d.divisionId}}">{{d.divisionName}}</option>
+            </select>
+        </div>
+        <div *ngIf="reportTypes == 3">
+            <label class="form-label" for="tlWise">Select Team Leader-wise</label>
+            <select class="form-select" name="tlWise" id="tlWise">
+                <option value="" selected disabled>--Select TL--</option>
+                <option *ngFor="let tl of teamLeaders" value="{{tl.code}}">{{tl.name}}</option>
+            </select>
+        </div>
+        <div *ngIf="reportTypes == 4">
+            <label class="form-label" for="employee">Select Employee</label>
+            <select class="form-select" name="employee" id="employee">
+                <option value="" selected disabled>--Select Employee--</option>
+                <option *ngFor="let employee of employees" value="{{employee.code}}">{{employee.name}}</option>
+            </select>
+        </div>
+        <br>
+        <div><button class="btn btn-outline-success"><i class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
+</div>

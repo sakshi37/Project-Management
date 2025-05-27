@@ -2,8 +2,8 @@ export class EmployeeModel {
 }
 export interface Employee {
     photo: string | null;
-    employeeName: string;
-    employeeCode: string;
+    name: string;
+    code: string;
     designationName: string;
     branchName: string;
     divisionName: string;
@@ -17,6 +17,12 @@ export interface Employee {
     totalCount: number;
     pageNumber: number;
     pageSize: number;
+  }
+  export interface GetEmployeesAll{
+    id : number;
+    name : string;
+    email : string;
+    isActive : boolean;
   }
   
   export interface EmployeeFull extends Employee {

@@ -72,15 +72,23 @@
           <thead>
             <tr>
               <th><div class="head-first">Sr. No</div></th>
-              <th><div class="head-other">Branch Name</div></th>
-              <th><div class="head-other">City</div></th>
-              <th><div class="head-other">State</div></th>
-              <th><div class="head-other">Status</div></th>
+              <th (click)="sortBranch('branchName')">
+                <div class="head-other sortable">Branch Name <i class="fas" [ngClass]="getSortIcon('branchName')"></i></div>
+              </th>
+              <th (click)="sortBranch('city')">
+                <div class="head-other sortable">City<i class="fas" [ngClass]="getSortIcon('city')"></i></div>
+              </th>
+              <th (click)="sortBranch('state')">
+                <div class="head-other sortable"> State<i class="fas" [ngClass]="getSortIcon('state')"></i></div>
+              </th>
+              <th (click)="sortBranch('status')">
+                <div class="head-other sortable">Status</div>
+              </th>
               <th><div class="head-last">Action</div></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let branch of filteredBranches | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i">
+            <tr *ngFor="let branch of filteredBranches | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i" [ngClass]="{ 'inactive-row': !branch.branchStatus}">
               <td><div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
               <td><div class="tr-other-child">{{ branch.branchName }}</div></td>
               <td><div class="tr-other-child">{{ branch.cityName }}</div></td>
@@ -107,8 +115,8 @@
           <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
         </div>
       </div>
-    </div>
-  
+    
+  </div>
     <!-- No Branches -->
     <ng-template #noBranchData>
       <div class="alert alert-info text-center mt-4">No branches found.</div>
