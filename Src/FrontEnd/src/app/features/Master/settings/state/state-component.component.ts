@@ -37,7 +37,9 @@ import { timer } from 'rxjs';
 export class StateComponent implements OnInit, AfterViewInit {
   stateForm!: FormGroup;
   states: GetStateDto[] = [];
+  allCountries: GetCountryDto[] = [];
   countries: GetCountryDto[] = [];
+  activeCountries: GetCountryDto[] = []; // To store only active countries
   countryList: any[] = []; // From country-state-city
   validStateList: any[] = []; // Valid states based on selected country
 
@@ -76,6 +78,10 @@ export class StateComponent implements OnInit, AfterViewInit {
         this.modalElement as unknown as Element
       );
     }
+    this.modalElement?.nativeElement.addEventListener('hidden.bs.modal', () => {
+      this.onModalHidden();
+    });
+    
   }
 
   initForm(): void {
@@ -94,13 +100,23 @@ export class StateComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // loadCountries(): void {
+  //   this.countryService.getAllCountries().subscribe({
+  //     next: (data) => (this.countries = data,console.log('Countries:', this.countries)),
+      
+  //     error: (err) => console.error('Error loading countries:', err),
+  //   });
+  // }
   loadCountries(): void {
     this.countryService.getAllCountries().subscribe({
-      next: (data) => (this.countries = data),
+      next: (data) => {
+        this.allCountries = data;
+        this.activeCountries = data.filter(c => c.countryStatus == 1); // Only active countries
+        this.countries = [...this.activeCountries]; 
+      },
       error: (err) => console.error('Error loading countries:', err),
     });
   }
-
   filterStates(): void {
     const search = this.searchText?.trim().toLowerCase();
     this.filteredStates = !search
@@ -200,8 +216,14 @@ export class StateComponent implements OnInit, AfterViewInit {
       this.stateForm.patchValue({ stateCode: '' });
     }
   }
+  onModalHidden(): void {
+    // Reset countries list to only active countries
+    this.countries = [...this.activeCountries];
+    this.resetForm();
+  }
 
   openAddModal(): void {
+    this.countries = [...this.activeCountries];
     this.resetForm();
     this.isEditMode = false;
     this.stateModal.show();
@@ -219,28 +241,42 @@ export class StateComponent implements OnInit, AfterViewInit {
     this.isEditMode = false;
   }
 
+
   // onEdit(state: GetStateDto): void {
+  //   this.isEditMode = true;
+  //   this.selectedStateId = state.stateId;
+  
+  //   this.onCountryChange(state.countryId);
+  
   //   this.stateForm.patchValue({
   //     countryId: state.countryId,
   //     stateName: state.stateName,
   //     stateCode: state.stateCode,
   //     stateStatus: state.stateStatus ? '1' : '0',
   //   });
-  //   this.selectedStateId = state.stateId;
-  //   this.isEditMode = true;
-
-  //   this.onCountryChange(state.countryId);
+  
   //   this.onStateNameChange(state.stateName);
+  
   //   this.stateModal.show();
   // }
   onEdit(state: GetStateDto): void {
     this.isEditMode = true;
     this.selectedStateId = state.stateId;
   
-    // 1. Update validStateList first (so dropdown options are ready)
-    this.onCountryChange(state.countryId);
+    const selectedCountry = this.allCountries.find(c => c.countryId === state.countryId);
   
-    // 2. Patch the form after validStateList updated
+    // If country is inactive, add it temporarily to dropdown
+    // if (selectedCountry && !this.countries.find(c => c.countryId === selectedCountry.countryId)) {
+    //   this.countries.push(selectedCountry);
+    // }
+    if (selectedCountry && !this.countries.find(c => c.countryId === selectedCountry.countryId)) {
+      this.countries = [...this.activeCountries, selectedCountry];
+    } else {
+      this.countries = [...this.activeCountries];
+    }
+    
+    this.onCountryChange(state.countryId); // load valid states
+  
     this.stateForm.patchValue({
       countryId: state.countryId,
       stateName: state.stateName,
@@ -248,7 +284,6 @@ export class StateComponent implements OnInit, AfterViewInit {
       stateStatus: state.stateStatus ? '1' : '0',
     });
   
-    // 3. Optionally call onStateNameChange to update stateCode if needed
     this.onStateNameChange(state.stateName);
   
     this.stateModal.show();
@@ -256,7 +291,7 @@ export class StateComponent implements OnInit, AfterViewInit {
   
   private cleanUpModal(): void {
     document.body.classList.remove('modal-open');
-    document.body.style.overflow = 'auto'; // ✅ restore scrolling
+    document.body.style.overflow = 'auto'; 
     document.body.style.removeProperty('padding-right');
   
     const backdrops = document.querySelectorAll('.modal-backdrop');
@@ -327,7 +362,7 @@ export class StateComponent implements OnInit, AfterViewInit {
                         text: 'State created successfully!',
                         confirmButtonColor: '#3085d6',
                       }).then(() => {
-                        this.cleanUpModal(); // Clean up modal afterwards
+                        this.cleanUpModal(); 
                       });
         },
         error: (err) => this.errorHandler.handleError(err),

@@ -37,6 +37,7 @@ export class CityComponent implements OnInit, AfterViewInit {
   cityForm!: FormGroup;
   countries: GetCountryDto[] = [];
   states: GetStateDto[] = [];
+  filteredCountries: GetCountryDto[] = [];
   filteredStates: GetStateDto[] = [];
   cities: GetCityDto[] = [];
   searchText: string = '';
@@ -103,6 +104,7 @@ export class CityComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (res) => {
           this.countries = res;
+          this.filteredCountries = res.filter(c => c.countryStatus == 1);
           console.log('Countries loaded:', this.countries.length);
         },
         error: (err) => console.error('Error loading countries:', err)
@@ -239,7 +241,10 @@ export class CityComponent implements OnInit, AfterViewInit {
   filterStates(): void {
     const countryId = +this.cityForm.get('countryId')?.value;
     console.log('Filtering states for CountryId:', countryId);
-    this.filteredStates = this.states.filter((s) => s.countryId === countryId);
+    this.filteredStates = this.states.filter(
+      (s) => s.countryId === countryId && s.stateStatus === true
+    );
+    // this.filteredStates = this.states.filter((s) => s.countryId === countryId);
     console.log('Filtered states:', this.filteredStates.length);
   }
 
@@ -247,43 +252,167 @@ export class CityComponent implements OnInit, AfterViewInit {
     this.resetForm();
     this.isEditMode = false;
     this.cityModal.show();
+    this.filteredCountries = this.countries.filter(c => c.countryStatus == 1);
+
+  // CLEAR any previously set inactive state dropdown
+  this.filteredStates = [];
+  
   }
 
+  // onEdit(city: GetCityDto): void {
+  //   console.log('Editing city:', city);
+  //   this.selectedCityId = city.cityId;
+  //   this.isEditMode = true;
+
+  //   this.cityForm.patchValue({
+  //     countryId: city.countryId,
+  //     cityStatus: city.cityStatus ? '1' : '0',
+  //   });
+
+  //   setTimeout(() => {
+  //     this.filterStates();
+
+  //     this.cityForm.patchValue({ stateId: city.stateId });
+
+  //     this.loadValidCities();
+
+  //     setTimeout(() => {
+  //       this.cityForm.patchValue({ cityName: city.cityName });
+  //     }, 200); 
+  //   }, 150); 
+
+  //   this.cityModal.show();
+  // }
+  // onEdit(city: GetCityDto): void {
+  //   console.log('Editing city:', city);
+  //   this.selectedCityId = city.cityId;
+  //   this.isEditMode = true;
+
+  //   this.countryService.getAllCountries().subscribe({
+  //     next: (res) => {
+  //       this.countries = res;
+  //       this.filteredCountries = res.filter(c => c.countryStatus == 1);
+
+
+  //       const cityCountry = this.countries.find(c => c.countryId === city.countryId);
+  //       if (cityCountry && !cityCountry.countryStatus) {
+  //         this.filteredCountries.push(cityCountry);
+  //       }
+
+
+  //       // Patch countryId and cityStatus first
+  //       this.cityForm.patchValue({
+  //         countryId: city.countryId,
+  //         cityStatus: city.cityStatus ? '1' : '0',
+  //       });
+
+  //       // Do NOT call filterStates here because this.states is not yet loaded
+
+  //       this.stateService.getAllStates().subscribe({
+  //         next: (allStates) => {
+  //           this.states = allStates.filter(s => s.stateStatus === true);
+
+  //           const cityState = allStates.find(s => s.stateId === city.stateId);
+  //           if (cityState && !cityState.stateStatus) {
+  //             this.states.push(cityState);
+  //           }
+
+  //           // Now filter states by the patched countryId
+  //           this.filterStates();
+
+  //           // Patch stateId AFTER filtering states so dropdown has the option
+  //           this.cityForm.patchValue({ stateId: city.stateId });
+
+  //           // Patch cityName immediately (no timeout needed)
+  //           this.cityForm.patchValue({ cityName: city.cityName });
+
+  //           // Load other data if needed
+  //           this.loadValidCities();
+  //         },
+  //         error: (err) => console.error('Error loading states:', err),
+  //       });
+
+  //       this.cityModal.show();
+  //     },
+  //     error: (err) => console.error('Error loading countries:', err),
+  //   });
+  // }
   onEdit(city: GetCityDto): void {
     console.log('Editing city:', city);
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
   
-    this.cityForm.patchValue({
-      countryId: city.countryId,
-      cityStatus: city.cityStatus ? '1' : '0',
+    this.cityForm.reset(); // Clear previous values
+  
+    // Fetch countries first
+    this.countryService.getAllCountries().subscribe({
+      next: (countries) => {
+        this.countries = countries;
+        this.filteredCountries = countries.filter(c => c.countryStatus == 1);
+  
+        // If selected country is inactive, add it back to the list
+        const selectedCountry = countries.find(c => c.countryId === city.countryId);
+        if (selectedCountry && !selectedCountry.countryStatus) {
+          this.filteredCountries.push(selectedCountry);
+        }
+  
+        // Patch countryId and cityStatus first
+        console.log('CountryId patched:', city.countryId, typeof(city.countryId));
+        this.cityForm.patchValue({
+          countryId: city.countryId,
+          cityStatus: city.cityStatus ? '1' : '0',
+        });
+        
+  
+        // Now fetch states
+        this.stateService.getAllStates().subscribe({
+          next: (states) => {
+            this.states = states;
+  
+            // If selected state is inactive, add it manually
+            const selectedState = states.find(s => s.stateId === city.stateId);
+            this.filteredStates = states.filter(s =>
+              s.countryId === city.countryId && s.stateStatus === true
+            );
+  
+            if (selectedState && !selectedState.stateStatus) {
+              this.filteredStates.push(selectedState);
+            }
+  
+            // Patch stateId
+            // this.cityForm.patchValue({ countryId: city.countryId });
+
+            this.cityForm.patchValue({ stateId: city.stateId });
+
+  
+            // Now load valid cities for dropdown
+            this.loadValidCities();
+  
+            // Finally, patch city name
+            this.cityForm.patchValue({ cityName: city.cityName });
+  
+            // Show modal
+            this.cityModal.show();
+          },
+          error: (err) => console.error('Error loading states:', err),
+        });
+      },
+      error: (err) => console.error('Error loading countries:', err),
     });
-  
-    setTimeout(() => {
-      this.filterStates();
-  
-      this.cityForm.patchValue({ stateId: city.stateId });
-  
-      this.loadValidCities();
-  
-      setTimeout(() => {
-        this.cityForm.patchValue({ cityName: city.cityName });
-      }, 200); 
-    }, 150); 
-  
-    this.cityModal.show();
   }
+  
+
 
   private cleanUpModal(): void {
     document.body.classList.remove('modal-open');
     document.body.style.overflow = 'auto'; // ✅ restore scrolling
     document.body.style.removeProperty('padding-right');
-  
+
     const backdrops = document.querySelectorAll('.modal-backdrop');
     backdrops.forEach((backdrop) => backdrop.remove());
   }
-  
-  
+
+
 
   onSubmit(): void {
     if (this.cityForm.invalid) {
@@ -295,10 +424,10 @@ export class CityComponent implements OnInit, AfterViewInit {
     if (!cityName) {
       Swal.fire({
         toast: true,
-                      position: 'top',
-                      timer: 3000,
-                      timerProgressBar: true,
-                      showConfirmButton: false,
+        position: 'top',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
         icon: 'error',
         title: 'Invalid City',
         text: 'Please select a valid city for the selected country and state.',

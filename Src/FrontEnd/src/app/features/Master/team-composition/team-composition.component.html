@@ -231,8 +231,8 @@
                             <th>
                                 <div class="head-first">Sr. No</div>
                             </th>
-                            <th>
-                                <div class="head-other">Team Name</div>
+                            <th (click)="sortTeams('teamName')">
+                                <div class="head-other">Team Name <i class="fas" [ngClass]="getSortIcon('teamName')"></i></div>
                             </th>
                             <th>
                                 <div class="head-other">Branch</div>
@@ -240,8 +240,8 @@
                             <th>
                                 <div class="head-other">Division</div>
                             </th>
-                            <th>
-                                <div class="head-other">TeamLeader</div>
+                            <th (click)="sortTeams('teamLeaderName')">
+                                <div class="head-other">TeamLeader <i class="fas" [ngClass]="getSortIcon('teamLeaderName')"></i></div>
                             </th>
                             <th>
                                 <div class="head-other">Status</div>
