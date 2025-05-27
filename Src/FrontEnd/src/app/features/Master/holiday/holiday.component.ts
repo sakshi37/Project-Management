@@ -11,6 +11,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { RoleService } from '../../../services/role.service';
 
 @Component({
   selector: 'app-holiday',
@@ -34,7 +35,10 @@ export class HolidayComponent implements OnInit, AfterViewInit {
   itemsPerPage: number = 3; 
   selectedImageFile: File | null = null;
 imagePreviewUrl: string | null = null;
-viewModeToggle: boolean = false; // false = Table, true = Card
+viewModeToggle: boolean = false; // false = Table, true = user
+userRole:string | null = null; 
+
+
 
 viewMode: 'card' | 'table' = 'table';
 activeCardHolidays: GetHolidayDto[] = [];
@@ -58,12 +62,15 @@ splitCardHolidays(): void {
     private holidayService: HolidayService,
     private el: ElementRef,
     private errorHandler: ErrorHandlerService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private roleService: RoleService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.loadHolidays();
+    this.userRole = this.roleService.getUserRole();
+
   }
 
   ngAfterViewInit(): void {
@@ -81,6 +88,7 @@ splitCardHolidays(): void {
       holidayStatus: ['1', Validators.required]
     });
   }
+  
 
   // loadHolidays(): void {
   //   this.holidayService.getAllHolidays().subscribe(res => {
