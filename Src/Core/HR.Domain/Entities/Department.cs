@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace HR.Domain.Entities
 {
-    public class Department
+   public  class Department
     {
-        
-           public int DepartmentId { get; set; }
-            public string DepartmentName { get; set; }
-        
+        public int Id { get; set; }
+        public String? Name { get; set; }
     }
 }

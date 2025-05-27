@@ -60,6 +60,7 @@ namespace HR.Persistence.Repositories
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
                         Email = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        LoginStatus = reader.GetBoolean(3)
                     });
                 }
             }
@@ -213,19 +214,7 @@ namespace HR.Persistence.Repositories
 
             return employee.FirstOrDefault();
         }
-        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
-        {
-            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
-            Console.WriteLine($"SQL Query: {sql}", did);
-            var employee = _appDbContext.Employees
-                .FromSqlRaw(sql, did)
-                .AsNoTracking()
-                .AsEnumerable()
-                .ToList();
-
-
-            return employee;
-        }
+       
 
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
@@ -316,6 +305,7 @@ namespace HR.Persistence.Repositories
             }
         }
 
+
         public async Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code)
         {
             return _appDbContext.EmployeeBasicDetails
@@ -324,6 +314,7 @@ namespace HR.Persistence.Repositories
                 .AsEnumerable()
                 .FirstOrDefault();
         }
+
 
         public async Task<int> ReadCurrentEmpCounter()
         {
@@ -413,6 +404,28 @@ namespace HR.Persistence.Repositories
         }
 
 
+
+
+
+
+
+
+
+        //getallteamleader
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
+        {
+            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
+            Console.WriteLine($"SQL Query: {sql}", did);
+            var employee = _appDbContext.Employees
+                .FromSqlRaw(sql, did)
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+
+            return employee;
+        }
+
     }
 
 
@@ -422,6 +435,11 @@ namespace HR.Persistence.Repositories
 
 
 
+     
+
+
+
+  
       
 
 

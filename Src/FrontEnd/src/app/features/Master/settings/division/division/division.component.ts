@@ -10,6 +10,8 @@ import { CreateDivisionDto } from './Models/create-division.dto.service';
 import Swal from 'sweetalert2';
 import { DivisionDto } from '../../../../../Models/division-dto';
 import { ErrorHandlerService } from '../../../../../services/error-handler.service';
+import { BranchService } from '../../../../../services/branch-service';
+import { Branch } from '../../../../../Models/branch-model';
 
 @Component({
   selector: 'app-division',
@@ -24,6 +26,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
   divisions: GetDivisionDto[] = [];
     filteredDivisions: any[] = [];
   projectManagerNames: any[] = [];
+   branches: Branch[] = [];
 
   isEditMode = false;
   selectedDivisionId: number | null = null;
@@ -40,13 +43,15 @@ export class DivisionComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private divisionService: DivisionService,
     private el: ElementRef,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private branchService: BranchService,
   ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.getDivisions();
     this.getProjectManagers();
+    this.loadBranches()
   }
 
   ngAfterViewInit(): void {
@@ -65,8 +70,10 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       prefixName: ['', Validators.required],
       manHours: ['', Validators.required],
       holidayListType: ['', Validators.required],
-      divisionStatus: ['', Validators.required]
+      divisionStatus: ['', Validators.required],
+      branchId:['',Validators.required]
     });
+    console.log(this.divisionForm.controls);
   }
 
 
@@ -98,6 +105,14 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       d.divisionName?.toLowerCase().includes(search)
     );
   }
+  loadBranches(): void {
+    this.branchService.getBranches().subscribe({
+      next: (res) => {
+        this.branches = res;
+      },
+      error: (err) => console.error('Error loading branches', err)
+    });
+  }
   openAddModal(): void {
     // this.resetForm();
     this.isEditMode = false;
@@ -107,8 +122,11 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       console.error('Modal not initialized.');
     }
   }
+  
   onEdit(division: GetDivisionDto): void {
+    console.log(division.fk_BranchId)
     this.divisionForm.patchValue({
+      branchId:division.fk_BranchId,
       divisionName: division.divisionName,
       projectManagerName: division.projectManagerName,
       prefixName: division.prefixName,
@@ -125,6 +143,8 @@ export class DivisionComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
+    console.log(this.divisionForm.value);
+    
     if (this.divisionForm.invalid) {
       console.log("hello world")
       return;
@@ -137,7 +157,8 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       prefixName: this.divisionForm.value.prefixName,
       manHours: this.divisionForm.value.manHours,
       fk_HolidayId: this.divisionForm.value.holidayListType,
-      divisionStatus: this.divisionForm.value.divisionStatus == 1 ? true : false
+      divisionStatus: this.divisionForm.value.divisionStatus == 1 ? true : false,
+      fk_BranchId: this.divisionForm.value.branchId,
     };
     console.log(payload.divisionStatus);
     
@@ -188,6 +209,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
     this.divisionForm.reset({ divisionName: '', status: '1' });
     this.selectedDivisionId = null;
   }
+  
   onStatusChange(division: GetDivisionDto): void {
     const confirmed = confirm(`Are you sure you want to mark "${division.divisionName}" as ${division.divisionStatus ? 'Inactive' : 'Active'}?`);
 

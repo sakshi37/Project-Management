@@ -45,7 +45,8 @@ export class TeamCompositionComponent {
   itemsPerPage: number = 5; // default value
 
   selectedTeamId: number | null = null;
-
+  selectedSortColumn = '';
+  sortDirectionAsc = true;
 
   selectedBranchId: number | null = null;
   selectedDivisionId: number | null = null;
@@ -145,6 +146,7 @@ export class TeamCompositionComponent {
       'Branch': t.branchName,
       'Division': t.divisionName,
       'Status': t.teamStatus ? 'Active' : 'Inactive',
+      'Team Members Ids': Array.isArray(t.teamMemberIds) ? t.teamMemberIds.join(',') : 'N/A',
     }));
   
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
@@ -153,7 +155,7 @@ export class TeamCompositionComponent {
     this.teamCompositions.forEach((t, index) => {
       if (!t.teamStatus) {
         const excelRow = index + 2; 
-        const colRange = ['A', 'B', 'C', 'D', 'E', 'F']; 
+        const colRange = ['A', 'B', 'C', 'D', 'E', 'F', 'G']; 
   
         colRange.forEach(col => {
           const cellRef = `${col}${excelRow}`;
@@ -399,7 +401,31 @@ onEdit(team: GetTeamCompositionDto ): void {
       });
     }
   }
-  
+  sortTeams(column: string): void {
+    if (this.selectedSortColumn === column) {
+      this.sortDirectionAsc = !this.sortDirectionAsc;
+    } else {
+      this.selectedSortColumn = column;
+      this.sortDirectionAsc = true;
+    }
+
+    this.filteredTeams.sort((a, b) => {
+      const aVal = a[column]?.toString().toLowerCase() || '';
+      const bVal = b[column]?.toString().toLowerCase() || '';
+      return this.sortDirectionAsc
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
+    });
+  }
+
+  getSortIcon(column: string): string {
+    return this.selectedSortColumn !== column
+      ? 'fa-sort'
+      : this.sortDirectionAsc
+      ? 'fa-sort-up'
+      : 'fa-sort-down';
+  }
+
   loadTeamCompositions(): void {
     this.teamService.getAllTeamCompositions().subscribe({
       next: (data) => this.teamCompositions = data,

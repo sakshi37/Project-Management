@@ -61,5 +61,20 @@ namespace HR.Persistence.Repositories
             var sql = "EXEC SP_BranchDelete @BranchId = {0}, @UpdatedBy = {1}";
              await _appcontext.Database.ExecuteSqlRawAsync(sql, id, updatedBy);
         }
+
+        //public async Task<BranchDto> CreateAsync(CreateBranchDto dto)
+        //{
+        //    var sql = "EXEC SP_BranchInsert @Fk_CityId = {0}, @BranchName = {1}, @BranchStatus = {2}, @CreatedBy = {3}";
+        //        await _appcontext.Database.ExecuteSqlRawAsync(sql, dto.Fk_CityId, dto.BranchName, true, dto.CreatedBy);
+        //    return new BranchDto
+        //    {
+        //        CityId = dto.Fk_CityId,
+        //        BranchName = dto.BranchName,
+                
+        //        CityName = cityData?.CityName ?? "",
+        //        StateName = cityData?.StateName ?? "",
+        //        BranchStatus = true
+        //    };
+        //}
     }
 }

@@ -7,14 +7,13 @@
 
   <!-- Search + Entries Dropdown -->
   <div class="mb-3 d-flex align-items-center justify-content-between flex-wrap">
-    
     <!-- Show Entries Dropdown -->
     <div class="entries-dropdown d-flex align-items-center mb-2">
       <label for="entries" class="me-2">Show</label>
       <select
         id="entries"
         class="form-select form-select-sm"
-        style="width: auto;"
+        style="width: auto"
         [(ngModel)]="pageSize"
         (change)="currentPage = 1"
       >
@@ -32,48 +31,84 @@
         id="search"
         type="text"
         class="form-control form-control-sm"
-        style="width: 300px;"
+        style="width: 300px"
         [(ngModel)]="searchTerm"
         (input)="filterRequests()"
         placeholder="Search by employee/requested by"
       />
     </div>
-
   </div>
 
- 
   <!-- Table -->
-  <table *ngIf="!isLoading && filteredRequests.length > 0" class="table table-bordered table-striped">
+  <table
+    *ngIf="!isLoading && filteredRequests.length > 0"
+    class="mb-0"
+  >
     <thead>
       <tr>
-        <th>Sr. No</th>
-        <th>Request Date</th>
-        <th>Employee Name</th>
-        <th>Requested By</th>
-        <th>Reason</th>
-        <th>Actions</th>
+        <th>
+          <div class="head-first">Sr. No</div>
+        </th>
+        <th>
+          <div class="head-other">Request Date</div>
+        </th>
+        <th>
+          <div class="head-other">Employee Name</div>
+        </th>
+        <th>
+          <div class="head-other">Requested By</div>
+        </th>
+        <th>
+          <div class="head-other">Reason</div>
+        </th>
+        <th>
+          <div class="head-last">Actions</div>
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr
         *ngFor="
           let req of filteredRequests
-            | paginate: { itemsPerPage: pageSize, currentPage: currentPage };
+            | paginate : { itemsPerPage: pageSize, currentPage: currentPage };
           let i = index
         "
       >
-        <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
-        <td>{{ req.requestDate | date: 'yyyy-MM-dd' }}</td>
-        <td>{{ req.employeeName }}</td>
-        <td>{{ req.requestByName }}</td>
-        <td>{{ req.reason }}</td>
         <td>
-          <button mat-icon-button (click)="openApproveRequestPopup(req)" title="Approve">
-            <mat-icon style="color: green;">check_circle</mat-icon>
-          </button>
-          <button mat-icon-button title="Reject" (click)="openRejectRequestPopup(req)">
-            <mat-icon style="color: red;">cancel</mat-icon>
-          </button>
+          <div class="tr-first-child">
+            {{ (currentPage - 1) * pageSize + i + 1 }}
+          </div>
+        </td>
+        <td>
+          <div class="tr-other-child">
+            {{ req.requestDate | date : "yyyy-MM-dd" }}
+          </div>
+        </td>
+        <td>
+          <div class="tr-other-child">{{ req.employeeName }}</div>
+        </td>
+        <td>
+          <div class="tr-other-child">{{ req.requestByName }}</div>
+        </td>
+        <td>
+          <div class="tr-other-child">{{ req.reason }}</div>
+        </td>
+        <td>
+          <div class="tr-last-child">
+            <button
+              mat-icon-button
+              (click)="openApproveRequestPopup(req)"
+              title="Approve"
+            >
+              <mat-icon style="color: green">check_circle</mat-icon></button
+            ><button
+              mat-icon-button
+              title="Reject"
+              (click)="openRejectRequestPopup(req)"
+            >
+              <mat-icon style="color: red">cancel</mat-icon>
+            </button>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -87,5 +122,7 @@
     ></pagination-controls>
   </div>
 
-  <p *ngIf="!isLoading && filteredRequests.length === 0">No pending requests.</p>
+  <p *ngIf="!isLoading && filteredRequests.length === 0">
+    No pending requests.
+  </p>
 </div>

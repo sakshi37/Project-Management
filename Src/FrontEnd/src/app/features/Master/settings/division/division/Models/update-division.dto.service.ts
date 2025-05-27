@@ -8,4 +8,5 @@ export interface UpdateDivisionDto {
   manHours: number;
   divisionStatus: boolean;
   updatedBy: string;
+  // fk_branchId:number;
 }
