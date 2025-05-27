@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AdminService } from '../../../services/admin-service';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-reject-request',
@@ -23,7 +24,9 @@ reason: string = '';
   }
 
   send(): void {
-  const empCode = localStorage.getItem('userName');  // Get empCode from local storage
+    const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+        const empCode = decodedToken.sub;  
+  // Get empCode from local storage
 
   if (!empCode || !this.reason || !this.data.requestId) {
     alert('Please enter a comment and ensure empCode and requestId are available.');
