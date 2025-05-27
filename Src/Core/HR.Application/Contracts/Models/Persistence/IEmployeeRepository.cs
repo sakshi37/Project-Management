@@ -40,11 +40,5 @@ namespace HR.Application.Contracts.Persistence
 
         Task IncrCurrentEmpCounter();
 
-
-        Task<bool> ExistsWithEmailAsync(string email, string excludeEmployeeCode);
-        Task<bool> ExistsWithPanAsync(string panNumber, string excludeEmployeeCode);
-        Task<bool> ExistsWithMobileAsync(string mobileNo, string excludeEmployeeCode);
-
-
     }
 }

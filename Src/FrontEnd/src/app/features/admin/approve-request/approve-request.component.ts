@@ -3,7 +3,6 @@ import { AdminService } from '../../../services/admin-service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-approve-request',
@@ -21,8 +20,7 @@ reason: string = '';
   ) {}
 
   send():void{
-    const decodedToken = jwtDecode(String(localStorage.getItem('token')));
-          const empCode = decodedToken.sub;
+    const empCode = localStorage.getItem('userName');  
 
   if (!empCode || !this.reason || !this.data.requestId) {
     alert('Please enter a comment and ensure empCode and requestId are available.');
@@ -38,8 +36,7 @@ reason: string = '';
                 position: 'top',
                 timer: 2000,
                 showConfirmButton: false
-              }).then(() => this.dialogRef.close({ approvedCode: this.data.code }));
-
+              }).then(() => this.dialogRef.close(true));
       
     },
     error: (err) => {
