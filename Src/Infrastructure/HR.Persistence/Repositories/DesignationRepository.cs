@@ -67,7 +67,6 @@ namespace HR.Persistence.Repositories
 
         public async Task<DesignationDto> GetByIdAsync(int id)
         {
-
             return await _context.DesignationDtos.FromSqlRaw("EXEC SP_GetDesignationById @DesignationId = {0}", id).FirstOrDefaultAsync();
         }
     }

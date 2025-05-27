@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-change-password',
@@ -48,9 +49,10 @@ export class ChangePasswordComponent {
       Swal.fire('Mismatch', 'New passwords do not match.', 'error');
       return;
     } 
-
+    const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+    const UserName = decodedToken.sub != undefined ? decodedToken.sub : '';
     const requestData = {
-      userName: String(localStorage.getItem('userName')),
+      userName: UserName,
       oldPassword: this.passwordModel.oldPassword,
       newPassword: this.passwordModel.newPassword,
       confirmPassword: this.passwordModel.confirmPassword
@@ -63,7 +65,7 @@ export class ChangePasswordComponent {
         // alert('Password updated successfully!');
         Swal.fire('Success', 'Password updated successfully!', 'success' ).then(()=>{
           form.resetForm();
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/changePassword']);
         })
       },
       error: (err) => {
@@ -82,3 +84,4 @@ export class ChangePasswordComponent {
     
   }
 }
+ 
