@@ -60,6 +60,7 @@ namespace HR.Persistence.Repositories
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
                         Email = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        LoginStatus = reader.GetBoolean(3)
                     });
                 }
             }
@@ -400,30 +401,6 @@ namespace HR.Persistence.Repositories
                 // For other exceptions, you can decide to log and return a friendly message
                 return $"Unexpected Error: {ex.Message}";
             }
-        }
-
-        public async Task<bool> ExistsWithEmailAsync(string email, string excludeCode)
-        {
-            return await _appDbContext.Employees
-                .FromSqlRaw(@"SELECT * FROM HR_Module.dbo.Tbl_Employee_master 
-                      WHERE Email = {0} AND Code <> {1}", email, excludeCode)
-                .AnyAsync();
-        }
-
-        public async Task<bool> ExistsWithPanAsync(string panNumber, string excludeCode)
-        {
-            return await _appDbContext.Employees
-                .FromSqlRaw(@"SELECT * FROM HR_Module.dbo.Tbl_Employee_master 
-                      WHERE PanNumber = {0} AND Code <> {1}", panNumber, excludeCode)
-                .AnyAsync();
-        }
-
-        public async Task<bool> ExistsWithMobileAsync(string mobileNo, string excludeCode)
-        {
-            return await _appDbContext.Employees
-                .FromSqlRaw(@"SELECT * FROM HR_Module.dbo.Tbl_Employee_master 
-                      WHERE MobileNo = {0} AND Code <> {1}", mobileNo, excludeCode)
-                .AnyAsync();
         }
 
 

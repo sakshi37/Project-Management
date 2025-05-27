@@ -40,15 +40,27 @@
         <span class="input-group-text" style="background-color: transparent">
           <i class="fas fa-search"></i>
         </span>
-        <input type="text" id="search" class="form-control" placeholder="Search City" [(ngModel)]="searchText"
-          (ngModelChange)="filterCities()" style="background-color: transparent" />
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          placeholder="Search City"
+          [(ngModel)]="searchText"
+          (ngModelChange)="filterCities()"
+          style="background-color: transparent"
+        />
       </div>
     </div>
 
     <!-- Right Column: Add Button -->
     <div class="col-md-6 text-end">
-      <button type="button" class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#cityModal"
-        (click)="openAddModal()">
+      <button
+        type="button"
+        class="btn custom-add-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#cityModal"
+        (click)="openAddModal()"
+      >
         + Add City
       </button>
     </div>
@@ -89,8 +101,7 @@
               <div class="input-icon-group">
                 <i class="fas fa-map-marked-alt"></i>
                 <select id="stateId" class="form-select" formControlName="stateId"
-                  [ngClass]="{ 'is-invalid': cityForm.get('stateId')?.touched && cityForm.get('stateId')?.invalid }"
-                  (change)="onStateChange()">
+                  [ngClass]="{ 'is-invalid': cityForm.get('stateId')?.touched && cityForm.get('stateId')?.invalid }" (change)="onStateChange()">
                   <option value="">Select State</option>
                   <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
                 </select>
@@ -114,7 +125,12 @@
             </div> -->
             <div class="mb-12">
               <label for="cityName" class="form-label">City Name</label>
-              <select id="cityName" class="form-select" formControlName="cityName" required>
+              <select
+                id="cityName"
+                class="form-select"
+                formControlName="cityName"
+                required
+              >
                 <option value="">-- Select City --</option>
                 <option *ngFor="let city of cityDropdownList" [value]="city">
                   {{ city }}
@@ -125,7 +141,7 @@
                 <div *ngIf="cityForm.get('cityName')?.errors?.['maxlength']">Max 100 characters allowed.</div>
               </div>
             </div>
-
+            
 
             <div class="col-md-12" *ngIf="isEditMode">
               <label for="cityStatus" class="form-label"> Status:</label>

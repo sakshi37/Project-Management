@@ -67,7 +67,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="
+      <tr
+        *ngFor="
           let req of filteredRequests
             | paginate : { itemsPerPage: pageSize, currentPage: currentPage };
           let i = index
@@ -115,7 +116,10 @@
 
   <!-- Pagination Controls -->
   <div class="pagination-wrapper" *ngIf="filteredRequests.length > pageSize">
-    <pagination-controls (pageChange)="currentPage = $event" [autoHide]="true"></pagination-controls>
+    <pagination-controls
+      (pageChange)="currentPage = $event"
+      [autoHide]="true"
+    ></pagination-controls>
   </div>
 
   <p *ngIf="!isLoading && filteredRequests.length === 0">

@@ -137,16 +137,3 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #ffffff; 
 }
-
-
-.green-dot-sidebar {
-  position: absolute;
-   top: 10px;         /* Adjust vertically to align with text */
-  left: 17px; 
-  right: 10px;
-  height: 8px;
-  width: 8px;
-  background-color: rgb(233, 22, 22);
-  border-radius: 80%;
-
-}

@@ -9,7 +9,7 @@ import { API_URL } from '../../constant';
   providedIn: 'root',
 })
 export class EmployeeService {
-  
+  private baseUrl = 'https://localhost:7292/AllEmployees';
 
   private url = API_URL;
 

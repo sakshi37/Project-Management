@@ -109,7 +109,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<MissPunchOutQueryVm> MissPunchOutQueryVms { get; set; }
     public DbSet<MissPunchInQueryVm> MissPunchInQueryVms { get; set; }
     public DbSet<PendingRequestVm> pendingRequestVms { get; set; }
-    public DbSet<HalfDayQueryVm> halfDayQueryVms { get; set; }
 
     public DbSet <Department>Department { get; set; }
 
@@ -180,8 +179,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<MissPunchOutQueryVm>().HasNoKey();
         modelBuilder.Entity<MissPunchInQueryVm>().HasNoKey();
         modelBuilder.Entity<PendingRequestVm>().HasNoKey();
-        modelBuilder.Entity<HalfDayQueryVm>().HasNoKey();
-        modelBuilder.Entity<GetNotificationByCodeVm>().HasNoKey();
+
 
     }
 
