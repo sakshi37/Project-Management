@@ -23,7 +23,7 @@
                  [(ngModel)]="searchText" (ngModelChange)="filterDivisions()" style="background-color: transparent;">
       </div>
     </div>
-    
+            
     <!-- Designation Modal -->
     <div class="modal fade" id="divisionModal" tabindex="-1" aria-labelledby="divisionModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -39,7 +39,7 @@
               <div class="col-12">
                 <label for="branchId" class="form-label">Branch:</label>
                 <select class="form-select" formControlName="branchId" id="branchId">
-                  <option value="">Select Branch</option>
+                  <option value=""disabled selected>--Select Branch--</option>
                   <option *ngFor="let b of branches" [value]="b.branchId">{{ b.branchName }}</option>
                 </select>
               </div>
@@ -52,7 +52,7 @@
                   <!-- <input type="text" id="fk_ProjectManagerName" class="form-control" formControlName="projectManagerName"> -->
                     <select class="form-select" name="projectManagerName" id="projectManagerName" formControlName="projectManagerName">
                       <option value="" disabled selected>--Select Project Manager--</option>
-                      <option *ngFor="let pm of projectManagerNames" value="{{pm.projectManager}}">{{pm.projectManagerName}}({{pm.projectManagerId}})</option>
+                      <option *ngFor="let pm of projectManagerNames" value="{{pm.projectManagerName}}">{{pm.projectManagerName}}({{pm.projectManagerId}})</option>
                     </select>
                 </div>
               
@@ -69,6 +69,7 @@
                   <div class="col-12">
                     <label for="holidayListType" class="form-label">HolidayListType:</label>
                     <select id="holidayListType" class="form-select" formControlName="holidayListType">
+                      <option value="" disabled selected>--Select Holiday ListType--</option>
                       <option value="1">Us-Based</option>
                       <option value="0">Non-UsBased</option>
                     </select>
@@ -78,6 +79,7 @@
               <div class="col-12">
                 <label for="divisionStatus" class="form-label">Status:</label>
                 <select id="divisionStatus" name="divisionStatus" class="form-select" formControlName="divisionStatus">
+                  <option value="" disabled selected>--Select Status--</option>
                   <option value="1">Active</option>
                   <option value="0">Inactive</option>
                 </select>
@@ -96,25 +98,19 @@
   <div class="row gy-4" *ngIf="divisions && divisions.length > 0; else noData">
     <div class="col-12">
       <table class="mb-0">
-        <!-- <thead>
-          <tr>
-            <th><div class="head-first">Sr. No</div></th>
-            <th><div class="head-other">Division Name</div></th>
-            <th><div class="head-other">Project Manager Name</div></th>
-            <th><div class="head-other">Prefix Name</div></th>
-            <th><div class="head-other">Man Hours</div></th>
-            <th><div class="head-other">Status</div></th>
-            <th><div class="head-last">Action</div></th>
-          </tr>
-        </thead> -->
+         
         <thead>
             <tr>
               <th><div class="head-first">Sr. No</div></th>
+              <th (click)="sortDivisions('branchName')">
+                <div class="head-other sortable">Branch Name<i class="fas" [ngClass]="getSortIcon('branchName')"></i></div>
+              </th>
               <th (click)="sortDivisions('divisionName')">
                 <div class="head-other sortable">Division <i class="fas" [ngClass]="getSortIcon('divisionName')"></i></div>
               </th>
+              
               <th (click)="sortDivisions('projectManagerName')">
-                <div class="head-other sortable">ProjectManager<i class="fas" [ngClass]="getSortIcon('projectManagerName')"></i></div>
+                <div class="head-other sortable">Project Manager<i class="fas" [ngClass]="getSortIcon('projectManagerName')"></i></div>
               </th>
               <th (click)="sortDivisions('prefixName')">
                 <div class="head-other sortable">Prefix Name<i class="fas" [ngClass]="getSortIcon('prefixName')"></i></div>
@@ -122,8 +118,8 @@
               <th (click)="sortDivisions('manHours')">
                 <div class="head-other sortable">Man Hours<i class="fas" [ngClass]="getSortIcon('manHours')"></i></div>
               </th>
-              <th (click)="sortDivisions('manHours')">
-                <div class="head-other sortable">Holiday Type<i class="fas" [ngClass]="getSortIcon('manHours')"></i></div>
+              <th (click)="sortDivisions('holidayListType')">
+                <div class="head-other sortable">Holiday Type<i class="fas" [ngClass]="getSortIcon('holidayListType')"></i></div>
               </th>
               <th (click)="sortDivisions('cityStatus')">
                 <div class="head-other sortable">Status</div>
@@ -134,6 +130,8 @@
         <tbody>
           <tr *ngFor="let division of filteredDivisions | paginate:{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': !division.divisionStatus}">
             <td><div class="tr-first-child">{{ i + 1 }}</div></td>
+            <!-- <td><div class="tr-other-child">{{ division.fk_BranchId }}</div></td> -->
+            <td><div class="tr-other-child">{{ division.branchName }}</div></td>
             <td><div class="tr-other-child">{{ division.divisionName }}</div></td>
             <td><div class="tr-other-child">{{ division.projectManagerName }}</div></td>
             <td><div class="tr-other-child">{{ division.prefixName }}</div></td>

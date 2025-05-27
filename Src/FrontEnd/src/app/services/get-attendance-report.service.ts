@@ -18,7 +18,7 @@ private apiUrl ="https://localhost:7292/api/EmployeeAttendanceReport";
     return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/DivisionName?divisionName=${divisionName}`);
   }
   getEAREmployeeName(employeeName:string):Observable<GetAttendanceReportDtoService[]>{
-    return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/Employee?.employeeName=${employeeName}`);
+    return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/EmployeeName?employeeName=${employeeName}`);
   }
   getEARByTLName(employeeId: number):Observable<GetAttendanceReportDtoService[]>{
     return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/Employee?employeeId=${employeeId}`)

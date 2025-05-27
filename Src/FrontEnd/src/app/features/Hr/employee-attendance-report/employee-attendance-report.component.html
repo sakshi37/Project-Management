@@ -27,7 +27,7 @@
       <label class="form-label" for="tlWise">Select Team Leader-wise</label>
       <select class="form-select" name="tlWise" id="tlWise" (change)="getEARByTLName()"
         [(ngModel)]="selectedEmployeeId">
-        <option value="" selected disabled>--Select TL--</option>
+        <option value="0" selected disabled>--Select TL--</option>
         <option *ngFor="let tl of teamLeaders" value="{{tl.id}}">{{tl.name}}</option>
       </select>
     </div>
@@ -69,9 +69,9 @@
 <div class="row gy-4" *ngIf="filteredattendanceReports && filteredattendanceReports.length > 0; else noData">
   <div class="col-12">
     <div>
-      <table class="mb-0" id="Table_id">
+      <table class="mb-0" id="Table_id" style="width: 100%; table-layout: fixed;">
         <thead>
-          <tr>
+          <tr style="height: 50px;">
             <th>
               <div class="head-first">Sr. No</div>
             </th>
@@ -114,8 +114,8 @@
         </thead>
 
 
-        <tbody>
-          <tr
+        <tbody >
+          <tr style="height: 50px;"
             *ngFor="let ateendanceReport of filteredattendanceReports | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; index as i"
             [ngClass]="{ 'inactive-row': !ateendanceReport.employeeCode }">
             <td>
@@ -141,16 +141,16 @@
             </td>
             <td>
               <div class="tr-other-child">{{(ateendanceReport.outTime)?(ateendanceReport.outTime |
-                date:'shortTime'):'-'}}</div>
+                date:'shortTime'):'-- --'}}</div>
             </td>
             <td>
-              <div class="tr-other-child">{{ (ateendanceReport.duration)?(ateendanceReport.duration): '-' }}</div>
+              <div class="tr-other-child">{{ (ateendanceReport.duration)?(ateendanceReport.duration): '-- --' }}</div>
             </td>
             <td>
               <div class="tr-other-child">{{ ateendanceReport.status }}</div>
             </td>
             <td>
-              <div class="tr-other-child">{{ ateendanceReport.leave }}</div>
+              <div class="tr-last-child">{{ ateendanceReport.leave }}</div>
             </td>
 
 

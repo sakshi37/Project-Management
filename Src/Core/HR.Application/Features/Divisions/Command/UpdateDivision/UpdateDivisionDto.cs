@@ -16,5 +16,6 @@ namespace HR.Application.Features.Divisions.Command.UpdateDivision
         public float ManHours { get; set; }
         public bool DivisionStatus { get; set; }
         public string UpdatedBy { get; set; }
+        public int? Fk_BranchId { get; set; }
     }
 }

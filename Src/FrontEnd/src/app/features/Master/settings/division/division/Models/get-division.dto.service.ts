@@ -1,5 +1,6 @@
 
 export interface GetDivisionDto {
+  // [x: string]: any;
   divisionId: number;
   divisionName: string;
   divisionStatus: boolean;
@@ -8,4 +9,6 @@ export interface GetDivisionDto {
   holidayListType: boolean;
   manHours: number;
   projectManagerId:Number;
+  fk_BranchId:Number;
+  BranchName:string;
 }

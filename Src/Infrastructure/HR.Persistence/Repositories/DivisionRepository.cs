@@ -81,8 +81,8 @@ namespace HR.Persistence.Repositories
 
         public async Task<division> UpdateAsync(UpdateDivisionDto dto)
         {
-            string sql = "EXEC Rahul.UpdateDivision @DivisionId={0},@DivisionName={1},@ProjectManagerName={2}, @PrefixName={3},@HolidayId={4},@ManHours ={5},@DivisionStatus ={6}, @UpdatedBy={7}";
-            await _context.Database.ExecuteSqlRawAsync(sql, dto.DivisionId, dto.DivisionName, dto.ProjectManagerName, dto.PrefixName, dto.Fk_HolidayId, dto.ManHours, dto.DivisionStatus, dto.UpdatedBy);
+            string sql = "EXEC Rahul.UpdateDivision @DivisionId={0},@DivisionName={1},@ProjectManagerName={2}, @PrefixName={3},@HolidayId={4},@ManHours ={5},@DivisionStatus ={6}, @UpdatedBy={7},@Fk_BranchId={8}";
+            await _context.Database.ExecuteSqlRawAsync(sql, dto.DivisionId, dto.DivisionName, dto.ProjectManagerName, dto.PrefixName, dto.Fk_HolidayId, dto.ManHours, dto.DivisionStatus, dto.UpdatedBy,dto.Fk_BranchId);
             return new division
             {
 
@@ -93,7 +93,8 @@ namespace HR.Persistence.Repositories
                 Fk_HolidayId = dto.Fk_HolidayId,
                 ManHours = dto.ManHours,
                 DivisionStatus = dto.DivisionStatus,
-                UpdatedBy = dto.UpdatedBy
+                UpdatedBy = dto.UpdatedBy,
+                Fk_BranchId =dto.Fk_BranchId
             };
         }
 

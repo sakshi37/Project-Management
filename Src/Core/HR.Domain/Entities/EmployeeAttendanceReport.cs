@@ -17,8 +17,8 @@ namespace HR.Domain.Entities
         public string? Duration { get; set; }
         public string? Status { get; set; }
         public decimal? Leave { get; set; }
-        public decimal? Half_Day { get; set; }
-        public decimal? Total { get; set; }
+        //public decimal? Half_Day { get; set; }
+        //public decimal? Total { get; set; }
 
 
     }

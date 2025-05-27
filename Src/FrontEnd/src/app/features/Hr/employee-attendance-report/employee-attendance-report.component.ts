@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DivisionService } from '../../../services/division.service';
 import { GetDivisionDto } from '../../Master/settings/division/division/Models/get-division.dto.service';
 import { CommonModule } from '@angular/common';
@@ -32,6 +32,9 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   itemsPerPage: number = 5; 
   currentPage: number = 1;
   reportTypes: number = 0;
+
+  @ViewChild("#empSelect") empSelect!: ElementRef; 
+
   constructor(private divisionService:DivisionService,
               private employeeService:EmployeeService,
               private getAttendanceReportService : GetAttendanceReportService
@@ -69,7 +72,10 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   
   getAttendanceReports(){
     // console.log(this.reportTypes);
-    if (this.reportTypes == 1) {
+    this.selectedEmployeeName = "";
+    this.selectedEmployeeId = 0;
+    this.selectedDivisionName = ""
+;    if (this.reportTypes == 1) {
       this.getAttendanceReportService.getAttendanceReports().subscribe({
         next: (response: GetAttendanceReportDtoService[]) => {
           this.attendanceReports = response;
@@ -93,6 +99,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
           this.attendanceReports = response;
         this.filteredattendanceReports = this.attendanceReports;
           // console.log(response);
+          
         },error:(error) =>{
           console.error(error.error);
         }
@@ -125,7 +132,7 @@ this.getAttendanceReportService.getEARByTLName(this.selectedEmployeeId).subscrib
         this.filteredattendanceReports = this.attendanceReports;
         console.log(response);
       },error:(error)=>{
-        console.error(error.error);
+        console.error('Error',error.error);
       }
     })
   }

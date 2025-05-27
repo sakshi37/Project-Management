@@ -122,8 +122,11 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       console.error('Modal not initialized.');
     }
   }
+  
   onEdit(division: GetDivisionDto): void {
+    console.log(division.fk_BranchId)
     this.divisionForm.patchValue({
+      branchId:division.fk_BranchId,
       divisionName: division.divisionName,
       projectManagerName: division.projectManagerName,
       prefixName: division.prefixName,
@@ -140,6 +143,8 @@ export class DivisionComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
+    console.log(this.divisionForm.value);
+    
     if (this.divisionForm.invalid) {
       console.log("hello world")
       return;
