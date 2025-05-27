@@ -8,4 +8,5 @@ export class DivisionDto {
     DivisionStatus?: boolean
     CreatedBy?: string
     UpdatedBy?: string
+    Fk_BranchId?:number
 }

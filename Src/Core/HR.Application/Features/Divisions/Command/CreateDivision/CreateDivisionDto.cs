@@ -16,6 +16,8 @@ namespace HR.Application.Features.Divisions.Command.CreateLocationCommand
         public float ManHours { get; set; }
         public bool DivisionStatus { get; set; }
         public string CreatedBy { get; set; }
+
+        public int Fk_BranchId{ get; set; }
         //public DateTime CreatedDate { get; set; } = DateTime.Now;
 
     }

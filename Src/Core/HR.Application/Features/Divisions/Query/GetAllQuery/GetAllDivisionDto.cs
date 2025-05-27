@@ -16,7 +16,9 @@ namespace HR.Application.Features.Divisions.Query.GetAllQuery
             public string? PrefixName { get; set; }
             public bool HolidayListType { get; set; }  
             public double? ManHours { get; set; }
-            public bool DivisionStatus { get; set; }
+            public bool? DivisionStatus { get; set; }
+        public int Fk_BranchId { get; set; }
+        public string? BranchName { get; set; }
 
     }
 }
