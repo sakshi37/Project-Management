@@ -12,20 +12,12 @@ import Swal from 'sweetalert2';
 import FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 
-<<<<<<< HEAD
-import { RouterLink } from '@angular/router';
-=======
->>>>>>> ae9145006a663debc0e9166a2ec3ceb05e09fbc7
 
 
 @Component({
   selector: 'app-gmc',
   standalone: true,
   imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule  ],
-<<<<<<< HEAD
-
-=======
->>>>>>> ae9145006a663debc0e9166a2ec3ceb05e09fbc7
   templateUrl: './gmc.component.html',
   styleUrls: ['./gmc.component.css'],
 })
@@ -37,11 +29,6 @@ export class GmcComponent implements OnInit {
     name: '',
     code: '',
     designation: '',
-<<<<<<< HEAD
-
-   
-  };
-=======
     fk_GenderId:0
   };
 employees: EmployeeSaveDto = {
@@ -56,7 +43,6 @@ employees: EmployeeSaveDto = {
   age: 0,
   fk_GenderId: 0
 };
->>>>>>> ae9145006a663debc0e9166a2ec3ceb05e09fbc7
 
   family: FamilyMember = {
     fk_FamilyMemberTypeId: 0,
@@ -271,31 +257,6 @@ onEmployeeBirthDateChange(birthDateStr: string) {
     });
   }
 
-<<<<<<< HEAD
-   saveEmployeeDetails(): void {
-  // const payload: EmployeeSaveDto = {
-  //   code: this.employee.code,
-  //   address: this.employee.address,
-  //   panNumber: this.employee. panNumber,
-  //   aadharCardNo: this.employee. aadharCardNo,
-  //   joinDate: this.employee.joinDate,
-  //   birthDate: this.employee.birthDate,
-  //   email: this.employee.email,
-  //   emergencyNo: this.employee.emergencyContact,
-  //   age: this.employee.age,
-  //   fk_GenderId: this.employee.fk_GenderId
-  // };
-
-  // this.gmcService.saveEmployeeDetails(payload).subscribe({
-  //   next: (res) => {
-  //     alert('Employee details saved successfully.');
-  //   },
-  //   error: (err) => {
-  //     console.error('Error saving employee:', err);
-  //     alert('Failed to save employee details.');
-  //   }
-  // });
-=======
  saveEmployeeDetails(): void {
   // Sync values from display-only employee object to the DTO
   this.employees.code = this.employee.code;
@@ -355,7 +316,6 @@ onEmployeeBirthDateChange(birthDateStr: string) {
       }
     }
   });
->>>>>>> ae9145006a663debc0e9166a2ec3ceb05e09fbc7
 }
 
 exportToExcel(): void {

@@ -34,6 +34,8 @@ using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using Microsoft.SharePoint.WebControls;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
 
 namespace HR.Persistence.Context;
 public class AppDbContext : IdentityDbContext<ApplicationUser>
