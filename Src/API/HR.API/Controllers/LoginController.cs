@@ -2,16 +2,18 @@
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
-using HR.Application.Features.LoginMaster.Commands.InsertLogin;
+using HR.Application.Exceptions;
+using HR.Application.Features.Employees.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SharePoint.Client;
 
 namespace HR.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class LoginController : ControllerBase 
     {
         readonly ILoginService _loginService;
         readonly IMediator _mediator;
@@ -34,16 +36,44 @@ namespace HR.API.Controllers
         }
 
         //verfying otp got on mail
-        [HttpPost("otpVerify")]
-        public async Task<ActionResult<OtpResponse>> VerifyOtp(OtpRequest otpRequest)
+        [HttpPost("otpVerify-for-first-login")]
+        public async Task<ActionResult<OtpResponse>> VerifyOtp([FromBody] OtpRequest otpRequest)
         {
-            var response = await _loginService.VerifyOtp(otpRequest);
-            return Ok(response);
+            if (otpRequest == null || string.IsNullOrWhiteSpace(otpRequest.Code) || string.IsNullOrWhiteSpace(otpRequest.Otp))
+            {
+                return BadRequest("OTP request is invalid. 'Code' and 'Otp' are required.");
+            }
+
+            try
+            {
+                var response = await _loginService.VerifyOtp(otpRequest);
+                return Ok(response);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (OtpNotFoundException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during OTP verification.", detail = ex.Message });
+            }
+        }
+
+        [HttpPut("FirstLoginUpdatePassword")]
+        public async Task<IActionResult> FirstLoginPasswordUpdate(string Code, string Password)
+        {
+            var result =await _loginService.FirstLoginPasswordUpdate(Code, Password);
+            return Ok(result);
+
         }
 
 
         //again sending otp for changing the password
-        [HttpPost("send-otp")]
+        [HttpPost("send-otp for forgot password")]
         public async Task<IActionResult> SendOtpToEmail(string username)
         {
             try
@@ -59,17 +89,36 @@ namespace HR.API.Controllers
         }
 
         // verifying the otp and chnaging the password if the otp is correct
+        private static readonly Dictionary<string, int> _passwordChangeTracker = new();
+        private static readonly int MaxPasswordChangesPerDay = 3;
 
-        [HttpPost("verify-otp")]
+        [HttpPost("Forgot Password")]
         public async Task<IActionResult> VerifyOtpAndChangePassword(ChangePassword changePasswordRequest)
         {
             try
             {
+                if (_passwordChangeTracker.ContainsKey(changePasswordRequest.UserName) && _passwordChangeTracker[changePasswordRequest.UserName] >= MaxPasswordChangesPerDay)
+                {
+                    return BadRequest("You have reached the maximum number of password changes allowed for today.");
+                }
 
                 bool isPasswordChanged = await _loginService.ChangePassword(changePasswordRequest);
 
+                foreach (var cookieKey in Request.Cookies.Keys)
+                {
+                    Response.Cookies.Delete(cookieKey);
+                }
                 if (isPasswordChanged)
                 {
+                    if (_passwordChangeTracker.ContainsKey(changePasswordRequest.UserName))
+                    {
+                        _passwordChangeTracker[changePasswordRequest.UserName]++;
+                    }
+                    else 
+                    {
+                        _passwordChangeTracker[changePasswordRequest.UserName] = 1;
+                    }
+                    Console.WriteLine(_passwordChangeTracker[changePasswordRequest.UserName]);
                     return Ok(new { message = "Password changed successfully!!!" });
                 }
                 else
@@ -81,11 +130,12 @@ namespace HR.API.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+           
         }
 
 
         //update password
-        [HttpPost("update_password")]
+        [HttpPost("change_password")]
         public async Task<IActionResult> UpdatePasswrd(UpdatePasswordRequest updatePasswordRequest)
         {
             var result = await _loginService.UpdatePassword(updatePasswordRequest);
@@ -97,13 +147,14 @@ namespace HR.API.Controllers
         }
 
 
+       
 
-
-        [HttpPost("insert-log")]
-        public async Task<IActionResult> InsertLog([FromBody] InsertLoginCommand command)
-        {
-            await _mediator.Send(command);
-            return Ok(new { Message = "Login inserted successfully" });
-        }
+        //[HttpPost("insert-login")]
+       
+        //public async Task<IActionResult> InsertLogin([FromBody] InsertLoginCommand command)
+        //{
+        //    await _mediator.Send(command);
+        //    return Ok("Login inserted successfully.");
+        //}
     }
 }
