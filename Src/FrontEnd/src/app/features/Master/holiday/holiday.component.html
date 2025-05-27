@@ -1,6 +1,6 @@
 <div class="container mt-4">
   <div class="row mb-3">
-    <div class="col-12 d-flex justify-content-end align-items-center pe-4">
+    <div class="col-12 d-flex justify-content-end align-items-center pe-4" *ngIf="userRole === 'HR'">
       <label for="viewToggle" class="form-check-label me-2 fw-semibold">
         {{ viewModeToggle ? 'Card View' : 'Table View' }}
       </label>
@@ -12,6 +12,7 @@
           [(ngModel)]="viewModeToggle" />
       </div>
     </div>
+    
   </div>
   <div class="entries-dropdown" *ngIf="!viewModeToggle">
     <label for="entries">Show</label>
@@ -39,7 +40,7 @@
       <button class="btn btn-secondary" (click)="filterHolidays()">Search</button>
     </div>
   </div> -->
-  <div class="mb-3 row align-items-center" *ngIf="!viewModeToggle ">
+  <div class="mb-3 row align-items-center" *ngIf="!viewModeToggle">
     <!-- Holiday List Type Dropdown -->
     <div class="col-md-3">
       <div class="input-group">

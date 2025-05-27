@@ -60,6 +60,7 @@ namespace HR.Persistence.Repositories
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
                         Email = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        LoginStatus = reader.GetBoolean(3)
                     });
                 }
             }
