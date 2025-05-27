@@ -34,6 +34,8 @@ using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using Microsoft.SharePoint.WebControls;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
+using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
+using HR.Application.Features.Notification.Queries;
 using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
 using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
 
