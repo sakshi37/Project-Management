@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { API_URL } from '../../constant';
 
 export interface UserProfile {
   image: string | null;
@@ -13,11 +12,11 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class ProfileService {
-   private apiUrl = `${API_URL}/Employee`;
+  private apiUrl = 'https://localhost:7292/api/Employee/ProfileDetalis';
 
   constructor(private http: HttpClient) {}
 
   getUserProfile(code: string): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}/ProfileDetalis/${code}`);
+    return this.http.get<UserProfile>(`${this.apiUrl}/${code}`);
   }
 }

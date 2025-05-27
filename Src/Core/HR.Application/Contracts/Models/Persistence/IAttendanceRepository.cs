@@ -1,7 +1,10 @@
-﻿using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
-using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+﻿using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HR.Application.Contracts.Models.Persistence
 {
@@ -9,7 +12,6 @@ namespace HR.Application.Contracts.Models.Persistence
     {
         Task<List<MissPunchOutQueryVm>> GetMissPunchOutReportAsync(DateTime startDate);
         Task<List<MissPunchInQueryVm>> GetMissPunchInReportAsync(DateTime startDate);
-        Task<List<HalfDayQueryVm>> GetHalfDayReportAsync(DateTime startDate);
 
     }
 }

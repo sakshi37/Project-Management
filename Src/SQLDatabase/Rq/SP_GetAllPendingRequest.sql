@@ -3,8 +3,6 @@ AS
 BEGIN
     SELECT 
 	   R.RequestId,
-	   R.Fk_EmpId,
-	   R.RequestByEmpId,
 	    R.RequestDate,
         R.EmployeeName,
         R.RequestByName,

@@ -62,7 +62,7 @@ export class UpdateEmployeeComponent implements OnInit {
     private branchService: BranchService,
     private designationService: DesignationService,
     private updateService: UpdateService,
-    private locationService:LocationService,  
+    private locationService:LocationService,
     private divisionService: DivisionService ,
     private cityService:CityService,
     private countryService:CountryService,
@@ -445,7 +445,7 @@ onSignatureSelected(event: Event): void {
     Swal.fire({
       toast: true,
       icon: 'error',
-      text: err.message,
+      text: 'Failed to update employee. Please try again.',
       position: 'top',
       timer: 3000,
       showConfirmButton: false

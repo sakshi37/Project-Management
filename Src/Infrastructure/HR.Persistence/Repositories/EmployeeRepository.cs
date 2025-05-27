@@ -402,30 +402,6 @@ namespace HR.Persistence.Repositories
             }
         }
 
-        public async Task<bool> ExistsWithEmailAsync(string email, string excludeCode)
-        {
-            return await _appDbContext.Employees
-                .FromSqlRaw(@"SELECT * FROM HR_Module.dbo.Tbl_Employee_master 
-                      WHERE Email = {0} AND Code <> {1}", email, excludeCode)
-                .AnyAsync();
-        }
-
-        public async Task<bool> ExistsWithPanAsync(string panNumber, string excludeCode)
-        {
-            return await _appDbContext.Employees
-                .FromSqlRaw(@"SELECT * FROM HR_Module.dbo.Tbl_Employee_master 
-                      WHERE PanNumber = {0} AND Code <> {1}", panNumber, excludeCode)
-                .AnyAsync();
-        }
-
-        public async Task<bool> ExistsWithMobileAsync(string mobileNo, string excludeCode)
-        {
-            return await _appDbContext.Employees
-                .FromSqlRaw(@"SELECT * FROM HR_Module.dbo.Tbl_Employee_master 
-                      WHERE MobileNo = {0} AND Code <> {1}", mobileNo, excludeCode)
-                .AnyAsync();
-        }
-
 
 
 

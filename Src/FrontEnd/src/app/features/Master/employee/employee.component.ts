@@ -27,8 +27,8 @@ export class EmployeeComponent implements OnInit {
   totalCount = 0;
   fullEmployeeList: EmployeeFull[] = [];
 
-  sortColumn: string = '';
-  sortDirection: 'asc' | 'desc' = 'asc';
+  
+
   searchText: string = '';
 
   columns = [
@@ -62,7 +62,6 @@ export class EmployeeComponent implements OnInit {
         this.employees = res.data;
         this.totalCount = res.totalCount;
       });
-      this.sortEmployees();
   }
 
   get totalPages(): number {
@@ -93,52 +92,20 @@ export class EmployeeComponent implements OnInit {
 }
 
 
-  // openInactivatePopup(emp: any): void {
-  //   this.dialog
-  //     .open(InactivateEmployeeComponent, {
-  //       width: '1000px',
-
-  //       data: emp,
-  //     })
-  //     .afterClosed()
-  //     .subscribe((result) => {
-  //       if (result === true) {
-  //         this.loadEmployees();
-  //       }
-  //     });
-  // }
-
   openInactivatePopup(emp: any): void {
-  this.dialog
-    .open(InactivateEmployeeComponent, {
-      width: '1000px',
-      data: emp,
-    })
-    .afterClosed()
-    .subscribe((inactivatedCode) => {
-      if (inactivatedCode) {
-        this.employeeService
-          .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
-          .subscribe((res) => {
-            this.employees = res.data;
-            this.totalCount = res.totalCount;
+    this.dialog
+      .open(InactivateEmployeeComponent, {
+        width: '1000px',
 
-            const index = this.employees.findIndex(e => e.code === inactivatedCode);
-            if (index !== -1) {
-              const [emp] = this.employees.splice(index, 1);
-              emp.highlight = true;
-              this.employees.unshift(emp);
-
-              setTimeout(() => {
-                emp.highlight = false;
-                this.loadEmployees(); // Reload after 5s to restore original order
-              }, 5000);
-            }
-          });
-      }
-    });
-}
-
+        data: emp,
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result === true) {
+          this.loadEmployees();
+        }
+      });
+  }
 
   openActivatePopup(emp: any): void {
     this.dialog
@@ -153,27 +120,6 @@ export class EmployeeComponent implements OnInit {
         }
       });
   }
-  loadEmployeesAndHighlight(codeToHighlight: string): void {
-  this.employeeService
-    .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
-    .subscribe((res) => {
-      this.employees = res.data;
-      this.totalCount = res.totalCount;
-
-      const index = this.employees.findIndex((e) => e.code === codeToHighlight);
-      if (index !== -1) {
-        const [highlightedEmp] = this.employees.splice(index, 1);
-        highlightedEmp.highlight = true;
-        this.employees.unshift(highlightedEmp);
-
-        setTimeout(() => {
-          highlightedEmp.highlight = false;
-          this.loadEmployees(); // reload the list after timeout
-        }, 5000);
-      }
-    });
-}
-
 
 onSearch() {
   const search = this.searchText?.toLowerCase().trim();
@@ -365,39 +311,5 @@ if (confirm('Are you sure you want to inactivate selected employees?')) {
 }
 
 }
-
-onSort(column: string): void {
-  if (this.sortColumn === column) {
-    // Toggle direction
-    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-  } else {
-    // New column
-    this.sortColumn = column;
-    this.sortDirection = 'asc';
-  }
-
-  this.sortEmployees();
-}
-
-sortEmployees(): void {
-  if (!this.sortColumn) return;
-
-  this.employees.sort((a, b) => {
-    let valueA = a[this.sortColumn];
-    let valueB = b[this.sortColumn];
-
-    // Fallback for undefined/null
-    valueA = valueA ?? '';
-    valueB = valueB ?? '';
-
-    if (typeof valueA === 'string') valueA = valueA.toLowerCase();
-    if (typeof valueB === 'string') valueB = valueB.toLowerCase();
-
-    if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
-    if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
-    return 0;
-  });
-}
-
 
 }
