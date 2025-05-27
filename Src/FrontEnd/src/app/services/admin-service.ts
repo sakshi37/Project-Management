@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { API_URL } from '../../constant';
 
 export interface ActivationRequest {
   id: number;
@@ -15,7 +14,7 @@ export interface ActivationRequest {
   providedIn: 'root'
 })
 export class AdminService {
-  private readonly apiUrl = `${API_URL}/Admin`;
+  private readonly apiUrl = 'https://localhost:7292/api/Admin';
 
   constructor(private http: HttpClient) {}
 

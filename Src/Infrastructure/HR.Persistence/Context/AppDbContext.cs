@@ -34,13 +34,8 @@ using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using Microsoft.SharePoint.WebControls;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
-<<<<<<< HEAD
-using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
-using HR.Application.Features.Notification.Queries;
-=======
 using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
 using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
->>>>>>> b1ba35244dd189dcc80b18df816a2efbc943915b
 
 namespace HR.Persistence.Context;
 public class AppDbContext : IdentityDbContext<ApplicationUser>
@@ -112,7 +107,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<MissPunchOutQueryVm> MissPunchOutQueryVms { get; set; }
     public DbSet<MissPunchInQueryVm> MissPunchInQueryVms { get; set; }
     public DbSet<PendingRequestVm> pendingRequestVms { get; set; }
-    public DbSet<HalfDayQueryVm> halfDayQueryVms { get; set; }
 
     public DbSet <Department>Department { get; set; }
 
@@ -183,8 +177,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<MissPunchOutQueryVm>().HasNoKey();
         modelBuilder.Entity<MissPunchInQueryVm>().HasNoKey();
         modelBuilder.Entity<PendingRequestVm>().HasNoKey();
-        modelBuilder.Entity<HalfDayQueryVm>().HasNoKey();
-        modelBuilder.Entity<GetNotificationByCodeVm>().HasNoKey();
+
 
     }
 

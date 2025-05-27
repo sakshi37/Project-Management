@@ -5,8 +5,7 @@ import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard
 import { ProfileService, UserProfile } from '../../services/profile-services';
 import { CommonModule } from '@angular/common';
 import { jwtDecode } from 'jwt-decode';
-import { NotificationModel } from '../../Models/notification-model';
-import { NotificationService } from '../../services/notification-services';
+import { RoleService } from '../../services/role.service';
 
 @Component({
   selector: 'app-lef-side-nav',
@@ -16,6 +15,7 @@ import { NotificationService } from '../../services/notification-services';
   imports: [RouterLink, HeaderComponent,CommonModule],
 })
 export class LefSideNavComponent {
+  userRole:string | null = null; 
   logout() {
     
     // Clear session or token
@@ -29,48 +29,32 @@ export class LefSideNavComponent {
     designationName: ''
   };
   imageSrc: string | null = null;
-    hasUnreadNotifications = false;
 
   // Reference to the DOM elements
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
 
-  constructor(private renderer: Renderer2,private profileService: ProfileService, private router:Router,private notificationService:NotificationService) {}
+  constructor(private renderer: Renderer2,private profileService: ProfileService, private router:Router,    private roleService: RoleService
+  ) {}
 
 ngOnInit(): void {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    console.error('No token found.');
-    return;
-  }
-
-  const decodedToken = jwtDecode<any>(token);
-  const code = decodedToken?.sub;
-
-  if (!code) {
-    console.error('No code found. User might not be logged in.');
-    return;
-  }
-
-  // Get profile
-  this.profileService.getUserProfile(code).subscribe({
-    next: (profile) => {
+  const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+  const code = decodedToken.sub;
+  if (code) {
+    this.profileService.getUserProfile(code).subscribe(profile => {
       this.user = profile;
+
       if (profile.image) {
         this.imageSrc = `data:image/png;base64,${profile.image}`;
       }
-    },
-    error: err => console.error('Error loading profile', err)
-  });
+    });
+  } else {
+    console.error('No code found. User might not be logged in.');
+  
+  }
+  this.userRole = this.roleService.getUserRole();
 
-  // Get notifications
-  this.notificationService.getNotifications(code).subscribe({
-    next: (data: NotificationModel[]) => {
-      this.hasUnreadNotifications = data.some(n => !n.isRead);
-    },
-    error: err => console.error('Error loading notifications', err)
-  });
 }
 
 // sidebarVisible: boolean = true;
