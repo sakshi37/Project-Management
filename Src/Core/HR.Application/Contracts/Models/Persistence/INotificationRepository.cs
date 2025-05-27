@@ -10,5 +10,6 @@ namespace HR.Application.Contracts.Models.Persistence
     public interface INotificationRepository
     {
         Task<List<GetNotificationByCodeVm>> GetNotificationDetailsAsync(string code);
+        Task<int>ReadAndDeleteNotificationAsync(int notificationId);
     }
 }

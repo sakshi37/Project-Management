@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { ActivateEmployeeModel } from "../Models/activate-employee-model";
 import { Injectable } from "@angular/core";
 import { API_URL } from "../../constant";
+import { jwtDecode } from "jwt-decode";
 @Injectable({
     providedIn: 'root'
   })
@@ -21,7 +22,8 @@ export class ActivateEmployeeService {
     // }
     
     activateEmployee(forEmpCode: string, reason: string): Observable<any> {
-  const requestByEmpCode = localStorage.getItem('userName'); 
+  const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+        const requestByEmpCode = decodedToken.sub; 
 
   if (!requestByEmpCode) {
     throw new Error('Logged-in user employee code not found in localStorage.');

@@ -4,10 +4,15 @@
   <div *ngIf="notification.length === 0">No notifications found.</div>
 
   <div *ngFor="let item of notification" class="card">
-    <div class="card-body">
-      <h5 class="card-title">{{ item.subject }}</h5>
+    <div class="card-body position-relative">
+      <!-- Close button in top-right -->
+      <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" (click)="readAndDeleteNotification(item.notificationId)"></button>
+
+      <h6 class="card-title">
+        {{ item.subject }}
+      </h6>
       <p class="card-text">{{ item.message }}</p>
     </div>
   </div>
-</div>
 
+</div>

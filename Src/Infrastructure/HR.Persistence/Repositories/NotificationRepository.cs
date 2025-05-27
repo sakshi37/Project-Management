@@ -1,6 +1,7 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.Notification.Queries;
 using HR.Persistence.Context;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,51 @@ namespace HR.Persistence.Repositories
 
         public async Task<List<GetNotificationByCodeVm>> GetNotificationDetailsAsync(string code)
         {
-            var notification = _appDbContext
-        .Set<GetNotificationByCodeVm>()
-        .FromSqlRaw("EXEC SP_GetNotificationsByEmpCode @EmpCode = {0}", code)
-        .AsNoTracking()
-        .ToList();
+            try
+            {
+                var notification = _appDbContext
+            .Set<GetNotificationByCodeVm>()
+            .FromSqlRaw("EXEC SP_GetNotificationsByEmpCode @EmpCode = {0}", code)
+            .AsNoTracking()
+            .ToList();
 
-            return await Task.FromResult(notification);
+                return await Task.FromResult(notification);
+            }
+            catch (SqlException ex)
+            {
+
+                throw new ApplicationException($"{ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Handle any other .NET exception
+                throw new ApplicationException("An unexpected error occurred while deleting the notification.", ex);
+            }
         }
+
+        public async Task<int> ReadAndDeleteNotificationAsync(int notificationId)
+        {
+            try
+            {
+
+                var result = await _appDbContext
+                    .Database
+                    .ExecuteSqlRawAsync("Exec dbo.SP_ReadandDelNotification @NotificationId={0}", notificationId);
+                return result;
+            }
+            catch (SqlException ex)
+            {
+               
+                throw new ApplicationException($"{ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Handle any other .NET exception
+                throw new ApplicationException("An unexpected error occurred while deleting the notification.", ex);
+            }
+        }
+
+
     }
+    
 }
