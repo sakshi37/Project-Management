@@ -19,11 +19,7 @@ namespace HR.Application.Contracts.Models.Persistence
         Task<bool> ChangePassword(ChangePassword changePasswordRequest);
 
         Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest);
-
-        Task<empdetailDto> GetByIdAsync(int id);
-        Task InsertLogAsync(string empCode, byte[] password);
-
-
+        Task<bool> FirstLoginPasswordUpdate(string Code, string Password);
     }
 
 }

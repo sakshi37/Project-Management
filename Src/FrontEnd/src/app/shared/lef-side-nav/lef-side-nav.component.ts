@@ -4,6 +4,7 @@ import { HeaderComponent } from '../header/header.component';
 import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard.component';
 import { ProfileService, UserProfile } from '../../services/profile-services';
 import { CommonModule } from '@angular/common';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-lef-side-nav',
@@ -35,8 +36,8 @@ export class LefSideNavComponent {
   constructor(private renderer: Renderer2,private profileService: ProfileService, private router:Router) {}
 
 ngOnInit(): void {
-  const code = localStorage.getItem('userName');  // Changed empId to code
-
+  const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+  const code = decodedToken.sub;
   if (code) {
     this.profileService.getUserProfile(code).subscribe(profile => {
       this.user = profile;
