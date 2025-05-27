@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { City, State, Country } from 'country-state-city';
+import { City} from 'country-state-city';
 import * as bootstrap from 'bootstrap';
 import { CityService } from '../../../../services/city.service';
 import { CountryService } from '../../../../services/country.service.service';

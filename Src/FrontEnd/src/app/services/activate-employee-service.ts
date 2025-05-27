@@ -2,12 +2,14 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { ActivateEmployeeModel } from "../Models/activate-employee-model";
 import { Injectable } from "@angular/core";
+import { API_URL } from "../../constant";
+import { jwtDecode } from "jwt-decode";
 @Injectable({
     providedIn: 'root'
   })
 
 export class ActivateEmployeeService {
-    private baseUrl = 'https://localhost:7292'; // Adjust if needed
+    private apiUrl = `${API_URL}`; // Adjust if needed
 
     constructor(private http: HttpClient) {}
   
@@ -20,7 +22,8 @@ export class ActivateEmployeeService {
     // }
     
     activateEmployee(forEmpCode: string, reason: string): Observable<any> {
-  const requestByEmpCode = localStorage.getItem('userName'); 
+  const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+        const requestByEmpCode = decodedToken.sub; 
 
   if (!requestByEmpCode) {
     throw new Error('Logged-in user employee code not found in localStorage.');
@@ -32,7 +35,7 @@ export class ActivateEmployeeService {
     reason
   };
 
-  return this.http.post<any>('https://localhost:7292/api/RequestByHr', body, {
+  return this.http.post<any>(this.apiUrl+'/RequestByHr', body, {
     headers: { 'Content-Type': 'application/json' }
   });
 }

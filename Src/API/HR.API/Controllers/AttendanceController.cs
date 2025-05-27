@@ -1,10 +1,13 @@
-﻿using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+﻿using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
+using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR.API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class AttendanceController : Controller
     {
         private readonly IMediator _mediator;
@@ -31,6 +34,19 @@ namespace HR.API.Controllers
         public async Task<IActionResult> GetMissPunchInReport([FromQuery] DateTime startDate)
         {
             var result = await _mediator.Send(new MissPunchInQuery { StartDate = startDate });
+
+            if (result == null || !result.Any())
+            {
+                return NotFound("No report found for the selected date.");
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("halfdate")]
+        public async Task<IActionResult> GetHalfReport([FromQuery] DateTime startDate)
+        {
+            var result = await _mediator.Send(new HalfDayQuery { StartDate = startDate });
 
             if (result == null || !result.Any())
             {

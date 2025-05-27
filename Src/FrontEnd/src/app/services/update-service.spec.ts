@@ -1,4 +1,4 @@
-import { UpdateService } from './update-service';
+import { UpdateService } from "./update-service";
 
 describe('UpdateService', () => {
   it('should create an instance', () => {

@@ -9,6 +9,8 @@ namespace HR.Application.Features.Admin.Queries.GetPendingRequest
     public class PendingRequestVm
     {  
         public int RequestId { get; set; }
+        public int Fk_EmpId { get; set; }
+        public int RequestByEmpId { get; set; }
         public DateTime RequestDate {get;set;}
         public string EmployeeName { get; set; }
         public string RequestByName { get; set; }

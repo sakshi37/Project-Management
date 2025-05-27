@@ -31,7 +31,7 @@ export class InactivateEmployeeComponent {
           showConfirmButton: false 
   
         }).then(()=>{
-        this.dialogRef.close(true);
+        this.dialogRef.close(this.data.code);
         });
       },
       error: (err) => {
