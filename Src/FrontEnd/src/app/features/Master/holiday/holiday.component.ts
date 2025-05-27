@@ -11,6 +11,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { RoleService } from '../../../services/role.service';
 
 @Component({
   selector: 'app-holiday',
@@ -34,7 +35,10 @@ export class HolidayComponent implements OnInit, AfterViewInit {
   itemsPerPage: number = 3; 
   selectedImageFile: File | null = null;
 imagePreviewUrl: string | null = null;
-viewModeToggle: boolean = false; // false = Table, true = Card
+viewModeToggle: boolean = false; // false = Table, true = user
+userRole:string | null = null; 
+
+
 
 viewMode: 'card' | 'table' = 'table';
 activeCardHolidays: GetHolidayDto[] = [];
@@ -58,12 +62,15 @@ splitCardHolidays(): void {
     private holidayService: HolidayService,
     private el: ElementRef,
     private errorHandler: ErrorHandlerService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private roleService: RoleService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.loadHolidays();
+    this.userRole = this.roleService.getUserRole();
+
   }
 
   ngAfterViewInit(): void {
@@ -77,10 +84,11 @@ splitCardHolidays(): void {
     this.holidayForm = this.fb.group({
       holidayName: ['', [Validators.required, Validators.maxLength(100)]],
       holidayDate: ['', Validators.required],
-      holidayListType: ['1', Validators.required],
+      holidayListType: ['', Validators.required],
       holidayStatus: ['1', Validators.required]
     });
   }
+  
 
   // loadHolidays(): void {
   //   this.holidayService.getAllHolidays().subscribe(res => {
@@ -310,12 +318,12 @@ splitCardHolidays(): void {
   onStatusChange(holiday: GetHolidayDto): void {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Do you want to mark "${holiday.holidayName}" as ${holiday.holidayStatus ? 'Inactive' : 'Active'}?`,
+      text: `Do you want to Remove "${holiday.holidayName}"`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, change it!',
+      confirmButtonText: 'Yes, Remove it!',
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
@@ -324,12 +332,13 @@ splitCardHolidays(): void {
         this.holidayService.softDeleteHoliday(holiday.holidayId, newStatus).subscribe({
           next: () => {
             this.loadHolidays();
-            Swal.fire({
-              icon: 'success',
-              title: 'Status Updated',
-              text: `"${holiday.holidayName}" is now ${newStatus ? 'Active' : 'Inactive'}.`,
-              confirmButtonColor: '#3085d6'
-            });
+            // Swal.fire({
+            //   icon: 'success',
+            //   title: 'Status Updated',
+            //   text: `"${holiday.holidayName}" is now ${newStatus ? 'Active' : 'Inactive'}.`,
+            //   confirmButtonColor: '#3085d6'
+            // });
+            this.handleSuccess('Deleted');
           },
           error: (err) => {
             this.errorHandler.handleError(err);

@@ -8,8 +8,9 @@ namespace HR.Application.Features.Branches.Commands.CreateBranch
 {
     public class CreateBranchDto
     {
-        public string BranchName { get; set; }
+        public string? BranchName { get; set; }
         public int CreatedBy { get; set; }
+        public bool BranchStatus { get; set; }
         public int Fk_CityId { get; set; }
 
     }

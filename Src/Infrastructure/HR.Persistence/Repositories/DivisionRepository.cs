@@ -1,8 +1,5 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Exception;
-using HR.Application.Features.Designations.Commands.CreateDesignation;
-using HR.Application.Features.Designations.Commands.Dtos;
-using HR.Application.Features.Designations.Commands.UpdateDesignation;
 using HR.Application.Features.Divisions.Command.CreateLocationCommand;
 using HR.Application.Features.Divisions.Command.UpdateDivision;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
@@ -43,7 +40,7 @@ namespace HR.Persistence.Repositories
             {
                 throw new LocationValidationException("A Division with the same name already exists.");
             }
-            string sql = "EXEC SP_DivisionInsert @DivisionName={0},@ProjectManagerName={1},@PrefixName={2},@Fk_HolidayId={3},   @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6}";
+            string sql = "EXEC SP_DivisionInsert @DivisionName={0},@ProjectManagerName={1},@PrefixName={2},@Fk_HolidayId={3},   @ManHours={4}, @DivisionStatus={5}, @CreatedBy={6},@Fk_BranchId={7}";
             await _context.Database.ExecuteSqlRawAsync(sql,
                 dto.DivisionName,
                 dto.ProjectManagerName,
@@ -51,7 +48,8 @@ namespace HR.Persistence.Repositories
                 dto.Fk_HolidayId,
                 dto.ManHours,
                 dto.DivisionStatus,
-                dto.CreatedBy);
+                dto.CreatedBy,
+                dto.Fk_BranchId);
             return new division
             {
                 DivisionName = dto.DivisionName,
@@ -61,6 +59,7 @@ namespace HR.Persistence.Repositories
                 ManHours = dto.ManHours,
                 DivisionStatus = dto.DivisionStatus,
                 CreatedBy = dto.CreatedBy,
+                Fk_BranchId=dto.Fk_BranchId
             };
         }
 
@@ -82,8 +81,8 @@ namespace HR.Persistence.Repositories
 
         public async Task<division> UpdateAsync(UpdateDivisionDto dto)
         {
-            string sql = "EXEC Rahul.UpdateDivision @DivisionId={0},@DivisionName={1},@ProjectManagerName={2}, @PrefixName={3},@HolidayId={4},@ManHours ={5},@DivisionStatus ={6}, @UpdatedBy={7}";
-            await _context.Database.ExecuteSqlRawAsync(sql, dto.DivisionId, dto.DivisionName, dto.ProjectManagerName, dto.PrefixName, dto.Fk_HolidayId, dto.ManHours, dto.DivisionStatus, dto.UpdatedBy);
+            string sql = "EXEC Rahul.UpdateDivision @DivisionId={0},@DivisionName={1},@ProjectManagerName={2}, @PrefixName={3},@HolidayId={4},@ManHours ={5},@DivisionStatus ={6}, @UpdatedBy={7},@Fk_BranchId={8}";
+            await _context.Database.ExecuteSqlRawAsync(sql, dto.DivisionId, dto.DivisionName, dto.ProjectManagerName, dto.PrefixName, dto.Fk_HolidayId, dto.ManHours, dto.DivisionStatus, dto.UpdatedBy,dto.Fk_BranchId);
             return new division
             {
 
@@ -94,13 +93,14 @@ namespace HR.Persistence.Repositories
                 Fk_HolidayId = dto.Fk_HolidayId,
                 ManHours = dto.ManHours,
                 DivisionStatus = dto.DivisionStatus,
-                UpdatedBy = dto.UpdatedBy
+                UpdatedBy = dto.UpdatedBy,
+                Fk_BranchId =dto.Fk_BranchId
             };
         }
 
         public async Task<List<GetAllProjectManagerDto>> GetAllPMAsync()
         {
-            string sql = "EXEC GetProjectManager";
+            string sql = "EXEC [remote].[GetProjectManager]";
             var pms = await _context.GetAllProjectManagerDtos.FromSqlRaw(sql).ToListAsync();
             return pms;
         }

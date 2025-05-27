@@ -39,7 +39,7 @@
       <button class="btn btn-secondary" (click)="filterHolidays()">Search</button>
     </div>
   </div> -->
-  <div class="mb-3 row align-items-center" *ngIf="!viewModeToggle">
+  <div class="mb-3 row align-items-center" *ngIf="!viewModeToggle ">
     <!-- Holiday List Type Dropdown -->
     <div class="col-md-3">
       <div class="input-group">
@@ -253,7 +253,7 @@
             <div class="col-md-6">
               <label class="form-label">List Type:</label>
               <select class="form-select" formControlName="holidayListType">
-                <option value="true" selected>US Holiday</option>
+                <option value="true">US Holiday</option>
                 <option value="false">Non-US Holiday</option>
               </select>
             </div>

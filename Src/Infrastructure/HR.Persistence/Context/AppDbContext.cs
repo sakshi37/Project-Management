@@ -34,8 +34,13 @@ using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using Microsoft.SharePoint.WebControls;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
+<<<<<<< HEAD
 using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
 using HR.Application.Features.Notification.Queries;
+=======
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
+>>>>>>> b1ba35244dd189dcc80b18df816a2efbc943915b
 
 namespace HR.Persistence.Context;
 public class AppDbContext : IdentityDbContext<ApplicationUser>
@@ -109,6 +114,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PendingRequestVm> pendingRequestVms { get; set; }
     public DbSet<HalfDayQueryVm> halfDayQueryVms { get; set; }
 
+    public DbSet <Department>Department { get; set; }
+
+    public DbSet<EmployeeAttendanceReportDto> attendanceRepoertdtos { get; set; }
+    public DbSet<ParticularEmployeeDto> ParticularEmployee { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -163,6 +172,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<GetEmployeeBasicDetailsByCodeQueryVm>().HasNoKey();
         modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
         modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
+
+        modelBuilder.Entity<EmployeeAttendanceReportDto>().HasNoKey();
+        modelBuilder.Entity<ParticularEmployeeDto>().HasNoKey();
+
+
+
         modelBuilder.Entity<empdetailDto>().HasNoKey(); 
         modelBuilder.Entity<GetFamilyDetailsByCodeQueryVm>().HasNoKey();
         modelBuilder.Entity<MissPunchOutQueryVm>().HasNoKey();
