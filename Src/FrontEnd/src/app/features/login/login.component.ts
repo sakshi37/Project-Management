@@ -152,12 +152,13 @@ loginUser(loginForm: NgForm) {
         if (res) {
           this.router.navigate(['/dashboard']);
         }
-      }, error: (error) => {
+      },
+      error: (error) => {
         console.error('Login failed!', error.error);
         Swal.fire('Password Update Failed', error.error.message, 'error');
         // this.isLoggingIn = false;
-      }
-    })
+      },
+    });
   }
 
   // OTP verifcation at firstlogin
@@ -178,7 +179,9 @@ loginUser(loginForm: NgForm) {
           next: (res: AuthResponseModel) => {
             Swal.fire('Success', 'OTP Verified Successfully!', 'success');
             const modalElement = document.getElementById('otpModal');
-            const otpModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            const otpModal =
+              bootstrap.Modal.getInstance(modalElement) ||
+              new bootstrap.Modal(modalElement);
             otpModal.hide();
             sessionStorage.setItem('isAuthenticated', 'true');
             // this.router.navigate(['']);
@@ -190,7 +193,11 @@ loginUser(loginForm: NgForm) {
           },
           error: (error) => {
             console.error('Otp Failed', error.error);
-            Swal.fire('Invalid OTP', 'Incorrect OTP. Please try again.', 'error');
+            Swal.fire(
+              'Invalid OTP',
+              'Incorrect OTP. Please try again.',
+              'error'
+            );
           },
         });
       }
@@ -285,7 +292,7 @@ loginUser(loginForm: NgForm) {
           title: 'Resend OTP failed!',
           text: 'Failed to resend OTP. Please try again.'
         });
-      }
+      },
     });
   }
   //forgot password modal
@@ -315,14 +322,20 @@ loginUser(loginForm: NgForm) {
             });
 
             setTimeout(() => {
-              const modalElement = document.getElementById('forgotPasswordModal');
+              const modalElement = document.getElementById(
+                'forgotPasswordModal'
+              );
               const forgotPasswordModal = new bootstrap.Modal(modalElement);
               forgotPasswordModal.show();
             }, 2000);
           },
           error: (error) => {
             console.error('Failed to send OTP!', error);
-            Swal.fire('Failed', 'Failed to send OTP. Please check your email and try again.', 'error');
+            Swal.fire(
+              'Failed',
+              'Failed to send OTP. Please check your email and try again.',
+              'error'
+            );
           },
         });
       }
@@ -330,11 +343,15 @@ loginUser(loginForm: NgForm) {
   }
 
   submitForgotPassword() {
-    if (!this.forgotUsername || !this.forgotOtp || !this.newPassword || !this.confirmNewPassword) {
+    if (
+      !this.forgotUsername ||
+      !this.forgotOtp ||
+      !this.newPassword ||
+      !this.confirmNewPassword
+    ) {
       Swal.fire('Validation', 'Please fill all fields.', 'warning');
       return;
     }
-
 
     const passwordPattern =
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&\-+=()])(?=\S+$).{6,12}$/;
@@ -349,7 +366,11 @@ loginUser(loginForm: NgForm) {
     }
 
     if (this.newPassword !== this.confirmNewPassword) {
-      Swal.fire('Mismatch', 'New Password and Confirm Password do not match.', 'error');
+      Swal.fire(
+        'Mismatch',
+        'New Password and Confirm Password do not match.',
+        'error'
+      );
       return;
     }
 
@@ -362,14 +383,22 @@ loginUser(loginForm: NgForm) {
 
     this.userService.resetPassword(resetPasswordData).subscribe({
       next: () => {
-        Swal.fire('Success', 'Password reset successfully! Please login with new password.', 'success');
+        Swal.fire(
+          'Success',
+          'Password reset successfully! Please login with new password.',
+          'success'
+        );
         const modalElement = document.getElementById('forgotPasswordModal');
         const forgotPasswordModal = bootstrap.Modal.getInstance(modalElement);
         forgotPasswordModal.hide();
       },
       error: (error) => {
         console.error('Password reset failed!', error);
-        Swal.fire('Failed', 'Failed to reset password. Please check your OTP and try again.', 'error');
+        Swal.fire(
+          'Failed',
+          'Failed to reset password. Please check your OTP and try again.',
+          'error'
+        );
       },
     });
   }

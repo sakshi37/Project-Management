@@ -1,4 +1,3 @@
-
 Create table Tbl_Employee_master(
 Id int primary key identity(1,1),
 Name varchar(100) not null,
@@ -43,6 +42,28 @@ ADD CONSTRAINT DF_Tbl_Employee_master_LoginStatus DEFAULT 0 FOR LoginStatus;
 ALTER TABLE Tbl_Employee_master
 DROP CONSTRAINT DF__Tbl_Emplo__Login__7C6F7215;
 
+alter table Tbl_Employee_master
 
-select * from Tbl_Employee_master
+
+
+select * from dbo.Tbl_Employee_master
  
+ SELECT name
+FROM sys.foreign_keys
+WHERE parent_object_id = OBJECT_ID('Tbl_Employee_master');
+
+ALTER TABLE Tbl_Employee_master
+DROP CONSTRAINT FK__Tbl_Emplo__Fk_Em__5006DFF2;
+
+ALTER TABLE Tbl_Employee_master
+ALTER COLUMN Fk_EmployeeTypeId INT NULL;
+
+
+SELECT COLUMN_NAME, IS_NULLABLE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'Tbl_Employee_master' AND COLUMN_NAME = 'Fk_DesignationId';
+
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, IS_NULLABLE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE COLUMN_NAME = 'Fk_DesignationId';
+
