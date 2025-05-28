@@ -1,4 +1,8 @@
-export class EmployeeModel {
+export interface EmployeeModel {
+  id: number;
+  name: string;
+  code: string;
+  designationName: string;
 }
 export interface Employee {
     photo: string | null;

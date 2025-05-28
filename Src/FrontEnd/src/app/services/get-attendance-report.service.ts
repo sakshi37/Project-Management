@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { GetAttendanceReportDtoService } from '../features/Hr/employee-attendance-report/Model/get-attendance-report-dto.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { ParticularEmployeeService } from '../features/Hr/employee-attendance-report/Model/particular-employee.service';
+import { EmployeeModel } from '../Models/employee-model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,9 @@ private apiUrl ="https://localhost:7292/api/EmployeeAttendanceReport";
   }
   getEARByTLName(employeeId: number):Observable<GetAttendanceReportDtoService[]>{
     return this.http.get<GetAttendanceReportDtoService[]>(`${this.apiUrl}/Employee?employeeId=${employeeId}`)
+  }
+  getTLEmployeeID(employeeCode?: string):Observable<EmployeeModel> {
+    return this.http.get<EmployeeModel>(`https://localhost:7292/api/Employee/${employeeCode}`);
   }
   
   

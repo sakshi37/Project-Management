@@ -14,6 +14,11 @@ import {
   TimeSheetService,
 } from '../../../services/time-sheet.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { GetAttendanceReportDtoService } from '../../Hr/employee-attendance-report/Model/get-attendance-report-dto.service';
+import { GetAttendanceReportService } from '../../../services/get-attendance-report.service';
+import { RoleService } from '../../../services/role.service';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { EmployeeModel } from '../../../Models/employee-model';
 
 @Component({
   selector: 'app-work-timesheet',
@@ -38,7 +43,8 @@ export class WorkTimesheetComponent implements OnInit {
 
   taskForm!: FormGroup;
   projectForm!: FormGroup;
-  employees: EmployeeByIdName[] = [];
+  employees: GetAttendanceReportDtoService[] = [];
+  attendanceReports:GetAttendanceReportDtoService[]=[];
   taskList: Timesheets[] = [];
   openProjectId: number | null = null;
   addTaskProjectId: number | null = null;
@@ -49,17 +55,45 @@ export class WorkTimesheetComponent implements OnInit {
   constructor(
     private employeeService: EmployeeService,
     private timesheetService: TimeSheetService,
+    private getAttendanceReportService : GetAttendanceReportService,
+    private roleService : RoleService,
     private fb: FormBuilder
   ) {}
-
+  empId:number = 0;
   ngOnInit(): void {
     this.initForm();
     this.initProjectForm();
-    this.employeeService.getAllEmployeeByIdName().subscribe((res) => {
-      console.log(res);
-      this.employees = res;
-    });
-
+    console.log(this.roleService.getUserRole(), 'Role');
+    
+    // this.employeeService.getAllEmployeeByIdName().subscribe((res) => {
+    //   console.log(res);
+    //   this.employees = res;
+    // });
+    const token  = this.roleService.getToken();
+    const decodeToken = jwtDecode<JwtPayload>(token != null ? token : '');
+    if(this.roleService.getUserRole() == 'Team Lead')
+    {
+      this.getAttendanceReportService.getTLEmployeeID(decodeToken.sub).subscribe({
+        next: (res:EmployeeModel) => {
+          this.empId = res.id;
+          console.log('TL chi ID', this.empId);
+          
+      this.getAttendanceReportService.getEARByTLName(this.empId).subscribe({
+        next:(response:GetAttendanceReportDtoService[])=>{
+          this.employees = response;
+          console.log(this.empId, 'Tyachya under employees', this.employees);
+          
+        },error:(error) =>{
+          console.error('Error', error.error);
+          console.error('Error Message', error.error.message);
+        }
+      });
+        }, error:(error) =>{
+          console.error('Error', error.error);
+          console.error('Error Message', error.error.message);
+        }
+      })
+  }
     this.timeSheet();
     this.getAllProject();
     this.getAllStack();

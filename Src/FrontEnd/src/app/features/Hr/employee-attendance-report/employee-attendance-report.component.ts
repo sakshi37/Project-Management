@@ -116,7 +116,7 @@ this.getAttendanceReportService.getEARByTLName(this.selectedEmployeeId).subscrib
   next:(response:GetAttendanceReportDtoService[])=>{
     this.attendanceReports = response;
     this.filteredattendanceReports = this.attendanceReports;
-    console.log("Hello")
+    console.log("Hello", this.attendanceReports)
   },error:(error) =>{
     console.error('Error', error.error);
     console.error('Error Message', error.error.message);

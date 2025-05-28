@@ -181,7 +181,7 @@
           <select formControlName="empId" class="form-select rounded-pill">
             <option value="">Employee</option>
             <option *ngFor="let employee of employees" [ngValue]="employee.id">
-              {{ employee.name }}
+              {{ employee.employeeName }}
             </option>
           </select>
         </div>
