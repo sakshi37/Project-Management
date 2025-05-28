@@ -170,11 +170,3 @@ export class WorkTimesheetComponent implements OnInit {
     console.log(this.selectedTaskList);
   }
 }
-
-type Task = {
-  jobNo: number;
-  sequence: string;
-  part: string;
-  activity: string;
-  type: string;
-};

@@ -68,6 +68,7 @@ export type Timesheets = {
   min: number | null;
   empId: number | null;
   timeSheetStatus: boolean | null;
+  code: string;
 };
 
 export type ProjectWithStack = {

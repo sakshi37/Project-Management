@@ -13,5 +13,6 @@
         public int? Min { get; set; }
         public int? EmpId { get; set; }
         public bool? TimeSheetStatus { get; set; }
+        public string Code { get; set; }
     }
 }
