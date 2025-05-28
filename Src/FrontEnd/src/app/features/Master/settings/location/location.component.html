@@ -47,6 +47,9 @@
                 <option value="">Select Country</option>
                 <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}</option>
               </select>
+                <div *ngIf="locationForm.get('countryId')?.touched && locationForm.get('countryId')?.invalid" class="text-danger">
+                <div *ngIf="locationForm.get('countryId')?.errors?.['required']">Please Select Country.</div>
+              </div>
               </div>
             </div>
 
@@ -58,6 +61,9 @@
                 <option value="">Select State</option>
                 <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
               </select>
+              <div *ngIf="locationForm.get('stateId')?.touched && locationForm.get('stateId')?.invalid" class="text-danger">
+                <div *ngIf="locationForm.get('stateId')?.errors?.['required']">Please Select State.</div>
+              </div>
               </div>
             </div>
             <div class="col-md-12">
@@ -68,6 +74,9 @@
                 <option value="">Select City</option>
                 <option *ngFor="let city of filteredCities" [value]="city.cityId">{{ city.cityName }}</option>
               </select>
+              <div *ngIf="locationForm.get('cityId')?.touched && locationForm.get('cityId')?.invalid" class="text-danger">
+                <div *ngIf="locationForm.get('cityId')?.errors?.['required']">Please Select City.</div>
+              </div>
               </div>
 
             </div>
@@ -77,7 +86,7 @@
               <input type="text" class="form-control" formControlName="locationName" id="locationName" />
               <div *ngIf="locationForm.get('locationName')?.touched && locationForm.get('locationName')?.invalid" class="text-danger">
                 <div *ngIf="locationForm.get('locationName')?.errors?.['required']">Location Name is required.</div>
-                <div *ngIf="locationForm.get('locationName')?.errors?.['maxlength']">Max 20 characters allowed.</div>
+                <!-- <div *ngIf="locationForm.get('locationName')?.errors?.['pattern']">Max 15 characters allowed.</div> -->
               </div>
             </div>
 

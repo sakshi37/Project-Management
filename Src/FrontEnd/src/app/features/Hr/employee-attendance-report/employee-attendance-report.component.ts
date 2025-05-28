@@ -30,6 +30,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   attendanceReports:GetAttendanceReportDtoService[]=[];
   filteredattendanceReports: GetAttendanceReportDtoService[] = [];
   // praticularEmployeeReports:ParticularEmployeeService[] = [];
+  itemsPerPageOptions: number[] = [3, 5, 10, 25, 50];
   itemsPerPage: number = 5; 
   currentPage: number = 1;
   reportTypes: number = 0;

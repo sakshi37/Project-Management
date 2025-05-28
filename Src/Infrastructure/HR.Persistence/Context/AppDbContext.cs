@@ -21,8 +21,6 @@ using HR.Application.Features.TeamCompositions.Commands.Dtos;
 using HR.Application.Features.TimeSheet.Queries;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
-using HR.Application.Features.States.Commands.Dtos;
-using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using HR.Identity.Models;
@@ -69,13 +67,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
-
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<TeamCompositionDto> TeamCompositionDtos { get; set; }
     public DbSet<TeamMember> TeamMembers { get; set; }
-
-
     public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
     public DbSet<Counter> Counter { get; set; }
     public DbSet<LocationDto> LocationDtos { get; set; }
