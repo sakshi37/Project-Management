@@ -1,0 +1,15 @@
+.custom-add-btn{
+    background-color: #5b7cfd;
+    color: white;
+    margin: 8px;
+
+  }
+  .custom-add-btn2{
+    background-color: #f7471b;
+    color: white;
+    margin: 8px;
+
+  }
+  .custom-add-btn:hover{
+    box-shadow: #555 0px 0px 10px;
+  }

@@ -1,0 +1,18 @@
+<p>Attendance works!</p>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Employee ID</th>
+      <th>Start Date & Time</th>
+      <th>End Date & Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let attendance of attendance">
+      <td>{{ attendance.fk_EmpId }}</td>
+      <td>{{ attendance.startDate | date : "medium" }}</td>
+      <td>{{ attendance.endDate | date : "medium" }}</td>
+    </tr>
+  </tbody>
+</table>

@@ -1,105 +1,124 @@
-import { Component, Renderer2, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Renderer2,
+  ElementRef,
+  ViewChild,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
-import { DashboardComponent } from '../../features/Dashboard/dashboard/dashboard.component';
-import { ProfileService, UserProfile } from '../../services/profile-services';
 import { CommonModule } from '@angular/common';
 import { jwtDecode } from 'jwt-decode';
+
+import { ProfileService, UserProfile } from '../../services/profile-services';
+import { RoleService } from '../../services/role.service';
+import { NotificationModel } from '../../Models/notification-model';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-lef-side-nav',
   templateUrl: './lef-side-nav.component.html',
   styleUrls: ['./lef-side-nav.component.css'],
   standalone: true,
-  imports: [RouterLink, HeaderComponent,CommonModule],
+  imports: [RouterLink, HeaderComponent, CommonModule],
 })
 export class LefSideNavComponent {
-  logout() {
-    
-    // Clear session or token
-    localStorage.clear();
-    sessionStorage.clear();
-    this.router.navigate(['login']);
-  }
+  userRole: string | null = null;
   user: UserProfile = {
     image: '',
     name: '',
     designationName: ''
   };
   imageSrc: string | null = null;
+  hasUnreadNotifications = false;
 
-  // Reference to the DOM elements
+  sidebarVisible: boolean = true;
+  @Output() sidebarToggled = new EventEmitter<boolean>();
+
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
 
-  constructor(private renderer: Renderer2,private profileService: ProfileService, private router:Router) {}
+  constructor(
+    private renderer: Renderer2,
+    private profileService: ProfileService,
+    private router: Router,
+    private roleService: RoleService,
+    private notificationService: NotificationService
+  ) {}
 
-ngOnInit(): void {
-  const decodedToken = jwtDecode(String(localStorage.getItem('token')));
-  const code = decodedToken.sub;
-  if (code) {
-    this.profileService.getUserProfile(code).subscribe(profile => {
-      this.user = profile;
+  ngOnInit(): void {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found.');
+      return;
+    }
 
-      if (profile.image) {
-        this.imageSrc = `data:image/png;base64,${profile.image}`;
-      }
+    const decodedToken = jwtDecode<any>(token);
+    const code = decodedToken?.sub;
+    this.userRole = decodedToken?.role || null;
+
+    if (!code) {
+      console.error('No code found. User might not be logged in.');
+      return;
+    }
+
+    // Get user profile
+    this.profileService.getUserProfile(code).subscribe({
+      next: (profile) => {
+        this.user = profile;
+        if (profile.image) {
+          this.imageSrc = `data:image/png;base64,${profile.image}`;
+        }
+      },
+      error: err => console.error('Error loading profile', err)
     });
-  } else {
-    console.error('No code found. User might not be logged in.');
-  
+
+    // Get notifications
+    this.notificationService.getNotifications(code).subscribe({
+      next: (data: NotificationModel[]) => {
+        this.hasUnreadNotifications = data.some(n => !n.isRead);
+      },
+      error: err => console.error('Error loading notifications', err)
+    });
   }
-}
 
-// sidebarVisible: boolean = true;
+  logout() {
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['login']);
+  }
 
-//   @Output() sidebarToggled = new EventEmitter<boolean>();
+  toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible;
+    this.sidebarToggled.emit(this.sidebarVisible);
+  }
 
-//   toggleSidebar() {
-//     this.sidebarVisible = !this.sidebarVisible;
-//     this.sidebarToggled.emit(this.sidebarVisible);
-//   }
-@Output() sidebarToggled = new EventEmitter<boolean>();
-sidebarVisible: boolean = true;
-
-toggleSidebar() {
-  this.sidebarVisible = !this.sidebarVisible;
-  this.sidebarToggled.emit(this.sidebarVisible);
-}
-  // Method to toggle profile menu
   toggleProfileMenu() {
     if (this.profileMenu) {
       const classList = this.profileMenu.nativeElement.classList;
-      if (classList.contains('show')) {
-        this.renderer.removeClass(this.profileMenu.nativeElement, 'show');
-      } else {
-        this.renderer.addClass(this.profileMenu.nativeElement, 'show');
-      }
+      classList.contains('show')
+        ? this.renderer.removeClass(this.profileMenu.nativeElement, 'show')
+        : this.renderer.addClass(this.profileMenu.nativeElement, 'show');
     }
   }
 
-  // Method to toggle masters menu
   toggleMastersMenu() {
     if (this.mastersMenu) {
       const classList = this.mastersMenu.nativeElement.classList;
-      if (classList.contains('show')) {
-        this.renderer.removeClass(this.mastersMenu.nativeElement, 'show');
-      } else {
-        this.renderer.addClass(this.mastersMenu.nativeElement, 'show');
-      }
+      classList.contains('show')
+        ? this.renderer.removeClass(this.mastersMenu.nativeElement, 'show')
+        : this.renderer.addClass(this.mastersMenu.nativeElement, 'show');
     }
   }
 
-  // Method to toggle HR menu
   toggleHrMenu() {
     if (this.hrMenu) {
       const classList = this.hrMenu.nativeElement.classList;
-      if (classList.contains('show')) {
-        this.renderer.removeClass(this.hrMenu.nativeElement, 'show');
-      } else {
-        this.renderer.addClass(this.hrMenu.nativeElement, 'show');
-      }
+      classList.contains('show')
+        ? this.renderer.removeClass(this.hrMenu.nativeElement, 'show')
+        : this.renderer.addClass(this.hrMenu.nativeElement, 'show');
     }
   }
 }
