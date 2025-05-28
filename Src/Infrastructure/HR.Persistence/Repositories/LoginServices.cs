@@ -1,98 +1,331 @@
 ﻿using Dapper;
+using HR.Application.Contracts;
 using HR.Application.Contracts.Models;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
 using HR.Application.Exceptions;
+using HR.Application.Features.Employee.Dtos;
+using HR.Application.Features.Employees.Dtos;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
-using System.Data.Common;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace HR.Identity.Services
 {
     public class LoginServices : ILoginService
     {
-        readonly AppDbContext _context;
-        readonly IEmailService _emailService;
+        private readonly AppDbContext _context;
+        private readonly IEmailService _emailService;
         private readonly IMemoryCache _cache;
+        private readonly JwtSettings _jwtSettings;
+        private readonly IConfiguration _configuration;
 
-        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache)
+        public LoginServices(AppDbContext context, IEmailService emailService, IMemoryCache cache, IOptions<JwtSettings> jwtOptions, IConfiguration configuration)
         {
             _context = context;
             _emailService = emailService;
             _cache = cache;
+            _jwtSettings = jwtOptions.Value;
+            _configuration = configuration;
         }
-
-
 
         public async Task<LoginResponse> Login(Tbl_LoginMasterDto loginRequest)
         {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == loginRequest.UserName);
+            var hasher = new PasswordHasher<string>();
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
+
+            var user = employees.FirstOrDefault(u => u.Code == loginRequest.UserName);
+
             if (user == null)
-            {
                 throw new NotFoundException($"User with username {loginRequest.UserName} does not exist");
-            }
 
-            var passwordCheck = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == loginRequest.UserName && u.Password == loginRequest.Password);
-            if (passwordCheck == null)
-            {
-                throw new UserNotFoundException("Invalid credentials, please try again!!");
-            }
-            Console.WriteLine(user.UserName);
-            //var otplogin =await _context.Tbl_LoginMaster.FirstOrDefaultAsync(ol=>ol.FirstLogin==);
+            if (string.IsNullOrWhiteSpace(user.Email))
+                throw new Exception("Email is missing for this user.");
 
-            //var status = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(s => s.LoginStatus == loginRequest.LoginStatus);
-            if (user.FirstLogin)
+            var isFirstLogin = user.FirstLogin ?? false;
+
+            if (isFirstLogin)
             {
+                var defaultPassword = _configuration["DefaultCredentials:DefaultPassword"];
+                if (loginRequest.Password != defaultPassword)
+                    throw new UserNotFoundException("Invalid credentials for first-time login.");
+
                 var otp = GenerateRandomNumber();
-                StoreOtp(user.UserName, otp);
-                await SendOtpMail(user.Email, otp, user.UserName);
+                StoreOtp(user.Code, otp);
+                await SendOtpMail(user.Email, otp, user.Code);
 
-                var response = new LoginResponse
+                var token = GenerateToken(user);
+
+                return new LoginResponse
                 {
                     Email = user.Email,
-                    UserName = user.UserName,
+                    Code = user.Code,
                     Otp = otp,
                     OtpExpiryTime = DateTime.Now.AddMinutes(3),
-                    FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName,
-                    LoginStatus=user.LoginStatus,
+                    FirstLogin = true,
+                    UserGroupName = user.UserGroupName ?? "Unknown",
+                    LoginStatus = user.LoginStatus ?? false,
                     UserCheckInTime = DateTime.Now,
-                    fk_EmpId=user.fk_EmpId
-
-
-        //EmpId = user.fk_EmpId
-    };
-
-                return response;
+                    Token = token
+                };
             }
             else
             {
-                // Return login response without OTP
-                var response = new LoginResponse
+                var failedAttempts = $"FailedLogin:{user.Code}";
+
+                var hashedPassword = hasher.VerifyHashedPassword(user.Code, user.Password, loginRequest.Password);
+                //if (user.Password != loginRequest.Password)
+                if (hashedPassword != PasswordVerificationResult.Success)
+                {
+
+                    _cache.TryGetValue(failedAttempts, out int Attempts);
+                    Attempts++;
+
+
+                    _cache.Set(failedAttempts, Attempts, TimeSpan.FromMinutes(10));
+
+
+                    if (Attempts >= 3)
+                    {
+                        var blockSql = "EXEC SP_UpdateLoginStatus @EmpCode = {0}, @LoginStatus = {1}";
+                        await _context.Database.ExecuteSqlRawAsync(blockSql, user.Code, false);
+
+                        throw new Exception("User is blocked due to 3 failed login attempts.");
+                    }
+
+                    throw new UserNotFoundException($"Invalid credentials. Attempt {Attempts} of 3.");
+                }
+                else
+                {
+
+                    _cache.Remove(failedAttempts);
+                }
+
+
+
+
+                var token = GenerateToken(user);
+
+                return new LoginResponse
                 {
                     Email = user.Email,
-                    UserName = user.UserName,
-                    FirstLogin = user.FirstLogin,
-                    RoleName = user.RoleName,
-                    LoginStatus = user.LoginStatus,
+                    Code = user.Code,
+                    FirstLogin = false,
+                    UserGroupName = user.UserGroupName ?? "Unknown",
+                    LoginStatus = user.LoginStatus ?? false,
                     UserCheckInTime = DateTime.Now,
-                    fk_EmpId = user.fk_EmpId
-
-                    //Otp = null,
-                    //OtpExpiryTime = DateTime.Now.
+                    Token = token
                 };
-
-                return response;
             }
-
         }
+
+        // VERIFYING THE OTP AT FIRST LOGIN
+        public async Task<OtpResponse> VerifyOtp(OtpRequest otpRequest)
+        {
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
+
+            var user = employees.FirstOrDefault(u => u.Code == otpRequest.Code);
+            if (user == null)
+                throw new NotFoundException($"User with Username {otpRequest.Code} does not exist");
+
+            var cacheOtp = GetOtp(user.Code);
+            if (cacheOtp == null || cacheOtp != otpRequest.Otp)
+                throw new OtpNotFoundException("You have entered an incorrect or expired OTP.");
+
+            RemoveOtp(user.Code);
+
+            var sql = "EXEC SP_ChangeFirstLoginStatus @EmpCode = {0}";
+            var changeStatus = await _context.Database.ExecuteSqlRawAsync(sql, otpRequest.Code);
+            if (changeStatus <= 0)
+                throw new Exception("First login status has not been changed.");
+
+            return new OtpResponse
+            {
+                UserName = user.Code,
+                Email = user.Email,
+                OtpExpiryTime = DateTime.Now.AddMinutes(3)
+            };
+        }
+
+
+
+
+        //UPDATING THE PASSWORD AT FIRSTLOGIN
+
+        public async Task<bool> FirstLoginPasswordUpdate(string code, string password)
+        {
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
+
+            var user = employees.FirstOrDefault(u => u.Code == code && u.Password == null);
+            if (user == null)
+                throw new UserNotFoundException("User not found or not first login.");
+
+            var hasher = new PasswordHasher<string>();
+            var hashedPassword = hasher.HashPassword(code, password);
+
+            var sql = "exec SP_UpdatePassword @Password={0}, @EmpCode = {1}";
+            var result = await _context.Database.ExecuteSqlRawAsync(sql, hashedPassword, code);
+            return result > 0;
+        }
+
+        public async Task<bool> SendChangePasswordOtp(string username)
+        {
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
+
+            var user = employees.FirstOrDefault(u => u.Code == username);
+            if (user == null)
+                throw new UserNotFoundException("User not found");
+
+            var otp = GenerateRandomNumber();
+            StoreOtp(user.Code, otp);
+            await SendOtpMail(user.Email, otp, user.Code);
+
+            return true;
+        }
+
+
+        // FOROGT PASSWORD MODULE
+        public async Task<bool> ChangePassword(ChangePassword changePasswordRequest)
+        {
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
+
+            var user = employees.FirstOrDefault(cp => cp.Code == changePasswordRequest.UserName);
+            if (user == null)
+                throw new UserNotFoundException("User not found");
+
+            if (changePasswordRequest.NewPassword != changePasswordRequest.ConfirmNewPassword)
+                throw new Exception("New and Confirm Password must be the same");
+
+
+            var otpRequest = new OtpRequest
+            {
+                Code = changePasswordRequest.UserName,
+                Otp = changePasswordRequest.Otp
+            };
+            var otpVerificationResult = await VerifyOtp(otpRequest);
+            if (otpVerificationResult == null)
+                throw new OtpNotFoundException("Invalid or expired OTP.");
+
+            RemoveOtp(user.Code);
+
+            var hasher = new PasswordHasher<string>();
+            var hashedPassword = hasher.HashPassword(user.Code, changePasswordRequest.NewPassword);
+
+            var result = await _context.Database.ExecuteSqlRawAsync(
+                "exec SP_updateForgotPassword @Password = {0}, @EmpCode = {1}",
+                changePasswordRequest.NewPassword, changePasswordRequest.UserName);
+
+            return result > 0;
+        }
+
+
+
+        // CHANGE PASSWORD MODULE
+        public async Task<bool> UpdatePassword(UpdatePasswordRequest request)
+        {
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
+
+            var user = employees.FirstOrDefault(u => u.Code == request.UserName);
+            if (user == null)
+                throw new UserNotFoundException("User not found");
+
+            var hasher = new PasswordHasher<string>();
+            var hashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
+            // Check default password case
+            if (user.Password == null && request.OldPassword == _configuration["DefaultCredentials:DefaultPassword"])
+            {
+                var result = await _context.Database.ExecuteSqlRawAsync(
+                    "exec SP_UpdatePassword @Password={0}, @EmpCode = {1}",
+                    hashedPassword, request.UserName);
+
+                return result > 0;
+            }
+            var convertPassword = hasher.VerifyHashedPassword(user.Code, user.Password, request.NewPassword);
+            if (convertPassword == PasswordVerificationResult.Success)
+                throw new Exception("New password can't be the same as the old one");
+
+            if (request.NewPassword != request.ConfirmPassword)
+                throw new PasswordNotMatchException("New and confirm passwords do not match");
+
+
+            var resultUpdate = await _context.Database.ExecuteSqlRawAsync(
+                "exec SP_UpdateOldPassword @Password={0}, @EmpCode = {1}, @OldPassword = {2}",
+                hashedPassword, request.UserName, request.OldPassword);
+
+            return resultUpdate > 0;
+        }
+
+        private string GenerateToken(employeesDto user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Code),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.UserGroupName ?? "User"),
+                new Claim("jti", DateTime.Now.ToString()),
+                new Claim("sub", user.Code),
+                new Claim("iss", user.Email),
+            };
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                Issuer = _jwtSettings.Issuer,
+                Audience = _jwtSettings.Audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        private string GenerateRandomNumber() =>
+            new Random().Next(1000, 9999).ToString("D4");
+
+        private string GenerateEmailBody(string name, string otpText)
+        {
+            return $"<div style='width:100%;background-color:yellow'><h1>Hi {name}, Thanks for Signing Up</h1><h2>Please enter the OTP to complete login verification.</h2><h2>OTP: {otpText}</h2></div>";
+        }
+
+        public void StoreOtp(string userName, string otp)
+        {
+            var cacheOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(3));
+            _cache.Set(userName, otp, cacheOptions);
+        }
+
+        public string? GetOtp(string userName) =>
+            _cache.TryGetValue(userName, out string? otp) ? otp : null;
+
+        public void RemoveOtp(string userName) =>
+            _cache.Remove(userName);
 
         public async Task SendOtpMail(string useremail, string otpText, string name)
         {
@@ -104,217 +337,5 @@ namespace HR.Identity.Services
             };
             await _emailService.SendEmail(mailRequest);
         }
-
-        private string GenerateEmailBody(string name, string otpText)
-        {
-            string emailBody = string.Empty;
-            emailBody = "<div style='width:100%;background-color:yellow'>";
-            emailBody += $"<h1>Hi {name}, Thanks for Signing Up</h1>";
-            emailBody += "<h2>Please enter the OTP to complete login verification.</h2>";
-            emailBody += $"<h2>OTP: {otpText}</h2>";
-            emailBody += "</div>";
-            return emailBody;
-        }
-
-        private string GenerateRandomNumber()
-        {
-            Random random = new Random();
-            string randomNo = random.Next(1000, 9999).ToString("D4");
-            return randomNo;
-        }
-
-        public void StoreOtp(string userName, string otp)
-        {
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromMinutes(3));
-            _cache.Set(userName, otp, cacheEntryOptions);
-        }
-
-        public string? GetOtp(string userName)
-        {
-            _cache.TryGetValue(userName, out string? otp);
-            return otp;
-        }
-
-        public async Task<OtpResponse> VerifyOtp(OtpRequest otpRequest)
-        {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == otpRequest.UserName);
-            if (user == null)
-            {
-                throw new NotFoundException($"User with Username {otpRequest.UserName} does not exist");
-            }
-
-            var cacheOtp = GetOtp(user.UserName);
-            if (cacheOtp == null || cacheOtp != otpRequest.Otp)
-            {
-                throw new OtpNotFoundException("You have entered an incorrect or expired OTP.");
-            }
-
-            // Remove the OTP from cache
-            RemoveOtp(user.UserName);
-
-            // Marking user as no longer first-time
-            if (user.FirstLogin)
-            {
-                user.FirstLogin = false;
-                _context.Tbl_LoginMaster.Update(user);
-                await _context.SaveChangesAsync();
-            }
-
-            var response = new OtpResponse
-            {
-                UserName = user.UserName,
-                Email = user.Email,
-                OtpExpiryTime = DateTime.Now.AddMinutes(3)
-            };
-
-            return response;
-        }
-
-        public void RemoveOtp(string userName)
-        {
-            _cache.Remove(userName);
-        }
-
-        //   Send OTP for changing password
-        public async Task<bool> SendChangePasswordOtp(string username)
-        {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == username);
-            if (user == null)
-            {
-                throw new UserNotFoundException("User not found");
-            }
-
-            var otp = GenerateRandomNumber();
-            StoreOtp(user.UserName, otp);
-            await SendOtpMail(user.Email, otp, user.UserName);
-
-            return true;
-        }
-
-        public async Task<bool> ChangePassword(ChangePassword changePasswordRequest)
-        {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(cp => cp.UserName == changePasswordRequest.UserName);
-            if (user == null)
-            {
-                throw new UserNotFoundException("User with this username not found");
-            }
-
-            var otpRequest = new OtpRequest
-            {
-                UserName = changePasswordRequest.UserName,
-                Otp = changePasswordRequest.Otp
-            };
-
-            var otpVerificationResult = await VerifyOtp(otpRequest);
-
-            if (otpVerificationResult == null)
-            {
-                throw new OtpNotFoundException("Invalid or expired OTP.");
-            }
-
-            if (changePasswordRequest.NewPassword != changePasswordRequest.ConfirmNewPassword)
-            {
-                throw new Exception("New and Confirm Password must be the same");
-            }
-
-
-            var hasher = new PasswordHasher<Tbl_LoginMaster>();
-            var hashedPassword = hasher.HashPassword(user, changePasswordRequest.NewPassword);
-
-            user.Password = changePasswordRequest.NewPassword;
-
-            _context.Tbl_LoginMaster.Update(user);
-            await _context.SaveChangesAsync();
-
-            RemoveOtp(user.UserName);
-
-            return true;
-        }
-
-
-
-        public async Task<bool> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
-        {
-            var user = await _context.Tbl_LoginMaster.FirstOrDefaultAsync(u => u.UserName == updatePasswordRequest.UserName);
-            if (user == null)
-            {
-                throw new UserNotFoundException("user with this username is not exist");
-            }
-
-            if (user.FirstLogin)
-            {
-                throw new Exception("You are New User Try with your Default Password Provided");
-
-            }
-
-            if (updatePasswordRequest.NewPassword == updatePasswordRequest.OldPassword)
-            {
-                throw new Exception("New password Can't be as same as older one ");
-            }
-
-            if (updatePasswordRequest.OldPassword != user.Password)
-            {
-                throw new Exception("Entered Password should be as nsame as existing Password");
-            }
-
-            if (updatePasswordRequest.NewPassword != updatePasswordRequest.ConfirmPassword)
-            {
-                throw new PasswordNotMatchException("“Old password types are wrong");
-            }
-            user.Password = updatePasswordRequest.NewPassword;
-            _context.Tbl_LoginMaster.Update(user);
-            await _context.SaveChangesAsync();
-
-            return true;
-        }
-
-        public async Task InsertLoginAsync(int empId, int createdBy)
-        {
-            var employee = await _context.Tbl_Employee_master
-                .Where(e => e.Id == empId)
-                .Select(e => new
-                {
-                    e.Id,
-                    e.Name,
-                    e.Code,
-                    e.Email
-                })
-                .FirstOrDefaultAsync();
-
-            if (employee == null)
-                throw new Exception("Employee not found");
-
-            var userName = employee.Code;
-            var email = employee.Email;
-            var employeeName = employee.Name;
-
-            var last3Code = userName.Length >= 3 ? userName[^3..] : userName;
-            var namePart = employeeName.Length >= 4 ? employeeName.Substring(0, 4) : employeeName;
-            var plainPassword = namePart + "@" + last3Code;
-
-            var encryptedPassword = Encoding.UTF8.GetBytes(plainPassword);
-
-            var maxLoginId = await _context.Tbl_Login.MaxAsync(l => (int?)l.pk_LoginId) ?? 0;
-
-            var login = new Tbl_Login
-            {
-                pk_LoginId = maxLoginId + 1,
-                fk_EmpId = empId,
-                UserName = userName,
-                Password = encryptedPassword,
-                CreatedDate = DateTime.UtcNow,
-                Email = email,
-                FirstLogin = true,
-                RoleName = "User"
-            };
-
-            _context.Tbl_Login.Add(login);
-            await _context.SaveChangesAsync();
-        }
-
-
-
-
     }
 }

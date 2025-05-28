@@ -3,14 +3,19 @@ using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
+using HR.Application.Features.Employees.Commands.MakeMultipleEmployeesInactive;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
-
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeeByDesignation;
+using HR.Application.Features.Employees.Queries.GetEmployeesAll;
 using HR.Application.Features.LoginMaster.Commands.InsertLogin;
+using HR.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HR.API.Controllers
 {
@@ -19,9 +24,12 @@ namespace HR.API.Controllers
     public class EmployeeController : ControllerBase
     {
         readonly IMediator _mediator;
-        public EmployeeController(IMediator mediator)
+        readonly AppDbContext _appDbContext;
+
+        public EmployeeController(IMediator mediator , AppDbContext appDbContext)
         {
             _mediator = mediator;
+            _appDbContext = appDbContext;
 
         }
 
@@ -68,6 +76,14 @@ namespace HR.API.Controllers
             var result = await _mediator.Send(query);
             return Ok(result);
         }
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetEmployeesAll()
+        {
+            var employees = await _mediator.Send(new GetEmployeesAllQuery());
+
+            return Ok(employees);
+        }
+
         [HttpGet("ProfileDetalis/{code}")]
         public async Task<IActionResult> GetEmployeeProfile(string code)
         {
@@ -127,6 +143,35 @@ namespace HR.API.Controllers
             return BadRequest("Failed to update employee");
 
 
+        }
+        [HttpGet("GetAllEmployeeByIdName")]
+        public async Task<IActionResult> GetALLEmployeeByIdName()
+        {
+            var result = await _mediator.Send(new GetAllEmployeesByIdNameQuery());
+            return Ok(result);
+        }
+
+        [HttpGet("{code}")]
+        public async Task<IActionResult> GetEmployeeBasicDetailsByCode(string code)
+        {
+            var result = await _mediator.Send(new GetEmployeeBasicDetailsByCodeQuery(code));
+
+            if (result == null)
+                return NotFound($"Employee with code '{code}' not found.");
+
+            return Ok(result);
+        }
+
+        [HttpPost("Inactivate")]
+        public async Task<IActionResult> MakeInactive([FromBody] MakeMultipleEmployeesInactiveDto dto)
+        {
+            var command = new MakeMultipleEmployeesInactiveCommannd
+            {
+                EmployeeCodes = dto.EmployeeCodes
+            };
+
+            var result = await _mediator.Send(command);
+            return Ok(new { message = result });
         }
 
     }

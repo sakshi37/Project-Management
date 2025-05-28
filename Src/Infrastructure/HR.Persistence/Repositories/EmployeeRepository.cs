@@ -3,18 +3,24 @@ using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
+using HR.Application.Features.Employees.Queries.GetEmployeesAll;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace HR.Persistence.Repositories
 {
     public class EmployeeRepository : IEmployeeMasterRepository
     {
         readonly AppDbContext _appDbContext;
+        private readonly IConfiguration _configuration;
         public EmployeeRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
@@ -36,7 +42,34 @@ namespace HR.Persistence.Repositories
             return new PaginatedResult<GetAllEmployeeVm>(pagedData, totalCount, pageNumber, pageSize);
 
         }
+        public async Task<List<GetEmployeeDto>> GetAllEmployeesAsync()
+        {
+            var result = new List<GetEmployeeDto>();
 
+            var connection = _appDbContext.Database.GetDbConnection();
+            await using (connection)
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = "SP_GetEmployeesAll"; // Your stored procedure name
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new GetEmployeeDto
+                    {
+                        Id = reader.GetInt32(0),
+                        Code = reader.GetString(1),
+                        Name = reader.GetString(2),
+                        Email = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        LoginStatus = reader.GetBoolean(4)
+                    });
+                }
+            }
+
+            return result;
+        }
         public async Task<string> MakeEmployeeActiveAsync(string code)
         {
             var result = await _appDbContext
@@ -66,7 +99,14 @@ namespace HR.Persistence.Repositories
         }
 
         public async Task<Employee> AddEmployee(CreateEmployeeMasterDto employee)
+
         {
+            Console.WriteLine($"Name: {employee.Name}");
+            Console.WriteLine($"Code: {employee.Code}");
+            Console.WriteLine($"MobileNo: {employee.MobileNo}");
+            Console.WriteLine($"JoinDate: {employee.JoinDate}");
+            Console.WriteLine($"Image is null? {employee.Image == null}");
+            Console.WriteLine($"Signature is null? {employee.Signature == null}");
             Console.WriteLine(employee.Image);
 
             byte[] imageBytes = employee.Image != null ? Convert.FromBase64String(employee.Image) : null;
@@ -81,7 +121,6 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@SkypeId", employee.SkypeId ?? (object)DBNull.Value),
     new SqlParameter("@JoinDate", (object?)employee.JoinDate ?? DBNull.Value),
     new SqlParameter("@Email", employee.Email ?? (object)DBNull.Value),
-    new SqlParameter("@BccEmail", employee.BccEmail ?? (object)DBNull.Value),
     new SqlParameter("@PanNumber", employee.PanNumber ?? (object)DBNull.Value),
     new SqlParameter("@BirthDate", (object?)employee.BirthDate ?? DBNull.Value),
 
@@ -89,22 +128,13 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Image", SqlDbType.VarBinary) { Value = (object?)imageBytes ?? DBNull.Value },
     new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
 
-    new SqlParameter("@LoginStatus", employee.LoginStatus),
     //new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
     //new SqlParameter("@leftDate", (object?)employee.LeftCompany ?? DBNull.Value),
 
     new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
-    new SqlParameter("@Fk_DesignationId", (object?)employee.DesignationId ?? DBNull.Value),
-    new SqlParameter("@Fk_ShiftId", (object?)employee.ShiftId ?? DBNull.Value),
-    new SqlParameter("@Fk_EmployeeTypeId", (object?)employee.EmployeeTypeId ?? DBNull.Value),
-    new SqlParameter("@Fk_UserGroupId", (object?)employee.UserGroupId ?? DBNull.Value),
-    new SqlParameter("@Fk_BranchId", (object?)employee.BranchId ?? DBNull.Value),
-    new SqlParameter("@Fk_DivisionId", (object?)employee.DivisionId ?? DBNull.Value),
      new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
     new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
     new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
-    new SqlParameter("@Fk_GenderId", (object?)employee.GenderId ?? DBNull.Value),
-
 
 };
 
@@ -119,24 +149,16 @@ namespace HR.Persistence.Repositories
             @SkypeId, 
             @JoinDate, 
             @Email, 
-            @BccEmail, 
             @PanNumber, 
             @BirthDate,
             @Image, 
             @Signature, 
-            @LoginStatus, 
             
             @Fk_LocationId, 
-            @Fk_DesignationId, 
-            @Fk_ShiftId, 
-            @Fk_EmployeeTypeId, 
-            @Fk_UserGroupId,
-            @Fk_BranchId,
-            @Fk_DivisionId,
+           
             @Fk_CountryId,
             @Fk_StateId,
-            @Fk_CityId,
-            @Fk_GenderId",
+            @Fk_CityId",
                 parameters.ToArray()
             );
 
@@ -149,30 +171,19 @@ namespace HR.Persistence.Repositories
                 SkypeId = employee.SkypeId,
                 JoinDate = employee.JoinDate,
                 Email = employee.Email,
-                BccEmail = employee.BccEmail,
                 PanNumber = employee.PanNumber,
                 BirthDate = employee.BirthDate,
                 Image = imageBytes,
                 Signature = signatureBytes,
-                LoginStatus = employee.LoginStatus,
                 //LeftCompany = employee.LeftCompany,
                 //LeftDate = employee.LeftDate,
                 LocationId = employee.LocationId,
-                DesignationId = employee.DesignationId,
-                ShiftId = employee.ShiftId,
-                EmployeeTypeId = employee.EmployeeTypeId,
-                UserGroupId = employee.UserGroupId,
-                BranchId = employee.BranchId,
-                DivisionId = employee.DivisionId,
+
                 CountryId = employee.CountryId,
                 StateId = employee.StateId,
                 CityId = employee.CityId,
-                GenderId = employee.GenderId,
             };
         }
-
-
-
 
         public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
         {
@@ -187,19 +198,7 @@ namespace HR.Persistence.Repositories
 
             return employee.FirstOrDefault();
         }
-        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
-        {
-            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
-            Console.WriteLine($"SQL Query: {sql}", did);
-            var employee = _appDbContext.Employees
-                .FromSqlRaw(sql, did)
-                .AsNoTracking()
-                .AsEnumerable()
-                .ToList();
 
-
-            return employee;
-        }
 
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
@@ -247,34 +246,36 @@ namespace HR.Persistence.Repositories
         new SqlParameter("@Email", dto.Email ?? (object)DBNull.Value),
         new SqlParameter("@BccEmail", dto.BccEmail ?? (object)DBNull.Value),
         new SqlParameter("@PanNumber", dto.PanNumber ?? (object)DBNull.Value),
-        new SqlParameter("@AadharCardNo", dto.AadharCardNo ?? (object)DBNull.Value), // ✅ Added
+        new SqlParameter("@AadharCardNo", dto.AadharCardNo ?? (object)DBNull.Value),
         new SqlParameter("@BirthDate", (object?)dto.BirthDate ?? DBNull.Value),
         new SqlParameter("@Image", SqlDbType.VarBinary) { Value = (object?)imageBytes ?? DBNull.Value },
         new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
         new SqlParameter("@LoginStatus", (object?)dto.LoginStatus ?? DBNull.Value),
         new SqlParameter("@LeftCompany", (object?)dto.LeftCompany ?? DBNull.Value),
         new SqlParameter("@LeftDate", (object?)dto.LeaveCompany ?? DBNull.Value),
-        new SqlParameter("@Fk_CountryId", (object?)dto.CountryId ?? DBNull.Value),     // ✅ Added
-        new SqlParameter("@Fk_StateId", (object?)dto.StateId ?? DBNull.Value),         // ✅ Added
-        new SqlParameter("@Fk_CityId", (object?)dto.CityId ?? DBNull.Value),           // ✅ Added
         new SqlParameter("@Fk_LocationId", (object?)dto.LocationId ?? DBNull.Value),
         new SqlParameter("@Fk_DesignationId", (object?)dto.DesignationId ?? DBNull.Value),
         new SqlParameter("@Fk_ShiftId", (object?)dto.ShiftId ?? DBNull.Value),
         new SqlParameter("@Fk_EmployeeTypeId", (object?)dto.EmployeeTypeId ?? DBNull.Value),
         new SqlParameter("@Fk_UserGroupId", (object?)dto.UserGroupId ?? DBNull.Value),
         new SqlParameter("@Fk_BranchId", (object?)dto.BranchId ?? DBNull.Value),
+        new SqlParameter("@Fk_CountryId", (object?)dto.CountryId ?? DBNull.Value),
+        new SqlParameter("@Fk_StateId", (object?)dto.StateId ?? DBNull.Value),
+        new SqlParameter("@Fk_CityId", (object?)dto.CityId ?? DBNull.Value),
         new SqlParameter("@Fk_DivisionId", (object?)dto.DivisionId ?? DBNull.Value),
-        new SqlParameter("@Fk_GenderId", (object?)dto.GenderId ?? DBNull.Value)        // ✅ Added
+        new SqlParameter("@Fk_GenderId", (object?)dto.GenderId ?? DBNull.Value),
+
+
     };
 
             try
             {
                 var result = await _appDbContext.Database.ExecuteSqlRawAsync(
                     @"EXEC SP_Employee_update 
-              @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber, @AadharCardNo, @BirthDate, 
+              @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber,@AadharCardNo, @BirthDate, 
               @Image, @Signature, @LoginStatus, @LeftCompany, @LeftDate, 
-              @Fk_CountryId, @Fk_StateId, @Fk_CityId, @Fk_LocationId, @Fk_DesignationId, 
-              @Fk_ShiftId, @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId, @Fk_GenderId",
+              @Fk_LocationId, @Fk_DesignationId, 
+              @Fk_ShiftId, @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId,@Fk_CountryId,@Fk_StateId,@Fk_CityId,@Fk_GenderId",
                     parameters.ToArray()
                 );
 
@@ -287,6 +288,17 @@ namespace HR.Persistence.Repositories
                 return false;
             }
         }
+
+
+        public async Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code)
+        {
+            return _appDbContext.EmployeeBasicDetails
+                .FromSqlRaw("EXEC dbo.SP_GetEmployeeBasicDetailsByCode @Code = {0}", code)
+                .AsNoTracking()
+                .AsEnumerable()
+                .FirstOrDefault();
+        }
+
 
         public async Task<int> ReadCurrentEmpCounter()
         {
@@ -305,13 +317,111 @@ namespace HR.Persistence.Repositories
         }
 
 
+        public async Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee)
+        {
+            await _appDbContext.Database.ExecuteSqlRawAsync(
+    "EXEC [dbo].[SP_InsertEmployeeDetails] @p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8 ,@p9",
+    employee.Code,
+    employee.Address,
+    employee.PanNumber,
+    employee.AadharCardNo,
+    employee.JoinDate,
+    employee.BirthDate,
+    employee.Email,
+    employee.EmergencyNo,
+    employee.Age,
+    employee.Fk_GenderId
+
+);
+
+            return true;
+
+        }
+
+
+
+        public async Task<bool> EmployeeExistsAsync(string code)
+        {
+            var result = await _appDbContext
+                .Employees
+                .FromSqlRaw("SELECT Code FROM HR_Module.dbo.Tbl_Employee_master WHERE Code = {0}", code)
+                .AnyAsync();
+
+            return result;
+        }
+
+        public async Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName()
+        {
+            return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployee").ToListAsync();
+        }
+
+
+
+
+
+        public async Task<string> MakeMultipleEmployeesInactiveAsync(string codes)
+        {
+            try
+            {
+                using (var conn = _appDbContext.Database.GetDbConnection())
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "dbo.SP_MakeMultipleEmployeesInactive";
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        var param = cmd.CreateParameter();
+                        param.ParameterName = "@Codes";
+                        param.Value = codes;
+                        cmd.Parameters.Add(param);
+
+                        if (conn.State != ConnectionState.Open)
+                            await conn.OpenAsync();
+
+                        var result = await cmd.ExecuteScalarAsync();
+                        return result?.ToString() ?? "No response from DB";
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                return $"SQL Error: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                // For other exceptions, you can decide to log and return a friendly message
+                return $"Unexpected Error: {ex.Message}";
+            }
+        }
+
+
+
+
+
+
+
+
+
+        //getallteamleader
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
+        {
+            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
+            Console.WriteLine($"SQL Query: {sql}", did);
+            var employee = _appDbContext.Employees
+                .FromSqlRaw(sql, did)
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+
+            return employee;
+        }
 
     }
 
 
 }
-
-
 
 
 

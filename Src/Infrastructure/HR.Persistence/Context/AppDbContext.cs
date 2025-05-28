@@ -1,38 +1,71 @@
-﻿using HR.Application.Features.Branches.Commands.Dtos;
+﻿using HR.Application.Features.Admin.Queries.GetPendingRequest;
+using HR.Application.Features.Branches.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.Dtos;
 using HR.Application.Features.Countries.Commands.Dtos;
+using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using HR.Application.Features.Designations.Commands.Dtos;
 using HR.Application.Features.Divisions.Command.Dtos;
 using HR.Application.Features.Divisions.Query.GetAllQuery;
 using HR.Application.Features.Divisions.Query.GetProjectManager;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
+using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
+using HR.Application.Features.Employees.Dtos;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
+using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.EmployeeType.Queries.GetAllEmployeeType;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
+using HR.Application.Features.Gender.Queries.GetAllGender;
 using HR.Application.Features.Holidays.Commands.Dtos;
 using HR.Application.Features.Locations.Dtos;
+using HR.Application.Features.Notification.Queries;
+using HR.Application.Features.ProjectMaster.Query;
+using HR.Application.Features.ProjectMaster.Stack.Query.GetAllStack;
 using HR.Application.Features.Shifts.Queries.GetAllShiftsQuery;
 using HR.Application.Features.States.Commands.Dtos;
 using HR.Application.Features.TeamCompositions.Commands.Dtos;
-using HR.Application.Features.TimeSheet.Queries;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
+using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
+using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
 using HR.Application.Features.UserGroup.Queries.GetAllUserGroup;
 using HR.Domain;
-//using HR.Application.Features.Location.Query;
-using HR.Application.Features.States.Commands.Dtos;
-using HR.Application.Features.TimeSheet.Queries;
 using HR.Domain.Entities;
+using HR.Identity.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
+using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
+using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+using Microsoft.SharePoint.WebControls;
+using HR.Application.Features.Admin.Queries.GetPendingRequest;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
+using HR.Application.Features.Notification.Queries;
+using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
+
 using Microsoft.EntityFrameworkCore;
 
+
 namespace HR.Persistence.Context;
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<CountryDto> CountryDtos { get; set; }
     public DbSet<State> States { get; set; }
+    public DbSet<employeesDto> employeesDto { get; set; }
 
+
+
+    public DbSet<GetAllProjectDto> GetAllProjects { get; set; }
+    public DbSet<GetAllStackDto> GetAllStackDtos { get; set; }
     public DbSet<StateDto> StateDtos { get; set; }
     public DbSet<DesignationDto> DesignationDtos { get; set; }
     public DbSet<City> Cities { get; set; }
@@ -40,24 +73,29 @@ public class AppDbContext : DbContext
     public DbSet<HolidayDto> HolidayDtos { get; set; }
     public DbSet<TotalValue> TotalValues { get; set; }
     public DbSet<EmployeeDto> Employees { get; set; }
+    public DbSet<GetAllEmployeeByIdNameDto> GetAllEmployeeByIdNameDtos { get; set; }
+    public DbSet<DailyReport> DailyReport { get; set; }
 
     // public DbSet<GetAllLocationDto> GetAllLocationDtos { get; set; }
-
+    public DbSet<GetByIdTimeSheetDto> timesheetGetByDto { get; set; }
     public DbSet<Employee> TblEmployeeMaster { get; set; }
     public DbSet<LocationDto> dtos { get; set; }
-    
 
-    public DbSet<Employee> Tbl_Employee_master { get; set; }
+
+
     public DbSet<LocationDto> Locationdtos { get; set; }
 
+    public DbSet<GetAllAttendanceDto> GetAllAttendanceDtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
 
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<TeamCompositionDto> TeamCompositionDtos { get; set; }
+    public DbSet<TeamMember> TeamMembers { get; set; }
 
-    public DbSet<GetAllShiftsVm>GetAllShiftsVms { get; set; }
+
+    public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<Counter> Counter { get; set; }
     public DbSet<LocationDto> LocationDtos { get; set; }
     public DbSet<Location> Locations { get; set; }
@@ -67,30 +105,65 @@ public class AppDbContext : DbContext
 
     //public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
     public DbSet<GetAllUserGroupQueryVm> GetAllUserGroupQueryVms { get; set; }
+    public DbSet<TeamLeaderDto> TeamLeaderDtos { get; set; }
+
     public DbSet<GetAllEmployeeTypeQueryVm> GetAllEmployeeTypeQueryVms { get; set; }
     public DbSet<Tbl_Login> Tbl_Login { get; set; }
+
     public DbSet<Employee> TblEmployeemaster { get; set; }
+
     public DbSet<GetAllFamilyMemberTypeQueryVm> GetAllFamilyTypeMemberVms { get; set; }
+    public DbSet<GetEmployeeBasicDetailsByCodeQueryVm> EmployeeBasicDetails { get; set; }
+    public DbSet<InsertEmployeeDetailsGmcCommandDto> EmployeesGmc { get; set; }
+
+    public DbSet<GetAllGenderQueryVm> GetAllGenderQueryVms { get; set; }
 
 
     public DbSet<Attendance> attendance { get; set; }
+    public DbSet<empdetailDto> EmpdetailDtos { get; set; }
+    public DbSet<GetFamilyDetailsByCodeQueryVm> FamilyDetailsByCodeVms { get; set; }
+
+    public DbSet<MissPunchOutQueryVm> MissPunchOutQueryVms { get; set; }
+    public DbSet<MissPunchInQueryVm> MissPunchInQueryVms { get; set; }
+    public DbSet<PendingRequestVm> pendingRequestVms { get; set; }
+
+    public DbSet<Department> Department { get; set; }
+
+    public DbSet<EmployeeAttendanceReportDto> attendanceRepoertdtos { get; set; }
+    public DbSet<ParticularEmployeeDto> ParticularEmployee { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // 🚨 Must be called first for Identity to work properly
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
+
+
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");
         modelBuilder.Entity<Employee>().ToTable("Tbl_Employee_master");
-
+        modelBuilder.Entity<GetAllEmployeeByIdNameDto>().HasNoKey();
         modelBuilder.Entity<CityDto>().HasNoKey();
         modelBuilder.Entity<HolidayDto>().HasNoKey();
         modelBuilder.Entity<TotalValue>().HasNoKey();
         modelBuilder.Entity<TeamCompositionDto>().HasNoKey();
+        modelBuilder.Entity<TeamComposition>().ToTable("Tbl_TeamComposition");
+        //modelBuilder.Entity<TeamComposition>().HasNoKey();
+
+
+        modelBuilder.Entity<TeamLeaderDto>().HasNoKey();
+        modelBuilder.Entity<GetByIdTimeSheetDto>().HasNoKey();
+        modelBuilder.Entity<GetAllProjectDto>().HasNoKey();
+        modelBuilder.Entity<EmployeeDto>().HasNoKey();
+        modelBuilder.Entity<GetAllStackDto>().HasNoKey();
+        //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
+        modelBuilder.Entity<TeamMember>().ToTable("Tbl_TeamMembers");
+
 
         modelBuilder.Entity<EmployeeDto>().HasNoKey();
-        //modelBuilder.Entity<GetAllLocationDto>().HasNoKey();
         modelBuilder.Entity<GetAllTimeSheetListDto>().HasNoKey();
         modelBuilder.Entity<Attendance>().HasNoKey();
 
@@ -99,29 +172,40 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<GetEmployeeProfileQueryVm>().HasNoKey();
 
         modelBuilder.Entity<Counter>().HasNoKey();
-
         modelBuilder.Entity<GetAllDivisionDto>().HasNoKey();
         modelBuilder.Entity<GetAllProjectManagerDto>().HasNoKey();
 
-
+        modelBuilder.Entity<GetAllAttendanceDto>().HasNoKey();
         modelBuilder.Entity<GetAllShiftsVm>().HasNoKey();
         modelBuilder.Entity<GetAllUserGroupQueryVm>().HasNoKey();
         modelBuilder.Entity<GetAllEmployeeTypeQueryVm>().HasNoKey();
         modelBuilder.Entity<GetAllFamilyMemberTypeQueryVm>().HasNoKey();
 
         modelBuilder.Entity<Tbl_Login>().ToTable("Tbl_Login");
-
         modelBuilder.Entity<Tbl_Login>().HasKey(l => l.pk_LoginId);
-
 
         modelBuilder.Entity<LocationDto>().HasNoKey();
         modelBuilder.Entity<DivisionDto>().HasNoKey();
+        modelBuilder.Entity<employeesDto>().HasNoKey();
+
+        modelBuilder.Entity<GetEmployeeBasicDetailsByCodeQueryVm>().HasNoKey();
+        modelBuilder.Entity<InsertEmployeeDetailsGmcCommandDto>().HasNoKey();
+        modelBuilder.Entity<GetAllGenderQueryVm>().HasNoKey();
+
+        modelBuilder.Entity<EmployeeAttendanceReportDto>().HasNoKey();
+        modelBuilder.Entity<ParticularEmployeeDto>().HasNoKey();
 
 
 
-
-
+        modelBuilder.Entity<empdetailDto>().HasNoKey();
+        modelBuilder.Entity<GetFamilyDetailsByCodeQueryVm>().HasNoKey();
+        modelBuilder.Entity<MissPunchOutQueryVm>().HasNoKey();
+        modelBuilder.Entity<MissPunchInQueryVm>().HasNoKey();
+        modelBuilder.Entity<PendingRequestVm>().HasNoKey();
+        modelBuilder.Entity<GetNotificationByCodeVm>().HasNoKey();
+        modelBuilder.Entity<HalfDayQueryVm>().HasNoKey();
 
 
     }
+
 }

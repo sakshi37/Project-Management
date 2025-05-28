@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import { FamilyMember } from '../Models/family-member-dto';
+import { API_URL } from '../../constant';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FamilyService {
-  private apiUrl = 'https://localhost:7292/api/Gmc';
+
+   private apiUrl = `${API_URL}/Gmc`;
 
   constructor(private http: HttpClient) {}
 

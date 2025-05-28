@@ -1,0 +1,29 @@
+<div class="p-3">
+  <h4>Rejection For Activation Of Employee </h4>
+  <hr class="my-2">
+
+  <label for="reasonInput">Enter Comment for Rejection:</label>
+ <textarea
+  id="reasonInput"
+  class="form-control"
+  [(ngModel)]="reason"
+  #reasonInput="ngModel"
+  minlength="10"
+  required
+  rows="3"
+  placeholder="Type your comment here..."
+></textarea>
+
+<div *ngIf="reasonInput.errors?.['minlength']">
+  Comment must be at least 10 letters.
+</div>
+
+  <p class="mt-3">For Employee: <b>{{ data.name }}</b></p>
+
+  <hr class="my-2">
+
+  <div class="d-flex justify-content-between mt-4">
+    <button class="btn btn-success" (click)="send()" [disabled]="reasonInput.invalid">Send</button>
+    <button class="btn btn-outline-secondary" (click)="close()">Close</button>
+  </div>
+</div>

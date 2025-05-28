@@ -1,10 +1,12 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
+using HR.Domain.Entities;
 using HR.Persistence.Context;
 using HR.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace HR.Persistence
 {
@@ -25,7 +27,7 @@ namespace HR.Persistence
             services.AddScoped<ITeamCompositionRepository, TeamCompositionRepository>();
 
             services.AddScoped<IShiftRepository, ShiftRepository>();
-
+            services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IUserGroupRepository, UserGroupRepository>();
 
             services.AddScoped<IEmployeeTypeRepository, EmployeeTypeRepository>();
@@ -33,11 +35,17 @@ namespace HR.Persistence
 
             services.AddScoped<IDivisionRepositry, DivisionRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IGenderRepository, GenderRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmenRepositoryt>();
+
+            services.AddScoped<IEmployeeAttendanceReportRepository, EmployeeAttendanceReportRepository>();
 
 
 
-
-
+            services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+            services.AddScoped<IRequestByHrRepository, RequestByHrRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
 
 
 

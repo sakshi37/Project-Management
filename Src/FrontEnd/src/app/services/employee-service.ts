@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EmployeeFull, EmployeeModel, EmployeeResponse } from '../Models/employee-model';
+import {
+  EmployeeFull,
+  EmployeeModel,
+  EmployeeResponse,
+  GetEmployeesAll,
+} from '../Models/employee-model';
 import { CreateModel } from '../Models/create-model';
 import { API_URL } from '../../constant';
 
@@ -9,8 +14,6 @@ import { API_URL } from '../../constant';
   providedIn: 'root',
 })
 export class EmployeeService {
-  private baseUrl = 'https://localhost:7292/AllEmployees';
-
   private url = API_URL;
 
   constructor(private http: HttpClient) {}
@@ -20,28 +23,59 @@ export class EmployeeService {
     size: number,
     search?: string
   ): Observable<any> {
-    let params: any = { page, size };
-    if (search) {
-      params.search = search;
+    let params = new HttpParams().set('pageNumber', page).set('pageSize', size);
+
+    if (search && search.trim() !== '') {
+      params = params.set('search', search.trim());
     }
 
     return this.http.get<any>(
-      `${this.url}/Employee/AllEmployees?pageNumber=${page}&pageSize=${size}&search=${search ?? ''}`
+      `${
+        this.url
+      }/Employee/AllEmployees?pageNumber=${page}&pageSize=${size}&search=${
+        search ?? ''
+      }`
     );
-    
+  }
+  getAllEmployees(): Observable<GetEmployeesAll[]> {
+    return this.http.get<GetEmployeesAll[]>(this.url + '/Employee/GetAll');
   }
   createEmployee(employee: CreateModel): Observable<any> {
     return this.http.post(this.url + '/Employee', employee);
   }
-  getTeamLeaders() : Observable<any[]> {
-    return this.http.get<any[]>(this.url + '/Employee/EmployeeByDesignation?did=6');
+  getTeamLeaders(): Observable<any[]> {
+    return this.http.get<any[]>(this.url + '/TeamComposition/team-leaders');
   }
 
   getAllLocation() {
     return this.http.get<Location[]>(this.url + '/Location');
   }
+  getAllEmployeeByIdName() {
+    return this.http.get<EmployeeByIdName[]>(
+      `${this.url}/Employee/GetAllEmployeeByIdName`
+    );
+  }
+  inactivateEmployees(codes: string[]): Observable<{ message: string }> {
+    const payload = {
+      employeeCodes: codes,
+    };
+
+    return this.http.post<{ message: string }>(
+      `${this.url}/Employee/Inactivate`,
+      payload,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
 }
+
 export type Location = {
   locationId: number;
   locationName: string;
+};
+
+export type EmployeeByIdName = {
+  id: number;
+  name: string;
 };

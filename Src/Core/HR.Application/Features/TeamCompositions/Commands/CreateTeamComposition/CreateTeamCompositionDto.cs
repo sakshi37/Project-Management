@@ -13,6 +13,8 @@ namespace HR.Application.Features.TeamCompositions.Commands.CreateTeamCompositio
         public int Fk_DivisionId { get; set; }
         public int Fk_TeamLeaderId { get; set; }
         public int CreatedBy { get; set; }
+        public List<int> TeamMembers { get; set; }
+
     }
 
 

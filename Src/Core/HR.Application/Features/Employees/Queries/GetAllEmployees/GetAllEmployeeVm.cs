@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HR.Application.Features.Employees.Queries.GetAllEmployees
+﻿namespace HR.Application.Features.Employees.Queries.GetAllEmployees
 {
-   public  class GetAllEmployeeVm
-    { 
-        public int Id { get; set; } 
-        //public byte[]? Image { get; set; }
+    public class GetAllEmployeeVm
+    {
+        public int Id { get; set; }
+        public byte[]? Image { get; set; }
         public string? Name { get; set; }
         public string? Code { get; set; }
         public string? DesignationName { get; set; }
@@ -26,6 +20,7 @@ namespace HR.Application.Features.Employees.Queries.GetAllEmployees
         public string? BccEmail { get; set; }
         public string? PanNumber { get; set; }
         public DateTime? BirthDate { get; set; }
+        public string? AadharCardNo { get; set; }
         //public byte[]? Signature { get; set; }
         public bool? LeftCompany { get; set; }
         public DateTime? LeftDate { get; set; }
