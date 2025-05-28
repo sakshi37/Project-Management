@@ -11,6 +11,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import { jwtDecode } from 'jwt-decode';
 
 
 
@@ -73,8 +74,8 @@ employees: EmployeeSaveDto = {
   }
 
   ngOnInit(): void {
-    const code = localStorage.getItem('userName');
-    if (code) {
+const decodedToken = jwtDecode(String(localStorage.getItem('token')));
+  const code = decodedToken.sub;    if (code) {
       this.family.employeeCode = code;
       this.fetchEmployeeDetails(code);
 

@@ -181,7 +181,12 @@ loginUser(loginForm: NgForm) {
             const otpModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
             otpModal.hide();
             sessionStorage.setItem('isAuthenticated', 'true');
-            this.router.navigate(['/changePassword']);
+            // this.router.navigate(['']);
+            this.router.navigate(['/changePassword']).then(() => {
+          const appRef = this.injector.get(AppComponent);
+          appRef.hideLayout = false;
+          appRef.isSidebarVisible = true;
+        });
           },
           error: (error) => {
             console.error('Otp Failed', error.error);
