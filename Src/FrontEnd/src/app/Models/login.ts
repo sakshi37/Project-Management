@@ -29,7 +29,6 @@ export class Login {
 
 export class AuthResponseModel {
   constructor(
-    public fk_EmpId: number,
     public email: string,
     public userName: string,
     public otp: string,
@@ -37,12 +36,13 @@ export class AuthResponseModel {
     public firstLogin: string,
     public roleName: string,
     public loginStatus: boolean,
-    public userCheckInTime: string
+    public userCheckInTime: string,
+    public token: string
   ) {}
 }
 export class VerifyOTPDto {
   constructor(
-    public userName: string,
+    public code: string,
     public password: string,
     public otp: string
   ) {}

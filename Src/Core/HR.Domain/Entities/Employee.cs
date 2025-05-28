@@ -34,6 +34,12 @@
         public int? GenderId { get; set; }
         public int? DepartmentId { get; set; }
 
+        public bool FirstLogin { get; set; }
+
+        //public int Age { get; set; }
+        //public string EmergencyNo { get; set; }
+        //public string AadharCardNo { get; set; }
+
         public int? Age { get; set; }
         public string? EmergencyNo { get; set; }
         public string? AadharCardNo { get; set; }

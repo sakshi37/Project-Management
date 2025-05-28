@@ -8,6 +8,7 @@ using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
+using HR.Application.Features.Employees.Queries.GetEmployeesAll;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.Data.SqlClient;
@@ -41,7 +42,33 @@ namespace HR.Persistence.Repositories
             return new PaginatedResult<GetAllEmployeeVm>(pagedData, totalCount, pageNumber, pageSize);
 
         }
+        public async Task<List<GetEmployeeDto>> GetAllEmployeesAsync()
+        {
+            var result = new List<GetEmployeeDto>();
 
+            var connection = _appDbContext.Database.GetDbConnection();
+            await using (connection)
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = "SP_GetEmployeesAll"; // Your stored procedure name
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new GetEmployeeDto
+                    {
+                        Id = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        Email = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        LoginStatus = reader.GetBoolean(3)
+                    });
+                }
+            }
+
+            return result;
+        }
         public async Task<string> MakeEmployeeActiveAsync(string code)
         {
             var result = await _appDbContext
@@ -170,19 +197,7 @@ namespace HR.Persistence.Repositories
 
             return employee.FirstOrDefault();
         }
-        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
-        {
-            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
-            Console.WriteLine($"SQL Query: {sql}", did);
-            var employee = _appDbContext.Employees
-                .FromSqlRaw(sql, did)
-                .AsNoTracking()
-                .AsEnumerable()
-                .ToList();
 
-
-            return employee;
-        }
 
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
         {
@@ -273,6 +288,7 @@ namespace HR.Persistence.Repositories
             }
         }
 
+
         public async Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code)
         {
             return _appDbContext.EmployeeBasicDetails
@@ -281,6 +297,7 @@ namespace HR.Persistence.Repositories
                 .AsEnumerable()
                 .FirstOrDefault();
         }
+
 
         public async Task<int> ReadCurrentEmpCounter()
         {
@@ -337,6 +354,68 @@ namespace HR.Persistence.Repositories
             return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployee").ToListAsync();
         }
 
+
+
+
+
+        public async Task<string> MakeMultipleEmployeesInactiveAsync(string codes)
+        {
+            try
+            {
+                using (var conn = _appDbContext.Database.GetDbConnection())
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "dbo.SP_MakeMultipleEmployeesInactive";
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        var param = cmd.CreateParameter();
+                        param.ParameterName = "@Codes";
+                        param.Value = codes;
+                        cmd.Parameters.Add(param);
+
+                        if (conn.State != ConnectionState.Open)
+                            await conn.OpenAsync();
+
+                        var result = await cmd.ExecuteScalarAsync();
+                        return result?.ToString() ?? "No response from DB";
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                return $"SQL Error: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                // For other exceptions, you can decide to log and return a friendly message
+                return $"Unexpected Error: {ex.Message}";
+            }
+        }
+
+
+
+
+
+
+
+
+
+        //getallteamleader
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did)
+        {
+            var sql = "EXEC SP_GetEmployeesByDesignationId @DID = {0}";
+            Console.WriteLine($"SQL Query: {sql}", did);
+            var employee = _appDbContext.Employees
+                .FromSqlRaw(sql, did)
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToList();
+
+
+            return employee;
+        }
 
     }
 

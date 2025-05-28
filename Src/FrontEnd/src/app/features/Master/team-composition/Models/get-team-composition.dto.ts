@@ -8,5 +8,8 @@ export interface GetTeamCompositionDto {
     fk_TeamLeaderId: number;
     teamLeaderName: string;
     teamStatus: boolean;
+    teamMemberIds: number[];
+
+    // teamMembers: string;
 }
   

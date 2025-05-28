@@ -6,6 +6,7 @@ export interface GetHolidayDto {
     holidayListType: boolean;
     year: number;
     holidayStatus: boolean;
+    imagePath?: string;
     dayName?: string;
     formattedDate?: string;
   }

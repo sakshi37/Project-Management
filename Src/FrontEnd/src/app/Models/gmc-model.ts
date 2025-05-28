@@ -1,15 +1,4 @@
 export interface Employee {
-  emergencyNo: any;
-  aadharCardNo: any;
-  email: any;
-  birthDate: any;
-  joinDate: any;
-  address: any;
-  gender: any;
-  pan: any;
-  age: any;
-  aadhar: any;
-  emergencyContact: any;
   name: string;
   code: string;
   designation: string;

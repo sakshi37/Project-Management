@@ -6,4 +6,6 @@ export interface UpdateTeamCompositionDto {
     fk_TeamLeaderId: number; 
     teamStatus: boolean; 
     updatedBy: number;
+    teamMembers: number[];
+
 }

@@ -2,6 +2,7 @@
 {
     public class EmployeeDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
 
         public string Code { get; set; }
@@ -27,5 +28,6 @@
         public int ShiftId { get; set; }
         public int EmployeeTypeId { get; set; }
         public int UsergroupId { get; set; }
+        public string Password { get; set; }
     }
 }

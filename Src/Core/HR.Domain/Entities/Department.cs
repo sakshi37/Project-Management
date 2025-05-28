@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.Application.Features
+namespace HR.Domain.Entities
 {
-    internal class Class1
+   public  class Department
     {
+        public int Id { get; set; }
+        public String? Name { get; set; }
     }
 }

@@ -20,6 +20,7 @@
         public string? BccEmail { get; set; }
         public string? PanNumber { get; set; }
         public DateTime? BirthDate { get; set; }
+        public string? AadharCardNo { get; set; }
         //public byte[]? Signature { get; set; }
         public bool? LeftCompany { get; set; }
         public DateTime? LeftDate { get; set; }
