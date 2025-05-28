@@ -37,6 +37,7 @@ ngOnInit(): void {
   console.log(decodedToken.jti);
   
   this.loginTime = checkInTime ? new Date(checkInTime) : null;
+  console.log(this.loginTime);
   this.holidayService.getAllHolidays().subscribe({
     next: (holidays) => {
       const today = new Date();

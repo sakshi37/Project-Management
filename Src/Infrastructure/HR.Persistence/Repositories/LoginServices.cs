@@ -87,8 +87,46 @@ namespace HR.Identity.Services
                 //var result = hasher.VerifyHashedPassword(user.Code, user.Password, loginRequest.Password);
                 //if (result != PasswordVerificationResult.Success)
                 //    throw new UserNotFoundException("Invalid credentials, please try again!!");
-                if(user.Password != loginRequest.Password)
-                    throw new UserNotFoundException("Invalid credentials, please try again!!");
+                //if(user.Password != loginRequest.Password)
+                //    throw new UserNotFoundException("Invalid credentials, please try again!!");
+                //------------------------------------------------------------------------
+                // Cache key to track failed attempts
+                var failedAttempts = $"FailedLogin:{user.Code}";
+
+                // Check if password is incorrect
+                if (user.Password != loginRequest.Password)
+                {
+                    // Increment failed attempts in cache
+                    _cache.TryGetValue(failedAttempts, out int Attempts);
+                    Attempts++;
+
+                    // Store updated count with expiration (e.g., 10 minutes)
+                    _cache.Set(failedAttempts, Attempts, TimeSpan.FromMinutes(10));
+
+                    // Block the user after 3 failed attempts
+                    if (Attempts >= 3)
+                    {
+                        var blockSql = "EXEC SP_UpdateLoginStatus @EmpCode = {0}, @LoginStatus = {1}";
+                        await _context.Database.ExecuteSqlRawAsync(blockSql, user.Code, false);
+
+                        throw new Exception("User is blocked due to 3 failed login attempts.");
+                    }
+
+                    throw new UserNotFoundException($"Invalid credentials. Attempt {Attempts} of 3.");
+                }
+                else
+                {
+                    // Successful login: clear failed attempts
+                    _cache.Remove(failedAttempts);
+                }
+
+
+
+
+
+                //------------------------------------------------------------------------
+
+
 
                 var token = GenerateToken(user);
 
