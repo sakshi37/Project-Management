@@ -1,41 +1,47 @@
-CREATE or alter PROCEDURE SP_TimeSheetInsert
-
-		@StartDate DATETIME2,
-		@EndDate DATETIME2,
-		@Fk_EmployeeId INT,
-		@Sequence varchar(50),
+CREATE PROCEDURE SP_TimeSheetInsert
+		
 		@FK_JobId int,
-		@TimeSheetStatus bit,
-		@CreatedBy INT,
-		@CreatedDate Datetime2,
-		@UpdatedBy int,
-		@UpdatedDate DateTime2
+		@Sequence varchar(50),
+		@Part varchar(50),
+		@Activity varchar(50),
+		@Type varchar(20),
+		@StartTime DATETIME2,
+		@EndTime DATETIME2,
+		@Hrs int,
+		@Min int,
+		@Fk_EmployeeId INT,
+		
+		@TimeSheetStatus bit
+		
 AS
 BEGIN
-    INSERT INTO Tbl_TimeSheetMaster (
-			StartDate ,
-			EndDate ,
-			Fk_EmployeeId,
-			Sequence,
+    INSERT INTO dbo.Tbl_TimeSheetMaster (
 			FK_JobId ,
-			TimeSheetStatus ,
-			CreatedBy ,
-			CreatedDATE,
-			UpdatedBy ,
-			UpdatedDate
+		Sequence ,
+		Part ,
+		Activity ,
+		Type ,
+		StartTime,
+		EndTime ,
+		Hrs ,
+		Min ,
+		Fk_EmployeeId ,
+		TimeSheetStatus 
+			
 )
 
 			VALUES (
-			@StartDate ,
-			@EndDate ,
-			@Fk_EmployeeId,
-			@Sequence,
 			@FK_JobId ,
-			@TimeSheetStatus ,
-			@CreatedBy ,
-			@CreatedDate,
-			@UpdatedBy ,
-			@UpdatedDate
+		@Sequence ,
+		@Part ,
+		@Activity ,
+		@Type ,
+		@StartTime,
+		@EndTime ,
+		@Hrs ,
+		@Min ,
+		@Fk_EmployeeId ,
+		@TimeSheetStatus 
 		)
 End
 

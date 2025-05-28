@@ -1,0 +1,89 @@
+import { Injectable } from '@angular/core';
+import { API_URL } from '../../constant';
+import { HttpClient } from '@angular/common/http';
+import { TimeSheetDto } from '../Models/attendance-dto';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class TimeSheetService {
+  private url = `${API_URL}/TimeSheet`;
+  private diffUrl = `${API_URL}/Project`;
+  constructor(private http: HttpClient) {}
+
+  punchIn(empId: number): Observable<any> {
+    return this.http.post(`${this.url}/PunchIn`, { EmpId: empId });
+  }
+
+  punchOut(empId: number): Observable<any> {
+    return this.http.post(`${this.url}/PunchOut`, { EmpId: empId });
+  }
+
+  getSession(empId: number) {
+    return this.http.get<PunchInStatus | null>(`${this.url}/${empId}`);
+  }
+
+  getAllTimeSheet() {
+    return this.http.get<Timesheets[]>(`${this.url}/GetAllTimeSheet`);
+  }
+
+  getByIdTimeSheet(empId: number) {
+    return this.http.get<Timesheets[]>(`${this.url}/timesheet/${empId}`);
+  }
+
+  InsertTimesheet(timeSheet: { timesheet: Timesheets }) {
+    console.log(timeSheet);
+    return this.http.post(`${this.url}`, timeSheet);
+  }
+
+  GetAllProject() {
+    return this.http.get<ProjectWithStack[]>(`${this.diffUrl}/GetAllProject`);
+  }
+
+  InserProject(project: Project) {
+    return this.http.post<Project>(`${this.diffUrl}`, project);
+  }
+
+  getAllStack() {
+    return this.http.get<Stack[]>(`${this.diffUrl}/GetAllStack`);
+  }
+}
+export type PunchInStatus = {
+  id: number;
+  fk_EmpId: number;
+  startDate: string;
+  endDate: null;
+};
+
+export type Timesheets = {
+  projectId: number;
+  sequence: string | null;
+  part: string | null;
+  activity: string | null;
+  type: string | null;
+  startTime: string;
+  endTime: string | null;
+  hrs: number | null;
+  min: number | null;
+  empId: number | null;
+  timeSheetStatus: boolean | null;
+  code: string;
+};
+
+export type ProjectWithStack = {
+  id: number;
+  name: string;
+  stack: { id: number; name: string }[];
+};
+
+export type Project = {
+  StackIds: number[];
+  Name: string;
+};
+
+export type Stack = {
+  // stack: Stack[];
+  id: number;
+  name: String;
+};
