@@ -234,7 +234,7 @@ namespace HR.Identity.Services
 
             var result = await _context.Database.ExecuteSqlRawAsync(
                 "exec SP_updateForgotPassword @Password = {0}, @EmpCode = {1}",
-                changePasswordRequest.NewPassword, changePasswordRequest.UserName);
+                hashedPassword, changePasswordRequest.UserName);
 
             return result > 0;
         }
@@ -253,10 +253,10 @@ namespace HR.Identity.Services
                 throw new UserNotFoundException("User not found");
 
             var hasher = new PasswordHasher<string>();
-            var hashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
             // Check default password case
             if (user.Password == null && request.OldPassword == _configuration["DefaultCredentials:DefaultPassword"])
             {
+                var hashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
                 var result = await _context.Database.ExecuteSqlRawAsync(
                     "exec SP_UpdatePassword @Password={0}, @EmpCode = {1}",
                     hashedPassword, request.UserName);
@@ -270,10 +270,11 @@ namespace HR.Identity.Services
             if (request.NewPassword != request.ConfirmPassword)
                 throw new PasswordNotMatchException("New and confirm passwords do not match");
 
+            var newHashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
 
             var resultUpdate = await _context.Database.ExecuteSqlRawAsync(
                 "exec SP_UpdateOldPassword @Password={0}, @EmpCode = {1}, @OldPassword = {2}",
-                hashedPassword, request.UserName, request.OldPassword);
+                newHashedPassword, request.UserName, user.Password);
 
             return resultUpdate > 0;
         }

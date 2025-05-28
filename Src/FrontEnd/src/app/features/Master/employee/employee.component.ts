@@ -27,7 +27,8 @@ export class EmployeeComponent implements OnInit {
   totalCount = 0;
   fullEmployeeList: EmployeeFull[] = [];
 
-highlightedCode: string | null = null;
+  
+
   searchText: string = '';
 
   columns = [
@@ -49,7 +50,7 @@ highlightedCode: string | null = null;
     private Router: Router
   ) {}
 
-ngOnInit(): void {
+  ngOnInit(): void {
   let updatedCode = this.Router.getCurrentNavigation()?.extras?.state?.['updatedCode'];
 
   if (!updatedCode) {
@@ -62,6 +63,7 @@ ngOnInit(): void {
   console.log('Updated Code from navigation or sessionStorage:', updatedCode);
   this.loadEmployees(updatedCode);
 }
+
 
 
 loadEmployees(updatedCode?: string) {

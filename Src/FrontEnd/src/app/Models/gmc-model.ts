@@ -1,14 +1,11 @@
-
 export interface Employee {
-    name: string;
-    code: string;
-    designation: string;
-    fk_GenderId?: number;
+  name: string;
+  code: string;
+  designation: string;
+  fk_GenderId?: number;
 }
-    
- 
-  
-  export interface EmployeeSaveDto {
+
+export interface EmployeeSaveDto {
   code: string;
   address?: string;
   panNumber?: string;
@@ -20,4 +17,3 @@ export interface Employee {
   age?: number;
   fk_GenderId?: number;
 }
-

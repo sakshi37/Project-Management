@@ -54,8 +54,3 @@ tr:hover td {
   background-color: #beb5b5;
   color: #817070;
 }
-
-.highlight {
-  background-color: #d1f0d1 !important; /* light green highlight */
-  transition: background-color 0.5s ease;
-}
