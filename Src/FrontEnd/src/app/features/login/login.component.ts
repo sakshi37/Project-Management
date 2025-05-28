@@ -35,6 +35,8 @@ export class LoginComponent implements OnInit {
 
   showNewPassword: boolean = true;
   showConfirmPassword: boolean = true;
+  loginAttempts: number = 0;
+  maxAttempts: number = 3;
 
   loginForm = new FormControl({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -51,7 +53,7 @@ export class LoginComponent implements OnInit {
     private userService: UserService,
     private ngZone: NgZone,
     private injector: Injector
-  ) {}
+  ) { }
 
   passwordModel = {
     oldPassword: '',
@@ -70,67 +72,96 @@ export class LoginComponent implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  loginUser(loginForm: NgForm) {
-    this.login = loginForm.value;
-    this.formSubmitted = true;
-    if (loginForm.invalid) {
-      return;
-    }
+   
+loginUser(loginForm: NgForm) {
+  this.login = loginForm.value;
+  this.formSubmitted = true;
+  if (loginForm.invalid) {
+    return;
+  }
 
-    this.login = loginForm.value;
-    this.isLoggingIn = true;
+  this.login = loginForm.value;
+  this.isLoggingIn = true;
 
-    this.userService.login(this.login).subscribe({
-      next: (response: AuthResponseModel) => {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('loginStatus', String(response.loginStatus));
-        const decodedToken = jwtDecode(response.token);
-        this.UserName = decodedToken.sub;
-        this.UserEmail = decodedToken.iss;
-        if (!response.loginStatus) {
-          Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
-          this.isLoggingIn = false;
-          return;
-        }
+  this.userService.login(this.login).subscribe({
+    next: (response: AuthResponseModel) => {
+      this.loginAttempts = 0; 
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('loginStatus', String(response.loginStatus));
+      const decodedToken = jwtDecode(response.token);
+      this.UserName = decodedToken.sub;
+      this.UserEmail = decodedToken.iss;
 
-        if (response.firstLogin) {
-          const modalElement = document.getElementById('otpModal');
-          const otpModal = new bootstrap.Modal(modalElement);
-          this.startTimer();
-          otpModal.show();
-        } else {
-          this.router.navigate(['/dashboard']).then(() => {
-            const appRef = this.injector.get(AppComponent);
-            appRef.hideLayout = false;
-            appRef.isSidebarVisible = true;
-          });
-          sessionStorage.setItem('isAuthenticated', 'true');
+      if (!response.loginStatus) {
+        Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
+        this.isLoggingIn = false;
+        return;
+      }
+
+      if (response.firstLogin) {
+        const modalElement = document.getElementById('otpModal');
+        const otpModal = new bootstrap.Modal(modalElement);
+        this.startTimer();
+        otpModal.show();
+
+      } else {
+        this.router.navigate(['/dashboard']).then(() => {
+          const appRef = this.injector.get(AppComponent);
+          appRef.hideLayout = false;
+          appRef.isSidebarVisible = true;
+        });
+        sessionStorage.setItem('isAuthenticated', 'true');
+      }
+    },
+    error: (error) => {
+      this.loginAttempts++; 
+
+      if (this.loginAttempts >= this.maxAttempts) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Account Blocked',
+          text: 'You have entered incorrect credentials 3 times. Your account has been blocked.',
+          confirmButtonColor: '#d33'
+        });
+      } else {
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          icon: 'error',
+          title: 'Login Failed',
+          text: `Invalid credentials. Attempt ${this.loginAttempts} of ${this.maxAttempts}.`,
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+      }
+
+      console.error('Login failed!', error);
+      this.isLoggingIn = false;
+    },
+  });
+}
+
+
+  // updating password update at first login
+  FirstLoginPasswordUpdate(code: string, Password: string) {
+    this.userService.FirstLoginPasswordUpdate(code, Password).subscribe({
+      next: (res: boolean) => {
+        if (res) {
+          this.router.navigate(['/dashboard']);
         }
       },
       error: (error) => {
-        console.error('Login failed!', error);
-        Swal.fire('Login Failed', 'Invalid email or password. Please try again.', 'error');
-        this.isLoggingIn = false;
-      },
-    });
-  }
-  FirstLoginPasswordUpdate(code:string,Password:string){
-    this.userService.FirstLoginPasswordUpdate(code,Password).subscribe({
-      next:(res:boolean)=>{
-        if (res) {
-         this.router.navigate(['/dashboard']); 
-        }
-      }, error: (error) => {
         console.error('Login failed!', error.error);
         Swal.fire('Password Update Failed', error.error.message, 'error');
         // this.isLoggingIn = false;
-      }
-    })
+      },
+    });
   }
-  
 
+  // OTP verifcation at firstlogin
   verifyOtp() {
     this.isVerifying = true;
 
@@ -148,14 +179,25 @@ export class LoginComponent implements OnInit {
           next: (res: AuthResponseModel) => {
             Swal.fire('Success', 'OTP Verified Successfully!', 'success');
             const modalElement = document.getElementById('otpModal');
-            const otpModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            const otpModal =
+              bootstrap.Modal.getInstance(modalElement) ||
+              new bootstrap.Modal(modalElement);
             otpModal.hide();
             sessionStorage.setItem('isAuthenticated', 'true');
-            this.router.navigate(['/dashboard']);
+            // this.router.navigate(['']);
+            this.router.navigate(['/changePassword']).then(() => {
+          const appRef = this.injector.get(AppComponent);
+          appRef.hideLayout = false;
+          appRef.isSidebarVisible = true;
+        });
           },
           error: (error) => {
             console.error('Otp Failed', error.error);
-            Swal.fire('Invalid OTP', 'Incorrect OTP. Please try again.', 'error');
+            Swal.fire(
+              'Invalid OTP',
+              'Incorrect OTP. Please try again.',
+              'error'
+            );
           },
         });
       }
@@ -164,45 +206,47 @@ export class LoginComponent implements OnInit {
     }, 1500);
   }
 
+  //timer at otp modal=====
   timeLeft: number = 60;
   txtTimeleft: boolean = false;
   btnDisabled: boolean = false;
   interval: any;
 
- startTimer() {
-  this.timeLeft = 60; // Reset the timer
-  this.btnDisabled = true;
-  this.txtTimeleft = true;
+  startTimer() {
+    this.timeLeft = 60; // Reset the timer
+    this.btnDisabled = true;
+    this.txtTimeleft = true;
 
-  this.interval = setInterval(() => {
-    if (this.timeLeft > 0) {
-      this.timeLeft--;
-    } else {
-      this.btnDisabled = false;
-      this.txtTimeleft = false;
-      clearInterval(this.interval);
-      this.otpButtonMsg = 'Resend OTP'
-    }
-  }, 1000);
-}
+    this.interval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+      } else {
+        this.btnDisabled = false;
+        this.txtTimeleft = false;
+        clearInterval(this.interval);
+        this.otpButtonMsg = 'Resend OTP'
+      }
+    }, 1000);
+  }
 
-terminateOtp() {
-   clearInterval(this.interval);  
+  // otp termination modal 
+  terminateOtp() {
+    clearInterval(this.interval);
     this.txtTimeleft = false;
-  this.otpDigits = ['', '', '', ''];
-  this.txtTimeleft = false;
-  this.isLoggingIn = false;
-  Swal.fire({
-    toast: true,
-    position: 'top',
-    icon: 'info',
-    title: 'Process Terminated',
-    text: 'OTP verification process has been terminated. Please login again.',
-    showConfirmButton: false,
-    timer: 4000,
-    timerProgressBar: true
-  });
-}
+    this.otpDigits = ['', '', '', ''];
+    this.txtTimeleft = false;
+    this.isLoggingIn = false;
+    Swal.fire({
+      toast: true,
+      position: 'top',
+      icon: 'info',
+      title: 'Process Terminated',
+      text: 'OTP verification process has been terminated. Please login again.',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true
+    });
+  }
 
 
   moveToNext(event: any, index: number) {
@@ -221,43 +265,37 @@ terminateOtp() {
     }
   }
 
-//==============================================================resendddddddddddddd======================
-isLoading = false;
+  //===resend OTP modal=====
+  isLoading = false;
 
-resendOtp() {
-  this.isLoading = true;
-  
+  resendOtp() {
+    this.isLoading = true;
+
     this.userService.resendOtp(this.UserName).subscribe({
       next: (response: AuthResponseModel) => {
-         this.isLoading = false;
+        this.isLoading = false;
         // localStorage.setItem('otp', response.otp); 
         // localStorage.setItem('email',response.token);
         Swal.fire({
           toast: true,
           position: 'top',
-          title:'Resending OTP',
-          text:'OTP Resent Successfully!',
+          title: 'Resending OTP',
+          text: 'OTP Resent Successfully!',
           icon: 'success'
         });
-  this.startTimer()
+        this.startTimer()
       },
       error: (error) => {
-              this.isLoading = false;
+        this.isLoading = false;
 
         Swal.fire({
-          title:'Resend OTP failed!',
-          text:'Failed to resend OTP. Please try again.'
+          title: 'Resend OTP failed!',
+          text: 'Failed to resend OTP. Please try again.'
         });
-      }
+      },
     });
   }
-
-  
-   
-  //==============================================================resendddddddddddddd====================
-
-
-
+  //forgot password modal
   openForgotPasswordModal() {
     Swal.fire({
       title: 'Forgot Password',
@@ -273,24 +311,31 @@ resendOtp() {
         this.forgotUsername = result.value;
         this.userService.sendForgotPasswordOtp(this.forgotUsername).subscribe({
           next: () => {
-           Swal.fire({
-          toast: true,
-          position: 'top',
-          icon: 'success',
-          title: 'OTP sent to your registered email.',
-          showConfirmButton: false,
-          timer: 4000,
-          timerProgressBar: true});
+            Swal.fire({
+              toast: true,
+              position: 'top',
+              icon: 'success',
+              title: 'OTP sent to your registered email.',
+              showConfirmButton: false,
+              timer: 4000,
+              timerProgressBar: true
+            });
 
             setTimeout(() => {
-              const modalElement = document.getElementById('forgotPasswordModal');
+              const modalElement = document.getElementById(
+                'forgotPasswordModal'
+              );
               const forgotPasswordModal = new bootstrap.Modal(modalElement);
               forgotPasswordModal.show();
             }, 2000);
           },
           error: (error) => {
             console.error('Failed to send OTP!', error);
-            Swal.fire('Failed', 'Failed to send OTP. Please check your email and try again.', 'error');
+            Swal.fire(
+              'Failed',
+              'Failed to send OTP. Please check your email and try again.',
+              'error'
+            );
           },
         });
       }
@@ -298,11 +343,15 @@ resendOtp() {
   }
 
   submitForgotPassword() {
-    if (!this.forgotUsername || !this.forgotOtp || !this.newPassword || !this.confirmNewPassword) {
+    if (
+      !this.forgotUsername ||
+      !this.forgotOtp ||
+      !this.newPassword ||
+      !this.confirmNewPassword
+    ) {
       Swal.fire('Validation', 'Please fill all fields.', 'warning');
       return;
     }
-    
 
     const passwordPattern =
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&\-+=()])(?=\S+$).{6,12}$/;
@@ -317,7 +366,11 @@ resendOtp() {
     }
 
     if (this.newPassword !== this.confirmNewPassword) {
-      Swal.fire('Mismatch', 'New Password and Confirm Password do not match.', 'error');
+      Swal.fire(
+        'Mismatch',
+        'New Password and Confirm Password do not match.',
+        'error'
+      );
       return;
     }
 
@@ -330,14 +383,22 @@ resendOtp() {
 
     this.userService.resetPassword(resetPasswordData).subscribe({
       next: () => {
-        Swal.fire('Success', 'Password reset successfully! Please login with new password.', 'success');
+        Swal.fire(
+          'Success',
+          'Password reset successfully! Please login with new password.',
+          'success'
+        );
         const modalElement = document.getElementById('forgotPasswordModal');
         const forgotPasswordModal = bootstrap.Modal.getInstance(modalElement);
         forgotPasswordModal.hide();
       },
       error: (error) => {
         console.error('Password reset failed!', error);
-        Swal.fire('Failed', 'Failed to reset password. Please check your OTP and try again.', 'error');
+        Swal.fire(
+          'Failed',
+          'Failed to reset password. Please check your OTP and try again.',
+          'error'
+        );
       },
     });
   }

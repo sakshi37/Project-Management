@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+
 namespace HR.Persistence
 {
     public static class PersistenceServiceRegistration
@@ -26,7 +27,7 @@ namespace HR.Persistence
             services.AddScoped<ITeamCompositionRepository, TeamCompositionRepository>();
 
             services.AddScoped<IShiftRepository, ShiftRepository>();
-
+            services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IUserGroupRepository, UserGroupRepository>();
 
             services.AddScoped<IEmployeeTypeRepository, EmployeeTypeRepository>();
@@ -41,13 +42,10 @@ namespace HR.Persistence
 
 
 
-
-
-
-
             services.AddScoped<IAttendanceRepository, AttendanceRepository>();
             services.AddScoped<IRequestByHrRepository, RequestByHrRepository>();
             services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
 
 
 

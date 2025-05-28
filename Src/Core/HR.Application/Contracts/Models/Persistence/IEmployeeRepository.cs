@@ -4,10 +4,10 @@ using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeesAll;
 using HR.Domain.Entities;
-using System.Threading.Tasks;
 
 namespace HR.Application.Contracts.Persistence
 {
@@ -36,7 +36,7 @@ namespace HR.Application.Contracts.Persistence
 
         Task<int> ReadCurrentEmpCounter();
 
-
+        Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName();
 
         Task IncrCurrentEmpCounter();
 

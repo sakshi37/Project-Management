@@ -7,6 +7,7 @@ using HR.Application.Features.Employees.Commands.MakeMultipleEmployeesInactive;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
+using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeeByDesignation;
 using HR.Application.Features.Employees.Queries.GetEmployeesAll;
@@ -142,6 +143,12 @@ namespace HR.API.Controllers
             return BadRequest("Failed to update employee");
 
 
+        }
+        [HttpGet("GetAllEmployeeByIdName")]
+        public async Task<IActionResult> GetALLEmployeeByIdName()
+        {
+            var result = await _mediator.Send(new GetAllEmployeesByIdNameQuery());
+            return Ok(result);
         }
 
         [HttpGet("{code}")]

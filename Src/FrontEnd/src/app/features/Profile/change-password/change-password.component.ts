@@ -23,7 +23,7 @@ export class ChangePasswordComponent {
   showNewPassword = true;
   showConfirmPassword = true;
 
-  constructor(private userService: UserService,private router: Router) {} 
+  constructor(private userService: UserService, private router: Router) { }
 
   toggleOldPasswordVisibility() {
     this.showOldPassword = !this.showOldPassword;
@@ -48,7 +48,20 @@ export class ChangePasswordComponent {
       // alert('New passwords do not match.');
       Swal.fire('Mismatch', 'New passwords do not match.', 'error');
       return;
-    } 
+    }
+
+    if (this.passwordModel.newPassword === this.passwordModel.oldPassword) {
+      Swal.fire({
+        toast: true,
+        position: 'top',
+        icon: 'error',
+        title: 'New Password can’t be the same as Old Password',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true
+      });
+    }
+
     const decodedToken = jwtDecode(String(localStorage.getItem('token')));
     const UserName = decodedToken.sub != undefined ? decodedToken.sub : '';
     const requestData = {
@@ -60,10 +73,12 @@ export class ChangePasswordComponent {
 
     console.log(requestData);
 
+
+
     this.userService.updatePasswords(requestData).subscribe({
       next: (res: string) => {
         // alert('Password updated successfully!');
-        Swal.fire('Success', 'Password updated successfully!', 'success' ).then(()=>{
+        Swal.fire('Success', 'Password updated successfully!', 'success').then(() => {
           form.resetForm();
           this.router.navigate(['/changePassword']);
         })
@@ -77,11 +92,20 @@ export class ChangePasswordComponent {
           this.router.navigate(['/dashboard']);
         } else {
           // alert('Error updating password.');
-          Swal.fire('Error', 'Error updating password.', 'error');
+          setTimeout(() => {
+            Swal.fire({
+              toast: true,
+              position: 'top',
+              icon: 'error',
+              title: 'Error Updating Password',
+              showConfirmButton: false,
+              timer: 1000,
+              timerProgressBar: true
+            });
+          }, 1000);
         }
       }
     });
-    
+
   }
 }
- 

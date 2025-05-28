@@ -15,7 +15,7 @@ namespace HR.Persistence.Repositories
 {
     public class FamilyRepository : IFamilyRepository
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _context; 
 
         public FamilyRepository(AppDbContext context)
         {
