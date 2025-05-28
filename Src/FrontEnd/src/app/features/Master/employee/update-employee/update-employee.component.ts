@@ -461,37 +461,31 @@ export class UpdateEmployeeComponent implements OnInit {
       updatedEmployee.leftCompany = formValues.leftCompany;
 
       // Submit the update (assuming updateService has updateEmployee method)
-   this.updateService.updateEmployee(updatedEmployee).subscribe({
-  next: () => {
-    Swal.fire({
-      toast: true,
-      icon: 'success',
-      text: 'Employee details updated successfully.',
-      position: 'top',
-      timer: 2000,
-      showConfirmButton: false,
-    }).then(() => {
-      // Save updatedCode to sessionStorage as fallback
-      sessionStorage.setItem('updatedCode', this.selectedEmployeeCode);
-
-      this.router.navigate(['/employee'], {
-        state: { updatedCode: this.selectedEmployeeCode },
+      this.updateService.updateEmployee(updatedEmployee).subscribe({
+        next: () => {
+          Swal.fire({
+            toast: true,
+            icon: 'success',
+            text: 'Employee details updated successfully.',
+            position: 'top',
+            timer: 2000,
+            showConfirmButton: false,
+          }).then(() => {
+            this.router.navigate(['/employee']);
+          });
+        },
+        error: (err) => {
+          console.error('Update failed:', err);
+          Swal.fire({
+            toast: true,
+            icon: 'error',
+            text: 'Failed to update employee. Please try again.',
+            position: 'top',
+            timer: 3000,
+            showConfirmButton: false,
+          });
+        },
       });
-    });
-  },
-  error: (err) => {
-    console.error('Update failed:', err);
-    Swal.fire({
-      toast: true,
-      icon: 'error',
-      text: 'Failed to update employee. Please try again.',
-      position: 'top',
-      timer: 3000,
-      showConfirmButton: false,
-    });
-  },
-});
-
     }
   }
 
