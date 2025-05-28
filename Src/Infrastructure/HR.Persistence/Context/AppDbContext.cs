@@ -88,14 +88,15 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<GetAllAttendanceDto> GetAllAttendanceDtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
-
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
     public DbSet<TeamCompositionDto> TeamCompositionDtos { get; set; }
     public DbSet<TeamMember> TeamMembers { get; set; }
 
 
+
     public DbSet<GetAllShiftsVm> GetAllShiftsVms { get; set; }
+
     public DbSet<Counter> Counter { get; set; }
     public DbSet<LocationDto> LocationDtos { get; set; }
     public DbSet<Location> Locations { get; set; }

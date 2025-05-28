@@ -41,6 +41,7 @@
       </select>
     </div>
   </div>
+  
   <br>
   <div class="row">
     <div class="col-md-3">
@@ -55,12 +56,22 @@
     <div class="col-md-1 mt-3">
       <div class="btn"><button class="btn btn-primary" (click)="filterByDate()">Filter</button></div>
     </div>
-  </div>
-  <div class="row">
-
-    <div class="col-md-12"><button (click)="exportToExcel()" class="btn btn-outline-success"><i
+      <!-- <div class="row"> -->
+&nbsp;&nbsp;&nbsp;
+    <div class="col-md-3 mt-4"><button (click)="exportToExcel()" class="btn btn-outline-success"><i
           class="fa-solid fa-file-csv"></i> Export to Excel</button></div>
   </div>
+</div>
+  <!-- </div> -->
+
+  <div class="entries-dropdown">
+    <label for="entries">Show</label>
+    <select id="entries" [(ngModel)]="itemsPerPage">
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+    </select>
+    <span>Entries</span>
+  
+
 </div>
 
 <br>

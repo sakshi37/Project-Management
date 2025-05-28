@@ -42,10 +42,17 @@
                   <option value=""disabled selected>--Select Branch--</option>
                   <option *ngFor="let b of branches" [value]="b.branchId">{{ b.branchName }}</option>
                 </select>
+                <div *ngIf="divisionForm.get('branchId')?.touched && divisionForm.get('branchId')?.invalid" class="text-danger">
+                <div *ngIf="divisionForm.get('branchId')?.errors?.['required']">Branch Name is required.</div>
+              </div>
               </div>
               <div class="col-12">
                 <label for="divisionName" class="form-label">Division Name:</label>
                 <input type="text" id="divisionName" class="form-control" formControlName="divisionName">
+                <div *ngIf="divisionForm.get('divisionName')?.touched && divisionForm.get('divisionName')?.invalid" class="text-danger">
+                <div *ngIf="divisionForm.get('divisionName')?.errors?.['required']">Division Name is required.</div>
+                <div *ngIf="divisionForm.get('divisionName')?.errors?.['pattern']">Max 26 characters allowed.</div>
+              </div>
               </div>
                   <div class="col-12">
                     <label for="projectManagerName" class="form-label">Project Manager Name</label>
@@ -54,16 +61,27 @@
                       <option value="" disabled selected>--Select Project Manager--</option>
                       <option *ngFor="let pm of projectManagerNames" value="{{pm.projectManagerName}}">{{pm.projectManagerName}}({{pm.projectManagerId}})</option>
                     </select>
+                    <div *ngIf="divisionForm.get('projectManagerName')?.touched && divisionForm.get('projectManagerName')?.invalid" class="text-danger">
+                <div *ngIf="divisionForm.get('projectManagerName')?.errors?.['required']">Project Manager Name is required.</div>
+              </div>
                 </div>
               
                   <div class="col-12">
                     <label for="prefixName" class="form-label">Prefix Name</label>
                     <input type="text" id="prefixName" class="form-control" formControlName="prefixName">
+                    <div *ngIf="divisionForm.get('prefixName')?.touched && divisionForm.get('prefixName')?.invalid" class="text-danger">
+                <div *ngIf="divisionForm.get('prefixName')?.errors?.['required']">Prefix Name is required.</div>
+                <div *ngIf="divisionForm.get('prefixName')?.errors?.['pattern']">Max 15 characters allowed.</div>
+              </div>
                   </div>
 
                   <div class="col-12">
                     <label for="manHours" class="form-label">Man Hours</label>
                     <input type="text" id="manHours" class="form-control" formControlName="manHours">
+                    <div *ngIf="divisionForm.get('manHours')?.touched && divisionForm.get('manHours')?.invalid" class="text-danger">
+                <div *ngIf="divisionForm.get('manHours')?.errors?.['required']">Man Hours is required.</div>
+                <div *ngIf="divisionForm.get('manHours')?.errors?.['pattern']">Max  24hrs allowed.</div>
+              </div>
                   </div>
                   
                   <div class="col-12">
@@ -73,6 +91,9 @@
                       <option value="1">Us-Based</option>
                       <option value="0">Non-UsBased</option>
                     </select>
+                    <div *ngIf="divisionForm.get('holidayListType')?.touched && divisionForm.get('holidayListType')?.invalid" class="text-danger">
+                <div *ngIf="divisionForm.get('holidayListType')?.errors?.['required']">Select Holiday List Type Name .</div>
+              </div>
                   </div>
     
   
@@ -83,10 +104,13 @@
                   <option value="1">Active</option>
                   <option value="0">Inactive</option>
                 </select>
+                <div *ngIf="divisionForm.get('holidayListType')?.touched && divisionForm.get('holidayListType')?.invalid" class="text-danger">
+                <div *ngIf="divisionForm.get('holidayListType')?.errors?.['required']">Select Holiday List Type Name .</div>
+              </div>
               </div>
   
               <div class="col-12 d-flex justify-content-end">
-                <button data-bs-dismiss="modal" type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Add' }}</button>
+                <button type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Add' }}</button>
                 <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal" (click)="resetForm()">Cancel</button>
               </div>
           </form>
