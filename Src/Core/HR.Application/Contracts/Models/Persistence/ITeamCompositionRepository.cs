@@ -25,3 +25,4 @@ namespace HR.Application.Contracts.Models.Persistence
     }
 
 }
+

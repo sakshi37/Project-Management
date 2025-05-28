@@ -4,10 +4,10 @@ using MediatR;
 
 namespace HR.Application.Features.TimeSheets.Commands.PunchOut
 {
-    public class PunchOutHandler : IRequestHandler<PunchOutCommand>
+    public class PunchOutCommandHandler : IRequestHandler<PunchOutCommand>
     {
         readonly ITimeSheetRepository _timeSheetRepository;
-        public PunchOutHandler(ITimeSheetRepository timeSheetRepository)
+        public PunchOutCommandHandler(ITimeSheetRepository timeSheetRepository)
         {
 
             _timeSheetRepository = timeSheetRepository;
@@ -16,12 +16,15 @@ namespace HR.Application.Features.TimeSheets.Commands.PunchOut
         public async Task Handle(PunchOutCommand request, CancellationToken cancellationToken)
         {
             var attendance = await _timeSheetRepository.GetCurrentSession(request.EmpId);
-            if (attendance != null)
+
+
+            if (attendance == null)
+
             {
 
-                throw new PunchInValidationException($"You have alraedy punch-out at. {attendance.StartDate}");
+                throw new PunchInValidationException("You have no current sessions");
             }
-            var endDateTime = DateTime.UtcNow;
+            var endDateTime = DateTime.Now;
             await _timeSheetRepository.PunchOut(request.EmpId, endDateTime);
         }
     }
