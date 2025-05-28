@@ -8,6 +8,7 @@ import {
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { RoleService } from '../../../services/role.service';
 
 @Component({
   selector: 'app-activity-timesheet',
@@ -18,7 +19,12 @@ import { RouterLink } from '@angular/router';
 export class ActivityTimesheetComponent implements OnInit {
   sessionStatus: PunchInStatus | null = null;
   timeSheets: Timesheets[] = [];
-  constructor(private timeSheetService: TimeSheetService) {}
+
+  constructor(
+    private timeSheetService: TimeSheetService,
+    private roleService: RoleService
+  ) {}
+
   ngOnInit() {
     this.getSession();
     this.getTimesheetByEmpId();
@@ -45,54 +51,58 @@ export class ActivityTimesheetComponent implements OnInit {
   }
 
   punchIn() {
-    const empId = this.getEmpId();
+    const empId = this.roleService.getEmpId();
     if (empId) {
-      this.timeSheetService.punchIn(empId).subscribe((res) => {
+      this.timeSheetService.punchIn(Number(empId)).subscribe((res) => {
         console.log(res);
         this.getSession();
       });
+    } else {
+      this.showError();
     }
   }
-  punchOut() {
-    const empId = this.getEmpId();
-    if (empId) {
-      this.timeSheetService.punchOut(empId).subscribe((res) => {
-        console.log(res);
-        this.getSession();
-      });
-    }
-  }
-  getSession() {
-    const empId = this.getEmpId();
-    if (empId) {
-      this.timeSheetService.getSession(empId).subscribe((res) => {
-        console.log(res);
 
+  punchOut() {
+    const empId = this.roleService.getEmpId();
+    if (empId) {
+      this.timeSheetService.punchOut(Number(empId)).subscribe((res) => {
+        console.log(res);
+        this.getSession();
+      });
+    } else {
+      this.showError();
+    }
+  }
+
+  getSession() {
+    const empId = this.roleService.getEmpId();
+    if (empId) {
+      this.timeSheetService.getSession(Number(empId)).subscribe((res) => {
+        console.log(res);
         this.sessionStatus = res;
       });
+    } else {
+      this.showError();
     }
   }
 
   getTimesheetByEmpId() {
-    const empId = this.getEmpId();
-    if (!empId) return;
-    this.timeSheetService.getByIdTimeSheet(empId).subscribe((data) => {
+    const empId = this.roleService.getEmpId();
+    if (!empId) {
+      this.showError();
+      return;
+    }
+    this.timeSheetService.getByIdTimeSheet(Number(empId)).subscribe((data) => {
       console.log('Received timesheet data:', data);
       this.timeSheets = data;
-
       console.log('After TimeSheets Data:', this.timeSheets);
     });
   }
-  private getEmpId() {
-    const empId = localStorage.getItem('empId');
 
-    if (empId === null || empId === '' || isNaN(Number(empId))) {
-      Swal.fire({
-        title: 'This should never happen',
-        text: 'Employee Id does not exist. Please logout and login again',
-      });
-      return;
-    }
-    return Number(empId);
+  private showError() {
+    Swal.fire({
+      title: 'This should never happen',
+      text: 'Employee Id does not exist. Please logout and login again',
+    });
   }
 }
