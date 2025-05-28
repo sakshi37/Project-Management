@@ -138,24 +138,85 @@ export class TeamCompositionComponent {
     });
   }
   
+  // exportToExcel(): void {
+  //   const exportData = this.teamCompositions.map((t, index) => ({
+  //     'Sr No': index + 1,
+  //     'Team Name': t.teamName,
+  //     'Team Leader': t.teamLeaderName,
+  //     'Branch': t.branchName,
+  //     'Division': t.divisionName,
+  //     'Status': t.teamStatus ? 'Active' : 'Inactive',
+  //     'Team Members Ids': Array.isArray(t.teamMemberIds) ? t.teamMemberIds.join(',') : 'N/A',
+  //   }));
+  
+  //   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+  
+  //   // Step 3: Apply gray fill for Inactive rows
+  //   this.teamCompositions.forEach((t, index) => {
+  //     if (!t.teamStatus) {
+  //       const excelRow = index + 2; 
+  //       const colRange = ['A', 'B', 'C', 'D', 'E', 'F', 'G']; 
+  
+  //       colRange.forEach(col => {
+  //         const cellRef = `${col}${excelRow}`;
+  //         if (!worksheet[cellRef]) return;
+  //         worksheet[cellRef].s = {
+  //           fill: {
+  //             patternType: "solid",
+  //             fgColor: { rgb: "D3D3D3" } 
+  //           }
+  //         };
+  //       });
+  //     }
+  //   });
+  
+  //   const workbook: XLSX.WorkBook = {
+  //     Sheets: { 'TeamComposition': worksheet },
+  //     SheetNames: ['TeamComposition']
+  //   };
+  
+  //   const excelBuffer: any = XLSX.write(workbook, {
+  //     bookType: 'xlsx',
+  //     type: 'array',
+  //     cellStyles: true
+  //   });
+  
+  //   this.saveAsExcelFile(excelBuffer, 'TeamCompositionData');
+  // }
   exportToExcel(): void {
-    const exportData = this.teamCompositions.map((t, index) => ({
-      'Sr No': index + 1,
-      'Team Name': t.teamName,
-      'Team Leader': t.teamLeaderName,
-      'Branch': t.branchName,
-      'Division': t.divisionName,
-      'Status': t.teamStatus ? 'Active' : 'Inactive',
-      'Team Members Ids': Array.isArray(t.teamMemberIds) ? t.teamMemberIds.join(',') : 'N/A',
-    }));
+    const exportData = this.teamCompositions.map((t, index) => {
+      const memberNames = t.teamMemberIds
+        ?.map(id => {
+          const emp = this.employeeList.find(e => e.id === id);
+          return emp ? emp.code : 'Unknown';
+        })
+        .join(', ');
+  
+      // If you want empCodes instead of names, use: emp.empCode
+      // const memberCodes = t.teamMemberIds?.map(id => {
+      //   const emp = this.employeeList.find(e => e.id === id);
+      //   return emp ? emp.empCode : 'Unknown';
+      // }).join(', ');
+  
+      return {
+        'Sr No': index + 1,
+        'Team Name': t.teamName,
+        'Team Leader': t.teamLeaderName,
+        'Branch': t.branchName,
+        'Division': t.divisionName,
+        'Status': t.teamStatus ? 'Active' : 'Inactive',
+        'Team Members EMPCODE': memberNames || 'N/A',
+        // 'Team Members (EmpCode)': memberCodes || 'N/A' // Optional: use instead of names
+      };
+    });
   
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
   
-    // Step 3: Apply gray fill for Inactive rows
+    // Highlight inactive rows
     this.teamCompositions.forEach((t, index) => {
       if (!t.teamStatus) {
-        const excelRow = index + 2; 
-        const colRange = ['A', 'B', 'C', 'D', 'E', 'F', 'G']; 
+        const excelRow = index + 2;
+        const colRange = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
   
         colRange.forEach(col => {
           const cellRef = `${col}${excelRow}`;
@@ -163,7 +224,7 @@ export class TeamCompositionComponent {
           worksheet[cellRef].s = {
             fill: {
               patternType: "solid",
-              fgColor: { rgb: "D3D3D3" } 
+              fgColor: { rgb: "D3D3D3" }
             }
           };
         });
@@ -183,6 +244,7 @@ export class TeamCompositionComponent {
   
     this.saveAsExcelFile(excelBuffer, 'TeamCompositionData');
   }
+  
   private saveAsExcelFile(buffer: any, fileName: string): void {
     const data: Blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
