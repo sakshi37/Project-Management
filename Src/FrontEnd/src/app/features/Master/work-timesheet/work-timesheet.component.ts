@@ -7,6 +7,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { CommonModule } from '@angular/common';
 import $ from 'jquery';
 import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-assigned-task',
   imports: [CommonModule, ReactiveFormsModule, NgSelectModule],

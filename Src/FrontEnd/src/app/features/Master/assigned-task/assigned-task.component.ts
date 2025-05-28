@@ -14,6 +14,11 @@ import {
   TimeSheetService,
 } from '../../../services/time-sheet.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { GetAttendanceReportDtoService } from '../../Hr/employee-attendance-report/Model/get-attendance-report-dto.service';
+import { GetAttendanceReportService } from '../../../services/get-attendance-report.service';
+import { RoleService } from '../../../services/role.service';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { EmployeeModel } from '../../../Models/employee-model';
 
 @Component({
   selector: 'app-work-timesheet',
@@ -43,16 +48,60 @@ export class AssignedTaskComponent implements OnInit {
   projects: ProjectWithStack[] = [];
   stacks: Stack[] = [];
   selectedTaskList: Timesheets[] = [];
-
+  employeess: GetAttendanceReportDtoService[] = [];
+  attendanceReports: GetAttendanceReportDtoService[] = [];
   constructor(
     private employeeService: EmployeeService,
     private timesheetService: TimeSheetService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private getAttendanceReportService: GetAttendanceReportService,
+    private roleService: RoleService
   ) {}
-
+  empId: number = 0;
   ngOnInit(): void {
+    console.log(this.roleService.getUserRole(), 'Role');
+
     this.initForm();
     this.initProjectForm();
+    console.log(this.roleService.getUserRole(), 'Role');
+
+    // this.employeeService.getAllEmployeeByIdName().subscribe((res) => {
+    //   console.log(res);
+    //   this.employees = res;
+    // });
+    const token = this.roleService.getToken();
+    const decodeToken = jwtDecode<JwtPayload>(token != null ? token : '');
+    if (this.roleService.getUserRole() == 'Team Lead') {
+      this.getAttendanceReportService
+        .getTLEmployeeID(decodeToken.sub)
+        .subscribe({
+          next: (res: EmployeeModel) => {
+            this.empId = res.id;
+            console.log('TL chi ID', this.empId);
+
+            this.getAttendanceReportService
+              .getEARByTLName(this.empId)
+              .subscribe({
+                next: (response: GetAttendanceReportDtoService[]) => {
+                  this.employeess = response;
+                  console.log(
+                    this.empId,
+                    'Tyachya under employees',
+                    this.employees
+                  );
+                },
+                error: (error) => {
+                  console.error('Error', error.error);
+                  console.error('Error Message', error.error.message);
+                },
+              });
+          },
+          error: (error) => {
+            console.error('Error', error.error);
+            console.error('Error Message', error.error.message);
+          },
+        });
+    }
     this.employeeService.getAllEmployeeByIdName().subscribe((res) => {
       console.log(res);
       this.employees = res;
