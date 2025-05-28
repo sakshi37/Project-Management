@@ -1,7 +1,10 @@
 ﻿using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
-using HR.Application.Features.TimeSheet.Query;
-using HR.Application.Features.TimeSheets.Commands.PunchIn;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Commands;
+using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchOut;
+using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
+using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
+using HR.Application.Features.TimeSheets.Queries.GetSessionByEmp;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,27 +28,49 @@ namespace HR.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllTimeSheet")]
         public async Task<IActionResult> GetAllTimeSheet()
         {
             var response = await _mediator.Send(new GetAllTimeSheetListQuery());
             return Ok(response);
         }
 
-        [HttpPost("PunchIn")]
-        public async Task<IActionResult> PunchIn()
+        [HttpGet("GetAllAttendance")]
+        public async Task<IActionResult> GetAllAttendance()
         {
-            var currentLogedInEmpId = 1;
-            await _mediator.Send(new PunchInCommand(currentLogedInEmpId));
-            return Ok("success");
+            var response = await _mediator.Send(new GetAllAttendanceListQuery());
+            return Ok(response);
+        }
+
+        [HttpPost("PunchIn")]
+        public async Task<IActionResult> PunchIn([FromBody] AttendanceDto attendanceDto)
+        {
+            var currentLoggedInEmpId = attendanceDto.EmpId;
+            await _mediator.Send(new PunchInCommand(currentLoggedInEmpId));
+            return Ok();
         }
 
         [HttpPost("PunchOut")]
-        public async Task<IActionResult> PunchOut()
+        public async Task<IActionResult> PunchOut([FromBody] AttendanceDto attendanceDto)
         {
-            var currentLogedInEmpId = 1;
-            await _mediator.Send(new PunchOutCommand(currentLogedInEmpId));
-            return Ok("success");
+            var currentLoggedInEmpId = attendanceDto.EmpId;
+            await _mediator.Send(new PunchOutCommand(currentLoggedInEmpId));
+            return Ok();
+        }
+        [HttpGet("{empId}")]
+        public async Task<IActionResult> getSessionByEmpId(int empId)
+        {
+            var currentLoggedIn = empId;
+            var session = await _mediator.Send(new GetSessionByEmpQuery(currentLoggedIn));
+            return Ok(session);
+        }
+
+        [HttpGet("timesheet/{id}")]
+        public async Task<IActionResult> TimeSheetMasterGetById(int Id)
+        {
+            var currentLoggedIn = Id;
+            var timesheetByEmpId = await _mediator.Send(new GetByIdTimeSheetQuery(currentLoggedIn));
+            return Ok(timesheetByEmpId);
         }
 
     }

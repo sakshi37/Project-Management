@@ -1,17 +1,21 @@
-CREATE OR ALTER PROCEDURE SP_TimeSheetGetAll
+
+CREATE  PROCEDURE SP_TimeSheetGetAll
 AS
 BEGIN
     SELECT 
-        Id,
-        StartDate,
-        EndDate,
-        Fk_EmployeeId as EmpId,
-        Sequence,
-        FK_JobId as JobId,
-        TimeSheetStatus,
-        CreatedBy,
-        CreatedDate,
-        UpdatedBy,
-        UpdatedDate
-    FROM Tbl_TimeSheetMaster
+        FK_JobId as JobId ,
+		Sequence ,
+		Part ,
+		Activity ,
+		Type ,
+		StartTime,
+		EndTime ,
+		Hrs ,
+		Min ,
+		Fk_EmployeeId as EmpId ,
+		TimeSheetStatus 
+    FROM dbo.Tbl_TimeSheetMaster
 END
+
+
+EXEC SP_TimeSheetGetAll
