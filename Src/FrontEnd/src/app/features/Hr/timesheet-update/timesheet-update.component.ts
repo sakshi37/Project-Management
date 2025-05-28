@@ -5,58 +5,67 @@ import {
 } from '../../../services/time-sheet.service';
 
 import Swal from 'sweetalert2';
+import { RoleService } from '../../../services/role.service';
 
 @Component({
   selector: 'app-timesheet-update',
-  imports: [],
   templateUrl: './timesheet-update.component.html',
   styleUrl: './timesheet-update.component.css',
 })
 export class TimesheetUpdateComponent implements OnInit {
   sessionStatus: PunchInStatus | null = null;
 
-  constructor(private timeSheetService: TimeSheetService) {}
+  constructor(
+    private timeSheetService: TimeSheetService,
+    private roleService: RoleService
+  ) {}
+
   ngOnInit() {
+    this.roleService.getEmpId();
+    console.log(this.roleService.getEmpId());
     this.getSession();
   }
-  punchIn() {
-    const empId = this.getEmpId();
-    if (empId) {
-      this.timeSheetService.punchIn(empId).subscribe((res) => {
-        console.log(res);
-        this.getSession();
-      });
-    }
-  }
-  punchOut() {
-    const empId = this.getEmpId();
-    if (empId) {
-      this.timeSheetService.punchOut(empId).subscribe((res) => {
-        console.log(res);
-        this.getSession();
-      });
-    }
-  }
-  getSession() {
-    const empId = this.getEmpId();
-    if (empId) {
-      this.timeSheetService.getSession(empId).subscribe((res) => {
-        console.log(res);
 
+  punchIn() {
+    const empId = this.roleService.getEmpId();
+    if (empId) {
+      this.timeSheetService.punchIn(Number(empId)).subscribe((res) => {
+        console.log(res);
+        this.getSession();
+      });
+    } else {
+      this.showError();
+    }
+  }
+
+  punchOut() {
+    const empId = this.roleService.getEmpId();
+    if (empId) {
+      this.timeSheetService.punchOut(Number(empId)).subscribe((res) => {
+        console.log(res);
+        this.getSession();
+      });
+    } else {
+      this.showError();
+    }
+  }
+
+  getSession() {
+    const empId = this.roleService.getEmpId();
+    if (empId) {
+      this.timeSheetService.getSession(Number(empId)).subscribe((res) => {
+        console.log(res);
         this.sessionStatus = res;
       });
+    } else {
+      this.showError();
     }
   }
-  private getEmpId() {
-    const empId = localStorage.getItem('empId');
 
-    if (empId === null || empId === '' || isNaN(Number(empId))) {
-      Swal.fire({
-        title: 'This should never happen',
-        text: 'Employee Id does not exist. Please logout and login again',
-      });
-      return;
-    }
-    return Number(empId);
+  private showError() {
+    Swal.fire({
+      title: 'This should never happen',
+      text: 'Employee Id does not exist. Please logout and login again',
+    });
   }
 }

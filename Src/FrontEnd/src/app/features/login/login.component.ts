@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
     private userService: UserService,
     private ngZone: NgZone,
     private injector: Injector
-  ) {}
+  ) { }
 
   passwordModel = {
     oldPassword: '',
@@ -72,79 +72,78 @@ export class LoginComponent implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  loginUser(loginForm: NgForm) {
-    this.login = loginForm.value;
-    this.formSubmitted = true;
-    if (loginForm.invalid) {
-      return;
-    }
-
-    this.login = loginForm.value;
-    this.isLoggingIn = true;
-
-    this.userService.login(this.login).subscribe({
-      next: (response: AuthResponseModel) => {
-        this.loginAttempts = 0;
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('loginStatus', String(response.loginStatus));
-        const decodedToken = jwtDecode(response.token);
-        this.UserName = decodedToken.sub;
-        this.UserEmail = decodedToken.iss;
-
-        if (!response.loginStatus) {
-          Swal.fire(
-            'Access Denied',
-            'Your login has been disabled. Please contact HR.',
-            'error'
-          );
-          this.isLoggingIn = false;
-          return;
-        }
-
-        if (response.firstLogin) {
-          const modalElement = document.getElementById('otpModal');
-          const otpModal = new bootstrap.Modal(modalElement);
-          this.startTimer();
-          otpModal.show();
-        } else {
-          this.router.navigate(['/dashboard']).then(() => {
-            const appRef = this.injector.get(AppComponent);
-            appRef.hideLayout = false;
-            appRef.isSidebarVisible = true;
-          });
-          sessionStorage.setItem('isAuthenticated', 'true');
-        }
-      },
-      error: (error) => {
-        this.loginAttempts++;
-
-        if (this.loginAttempts >= this.maxAttempts) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Account Blocked',
-            text: 'You have entered incorrect credentials 3 times. Your account has been blocked.',
-            confirmButtonColor: '#d33',
-          });
-        } else {
-          Swal.fire({
-            toast: true,
-            position: 'top',
-            icon: 'error',
-            title: 'Login Failed',
-            text: `Invalid credentials. Attempt ${this.loginAttempts} of ${this.maxAttempts}.`,
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-          });
-        }
-
-        console.error('Login failed!', error);
-        this.isLoggingIn = false;
-      },
-    });
+   
+loginUser(loginForm: NgForm) {
+  this.login = loginForm.value;
+  this.formSubmitted = true;
+  if (loginForm.invalid) {
+    return;
   }
+
+  this.login = loginForm.value;
+  this.isLoggingIn = true;
+
+  this.userService.login(this.login).subscribe({
+    next: (response: AuthResponseModel) => {
+      this.loginAttempts = 0; 
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('loginStatus', String(response.loginStatus));
+      const decodedToken = jwtDecode(response.token);
+      this.UserName = decodedToken.sub;
+      this.UserEmail = decodedToken.iss;
+
+      if (!response.loginStatus) {
+        Swal.fire('Access Denied', 'Your login has been disabled. Please contact HR.', 'error');
+        this.isLoggingIn = false;
+        return;
+      }
+
+      if (response.firstLogin) {
+        const modalElement = document.getElementById('otpModal');
+        const otpModal = new bootstrap.Modal(modalElement);
+        this.startTimer();
+        otpModal.show();
+
+      } else {
+        this.router.navigate(['/dashboard']).then(() => {
+          const appRef = this.injector.get(AppComponent);
+          appRef.hideLayout = false;
+          appRef.isSidebarVisible = true;
+        });
+        sessionStorage.setItem('isAuthenticated', 'true');
+      }
+    },
+    error: (error) => {
+      this.loginAttempts++; 
+
+      if (this.loginAttempts >= this.maxAttempts) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Account Blocked',
+          text: 'You have entered incorrect credentials 3 times. Your account has been blocked.',
+          confirmButtonColor: '#d33'
+        });
+      } else {
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          icon: 'error',
+          title: 'Login Failed',
+          text: `Invalid credentials. Attempt ${this.loginAttempts} of ${this.maxAttempts}.`,
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+      }
+
+      console.error('Login failed!', error);
+      this.isLoggingIn = false;
+    },
+  });
+}
+
 
   // updating password update at first login
   FirstLoginPasswordUpdate(code: string, Password: string) {
@@ -185,7 +184,12 @@ export class LoginComponent implements OnInit {
               new bootstrap.Modal(modalElement);
             otpModal.hide();
             sessionStorage.setItem('isAuthenticated', 'true');
-            this.router.navigate(['/changePassword']);
+            // this.router.navigate(['']);
+            this.router.navigate(['/changePassword']).then(() => {
+          const appRef = this.injector.get(AppComponent);
+          appRef.hideLayout = false;
+          appRef.isSidebarVisible = true;
+        });
           },
           error: (error) => {
             console.error('Otp Failed', error.error);
@@ -220,12 +224,12 @@ export class LoginComponent implements OnInit {
         this.btnDisabled = false;
         this.txtTimeleft = false;
         clearInterval(this.interval);
-        this.otpButtonMsg = 'Resend OTP';
+        this.otpButtonMsg = 'Resend OTP'
       }
     }, 1000);
   }
 
-  // otp termination modal
+  // otp termination modal 
   terminateOtp() {
     clearInterval(this.interval);
     this.txtTimeleft = false;
@@ -240,9 +244,10 @@ export class LoginComponent implements OnInit {
       text: 'OTP verification process has been terminated. Please login again.',
       showConfirmButton: false,
       timer: 4000,
-      timerProgressBar: true,
+      timerProgressBar: true
     });
   }
+
 
   moveToNext(event: any, index: number) {
     const input = event.target;
@@ -269,23 +274,23 @@ export class LoginComponent implements OnInit {
     this.userService.resendOtp(this.UserName).subscribe({
       next: (response: AuthResponseModel) => {
         this.isLoading = false;
-        // localStorage.setItem('otp', response.otp);
+        // localStorage.setItem('otp', response.otp); 
         // localStorage.setItem('email',response.token);
         Swal.fire({
           toast: true,
           position: 'top',
           title: 'Resending OTP',
           text: 'OTP Resent Successfully!',
-          icon: 'success',
+          icon: 'success'
         });
-        this.startTimer();
+        this.startTimer()
       },
       error: (error) => {
         this.isLoading = false;
 
         Swal.fire({
           title: 'Resend OTP failed!',
-          text: 'Failed to resend OTP. Please try again.',
+          text: 'Failed to resend OTP. Please try again.'
         });
       },
     });
@@ -313,7 +318,7 @@ export class LoginComponent implements OnInit {
               title: 'OTP sent to your registered email.',
               showConfirmButton: false,
               timer: 4000,
-              timerProgressBar: true,
+              timerProgressBar: true
             });
 
             setTimeout(() => {
