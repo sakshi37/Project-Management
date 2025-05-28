@@ -18,16 +18,15 @@
     <small class="text-white">{{ user.designationName }}</small>
   </div>
 
-   <!-- Notification -->
-<a
-  routerLink="/notification"
-  routerLinkActive="active-link"
-  class="sidebar-link mb-2 position-relative"
->
-  <i class="fas fa-bell me-2"></i> Notifications
-  <span *ngIf="hasUnreadNotifications" class="green-dot-sidebar"></span>
-</a>
-
+  <!-- Notification -->
+  <a
+    routerLink="/notification"
+    routerLinkActive="active-link"
+    class="sidebar-link mb-2 position-relative"
+  >
+    <i class="fas fa-bell me-2"></i> Notifications
+    <span *ngIf="hasUnreadNotifications" class="green-dot-sidebar"></span>
+  </a>
 
   <!-- Dashboard -->
   <a
@@ -101,31 +100,34 @@
         class="accordion-collapse collapse"
         data-bs-parent="#sidebarMenu"
       >
-        <div class="accordion-body ps-4" >
+        <div class="accordion-body ps-4">
           <a
             routerLink="/employee"
-            class="sidebar-link-text sidebar-link d-block mb-2" *ngIf="userRole === 'HR' || userRole === 'Admin'"
+            class="sidebar-link-text sidebar-link d-block mb-2"
+            *ngIf="userRole === 'HR' || userRole === 'Admin'"
           >
             <i class="fas fa-user-tie me-2"></i> Employee Master
           </a>
 
           <a
             routerLink="/holiday"
-            class="sidebar-link-text sidebar-link d-block mb-2" 
+            class="sidebar-link-text sidebar-link d-block mb-2"
           >
             <i class="fas fa-calendar-alt me-2"></i> Holiday Calendar
           </a>
 
           <a
             routerLink="/settings"
-            class="sidebar-link-text sidebar-link d-block mb-2" *ngIf="userRole === 'HR' || userRole === 'Admin'"
+            class="sidebar-link-text sidebar-link d-block mb-2"
+            *ngIf="userRole === 'HR' || userRole === 'Admin'"
           >
             <i class="fas fa-cog me-2"></i> Settings
           </a>
 
           <a
             routerLink="/team-composition"
-            class="sidebar-link-text sidebar-link d-block mb-2" *ngIf="userRole === 'HR' || userRole === 'Admin'"
+            class="sidebar-link-text sidebar-link d-block mb-2"
+            *ngIf="userRole === 'HR' || userRole === 'Admin'"
           >
             <i class="fas fa-users-cog me-2"></i> Team Composition
           </a>
@@ -138,7 +140,10 @@
     </div>
 
     <!-- HR -->
-    <div class="accordion-item bg-transparent border-0" *ngIf="userRole === 'HR' || userRole === 'Admin'">
+    <div
+      class="accordion-item bg-transparent border-0"
+      *ngIf="userRole === 'HR' || userRole === 'Admin'"
+    >
       <h2 class="accordion-header">
         <button
           class="accordion-button collapsed bg-transparent text-white d-flex justify-content-between align-items-center"
@@ -186,7 +191,10 @@
       </div>
     </div>
     <!-- Team Leader -->
-    <div class="accordion-item bg-transparent border-0" *ngIf="userRole === 'Team Lead'">
+    <div
+      class="accordion-item bg-transparent border-0"
+      *ngIf="userRole === 'Team Lead'"
+    >
       <h2 class="accordion-header">
         <button
           class="accordion-button collapsed bg-transparent text-white d-flex justify-content-between align-items-center"
@@ -214,27 +222,26 @@
           </a>
 
           <a
-            routerLink="/work-timesheet"
+            routerLink="/assigned-timesheet"
             class="sidebar-link-text sidebar-link d-block mb-2"
             ><i class="fas fa-clipboard me-2"></i>View Projects</a
           >
         </div>
       </div>
-    </div>    
-
-      
-    <!-- Admin -->
-   <div class="accordion-item bg-transparent border-0" *ngIf="userRole === 'Admin'">
-      <a
-    routerLink="/admin"
-    routerLinkActive="active-link"
-    class="sidebar-link mb-2"
-  >
-    <i class="fas fa-user-shield me-2 "></i> Admin
-  </a>
-
-      
     </div>
-    
+
+    <!-- Admin -->
+    <div
+      class="accordion-item bg-transparent border-0"
+      *ngIf="userRole === 'Admin'"
+    >
+      <a
+        routerLink="/admin"
+        routerLinkActive="active-link"
+        class="sidebar-link mb-2"
+      >
+        <i class="fas fa-user-shield me-2"></i> Admin
+      </a>
+    </div>
   </div>
 </div>

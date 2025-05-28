@@ -1,13 +1,13 @@
-﻿using Dapper;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using HR.Application.Contracts;
 using HR.Application.Contracts.Models;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
 using HR.Application.Exceptions;
-using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employees.Dtos;
-using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +15,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace HR.Identity.Services
 {
