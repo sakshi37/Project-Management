@@ -5,6 +5,7 @@ import {
 } from '../../../services/time-sheet.service';
 
 import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-timesheet-update',
@@ -47,16 +48,37 @@ export class TimesheetUpdateComponent implements OnInit {
       });
     }
   }
-  private getEmpId() {
-    const empId = localStorage.getItem('empId');
 
-    if (empId === null || empId === '' || isNaN(Number(empId))) {
+  private getEmpId(): number | undefined {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
       Swal.fire({
-        title: 'This should never happen',
-        text: 'Employee Id does not exist. Please logout and login again',
+        title: 'Missing Token',
+        text: 'Token not found. Please logout and login again.',
       });
       return;
     }
-    return Number(empId);
+
+    try {
+      const decodedToken: any = jwtDecode(token);
+      const empId = decodedToken.empId || decodedToken.sub;
+
+      if (!empId || isNaN(Number(empId))) {
+        Swal.fire({
+          title: 'Invalid Token',
+          text: 'Employee Id is missing or invalid in token. Please logout and login again.',
+        });
+        return;
+      }
+
+      return Number(empId);
+    } catch (error) {
+      Swal.fire({
+        title: 'Token Error',
+        text: 'Failed to decode token. Please logout and login again.',
+      });
+      return;
+    }
   }
 }

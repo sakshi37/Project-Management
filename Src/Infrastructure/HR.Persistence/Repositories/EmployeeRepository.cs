@@ -135,6 +135,7 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
     new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
 
+
 };
 
 
@@ -157,7 +158,8 @@ namespace HR.Persistence.Repositories
            
             @Fk_CountryId,
             @Fk_StateId,
-            @Fk_CityId",
+            @Fk_CityId,
+            ",
                 parameters.ToArray()
             );
 
