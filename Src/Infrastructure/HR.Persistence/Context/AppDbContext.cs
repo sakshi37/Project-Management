@@ -37,7 +37,20 @@ using HR.Domain;
 using HR.Domain.Entities;
 using HR.Identity.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Employees.Dtos;
+using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
+using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
+using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
+using Microsoft.SharePoint.WebControls;
+using HR.Application.Features.Admin.Queries.GetPendingRequest;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
+using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
+using HR.Application.Features.Notification.Queries;
+using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
+
 using Microsoft.EntityFrameworkCore;
+
 
 namespace HR.Persistence.Context;
 public class AppDbContext : IdentityDbContext<ApplicationUser>
@@ -190,6 +203,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<MissPunchInQueryVm>().HasNoKey();
         modelBuilder.Entity<PendingRequestVm>().HasNoKey();
         modelBuilder.Entity<GetNotificationByCodeVm>().HasNoKey();
+        modelBuilder.Entity<HalfDayQueryVm>().HasNoKey();
 
 
     }

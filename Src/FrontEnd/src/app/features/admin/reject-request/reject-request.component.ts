@@ -4,10 +4,11 @@ import { AdminService } from '../../../services/admin-service';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-reject-request',
-  imports: [FormsModule],
+  imports: [FormsModule,CommonModule],
   templateUrl: './reject-request.component.html',
   styleUrl: './reject-request.component.css'
 })
