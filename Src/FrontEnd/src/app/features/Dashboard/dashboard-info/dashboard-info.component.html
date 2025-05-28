@@ -1,4 +1,4 @@
-<div class="container py-5">
+<div class="container py-3">
   <div class="row">
     <div class="col-md-4 mb-4">
       <div class="card job-card p-3">
@@ -29,7 +29,7 @@
         <h5 class="font-weight-normal mb-2">{{ loginTime | date: 'EEE MMM d y HH:mm:ss' }}
         </h5>
       </div>
-      <div class="card job-card p-3" *ngIf="userRole === 'User' || userRole === 'HR'">
+      <div class="card job-card p-3" *ngIf="userRole === 'User' || userRole === 'HR' || userRole === 'Team Lead'">
         <div class="d-flex align-items-center mb-2">
           <div class="company-logo">
             <i class="fa-solid fa-calendar-days fa-lg"></i>
@@ -95,7 +95,7 @@
             </div>
           </div> -->
     <div class="col-md-4 mb-4">
-      <div class="card job-card p-3" *ngIf="userRole === 'User'">
+      <div class="card job-card p-3" *ngIf="userRole === 'User' || userRole === 'Team Lead'">
         <div class="d-flex align-items-center mb-2">
           <div class="company-logo">
             <i class="fa-solid fa-bullhorn fa-large"></i>

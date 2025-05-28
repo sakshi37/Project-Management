@@ -114,3 +114,20 @@ th {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
+  .entries-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    margin-left: 55px;
+    font-weight: bold;
+
+  }
+  .entries-dropdown select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+  }
+
