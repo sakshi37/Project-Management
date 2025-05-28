@@ -60,9 +60,10 @@ namespace HR.Persistence.Repositories
                     result.Add(new GetEmployeeDto
                     {
                         Id = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Email = reader.IsDBNull(2) ? null : reader.GetString(2),
-                        LoginStatus = reader.GetBoolean(3)
+                        Code = reader.GetString(1),
+                        Name = reader.GetString(2),
+                        Email = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        LoginStatus = reader.GetBoolean(4)
                     });
                 }
             }
