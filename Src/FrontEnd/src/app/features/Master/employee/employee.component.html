@@ -60,7 +60,7 @@
 
     </thead>
     <tbody>
-      <tr *ngFor="let emp of employees; let i = index">
+      <tr *ngFor="let emp of employees; let i = index " [class.highlight]="emp.code === highlightedCode">
   <td>
   <input type="checkbox" [(ngModel)]="emp.selected" />
 </td>

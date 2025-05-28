@@ -27,8 +27,7 @@ export class EmployeeComponent implements OnInit {
   totalCount = 0;
   fullEmployeeList: EmployeeFull[] = [];
 
-  
-
+highlightedCode: string | null = null;
   searchText: string = '';
 
   columns = [
@@ -50,19 +49,47 @@ export class EmployeeComponent implements OnInit {
     private Router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.loadEmployees();
+ngOnInit(): void {
+  let updatedCode = this.Router.getCurrentNavigation()?.extras?.state?.['updatedCode'];
+
+  if (!updatedCode) {
+    updatedCode = sessionStorage.getItem('updatedCode') || undefined;
+    if (updatedCode) {
+      sessionStorage.removeItem('updatedCode');
+    }
   }
 
-  loadEmployees() {
-    this.employeeService
-      .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
-      .subscribe((res) => {
-        this.fullEmployeeList = res.data;
-        this.employees = res.data;
-        this.totalCount = res.totalCount;
-      });
-  }
+  console.log('Updated Code from navigation or sessionStorage:', updatedCode);
+  this.loadEmployees(updatedCode);
+}
+
+
+loadEmployees(updatedCode?: string) {
+  this.employeeService
+    .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
+    .subscribe((res) => {
+      this.fullEmployeeList = res.data;
+      this.employees = res.data;
+      this.totalCount = res.totalCount;
+      console.log('Loaded employees:', this.employees.length);
+
+      if (updatedCode) {
+        const index = this.employees.findIndex(emp => emp.code === updatedCode);
+        console.log('Index of updated employee:', index);
+        if (index > -1) {
+          const updatedEmp = this.employees.splice(index, 1)[0];
+          this.employees.unshift(updatedEmp);
+          console.log('Moved updated employee to top:', updatedEmp);
+
+          setTimeout(() => {
+            this.loadEmployees();
+          }, 5000);
+        }
+      }
+    });
+}
+
+
 
   get totalPages(): number {
   return Math.ceil(this.totalCount / this.pageSize);
