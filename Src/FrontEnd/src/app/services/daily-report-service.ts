@@ -10,12 +10,17 @@ import { API_URL } from '../../constant';
 })
 export class DailyReportService {
  
-    private apiUrl = `${API_URL}`;
+    private apiUrl = `${API_URL}/Attendance`;
   
 
   constructor(private http: HttpClient) {}
 
   getMissPunchOut(startDate: string): Observable<MissPushOutModel[]> {
     return this.http.get<MissPushOutModel[]>(`${this.apiUrl}/miss-punch-out?startDate=${startDate}`);
+
+
+  }
+  getHalfDay(startDate :string):Observable<[]>{
+    return this.http.get<[]>(`${this.apiUrl}/halfdate?startDate=${startDate}`)
   }
 }

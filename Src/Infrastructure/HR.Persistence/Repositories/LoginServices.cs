@@ -84,11 +84,38 @@ namespace HR.Identity.Services
             }
             else
             {
-                //var result = hasher.VerifyHashedPassword(user.Code, user.Password, loginRequest.Password);
-                //if (result != PasswordVerificationResult.Success)
-                //    throw new UserNotFoundException("Invalid credentials, please try again!!");
-                if(user.Password != loginRequest.Password)
-                    throw new UserNotFoundException("Invalid credentials, please try again!!");
+                var failedAttempts = $"FailedLogin:{user.Code}";
+
+                var hashedPassword = hasher.VerifyHashedPassword(user.Code, user.Password, loginRequest.Password);
+                //if (user.Password != loginRequest.Password)
+                if (hashedPassword != PasswordVerificationResult.Success)
+                {
+
+                    _cache.TryGetValue(failedAttempts, out int Attempts);
+                    Attempts++;
+
+
+                    _cache.Set(failedAttempts, Attempts, TimeSpan.FromMinutes(10));
+
+
+                    if (Attempts >= 3)
+                    {
+                        var blockSql = "EXEC SP_UpdateLoginStatus @EmpCode = {0}, @LoginStatus = {1}";
+                        await _context.Database.ExecuteSqlRawAsync(blockSql, user.Code, false);
+
+                        throw new Exception("User is blocked due to 3 failed login attempts.");
+                    }
+
+                    throw new UserNotFoundException($"Invalid credentials. Attempt {Attempts} of 3.");
+                }
+                else
+                {
+
+                    _cache.Remove(failedAttempts);
+                }
+
+
+
 
                 var token = GenerateToken(user);
 
@@ -203,7 +230,7 @@ namespace HR.Identity.Services
             RemoveOtp(user.Code);
 
             var hasher = new PasswordHasher<string>();
-            //var hashedPassword = hasher.HashPassword(user.Code, changePasswordRequest.NewPassword);
+            var hashedPassword = hasher.HashPassword(user.Code, changePasswordRequest.NewPassword);
 
             var result = await _context.Database.ExecuteSqlRawAsync(
                 "exec SP_updateForgotPassword @Password = {0}, @EmpCode = {1}",
@@ -226,29 +253,27 @@ namespace HR.Identity.Services
                 throw new UserNotFoundException("User not found");
 
             var hasher = new PasswordHasher<string>();
-
+            var hashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
             // Check default password case
             if (user.Password == null && request.OldPassword == _configuration["DefaultCredentials:DefaultPassword"])
             {
-                //var hashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
                 var result = await _context.Database.ExecuteSqlRawAsync(
                     "exec SP_UpdatePassword @Password={0}, @EmpCode = {1}",
-                    request.NewPassword, request.UserName);
+                    hashedPassword, request.UserName);
 
                 return result > 0;
             }
-
-            if (request.NewPassword == request.OldPassword)
+            var convertPassword = hasher.VerifyHashedPassword(user.Code, user.Password, request.NewPassword);
+            if (convertPassword == PasswordVerificationResult.Success)
                 throw new Exception("New password can't be the same as the old one");
 
             if (request.NewPassword != request.ConfirmPassword)
                 throw new PasswordNotMatchException("New and confirm passwords do not match");
 
-            //var newHashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
 
             var resultUpdate = await _context.Database.ExecuteSqlRawAsync(
                 "exec SP_UpdateOldPassword @Password={0}, @EmpCode = {1}, @OldPassword = {2}",
-                request.NewPassword, request.UserName, request.OldPassword);
+                hashedPassword, request.UserName, request.OldPassword);
 
             return resultUpdate > 0;
         }
