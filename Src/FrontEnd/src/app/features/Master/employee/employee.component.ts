@@ -12,7 +12,7 @@ import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
-import { EmployeeFull } from '../../../Models/employee-model';
+import { Employee, EmployeeFull } from '../../../Models/employee-model';
 
 @Component({
   selector: 'app-employee',
@@ -65,29 +65,30 @@ ngOnInit(): void {
 
 
 loadEmployees(updatedCode?: string) {
+  const pageSizeToUse = updatedCode ? 1000 : this.pageSize;
+
   this.employeeService
-    .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
+    .getPagedEmployees(this.pageNumber, pageSizeToUse, this.searchText)
     .subscribe((res) => {
       this.fullEmployeeList = res.data;
-      this.employees = res.data;
+      this.employees = res.data.slice(0, this.pageSize); // display only first page
       this.totalCount = res.totalCount;
+
       console.log('Loaded employees:', this.employees.length);
 
       if (updatedCode) {
-        const index = this.employees.findIndex(emp => emp.code === updatedCode);
-        console.log('Index of updated employee:', index);
-        if (index > -1) {
-          const updatedEmp = this.employees.splice(index, 1)[0];
-          this.employees.unshift(updatedEmp);
-          console.log('Moved updated employee to top:', updatedEmp);
+const index = res.data.findIndex((emp: Employee) => emp.code === updatedCode);
+        console.log('Index of updated employee in full list:', index);
 
-          setTimeout(() => {
-            this.loadEmployees();
-          }, 5000);
+        if (index > -1) {
+          const updatedEmp = res.data.splice(index, 1)[0];
+          this.employees.unshift(updatedEmp); // add to top of display
+          console.log('Moved updated employee to top:', updatedEmp);
         }
       }
     });
 }
+
 
 
 
