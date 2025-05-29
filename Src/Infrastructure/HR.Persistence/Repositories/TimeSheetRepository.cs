@@ -1,4 +1,6 @@
-﻿using HR.Application.Contracts.Persistence;
+﻿using Dapper;
+using System.Data;
+using HR.Application.Contracts.Persistence;
 using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
@@ -6,6 +8,7 @@ using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet;
 
 namespace HR.Persistence.Repositories
 {
@@ -97,9 +100,30 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
-        //public async Task<CreateTimeSheetDto> UpdateTimeSheet()
+        public async Task<bool> UpdateTimeSheetMaster(UpdateTimeSheetDto timeSheetDto)
+        {
+            using var connection = _DbContext.Database.GetDbConnection();
+            await connection.OpenAsync();
 
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", timeSheetDto.Id);
+            parameters.Add("@Sequence", timeSheetDto.Sequence);
+            parameters.Add("@Part", timeSheetDto.Part);
+            parameters.Add("@Activity", timeSheetDto.Activity);
+            parameters.Add("@Type", timeSheetDto.Type);
+            //parameters.Add("@StartTime", timeSheetDto.StartTime);
+            //parameters.Add("@EndTime", timeSheetDto.EndTime);
+            //parameters.Add("@Hrs", timeSheetDto.Hrs);
+            //parameters.Add("@Min", timeSheetDto.Min);
+            parameters.Add("@Fk_EmpId", timeSheetDto.Fk_EmpId);
+            //parameters.Add("@TimeSheetStatus", timeSheetDto.TimeSheetStatus);
 
+            var affectedRows = await connection.ExecuteAsync(
+                "SP_TimeSheetMasterUpdate",parameters,commandType: CommandType.StoredProcedure
+            );
+
+            return affectedRows > 0;
+        }
 
 
     }
