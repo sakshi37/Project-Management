@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
   Output,
-  EventEmitter
+  EventEmitter,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
@@ -28,11 +28,11 @@ export class LefSideNavComponent {
   user: UserProfile = {
     image: '',
     name: '',
-    designationName: ''
+    designationName: '',
   };
   imageSrc: string | null = null;
   hasUnreadNotifications = false;
-unreadCount: number = 0;
+  unreadCount: number = 0;
   sidebarVisible: boolean = true;
   code: string = '';
 
@@ -74,18 +74,18 @@ unreadCount: number = 0;
           this.imageSrc = `data:image/png;base64,${profile.image}`;
         }
       },
-      error: err => console.error('Error loading profile', err)
+      error: (err) => console.error('Error loading profile', err),
     });
 
     // Get notifications
-     // Listen to unread count updates
-  this.notificationService.unreadCount$.subscribe(count => {
-    this.unreadCount = count;
-    this.hasUnreadNotifications = count > 0;
-  });
+    // Listen to unread count updates
+    this.notificationService.unreadCount$.subscribe((count) => {
+      this.unreadCount = count;
+      this.hasUnreadNotifications = count > 0;
+    });
 
-  // Initial load
-  this.notificationService.updateUnreadCount(code);
+    // Initial load
+    this.notificationService.updateUnreadCount(code);
   }
 
   logout() {
@@ -126,19 +126,19 @@ unreadCount: number = 0;
     }
   }
   toggleMessage(item: any): void {
-  item.showMessage = !item.showMessage;
+    item.showMessage = !item.showMessage;
 
-  if (item.showMessage && !item.isRead) {
-    item.isRead = true;
+    if (item.showMessage && !item.isRead) {
+      item.isRead = true;
 
-    this.notificationService.markAsRead(item.notificationId).subscribe({
-      next: () => {
-        console.log(`Notification ${item.notificationId} marked as read.`);
+      this.notificationService.markAsRead(item.notificationId).subscribe({
+        next: () => {
+          console.log(`Notification ${item.notificationId} marked as read.`);
 
-        this.notificationService.updateUnreadCount(this.code);
-      },
-      error: (err) => console.error('Error marking as read:', err)
-    });
+          this.notificationService.updateUnreadCount(this.code);
+        },
+        error: (err) => console.error('Error marking as read:', err),
+      });
+    }
   }
-}
 }

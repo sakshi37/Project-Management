@@ -19,7 +19,7 @@ import { GetAttendanceReportService } from '../../../services/get-attendance-rep
 import { RoleService } from '../../../services/role.service';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { EmployeeModel } from '../../../Models/employee-model';
- 
+
 @Component({
   selector: 'app-work-timesheet',
   imports: [CommonModule, ReactiveFormsModule, NgSelectModule],
@@ -30,7 +30,7 @@ export class AssignedTaskComponent implements OnInit {
   currentEmpId: number | undefined;
   sessionStatus: any;
   showAddProjectForm: boolean | undefined;
- 
+
   toggleAddTaskForm(projectId: number): void {
     if (this.addTaskProjectId === projectId) {
       this.addTaskProjectId = null;
@@ -39,7 +39,7 @@ export class AssignedTaskComponent implements OnInit {
       this.openProjectId = null; // Close the task list when opening the add task form
     }
   }
- 
+
   taskForm!: FormGroup;
   projectForm!: FormGroup;
   employees: EmployeeByIdName[] = [];
@@ -48,26 +48,26 @@ export class AssignedTaskComponent implements OnInit {
   addTaskProjectId: number | null = null;
   projects: ProjectWithStack[] = [];
   stacks: Stack[] = [];
- 
+
   constructor(
     private employeeService: EmployeeService,
     private timesheetService: TimeSheetService,
     private fb: FormBuilder,
     private roleService: RoleService
   ) {}
- 
+
   ngOnInit(): void {
     console.log(this.roleService.getUserRole(), 'Role');
- 
+
     this.initForm();
     this.initProjectForm();
     console.log(this.roleService.getUserRole(), 'Role');
- 
+
     const token = this.roleService.getToken();
     const decodeToken = jwtDecode<JwtPayload>(token != null ? token : '');
     const empId: string | undefined = (decodeToken as any).id;
     console.log(decodeToken);
- 
+
     if (empId) {
       this.employeeService
         .getAllEmployeeByIdName(Number(empId))
@@ -75,14 +75,14 @@ export class AssignedTaskComponent implements OnInit {
           console.log('res', res);
           this.employees = res;
         });
- 
+
       this.getAllProject(Number(empId));
     }
- 
+
     this.timeSheet();
     this.getAllStack();
   }
- 
+
   initForm(): void {
     this.taskForm = this.fb.group({
       jobId: [],
@@ -90,21 +90,21 @@ export class AssignedTaskComponent implements OnInit {
       part: ['', Validators.required],
       activity: ['', Validators.required],
       type: ['', Validators.required],
- 
+
       empId: [],
       timeSheetStatus: [],
     });
   }
- 
+
   onSubmit(projectId: number) {
     console.log(this.taskForm.value);
     if (this.taskForm.invalid) return;
- 
+
     this.timesheetService
       .InsertTimesheet({
         timesheet: { ...this.taskForm.value, projectId },
       })
- 
+
       .subscribe((res) => {
         console.log(res);
         this.timeSheet();
@@ -118,21 +118,21 @@ export class AssignedTaskComponent implements OnInit {
         });
       });
   }
- 
+
   initProjectForm(): void {
     this.projectForm = this.fb.group({
       Name: [''],
       StackIds: [[]],
     });
   }
- 
+
   getAllProject(empId: number) {
     this.timesheetService.GetAllProject(empId).subscribe((res) => {
       console.log(res);
       this.projects = res;
     });
   }
- 
+
   getAllStack() {
     this.timesheetService.getAllStack().subscribe((res) => {
       console.log(res);
@@ -147,7 +147,7 @@ export class AssignedTaskComponent implements OnInit {
       this.taskList = res;
     });
   }
- 
+
   toggleTaskList(empId: number) {
     if (empId === this.openProjectId) {
       this.openProjectId = null;
@@ -157,5 +157,3 @@ export class AssignedTaskComponent implements OnInit {
     }
   }
 }
- 
- 

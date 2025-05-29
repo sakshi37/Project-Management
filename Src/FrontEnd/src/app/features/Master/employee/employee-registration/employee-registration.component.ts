@@ -249,10 +249,14 @@ export class EmployeeRegistrationComponent implements OnInit {
     };
 
     this.employeeService.createEmployee(emp).subscribe({
-  
       next: () => {
         this.resetForm();
         Swal.fire({
+          toast: true,
+          position: 'top',
+          timer: 1000,
+          timerProgressBar: true,
+          showConfirmButton: false,
           icon: 'success',
           title: 'Success!',
           text: 'Employee created successfully!',
@@ -266,6 +270,11 @@ export class EmployeeRegistrationComponent implements OnInit {
           errorMsg = err.error;
         }
         Swal.fire({
+          toast: true,
+          position: 'top',
+          timer: 1000,
+          timerProgressBar: true,
+          showConfirmButton: false,
           icon: 'error',
           title: 'Error!',
           text: errorMsg,

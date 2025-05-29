@@ -20,28 +20,27 @@
 
   <!-- Notification -->
   <a
-  routerLink="/notification"
-  routerLinkActive="active-link"
-  class="sidebar-link mb-2 position-relative d-flex align-items-center"
->
-  <span class="position-relative">
-    <i
-      class="fas fa-bell me-2"
-      [ngClass]="{ 'text-danger': unreadCount > 0 }"
-    ></i>
+    routerLink="/notification"
+    routerLinkActive="active-link"
+    class="sidebar-link mb-2 position-relative d-flex align-items-center"
+  >
+    <span class="position-relative">
+      <i
+        class="fas fa-bell me-2"
+        [ngClass]="{ 'text-danger': unreadCount > 0 }"
+      ></i>
 
-    <span
-      *ngIf="unreadCount > 0"
-      class="badge bg-danger position-absolute top-0 start-100 translate-middle p-1 rounded-circle"
-      style="font-size: 0.6rem;"
-    >
-      {{ unreadCount }}
+      <span
+        *ngIf="unreadCount > 0"
+        class="badge bg-danger position-absolute top-0 start-100 translate-middle p-1 rounded-circle"
+        style="font-size: 0.6rem"
+      >
+        {{ unreadCount }}
+      </span>
     </span>
-  </span>
 
-  Notifications
-</a>
-
+    Notifications
+  </a>
 
   <!-- Dashboard -->
   <a
