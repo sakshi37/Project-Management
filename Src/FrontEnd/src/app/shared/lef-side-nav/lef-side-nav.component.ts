@@ -32,8 +32,10 @@ export class LefSideNavComponent {
   };
   imageSrc: string | null = null;
   hasUnreadNotifications = false;
-
+unreadCount: number = 0;
   sidebarVisible: boolean = true;
+  code: string = '';
+
   @Output() sidebarToggled = new EventEmitter<boolean>();
 
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
@@ -76,12 +78,14 @@ export class LefSideNavComponent {
     });
 
     // Get notifications
-    this.notificationService.getNotifications(code).subscribe({
-      next: (data: NotificationModel[]) => {
-        this.hasUnreadNotifications = data.some(n => !n.isRead);
-      },
-      error: err => console.error('Error loading notifications', err)
-    });
+     // Listen to unread count updates
+  this.notificationService.unreadCount$.subscribe(count => {
+    this.unreadCount = count;
+    this.hasUnreadNotifications = count > 0;
+  });
+
+  // Initial load
+  this.notificationService.updateUnreadCount(code);
   }
 
   logout() {
@@ -121,4 +125,21 @@ export class LefSideNavComponent {
         : this.renderer.addClass(this.hrMenu.nativeElement, 'show');
     }
   }
+  toggleMessage(item: any): void {
+  item.showMessage = !item.showMessage;
+
+  if (item.showMessage && !item.isRead) {
+    item.isRead = true;
+
+    this.notificationService.markAsRead(item.notificationId).subscribe({
+      next: () => {
+        console.log(`Notification ${item.notificationId} marked as read.`);
+
+        // 👇 ADD THIS LINE to refresh the unread count
+        this.notificationService.updateUnreadCount(this.code);
+      },
+      error: (err) => console.error('Error marking as read:', err)
+    });
+  }
+}
 }
