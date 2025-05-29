@@ -159,7 +159,7 @@ namespace HR.Persistence.Repositories
            
             @Fk_CountryId,
             @Fk_StateId,
-            @Fk_CityId,
+            @Fk_CityId
             ",
                 parameters.ToArray()
             );
