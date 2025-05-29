@@ -22,5 +22,4 @@ export interface CreateModel {
   divisionId: number;
   countryId: number;
   stateId: number;
-  password: string | null;
 }
