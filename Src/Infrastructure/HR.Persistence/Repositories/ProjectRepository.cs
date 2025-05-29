@@ -15,23 +15,22 @@ namespace HR.Persistence.Repositories
 
             _context = appDbContext;
         }
-        public async Task<List<GetAllProjectDto>> GetAllProjects()
+        public async Task<List<GetAllProjectDto>> GetAllProjects(int teamLeaderId)
         {
-            return await _context.GetAllProjects.FromSqlRaw("EXEC SP_GetAllProjects").ToListAsync();
+            return await _context.GetAllProjects.FromSqlRaw("EXEC SP_GetAllProjects @TeamLeaderId = {0}", teamLeaderId).ToListAsync();
         }
 
         public async Task<CreateProjectDto> InsertProject(CreateProjectDto insertDto)
 
         {
             string commaSeparatedStackIds = string.Join(",", insertDto.StackIds);
-            string sql = "EXEC SP_ProjectInsert @Name={0}, @Fk_StackIds={1}";
-            await _context.Database.ExecuteSqlRawAsync(sql, insertDto.Name, commaSeparatedStackIds);
+            string sql = "EXEC SP_ProjectInsert @Name={0}, @Fk_StackIds={1}, @Fk_TeamLeaderId = {2}";
+            await _context.Database.ExecuteSqlRawAsync(sql, insertDto.Name, commaSeparatedStackIds, insertDto.Fk_TeamLeaderId);
 
             return new CreateProjectDto
             {
                 Name = insertDto.Name,
                 StackIds = insertDto.StackIds,
-
             };
         }
         public async Task<List<GetAllStackDto>> GetAllStack()

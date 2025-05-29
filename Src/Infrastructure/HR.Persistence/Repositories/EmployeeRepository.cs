@@ -136,6 +136,7 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
     new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
 
+
 };
 
 
@@ -158,7 +159,8 @@ namespace HR.Persistence.Repositories
            
             @Fk_CountryId,
             @Fk_StateId,
-            @Fk_CityId",
+            @Fk_CityId,
+            ",
                 parameters.ToArray()
             );
 
@@ -350,9 +352,9 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
-        public async Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName()
+        public async Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName(int teamLeadId)
         {
-            return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployee").ToListAsync();
+            return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployees @TeamLeadId = {0}", teamLeadId).ToListAsync();
         }
 
 

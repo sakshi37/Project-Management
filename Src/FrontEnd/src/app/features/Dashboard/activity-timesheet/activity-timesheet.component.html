@@ -1,24 +1,13 @@
 <div class="container">
   <div class="section-header"><h5>ACTIVITY TIME SHEET</h5></div>
 
-  <!-- <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <button class="btn btn-secondary btn-sm btn-custom">🖨️ PRINT</button>
-      <button class="btn btn-secondary btn-sm btn-custom">
-        ✉️ REQUEST FOR BACKDATE
-      </button>
-      <button class="btn btn-secondary btn-sm btn-custom">
-        👁️ BACKDATED VIEW
-      </button>
-    </div>
-  </div> -->
-
   <div class="mb-3">
     <button
       class="btn custom-add-btn"
       [disabled]="sessionStatus != null"
       (click)="punchIn()"
-    ><i class="fa-solid fa-arrow-right-to-bracket"></i>
+    >
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
       Punch-In
     </button>
     <button
@@ -26,12 +15,18 @@
       [disabled]="sessionStatus == null"
       (click)="punchOut()"
     >
-    
       ✖ Punch-Out
     </button>
   </div>
 
   <div class="table-wrapper">
+    <button
+      class="btn custom-add-btn"
+      *ngIf="sessionStatus !== null"
+      (click)="toggleCompleted()"
+    >
+      {{ showCompleted ? "Hide Completed" : "Show Completed" }}
+    </button>
     <table class="table table-bordered table-sm">
       <thead class="table-light">
         <tr>
@@ -46,34 +41,103 @@
           <th>Hrs</th>
           <th>Min</th>
           <th>Remarks</th>
-          <th>Split</th>
           <th>Edit</th>
         </tr>
       </thead>
-      <tbody>
+
+      <tbody *ngIf="sessionStatus === null">
+        <tr>
+          <td colspan="13">Punch in first</td>
+        </tr>
+      </tbody>
+
+      <tbody *ngIf="sessionStatus !== null">
         <tr *ngIf="timeSheets.length === 0">
           <td colspan="13">No Data Found !!!</td>
         </tr>
 
-        <tr *ngFor="let timesheet of timeSheets; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ timesheet.projectId }}</td>
-          <td>{{ timesheet.sequence }}</td>
-          <td>{{ timesheet.part }}</td>
-          <td>{{ timesheet.activity }}</td>
-          <td>{{ timesheet.type }}</td>
-          <td>{{ timesheet.startTime | date : "short" }}</td>
-          <td>{{ timesheet.endTime | date : "short" }}</td>
-          <td>{{ timesheet.hrs }}</td>
-          <td>{{ timesheet.min }}</td>
-          <td>--</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Split</button>
-          </td>
-          <td>
-            <button class="btn btn-info btn-sm">Edit</button>
-          </td>
-        </tr>
+        <ng-container *ngFor="let timesheet of timeSheets; let i = index">
+          <tr
+            *ngIf="
+              showCompleted ? timesheet.endTime : timesheet.endTime == null
+            "
+          >
+            <td>{{ i + 1 }}</td>
+            <td>{{ timesheet.projectId }}</td>
+            <td>{{ timesheet.sequence }}</td>
+            <td>{{ timesheet.part }}</td>
+            <td>{{ timesheet.activity }}</td>
+            <td>{{ timesheet.type }}</td>
+            <td>{{ timesheet.startTime | date : "short" }}</td>
+            <td>{{ timesheet.endTime | date : "short" }}</td>
+            <td>{{ timesheet.hrs }}</td>
+            <td>{{ timesheet.min }}</td>
+            <td>--</td>
+            <td>
+              <button
+                class="btn btn-info btn-sm"
+                (click)="toggleEditForm(timesheet.id)"
+              >
+                Edit
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="editFormData.id === timesheet.id">
+            <td colspan="13">
+              <form>
+                <div class="row">
+                  <div class="col-md-4">
+                    <label>Start Time:</label>
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      [(ngModel)]="editFormData.startTime"
+                      name="editStartTime"
+                      (change)="onEditTimeChange()"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label>End Time:</label>
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      [(ngModel)]="editFormData.endTime"
+                      name="editEndTime"
+                      (change)="onEditTimeChange()"
+                    />
+                  </div>
+                  <div class="col-md-4 d-flex align-items-end gap-2">
+                    <div class="me-auto">
+                      <strong
+                        *ngIf="
+                          editFormData.Hrs !== null &&
+                          editFormData.Mins !== null
+                        "
+                      >
+                        {{ editFormData.Hrs }}h {{ editFormData.Mins }}m
+                      </strong>
+                    </div>
+                    <button
+                      type="submit"
+                      class="btn btn-success"
+                      (click)="submitEditForm()"
+                    >
+                      Submit
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      (click)="toggleEditForm(i)"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </td>
+          </tr>
+        </ng-container>
       </tbody>
     </table>
   </div>

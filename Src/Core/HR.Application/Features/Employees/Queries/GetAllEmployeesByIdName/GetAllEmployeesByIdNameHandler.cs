@@ -18,7 +18,7 @@ namespace HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName
 
         public async Task<List<GetAllEmployeeByIdNameDto>> Handle(GetAllEmployeesByIdNameQuery request, CancellationToken cancellationToken)
         {
-            var employee = await _employeeMasterRepository.GetAllEmployeeByIdName();
+            var employee = await _employeeMasterRepository.GetAllEmployeeByIdName(request.teamLeadId);
             var getAllEmployeeWithIdName = _mapper.Map<List<GetAllEmployeeByIdNameDto>>(employee);
             return getAllEmployeeWithIdName;
         }

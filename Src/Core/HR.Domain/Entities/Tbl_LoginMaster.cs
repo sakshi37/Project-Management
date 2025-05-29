@@ -1,8 +1,6 @@
 ﻿
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.Contracts;
 
 namespace HR.Domain.Entities
 {
@@ -14,14 +12,14 @@ namespace HR.Domain.Entities
         [Required]
         public string UserName { get; set; }
         [Required]
-        public string Password { get; set; }
-        public string Email {  get; set; }
+        public string? Password { get; set; }
+        public string Email { get; set; }
         public bool FirstLogin { get; set; }
-       public string RoleName { get; set; }
+        public string RoleName { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
-        public DateTime UpdatedDate { get; set; }        
+        public DateTime UpdatedDate { get; set; }
         public bool LoginStatus { get; set; }
         public DateTime UserCheckInTime { get; set; }
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HR.Domain.Entities
+﻿namespace HR.Domain.Entities
 {
     public class Tbl_Login
     {

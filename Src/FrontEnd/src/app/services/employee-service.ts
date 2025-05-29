@@ -50,9 +50,9 @@ export class EmployeeService {
   getAllLocation() {
     return this.http.get<Location[]>(this.url + '/Location');
   }
-  getAllEmployeeByIdName() {
+  getAllEmployeeByIdName(id: number) {
     return this.http.get<EmployeeByIdName[]>(
-      `${this.url}/Employee/GetAllEmployeeByIdName`
+      `${this.url}/Employee/GetAllEmployeeByIdName/${id}`
     );
   }
   inactivateEmployees(codes: string[]): Observable<{ message: string }> {

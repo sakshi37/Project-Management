@@ -6,7 +6,7 @@ namespace HR.Application.Contracts.Models.Persistence
 {
     public interface IProjectRepository
     {
-        public Task<List<GetAllProjectDto>> GetAllProjects();
+        public Task<List<GetAllProjectDto>> GetAllProjects(int id);
 
         public Task<CreateProjectDto> InsertProject(CreateProjectDto project);
 

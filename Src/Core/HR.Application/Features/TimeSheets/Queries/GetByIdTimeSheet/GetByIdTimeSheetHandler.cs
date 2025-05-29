@@ -14,7 +14,7 @@ namespace HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet
 
         public async Task<List<GetByIdTimeSheetDto>> Handle(GetByIdTimeSheetQuery request, CancellationToken cancellationToken)
         {
-            return await _timeSheetRepository.TimeSheetGetById(request.empId);
+            return await _timeSheetRepository.TimeSheetGetByCode(request.code);
         }
 
 
