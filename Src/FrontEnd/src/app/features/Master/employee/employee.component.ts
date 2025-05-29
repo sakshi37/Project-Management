@@ -317,32 +317,70 @@ selectedEmployees(): any[] {
 }
 
 // Delete (inactivate) selected employees
+
 deleteSelectedEmployees() {
   const selectedCodes = this.selectedEmployees().map(emp => emp.code);
 
-if (selectedCodes.length === 0) {
-  alert('Please select at least one employee.');
-  return;
+  if (selectedCodes.length === 0) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      text: 'Please select at least one employee.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false
+    });
+    return;
+  }
+
+  if (confirm('Are you sure you want to inactivate selected employees?')) {
+    const originalOrder = [...this.employees]; // Save original order
+
+    this.employeeService.inactivateEmployees(selectedCodes).subscribe({
+      next: (response) => {
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          text: response.message || 'Employees inactivated successfully.',
+          position: 'top',
+          timer: 3000,
+          showConfirmButton: false
+        });
+
+        // Update loginStatus and deselect
+        this.employees.forEach(emp => {
+          if (selectedCodes.includes(emp.code)) {
+            emp.loginStatus = false;
+          }
+          emp.selected = false;
+        });
+
+        // Move inactivated employees to top
+        this.employees.sort((a, b) => {
+          const aSelected = selectedCodes.includes(a.code) ? -1 : 1;
+          const bSelected = selectedCodes.includes(b.code) ? -1 : 1;
+          return aSelected - bSelected;
+        });
+
+        // Restore original order after 10 seconds
+        setTimeout(() => {
+          this.employees = [...originalOrder];
+        }, 10000);
+      },
+      error: (error) => {
+        console.error('Error:', error);
+        Swal.fire({
+          toast: true,
+          icon: 'error',
+          text: 'Something went wrong while inactivating employees.',
+          position: 'top',
+          timer: 3000,
+          showConfirmButton: false
+        });
+      }
+    });
+  }
 }
 
-if (confirm('Are you sure you want to inactivate selected employees?')) {
-  this.employeeService.inactivateEmployees(selectedCodes).subscribe({
-    next: (response) => {
-      alert(response.message);
-      this.employees.forEach(emp => {
-        if (selectedCodes.includes(emp.code)) {
-          emp.loginStatus = false;
-        }
-        emp.selected = false;
-      });
-    },
-    error: (error) => {
-      console.error('Error:', error);
-      alert('Something went wrong while inactivating employees.');
-    }
-  });
-}
-
-}
 
 }
