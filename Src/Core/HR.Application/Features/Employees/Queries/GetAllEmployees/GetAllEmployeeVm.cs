@@ -10,6 +10,13 @@
         public string? BranchName { get; set; }
         public string? DivisionName { get; set; }
         public string? UserGroupName { get; set; }
+        public string? LocationName {  get; set; }
+        public string? GenderType { get; set; }
+        public string? CountryName {  get; set; }
+        public string? CityName { get; set; }   
+        public string? ShiftType {  get; set; }
+        public string? EmployeeType {  get; set; }
+        public string? StateName {  get; set; }
         public Boolean? LoginStatus { get; set; }
         public string? Action { get; set; }
         public string? Address { get; set; }

@@ -144,10 +144,10 @@ namespace HR.API.Controllers
 
 
         }
-        [HttpGet("GetAllEmployeeByIdName")]
-        public async Task<IActionResult> GetALLEmployeeByIdName()
+        [HttpGet("GetAllEmployeeByIdName/{id}")]
+        public async Task<IActionResult> GetALLEmployeeByIdName(int id)
         {
-            var result = await _mediator.Send(new GetAllEmployeesByIdNameQuery());
+            var result = await _mediator.Send(new GetAllEmployeesByIdNameQuery(id));
             return Ok(result);
         }
 
