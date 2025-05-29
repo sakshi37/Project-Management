@@ -34,7 +34,7 @@ namespace HR.Identity.Services
             _jwtSettings = jwtOptions.Value;
             _configuration = configuration;
         }
-
+        
         public async Task<LoginResponse> Login(Tbl_LoginMasterDto loginRequest)
         {
             var hasher = new PasswordHasher<string>();
