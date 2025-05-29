@@ -3,16 +3,23 @@
 
   <div *ngIf="notification.length === 0">No notifications found.</div>
 
-  <div *ngFor="let item of notification" class="card">
+  <div *ngFor="let item of notification" class="card mb-3">
     <div class="card-body position-relative">
-      <!-- Close button in top-right -->
-      <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" (click)="readAndDeleteNotification(item.notificationId)"></button>
 
-      <h6 class="card-title">
-        {{ item.subject }}
+      <!-- Close button -->
+      <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+              aria-label="Close"
+              (click)="readAndDeleteNotification(item.notificationId)">
+      </button>
+
+      <!-- Subject clickable -->
+      <h6 class="card-title text-primary" style="cursor: pointer;" (click)="toggleMessage(item)">
+        {{ item.subject }} 
+        <span *ngIf="!item.isRead" class="badge bg-warning ms-2">New</span>
       </h6>
-      <p class="card-text">{{ item.message }}</p>
+
+      <!-- Message shown conditionally -->
+      <p class="card-text" *ngIf="item.showMessage">{{ item.message }}</p>
     </div>
   </div>
-
 </div>
