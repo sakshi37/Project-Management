@@ -50,14 +50,21 @@
             >
               {{ task.endTime ? "✔ Completed" : "❌ Incomplete" }}
             </span>
+
+            <span *ngIf="task.endTime" class="text-muted small">
+              (Ended on: {{ task.endTime | date : "medium" }})
+            </span>
           </div>
 
           <div class="row text-sm text-muted">
+            <!-- <div class="col-md-6 mb-1">
+              <strong>time:</strong> {{ task.startTime }}
+            </div> -->
             <div class="col-md-6 mb-1">
               <strong>Activity:</strong> {{ task.activity }}
             </div>
             <div class="col-md-6 mb-1">
-              <strong>Sequence:</strong> {{ task.sequence }}
+              <strong>Task:</strong> {{ task.sequence }}
             </div>
             <div class="col-md-6 mb-1">
               <strong>Type:</strong> {{ task.type }}

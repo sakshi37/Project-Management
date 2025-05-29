@@ -87,7 +87,7 @@ export class EmployeeRegistrationComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^[0-9]{10}$'),
+          Validators.pattern(/^[6-9]\d{9}$/),
           Validators.minLength(10),
           Validators.maxLength(10),
         ],
