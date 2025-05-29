@@ -134,14 +134,14 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
      new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
     new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
-    new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
+    new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value)
 
 
 };
 
 
             await _appDbContext.Database.ExecuteSqlRawAsync(
-                @"EXEC dbo.SP_EmployeeInsert 
+                @"EXEC dbo.SP_Employee_Insert 
             @Name,
             @Code, 
             
@@ -159,7 +159,7 @@ namespace HR.Persistence.Repositories
            
             @Fk_CountryId,
             @Fk_StateId,
-            @Fk_CityId,
+            @Fk_CityId
             ",
                 parameters.ToArray()
             );
@@ -183,7 +183,7 @@ namespace HR.Persistence.Repositories
 
                 CountryId = employee.CountryId,
                 StateId = employee.StateId,
-                CityId = employee.CityId,
+                CityId = employee.CityId
             };
         }
 

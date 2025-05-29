@@ -1,5 +1,5 @@
 import { NgSelectModule } from '@ng-select/ng-select';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -86,10 +86,10 @@ export class AssignedTaskComponent implements OnInit {
   initForm(): void {
     this.taskForm = this.fb.group({
       jobId: [],
-      sequence: [],
-      part: [],
-      activity: [],
-      type: [],
+      sequence: ['', Validators.required],
+      part: ['', Validators.required],
+      activity: ['', Validators.required],
+      type: ['', Validators.required],
 
       empId: [],
       timeSheetStatus: [],
