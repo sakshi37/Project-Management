@@ -1,7 +1,7 @@
 import { NgSelectModule } from '@ng-select/ng-select';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import {
   EmployeeByIdName,
   EmployeeService,
@@ -12,6 +12,7 @@ import {
   Stack,
   Timesheets,
   TimeSheetService,
+  UpdateTaskTimeSheetDto,
 } from '../../../services/time-sheet.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { GetAttendanceReportDtoService } from '../../Hr/employee-attendance-report/Model/get-attendance-report-dto.service';
@@ -19,14 +20,18 @@ import { GetAttendanceReportService } from '../../../services/get-attendance-rep
 import { RoleService } from '../../../services/role.service';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { EmployeeModel } from '../../../Models/employee-model';
+// import*  bootstrap from 'bootstrap';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-work-timesheet',
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NgSelectModule],
   templateUrl: './assigned-task.component.html',
   styleUrl: './assigned-task.component.css',
 })
 export class AssignedTaskComponent implements OnInit {
+  
+  @ViewChild('updateModal') updateModalRef!: ElementRef;
   currentEmpId: number | undefined;
   sessionStatus: any;
   showAddProjectForm: boolean | undefined;
@@ -48,13 +53,26 @@ export class AssignedTaskComponent implements OnInit {
   addTaskProjectId: number | null = null;
   projects: ProjectWithStack[] = [];
   stacks: Stack[] = [];
+    private modal!: bootstrap.Modal;
+  
 
   constructor(
+
+    private timeSheetService: TimeSheetService,
     private employeeService: EmployeeService,
     private timesheetService: TimeSheetService,
     private fb: FormBuilder,
     private roleService: RoleService
-  ) {}
+  ) {
+    this.updateForm = this.fb.group({
+      id: [0],
+      sequence: ['', Validators.required],
+      part: ['', Validators.required],
+      activity: ['', Validators.required],
+      type: ['', Validators.required],
+      fk_EmpId: [0]
+    });
+  }
 
   ngOnInit(): void {
     console.log(this.roleService.getUserRole(), 'Role');
@@ -81,6 +99,10 @@ export class AssignedTaskComponent implements OnInit {
 
     this.timeSheet();
     this.getAllStack();
+    const modalElement = document.getElementById('updateModal');
+        if (modalElement) {
+          this.modal = new bootstrap.Modal(modalElement);
+        }
   }
 
   initForm(): void {
@@ -97,6 +119,8 @@ export class AssignedTaskComponent implements OnInit {
   }
 
   onSubmit(projectId: number) {
+
+
     console.log(this.taskForm.value);
     if (this.taskForm.invalid) return;
 
@@ -156,4 +180,67 @@ export class AssignedTaskComponent implements OnInit {
       this.addTaskProjectId = null;
     }
   }
+
+  updateForm: FormGroup;
+
+
+
+    openUpdateModal(task: Timesheets) {
+    // Patch the task properties into the update form dynamically
+    this.updateForm.patchValue({
+      id: task.id,
+      sequence: task.sequence,
+      part: task.part,
+      activity: task.activity,
+      type: task.type,
+      fk_EmpId: task.empId
+    });
+
+    this.modal.show();
+  }
+
+
+  // model: UpdateTaskTimeSheetDto = {
+  //   id: 2,
+  //   sequence: '001',
+  //   part: 'designing the',
+  //   activity: 'Frontend',
+  //   type: 'with work',
+  //   fk_EmpId: 1
+  // };
+
+
+
+  submitUpdate() {
+    const updatePayload: UpdateTaskTimeSheetDto = this.updateForm.value;
+    console.log(this.updateForm.value);
+    this.timeSheetService.updateTaskTimeSheet(updatePayload).subscribe({
+      next: () => {
+         this.timeSheet();
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          title: 'TimeSheet updated successfully!',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+        this.modal.hide();
+      },
+      error: err => {
+        Swal.fire({
+          toast: true,
+          icon: 'error',
+          title: 'Update failed!',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+        console.error('Update error:', err);
+      }
+    });
+  }
+
 }
