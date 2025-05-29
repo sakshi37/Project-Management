@@ -22,10 +22,24 @@
   <a
     routerLink="/notification"
     routerLinkActive="active-link"
-    class="sidebar-link mb-2 position-relative"
+    class="sidebar-link mb-2 position-relative d-flex align-items-center"
   >
-    <i class="fas fa-bell me-2"></i> Notifications
-    <span *ngIf="hasUnreadNotifications" class="green-dot-sidebar"></span>
+    <span class="position-relative">
+      <i
+        class="fas fa-bell me-2"
+        [ngClass]="{ 'text-danger': unreadCount > 0 }"
+      ></i>
+
+      <span
+        *ngIf="unreadCount > 0"
+        class="badge bg-danger position-absolute top-0 start-100 translate-middle p-1 rounded-circle"
+        style="font-size: 0.6rem"
+      >
+        {{ unreadCount }}
+      </span>
+    </span>
+
+    Notifications
   </a>
 
   <!-- Dashboard -->

@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
   Output,
-  EventEmitter
+  EventEmitter,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
@@ -28,7 +28,7 @@ export class LefSideNavComponent {
   user: UserProfile = {
     image: '',
     name: '',
-    designationName: ''
+    designationName: '',
   };
   imageSrc: string | null = null;
   hasUnreadNotifications = false;
@@ -39,6 +39,7 @@ export class LefSideNavComponent {
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
+  unreadCount: number = 0;
 
   constructor(
     private renderer: Renderer2,
@@ -72,16 +73,17 @@ export class LefSideNavComponent {
           this.imageSrc = `data:image/png;base64,${profile.image}`;
         }
       },
-      error: err => console.error('Error loading profile', err)
+      error: (err) => console.error('Error loading profile', err),
     });
 
     // Get notifications
-    this.notificationService.getNotifications(code).subscribe({
-      next: (data: NotificationModel[]) => {
-        this.hasUnreadNotifications = data.some(n => !n.isRead);
-      },
-      error: err => console.error('Error loading notifications', err)
+    this.notificationService.unreadCount$.subscribe((count) => {
+      this.unreadCount = count;
+      this.hasUnreadNotifications = count > 0;
     });
+
+    // Initial load
+    this.notificationService.updateUnreadCount(code);
   }
 
   logout() {
