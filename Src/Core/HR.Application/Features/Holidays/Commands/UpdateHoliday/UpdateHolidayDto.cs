@@ -15,6 +15,7 @@ namespace HR.Application.Features.Holidays.Commands.UpdateHoliday
         public bool HolidayListType { get; set; }
         public bool HolidayStatus { get; set; }
         public IFormFile? Image { get; set; }
+        public string? ExistingImagePath { get; set; }
 
         public int UpdatedBy { get; set; }
     }

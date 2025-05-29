@@ -74,6 +74,11 @@ export class WorkTimesheetComponent {
 
         this.projectForm.reset();
         Swal.fire({
+          toast: true,
+          position: 'top',
+          timer: 1000,
+          timerProgressBar: true,
+          showConfirmButton: false,
           icon: 'success',
           title: 'success',
           text: 'Project Added successfully!',

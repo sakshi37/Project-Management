@@ -3,6 +3,7 @@ using HR.Application.Features.TimeSheet.Commands.UpdateTimeSheet;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Commands;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchOut;
+using HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetSessionByEmp;
@@ -74,6 +75,24 @@ namespace HR.API.Controllers
             return Ok(timesheetByEmpId);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTimeSheetMaster(int id, [FromBody] UpdateTimeSheetTaskDto timeSheetDto)
+        {
+            if (id != timeSheetDto.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            var result = await _mediator.Send(new UpdateTimeSheetCommandTask(timeSheetDto));
+            return Ok(result);
+
+            //if (result)
+            //    return Ok(new { message = "TimeSheet updated successfully" });
+            //else
+            //    return NotFound(new { message = "TimeSheet not found or update failed" });
+        }
+
+
         [HttpPatch()]
         public async Task<IActionResult> UpdateTimeSheet([FromBody] UpdateTimeSheetCommand timeSheet)
         {
@@ -81,4 +100,5 @@ namespace HR.API.Controllers
             return Ok();
         }
     }
+
 }
