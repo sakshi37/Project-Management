@@ -183,7 +183,7 @@ namespace HR.Persistence.Repositories
 
                 CountryId = employee.CountryId,
                 StateId = employee.StateId,
-                CityId = employee.CityId,
+                CityId = employee.CityId
             };
         }
 
