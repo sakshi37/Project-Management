@@ -92,6 +92,7 @@ export class ActivityTimesheetComponent implements OnInit {
     if (empId) {
       this.timeSheetService.getSession(empId).subscribe((res) => {
         console.log(res);
+        this.sessionStatus = res;
       });
     } else {
       this.showError();
