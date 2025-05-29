@@ -4,10 +4,16 @@ export interface Employee {
     photo: string | null;
     name: string;
     code: string;
+    genderType:string;
+    countryName:string;
+    cityName:string;
+    StateName:string;
     designationName: string;
     branchName: string;
     divisionName: string;
     userGroupName: string;
+    locationName:string;
+    employeeType:string;
     loginStatus: 'Active' | 'Inactive';
     action: string;
   }
