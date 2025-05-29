@@ -7,12 +7,7 @@ import { ActivityTimesheetComponent } from '../activity-timesheet/activity-times
 
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    LefSideNavComponent,
-    HeaderComponent,
-    DashboardInfoComponent,
-    ActivityTimesheetComponent,
-  ],
+  imports: [DashboardInfoComponent, ActivityTimesheetComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })

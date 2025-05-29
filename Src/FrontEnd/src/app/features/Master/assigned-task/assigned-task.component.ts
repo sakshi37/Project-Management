@@ -27,16 +27,17 @@ import { EmployeeModel } from '../../../Models/employee-model';
   styleUrl: './assigned-task.component.css',
 })
 export class AssignedTaskComponent implements OnInit {
-  toggleAddProjectForm() {
-    throw new Error('Method not implemented.');
-  }
   currentEmpId: number | undefined;
   sessionStatus: any;
   showAddProjectForm: boolean | undefined;
 
   toggleAddTaskForm(projectId: number): void {
-    this.addTaskProjectId =
-      this.addTaskProjectId === projectId ? null : projectId;
+    if (this.addTaskProjectId === projectId) {
+      this.addTaskProjectId = null;
+    } else {
+      this.addTaskProjectId = projectId;
+      this.openProjectId = null; // Close the task list when opening the add task form
+    }
   }
 
   taskForm!: FormGroup;
@@ -47,17 +48,14 @@ export class AssignedTaskComponent implements OnInit {
   addTaskProjectId: number | null = null;
   projects: ProjectWithStack[] = [];
   stacks: Stack[] = [];
-  selectedTaskList: Timesheets[] = [];
-  employeess: GetAttendanceReportDtoService[] = [];
-  attendanceReports: GetAttendanceReportDtoService[] = [];
+
   constructor(
     private employeeService: EmployeeService,
     private timesheetService: TimeSheetService,
     private fb: FormBuilder,
-    private getAttendanceReportService: GetAttendanceReportService,
     private roleService: RoleService
   ) {}
-  empId: number = 0;
+
   ngOnInit(): void {
     console.log(this.roleService.getUserRole(), 'Role');
 
@@ -65,50 +63,23 @@ export class AssignedTaskComponent implements OnInit {
     this.initProjectForm();
     console.log(this.roleService.getUserRole(), 'Role');
 
-    // this.employeeService.getAllEmployeeByIdName().subscribe((res) => {
-    //   console.log(res);
-    //   this.employees = res;
-    // });
     const token = this.roleService.getToken();
     const decodeToken = jwtDecode<JwtPayload>(token != null ? token : '');
-    if (this.roleService.getUserRole() == 'Team Lead') {
-      this.getAttendanceReportService
-        .getTLEmployeeID(decodeToken.sub)
-        .subscribe({
-          next: (res: EmployeeModel) => {
-            this.empId = res.id;
-            console.log('TL chi ID', this.empId);
+    const empId: string | undefined = (decodeToken as any).id;
+    console.log(decodeToken);
 
-            this.getAttendanceReportService
-              .getEARByTLName(this.empId)
-              .subscribe({
-                next: (response: GetAttendanceReportDtoService[]) => {
-                  this.employeess = response;
-                  console.log(
-                    this.empId,
-                    'Tyachya under employees',
-                    this.employees
-                  );
-                },
-                error: (error) => {
-                  console.error('Error', error.error);
-                  console.error('Error Message', error.error.message);
-                },
-              });
-          },
-          error: (error) => {
-            console.error('Error', error.error);
-            console.error('Error Message', error.error.message);
-          },
+    if (empId) {
+      this.employeeService
+        .getAllEmployeeByIdName(Number(empId))
+        .subscribe((res) => {
+          console.log('res', res);
+          this.employees = res;
         });
+
+      this.getAllProject(Number(empId));
     }
-    this.employeeService.getAllEmployeeByIdName().subscribe((res) => {
-      console.log(res);
-      this.employees = res;
-    });
 
     this.timeSheet();
-    this.getAllProject();
     this.getAllStack();
   }
 
@@ -124,6 +95,7 @@ export class AssignedTaskComponent implements OnInit {
       timeSheetStatus: [],
     });
   }
+
   onSubmit(projectId: number) {
     console.log(this.taskForm.value);
     if (this.taskForm.invalid) return;
@@ -154,26 +126,8 @@ export class AssignedTaskComponent implements OnInit {
     });
   }
 
-  onProjectSubmit() {
-    console.log(this.projectForm.value);
-    if (this.projectForm.invalid) return;
-
-    this.timesheetService
-      .InserProject(this.projectForm.value)
-      .subscribe((res) => {
-        console.log('Project Inserted:', res);
-        this.getAllProject();
-        this.projectForm.reset();
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Project Added successfully!',
-          confirmButtonColor: '#3085d6',
-        });
-      });
-  }
-  getAllProject() {
-    this.timesheetService.GetAllProject().subscribe((res) => {
+  getAllProject(empId: number) {
+    this.timesheetService.GetAllProject(empId).subscribe((res) => {
       console.log(res);
       this.projects = res;
     });
@@ -199,22 +153,7 @@ export class AssignedTaskComponent implements OnInit {
       this.openProjectId = null;
     } else {
       this.openProjectId = empId;
+      this.addTaskProjectId = null;
     }
-  }
-
-  checkTask(clickedTask: Timesheets) {
-    const isChecked = this.selectedTaskList.find(
-      (task) => task.projectId === clickedTask.projectId
-    );
-
-    if (isChecked) {
-      this.selectedTaskList = this.selectedTaskList.filter(
-        (task) => task.projectId !== clickedTask.projectId
-      );
-    } else {
-      this.selectedTaskList.push(clickedTask);
-    }
-
-    console.log(this.selectedTaskList);
   }
 }

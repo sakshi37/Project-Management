@@ -5,8 +5,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CommonModule } from '@angular/common';
-import $ from 'jquery';
 import { Router } from '@angular/router';
+import { GetAttendanceReportDtoService } from '../../Hr/employee-attendance-report/Model/get-attendance-report-dto.service';
+import { GetAttendanceReportService } from '../../../services/get-attendance-report.service';
+import { RoleService } from '../../../services/role.service';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { EmployeeModel } from '../../../Models/employee-model';
 
 @Component({
   selector: 'app-assigned-task',
@@ -18,9 +22,15 @@ export class WorkTimesheetComponent {
   projectForm!: FormGroup;
   stacks: Stack[] = [];
 
+  employees: GetAttendanceReportDtoService[] = [];
+  attendanceReports: GetAttendanceReportDtoService[] = [];
+  empId: number = 0;
+
   constructor(
     private employeeService: EmployeeService,
     private timesheetService: TimeSheetService,
+    private getAttendanceReportService: GetAttendanceReportService,
+    private roleService: RoleService,
     private fb: FormBuilder,
     private router: Router
   ) {}
@@ -28,6 +38,14 @@ export class WorkTimesheetComponent {
   ngOnInit(): void {
     this.initProjectForm();
     this.getAllStack();
+
+    const token = this.roleService.getToken();
+    const decodeToken = jwtDecode<JwtPayload>(token != null ? token : '');
+    const empId: string | undefined = (decodeToken as any).id;
+    console.log('decodeToken', decodeToken);
+
+    if (!empId) return;
+    if (this.roleService.getUserRole() !== 'Team Lead') return;
   }
 
   initProjectForm(): void {
@@ -40,8 +58,17 @@ export class WorkTimesheetComponent {
   onProjectSubmit() {
     if (this.projectForm.invalid) return;
 
+    const token = this.roleService.getToken();
+    const decodeToken = jwtDecode<JwtPayload>(token != null ? token : '');
+    const empId: string | undefined = (decodeToken as any).id;
+
+    if (!empId) return;
+
     this.timesheetService
-      .InserProject(this.projectForm.value)
+      .InserProject({
+        ...this.projectForm.value,
+        fk_TeamLeaderId: Number(empId),
+      })
       .subscribe((res) => {
         console.log('Project Inserted:', res);
 

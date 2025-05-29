@@ -18,12 +18,14 @@ namespace HR.Application.Features.ProjectMaster.Query
 
         public async Task<List<ProjectOutputDto>> Handle(GetAllProjectQuery request, CancellationToken cancellationToken)
         {
-            var response = await _projectRepository.GetAllProjects();
+            var response = await _projectRepository.GetAllProjects(request.id);
             var projectDtos = _mapper.Map<List<GetAllProjectDto>>(response);
-            var result = projectDtos.GroupBy(x => new { x.Id, x.Name }).Select(g => new ProjectOutputDto
+            var result = projectDtos.GroupBy(x => new { x.Id, x.Name, x.TeamLeaderId, x.TeamLeaderName }).Select(g => new ProjectOutputDto
             {
                 Id = g.Key.Id,
                 Name = g.Key.Name,
+                TeamLeaderId = g.Key.TeamLeaderId,
+                TeamLeaderName = g.Key.TeamLeaderName,
                 Stack = g.Select(s => new StackModel
                 {
                     Id = s.StackId,

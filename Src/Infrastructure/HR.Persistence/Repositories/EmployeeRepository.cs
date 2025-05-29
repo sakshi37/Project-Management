@@ -352,9 +352,9 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
-        public async Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName()
+        public async Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName(int teamLeadId)
         {
-            return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployee").ToListAsync();
+            return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployees @TeamLeadId = {0}", teamLeadId).ToListAsync();
         }
 
 
