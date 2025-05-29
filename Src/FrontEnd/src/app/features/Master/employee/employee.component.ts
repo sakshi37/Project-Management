@@ -12,7 +12,7 @@ import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
-import { EmployeeFull } from '../../../Models/employee-model';
+import { Employee, EmployeeFull } from '../../../Models/employee-model';
 
 @Component({
   selector: 'app-employee',
@@ -51,18 +51,48 @@ export class EmployeeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadEmployees();
+  let updatedCode = this.Router.getCurrentNavigation()?.extras?.state?.['updatedCode'];
+
+  if (!updatedCode) {
+    updatedCode = sessionStorage.getItem('updatedCode') || undefined;
+    if (updatedCode) {
+      sessionStorage.removeItem('updatedCode');
+    }
   }
 
-  loadEmployees() {
-    this.employeeService
-      .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
-      .subscribe((res) => {
-        this.fullEmployeeList = res.data;
-        this.employees = res.data;
-        this.totalCount = res.totalCount;
-      });
-  }
+  console.log('Updated Code from navigation or sessionStorage:', updatedCode);
+  this.loadEmployees(updatedCode);
+}
+
+
+
+loadEmployees(updatedCode?: string) {
+  const pageSizeToUse = updatedCode ? 1000 : this.pageSize;
+
+  this.employeeService
+    .getPagedEmployees(this.pageNumber, pageSizeToUse, this.searchText)
+    .subscribe((res) => {
+      this.fullEmployeeList = res.data;
+      this.employees = res.data.slice(0, this.pageSize); // display only first page
+      this.totalCount = res.totalCount;
+
+      console.log('Loaded employees:', this.employees.length);
+
+      if (updatedCode) {
+const index = res.data.findIndex((emp: Employee) => emp.code === updatedCode);
+        console.log('Index of updated employee in full list:', index);
+
+        if (index > -1) {
+          const updatedEmp = res.data.splice(index, 1)[0];
+          this.employees.unshift(updatedEmp); // add to top of display
+          console.log('Moved updated employee to top:', updatedEmp);
+        }
+      }
+    });
+}
+
+
+
 
   get totalPages(): number {
   return Math.ceil(this.totalCount / this.pageSize);

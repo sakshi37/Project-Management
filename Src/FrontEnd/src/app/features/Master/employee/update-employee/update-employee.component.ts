@@ -78,7 +78,7 @@ export class UpdateEmployeeComponent implements OnInit {
     private cityService: CityService,
     private countryService: CountryService,
     private stateService: StateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.employeeForm = this.fb.group(
@@ -385,7 +385,7 @@ export class UpdateEmployeeComponent implements OnInit {
       },
     });
   }
-  filterLocations() {}
+  filterLocations() { }
   imagePreview: string | ArrayBuffer | null = null;
   signaturePreview: string | ArrayBuffer | null = null;
 
@@ -471,9 +471,14 @@ export class UpdateEmployeeComponent implements OnInit {
             timer: 2000,
             showConfirmButton: false,
           }).then(() => {
-            this.router.navigate(['/employee']);
+            // Save updatedCode to sessionStorage as fallback
+            sessionStorage.setItem('updatedCode', this.selectedEmployeeCode);
+
+            this.router.navigate(['/employee'], {
+              state: { updatedCode: this.selectedEmployeeCode },
+            });
           });
-        },
+        }, 
         error: (err) => {
           console.error('Update failed:', err);
           Swal.fire({
@@ -486,6 +491,7 @@ export class UpdateEmployeeComponent implements OnInit {
           });
         },
       });
+
     }
   }
 

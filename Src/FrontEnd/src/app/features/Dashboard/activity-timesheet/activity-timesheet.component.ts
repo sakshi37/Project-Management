@@ -64,12 +64,14 @@ export class ActivityTimesheetComponent implements OnInit {
   }
 
   punchIn() {
-    const empId = this.getEmpId();
+    const empId = this.roleService.getEmpId();
     if (empId) {
-      this.timeSheetService.punchIn(empId).subscribe((res) => {
+      this.timeSheetService.punchIn(Number(empId)).subscribe((res) => {
         console.log(res);
         this.getSession();
       });
+    } else {
+      this.showError();
     }
   }
 
@@ -80,6 +82,8 @@ export class ActivityTimesheetComponent implements OnInit {
         console.log(res);
         this.getSession();
       });
+    } else {
+      this.showError();
     }
   }
 
@@ -88,9 +92,9 @@ export class ActivityTimesheetComponent implements OnInit {
     if (empId) {
       this.timeSheetService.getSession(empId).subscribe((res) => {
         console.log(res);
-
-        this.sessionStatus = res;
       });
+    } else {
+      this.showError();
     }
   }
 
@@ -98,7 +102,6 @@ export class ActivityTimesheetComponent implements OnInit {
     this.timeSheetService.getByCodeTimeSheet(empCode).subscribe((data) => {
       console.log('Received timesheet data:', data);
       this.timeSheets = data;
-
       console.log('After TimeSheets Data:', this.timeSheets);
     });
   }
@@ -131,6 +134,12 @@ export class ActivityTimesheetComponent implements OnInit {
       return null;
     }
     return Number(empId);
+  }
+  private showError() {
+    Swal.fire({
+      title: 'This should never happen',
+      text: 'Employee Id does not exist. Please logout and login again',
+    });
   }
 
   toggleCompleted() {

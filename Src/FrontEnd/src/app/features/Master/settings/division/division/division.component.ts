@@ -65,10 +65,10 @@ export class DivisionComponent implements OnInit, AfterViewInit {
   }
   initForm(): void {
     this.divisionForm = this.fb.group({
-      divisionName: ['', Validators.required],
+      divisionName: ['', [Validators.required,Validators.pattern(/^.{0,26}$/)]],
       projectManagerName: ['', Validators.required],
-      prefixName: ['', Validators.required],
-      manHours: ['', Validators.required],
+      prefixName: ['', [Validators.required,Validators.pattern(/^.{0,20}$/)]],
+      manHours: ['', [Validators.required,Validators.pattern(/^(0?[0-9]|1[0-9]|2[0-3])$/)]],
       holidayListType: ['', Validators.required],
       divisionStatus: ['', Validators.required],
       branchId:['',Validators.required]
@@ -141,11 +141,19 @@ export class DivisionComponent implements OnInit, AfterViewInit {
     this.isEditMode = true;
     this.modal.show();
   }
+  private cleanUpModal(): void {
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = 'auto'; // ✅ restore scrolling
+    document.body.style.removeProperty('padding-right');
 
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach((backdrop) => backdrop.remove());
+  }
   onSubmit(): void {
     console.log(this.divisionForm.value);
     
     if (this.divisionForm.invalid) {
+      this.divisionForm.markAllAsTouched();
       console.log("hello world")
       return;
     }
@@ -170,12 +178,19 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       this.divisionService.updateDivisions(updateDto).subscribe({
         next: () => {
           this.getDivisions();
+          this.modal.hide();
+          this.cleanUpModal();
           this.resetForm();
           Swal.fire({
+            toast: true,
+            position: 'top',
+            timerProgressBar: true,
             icon: 'success',
-            title: 'Updated',
-            text: 'Division updated successfully!',
-            confirmButtonColor: '#3085d6'
+            title: 'Division updated successfully',
+            timer: 1000,
+            showConfirmButton: false,
+          }).then(() => {
+            this.cleanUpModal();
           });
           console.log(updateDto);
           
@@ -191,12 +206,19 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       this.divisionService.createDivisions(createDto).subscribe({
         next: (res: DivisionDto) => {
           this.getDivisions();
+          this.modal.hide();
+          this.cleanUpModal();
           this.resetForm();
           Swal.fire({
+            toast: true,
+            position: 'top',
+            timerProgressBar: true,
             icon: 'success',
-            title: 'Created',
-            text: 'Division created successfully!',
-            confirmButtonColor: '#3085d6'
+            title: 'Division created successfully',
+            timer: 1000,
+            showConfirmButton: false,
+          }).then(() => {
+            this.cleanUpModal();
           });
         },
         error: (err) => this.errorHandler.handleError(err)
