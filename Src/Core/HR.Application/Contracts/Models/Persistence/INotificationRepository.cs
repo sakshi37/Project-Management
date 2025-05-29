@@ -11,5 +11,6 @@ namespace HR.Application.Contracts.Models.Persistence
     {
         Task<List<GetNotificationByCodeVm>> GetNotificationDetailsAsync(string code);
         Task<int> ReadAndDeleteNotificationAsync(int notificationId);
+        Task<int> ReadNotificationAsync (int notificationId);
     }
 }
