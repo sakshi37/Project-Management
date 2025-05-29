@@ -66,7 +66,27 @@ namespace HR.Persistence.Repositories
             }
         }
 
+        public async Task<int> ReadNotificationAsync(int notificationId)
+        {
+            try
+            {
 
+                var result = await _appDbContext
+                    .Database
+                    .ExecuteSqlRawAsync("Exec dbo.SP_ReadNotification @NotificationId={0}", notificationId);
+                return result;
+            }
+            catch (SqlException ex)
+            {
+
+                throw new ApplicationException($"{ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Handle any other .NET exception
+                throw new ApplicationException("An unexpected error occurred while deleting the notification.", ex);
+            }
+        }
     }
-    
+
 }

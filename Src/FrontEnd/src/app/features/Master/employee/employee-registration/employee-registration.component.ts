@@ -87,7 +87,7 @@ export class EmployeeRegistrationComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^[0-9]{10}$'),
+          Validators.pattern(/^[6-9]\d{9}$/),
           Validators.minLength(10),
           Validators.maxLength(10),
         ],
@@ -249,10 +249,14 @@ export class EmployeeRegistrationComponent implements OnInit {
     };
 
     this.employeeService.createEmployee(emp).subscribe({
-  
       next: () => {
         this.resetForm();
         Swal.fire({
+          toast: true,
+          position: 'top',
+          timer: 1000,
+          timerProgressBar: true,
+          showConfirmButton: false,
           icon: 'success',
           title: 'Success!',
           text: 'Employee created successfully!',
@@ -266,6 +270,11 @@ export class EmployeeRegistrationComponent implements OnInit {
           errorMsg = err.error;
         }
         Swal.fire({
+          toast: true,
+          position: 'top',
+          timer: 1000,
+          timerProgressBar: true,
+          showConfirmButton: false,
           icon: 'error',
           title: 'Error!',
           text: errorMsg,

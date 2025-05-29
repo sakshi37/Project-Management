@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HR.Application.Features.Notification.Commands.ReadAndDeleteNotification;
+using HR.Application.Features.Notification.Commands.ReadNotification;
 using HR.Application.Features.Notification.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,20 @@ namespace HR.API.Controllers
             if (result > 0)
             {
                 return Ok(new { message = "Notification deleted successfully" });
+            }
+            else
+            {
+                return NotFound(new { message = "Notification not found or already deleted" });
+            }
+
+        }
+        [HttpPut("make-read")]
+        public async Task<IActionResult> ReadNotification(int notificationId)
+        {
+            var result = await _mediator.Send(new ReadNotificationCommand(notificationId));
+            if (result > 0)
+            {
+                return Ok(new { message = "Notification read successfully" });
             }
             else
             {

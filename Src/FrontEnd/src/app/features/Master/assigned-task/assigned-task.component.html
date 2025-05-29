@@ -43,9 +43,16 @@
               }">
               {{ task.endTime ? "✔ Completed" : "❌ Incomplete" }}
             </span>
+
+            <span *ngIf="task.endTime" class="text-muted small">
+              (Ended on: {{ task.endTime | date : "medium" }})
+            </span>
           </div>
 
           <div class="row text-sm text-muted">
+            <!-- <div class="col-md-6 mb-1">
+              <strong>time:</strong> {{ task.startTime }}
+            </div> -->
             <div class="col-md-6 mb-1">
 
 
@@ -53,7 +60,7 @@
               <strong>Activity:</strong> {{ task.activity }}
             </div>
             <div class="col-md-6 mb-1">
-              <strong>Sequence:</strong> {{ task.sequence }}
+              <strong>Task:</strong> {{ task.sequence }}
             </div>
             <div class="col-md-6 mb-1">
               <strong>Type:</strong> {{ task.type }}
@@ -76,19 +83,82 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label for="sequence" class="form-label">Task</label>
-            <input id="sequence" type="text" class="form-control" formControlName="sequence" />
+            <input
+              id="sequence"
+              type="text"
+              class="form-control"
+              formControlName="sequence"
+              [class.is-invalid]="
+                taskForm.get('sequence')?.invalid &&
+                (taskForm.get('sequence')?.touched ||
+                  taskForm.get('sequence')?.dirty)
+              "
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="taskForm.get('sequence')?.errors?.['required'] && (taskForm.get('sequence')?.touched || taskForm.get('sequence')?.dirty)"
+            >
+              Task is required.
+            </div>
           </div>
           <div class="col-md-6">
             <label for="activity" class="form-label">Activity</label>
-            <input id="activity" type="text" class="form-control" formControlName="activity" />
+            <input
+              id="activity"
+              type="text"
+              class="form-control"
+              formControlName="activity"
+              [class.is-invalid]="
+                taskForm.get('activity')?.invalid &&
+                (taskForm.get('activity')?.touched ||
+                  taskForm.get('activity')?.dirty)
+              "
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="taskForm.get('activity')?.errors?.['required'] && (taskForm.get('activity')?.touched || taskForm.get('activity')?.dirty)"
+            >
+              Activity is required.
+            </div>
           </div>
+
           <div class="col-md-6">
             <label for="part" class="form-label">Part</label>
-            <input id="part" type="text" class="form-control" formControlName="part" />
+            <input
+              id="part"
+              type="text"
+              class="form-control"
+              formControlName="part"
+              [class.is-invalid]="
+                taskForm.get('part')?.invalid &&
+                (taskForm.get('part')?.touched || taskForm.get('part')?.dirty)
+              "
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="taskForm.get('part')?.errors?.['required'] && (taskForm.get('part')?.touched || taskForm.get('part')?.dirty)"
+            >
+              Part is required.
+            </div>
           </div>
           <div class="col-md-6">
             <label for="type" class="form-label">Type</label>
-            <input id="type" type="text" class="form-control" formControlName="type" />
+            <input
+              id="type"
+              type="text"
+              class="form-control"
+              formControlName="type"
+              [class.is-invalid]="
+                taskForm.get('type')?.invalid &&
+                (taskForm.get('type')?.touched || taskForm.get('type')?.dirty)
+              "
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="taskForm.get('type')?.errors?.['required'] && (taskForm.get('type')?.touched || taskForm.get('type')?.dirty)"
+            >
+              type is required.
+            </div>
           </div>
           <div class="col-md-6">
             <label for="empId" class="form-label">Employee</label>

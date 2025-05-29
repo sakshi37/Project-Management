@@ -134,14 +134,14 @@ namespace HR.Persistence.Repositories
     new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
      new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
     new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
-    new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value),
+    new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value)
 
 
 };
 
 
             await _appDbContext.Database.ExecuteSqlRawAsync(
-                @"EXEC dbo.SP_EmployeeInsert 
+                @"EXEC dbo.SP_Employee_Insert 
             @Name,
             @Code, 
             

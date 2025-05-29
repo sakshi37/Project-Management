@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
   Output,
-  EventEmitter
+  EventEmitter,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
@@ -28,12 +28,14 @@ export class LefSideNavComponent {
   user: UserProfile = {
     image: '',
     name: '',
-    designationName: ''
+    designationName: '',
   };
   imageSrc: string | null = null;
   hasUnreadNotifications = false;
-
+  unreadCount: number = 0;
   sidebarVisible: boolean = true;
+  code: string = '';
+
   @Output() sidebarToggled = new EventEmitter<boolean>();
 
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
@@ -72,16 +74,18 @@ export class LefSideNavComponent {
           this.imageSrc = `data:image/png;base64,${profile.image}`;
         }
       },
-      error: err => console.error('Error loading profile', err)
+      error: (err) => console.error('Error loading profile', err),
     });
 
     // Get notifications
-    this.notificationService.getNotifications(code).subscribe({
-      next: (data: NotificationModel[]) => {
-        this.hasUnreadNotifications = data.some(n => !n.isRead);
-      },
-      error: err => console.error('Error loading notifications', err)
+    // Listen to unread count updates
+    this.notificationService.unreadCount$.subscribe((count) => {
+      this.unreadCount = count;
+      this.hasUnreadNotifications = count > 0;
     });
+
+    // Initial load
+    this.notificationService.updateUnreadCount(code);
   }
 
   logout() {
@@ -119,6 +123,22 @@ export class LefSideNavComponent {
       classList.contains('show')
         ? this.renderer.removeClass(this.hrMenu.nativeElement, 'show')
         : this.renderer.addClass(this.hrMenu.nativeElement, 'show');
+    }
+  }
+  toggleMessage(item: any): void {
+    item.showMessage = !item.showMessage;
+
+    if (item.showMessage && !item.isRead) {
+      item.isRead = true;
+
+      this.notificationService.markAsRead(item.notificationId).subscribe({
+        next: () => {
+          console.log(`Notification ${item.notificationId} marked as read.`);
+
+          this.notificationService.updateUnreadCount(this.code);
+        },
+        error: (err) => console.error('Error marking as read:', err),
+      });
     }
   }
 }

@@ -11,11 +11,10 @@ using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeeByDesignation;
 using HR.Application.Features.Employees.Queries.GetEmployeesAll;
-using HR.Application.Features.LoginMaster.Commands.InsertLogin;
 using HR.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace HR.API.Controllers
 {
@@ -26,7 +25,7 @@ namespace HR.API.Controllers
         readonly IMediator _mediator;
         readonly AppDbContext _appDbContext;
 
-        public EmployeeController(IMediator mediator , AppDbContext appDbContext)
+        public EmployeeController(IMediator mediator, AppDbContext appDbContext)
         {
             _mediator = mediator;
             _appDbContext = appDbContext;
@@ -64,8 +63,22 @@ namespace HR.API.Controllers
             {
                 return BadRequest("Employee with that email already exists");
             }
-            var response = await _mediator.Send(new CreateEmployeeCommand(dto));
-            return Ok(response);
+            try
+            {
+                var response = await _mediator.Send(new CreateEmployeeCommand(dto));
+                return Ok(response);
+            }
+            catch (SqlException ex)
+            {
+
+                if (ex.Message.Contains("Mobile number already exists"))
+                    return BadRequest("Mobile number already exists.");
+
+                if (ex.Message.Contains("PAN number already exists"))
+                    return BadRequest("PAN number already exists.");
+
+                return StatusCode(500, "An error occurred while adding the employee.");
+            }
         }
 
 
