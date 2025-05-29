@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using HR.Application.Contracts.Persistence;
 using MediatR;
 
@@ -16,16 +12,16 @@ namespace HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet
 
     namespace HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet
     {
-        public class UpdateTimeSheetCommandHandler : IRequestHandler<UpdateTimeSheetCommand,bool>
+        public class UpdateTimeSheetCommandTaskHandler : IRequestHandler<UpdateTimeSheetCommandTask, bool>
         {
             private readonly ITimeSheetRepository _timeSheetRepository;
 
-            public UpdateTimeSheetCommandHandler(ITimeSheetRepository timeSheetRepository)
+            public UpdateTimeSheetCommandTaskHandler(ITimeSheetRepository timeSheetRepository)
             {
                 _timeSheetRepository = timeSheetRepository;
             }
 
-            public async Task<bool> Handle(UpdateTimeSheetCommand request, CancellationToken cancellationToken)
+            public async Task<bool> Handle(UpdateTimeSheetCommandTask request, CancellationToken cancellationToken)
             {
                 var result = await _timeSheetRepository.UpdateTimeSheetMaster(request.timeSheetDto);
                 return result;

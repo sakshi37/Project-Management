@@ -7,5 +7,5 @@ using MediatR;
 
 namespace HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet
 {
-    public record UpdateTimeSheetCommand(UpdateTimeSheetDto timeSheetDto) : IRequest<bool> { }
+    public record UpdateTimeSheetCommandTask(UpdateTimeSheetTaskDto timeSheetDto) : IRequest<bool> { }
 }

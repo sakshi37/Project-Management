@@ -23,7 +23,7 @@ namespace HR.Application.Contracts.Persistence
         Task<List<GetByIdTimeSheetDto>> TimeSheetGetById(int empId);
         Task<List<GetAllAttendanceDto>> GetAllAttendance();
      
-       Task<bool> UpdateTimeSheetMaster(UpdateTimeSheetDto timeSheetDto);
+       Task<bool> UpdateTimeSheetMaster(UpdateTimeSheetTaskDto timeSheetDto);
         
 
     }

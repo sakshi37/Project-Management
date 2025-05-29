@@ -100,7 +100,7 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
-        public async Task<bool> UpdateTimeSheetMaster(UpdateTimeSheetDto timeSheetDto)
+        public async Task<bool> UpdateTimeSheetMaster(UpdateTimeSheetTaskDto timeSheetDto)
         {
             using var connection = _DbContext.Database.GetDbConnection();
             await connection.OpenAsync();

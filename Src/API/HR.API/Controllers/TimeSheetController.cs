@@ -75,19 +75,20 @@ namespace HR.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTimeSheetMaster(int id, [FromBody] UpdateTimeSheetDto timeSheetDto)
+        public async Task<IActionResult> UpdateTimeSheetMaster(int id, [FromBody] UpdateTimeSheetTaskDto timeSheetDto)
         {
             if (id != timeSheetDto.Id)
             {
                 return BadRequest("ID mismatch");
             }
 
-            var result = await _mediator.Send(new UpdateTimeSheetCommand(timeSheetDto));
+            var result = await _mediator.Send(new UpdateTimeSheetCommandTask(timeSheetDto));
+            return Ok(result);
 
-            if (result)
-                return Ok(new { message = "TimeSheet updated successfully" });
-            else
-                return NotFound(new { message = "TimeSheet not found or update failed" });
+            //if (result)
+            //    return Ok(new { message = "TimeSheet updated successfully" });
+            //else
+            //    return NotFound(new { message = "TimeSheet not found or update failed" });
         }
 
 

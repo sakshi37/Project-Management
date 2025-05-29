@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet
 {
-    public class UpdateTimeSheetDto
+    public class UpdateTimeSheetTaskDto
     {
         public int Id { get; set; }
         public string? Sequence { get; set; }
