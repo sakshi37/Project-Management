@@ -16,10 +16,10 @@ namespace HR.API.Controllers
 
             _mediator = mediator;
         }
-        [HttpGet("GetAllProject")]
-        public async Task<IActionResult> GetAllResult()
+        [HttpGet("GetAllProject/{id}")]
+        public async Task<IActionResult> GetAllResult(int id)
         {
-            var Response = await _mediator.Send(new GetAllProjectQuery());
+            var Response = await _mediator.Send(new GetAllProjectQuery(id));
             return Ok(Response);
         }
 

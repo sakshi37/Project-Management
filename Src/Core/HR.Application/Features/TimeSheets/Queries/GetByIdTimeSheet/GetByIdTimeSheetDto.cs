@@ -2,6 +2,7 @@
 {
     public class GetByIdTimeSheetDto
     {
+        public int Id { get; set; }
         public int ProjectId { get; set; }
         public string? Sequence { get; set; }
         public string Part { get; set; }

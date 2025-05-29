@@ -115,9 +115,12 @@ const index = res.data.findIndex((emp: Employee) => emp.code === updatedCode);
 
   console.log('Selected Employee:', emp);
   console.log('Selected Employee Code:', emp.code);
+    console.log('Selected Employee Name:', emp.name);
 
   this.Router.navigate(['/update-employee'], {
-    state: { employee: emp }  
+    state: { employee: emp,
+       employeeName: emp.name
+     }  
   });
 }
 

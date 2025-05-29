@@ -1,0 +1,11 @@
+::ng-deep .custom-ng-select .ng-select-container {
+  background-color: #fff !important;
+  color: #000;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+::ng-deep .custom-ng-select .ng-dropdown-panel {
+  background-color: #fff !important;
+  color: #000;
+}

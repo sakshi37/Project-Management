@@ -1,4 +1,5 @@
 ﻿using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
+using HR.Application.Features.TimeSheet.Commands.UpdateTimeSheet;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Commands;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchOut;
@@ -66,10 +67,10 @@ namespace HR.API.Controllers
             return Ok(session);
         }
 
-        [HttpGet("timesheet/{id}")]
-        public async Task<IActionResult> TimeSheetMasterGetById(int Id)
+        [HttpGet("timesheet/{code}")]
+        public async Task<IActionResult> TimeSheetMasterGetById(string code)
         {
-            var currentLoggedIn = Id;
+            var currentLoggedIn = code;
             var timesheetByEmpId = await _mediator.Send(new GetByIdTimeSheetQuery(currentLoggedIn));
             return Ok(timesheetByEmpId);
         }
@@ -92,6 +93,12 @@ namespace HR.API.Controllers
         }
 
 
+        [HttpPatch()]
+        public async Task<IActionResult> UpdateTimeSheet([FromBody] UpdateTimeSheetCommand timeSheet)
+        {
+            await _mediator.Send(timeSheet);
+            return Ok();
+        }
     }
 
 }

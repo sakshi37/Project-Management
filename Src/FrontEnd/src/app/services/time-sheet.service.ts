@@ -28,8 +28,8 @@ export class TimeSheetService {
     return this.http.get<Timesheets[]>(`${this.url}/GetAllTimeSheet`);
   }
 
-  getByIdTimeSheet(empId: number) {
-    return this.http.get<Timesheets[]>(`${this.url}/timesheet/${empId}`);
+  getByCodeTimeSheet(empCode: string) {
+    return this.http.get<Timesheets[]>(`${this.url}/timesheet/${empCode}`);
   }
 
   InsertTimesheet(timeSheet: { timesheet: Timesheets }) {
@@ -37,16 +37,30 @@ export class TimeSheetService {
     return this.http.post(`${this.url}`, timeSheet);
   }
 
-  GetAllProject() {
-    return this.http.get<ProjectWithStack[]>(`${this.diffUrl}/GetAllProject`);
+  GetAllProject(empId: number) {
+    return this.http.get<ProjectWithStack[]>(
+      `${this.diffUrl}/GetAllProject/${empId}`
+    );
   }
 
-  InserProject(project: Project) {
+  InserProject(project: Project & { fk_TeamLeaderId: number }) {
     return this.http.post<Project>(`${this.diffUrl}`, project);
   }
 
   getAllStack() {
     return this.http.get<Stack[]>(`${this.diffUrl}/GetAllStack`);
+  }
+
+  updateTimeSheet(timeSheet: {
+    timeSheet: {
+      id: number;
+      startTime: string;
+      endTime: string;
+      Hrs: number;
+      Mins: number;
+    };
+  }) {
+    return this.http.patch(this.url, timeSheet);
   }
 }
 export type PunchInStatus = {
@@ -57,6 +71,7 @@ export type PunchInStatus = {
 };
 
 export type Timesheets = {
+  id: number;
   projectId: number;
   sequence: string | null;
   part: string | null;
@@ -74,6 +89,8 @@ export type Timesheets = {
 export type ProjectWithStack = {
   id: number;
   name: string;
+  teamLeaderId: number;
+  teamLeaderName: string;
   stack: { id: number; name: string }[];
 };
 

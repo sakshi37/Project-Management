@@ -249,6 +249,7 @@ export class EmployeeRegistrationComponent implements OnInit {
     };
 
     this.employeeService.createEmployee(emp).subscribe({
+  
       next: () => {
         this.resetForm();
         Swal.fire({
