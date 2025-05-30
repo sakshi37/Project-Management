@@ -29,7 +29,15 @@ export class ActivityTimesheetComponent implements OnInit {
     endTime: string | null;
     Hrs: number | null;
     Mins: number | null;
-  } = { id: null, startTime: null, endTime: null, Hrs: null, Mins: null };
+    remark: string | null;
+  } = {
+    id: null,
+    startTime: null,
+    endTime: null,
+    Hrs: null,
+    Mins: null,
+    remark: null,
+  };
 
   constructor(
     private timeSheetService: TimeSheetService,
@@ -156,6 +164,7 @@ export class ActivityTimesheetComponent implements OnInit {
         endTime: null,
         Hrs: null,
         Mins: null,
+        remark: null,
       };
       return;
     }
@@ -174,6 +183,7 @@ export class ActivityTimesheetComponent implements OnInit {
         ),
         Hrs: timesheet.hrs ?? null,
         Mins: timesheet.min ?? null,
+        remark: timesheet.remark ?? null,
       };
     }
   }
@@ -221,6 +231,7 @@ export class ActivityTimesheetComponent implements OnInit {
         endTime: string;
         Hrs: number;
         Mins: number;
+        remark: string | null;
       };
 
       console.log('updating');

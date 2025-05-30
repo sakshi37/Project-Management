@@ -7,5 +7,6 @@ namespace HR.Application.Features.TimeSheet.Commands.UpdateTimeSheet
         public DateTime EndTime { get; set; }
         public int Hrs { get; set; }
         public int Mins { get; set; }
+        public string? Remark { get; set; }
     }
 }

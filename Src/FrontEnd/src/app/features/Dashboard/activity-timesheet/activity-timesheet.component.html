@@ -31,8 +31,8 @@
       <thead class="table-light">
         <tr>
           <th>Sr.No</th>
-          <th>Job No</th>
-          <th>Sequence</th>
+          <!-- <th>Job No</th> -->
+          <th>Task</th>
           <th>Part</th>
           <th>Activity</th>
           <th>Type</th>
@@ -63,18 +63,20 @@
             "
           >
             <td>{{ i + 1 }}</td>
-            <td>{{ timesheet.projectId }}</td>
-            <td>{{ timesheet.sequence }}</td>
+            <!-- <td>{{ timesheet.projectId }}</td> -->
             <td>{{ timesheet.part }}</td>
+            <td>{{ timesheet.sequence }}</td>
+
             <td>{{ timesheet.activity }}</td>
             <td>{{ timesheet.type }}</td>
             <td>{{ timesheet.startTime | date : "short" }}</td>
             <td>{{ timesheet.endTime | date : "short" }}</td>
             <td>{{ timesheet.hrs }}</td>
             <td>{{ timesheet.min }}</td>
-            <td>--</td>
+            <td>{{ timesheet.remark }}</td>
             <td>
               <button
+                *ngIf="!timesheet.endTime"
                 class="btn btn-info btn-sm"
                 (click)="toggleEditForm(timesheet.id)"
               >
@@ -103,6 +105,16 @@
                       type="datetime-local"
                       class="form-control"
                       [(ngModel)]="editFormData.endTime"
+                      name="editEndTime"
+                      (change)="onEditTimeChange()"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label>Remarks:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="editFormData.remark"
                       name="editEndTime"
                       (change)="onEditTimeChange()"
                     />
