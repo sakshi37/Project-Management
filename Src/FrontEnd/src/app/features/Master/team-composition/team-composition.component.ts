@@ -17,9 +17,7 @@ import { CreateTeamCompositionDto } from './Models/create-team-composition.dto';
 import { UpdateTeamCompositionDto } from './Models/update-team-composition.dto';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { EmployeeService } from '../../../services/employee-service';
-interface TeamCompositionWithHighlight extends GetTeamCompositionDto {
-  highlight?: boolean;
-}
+
 @Component({
   selector: 'app-team-composition',
   standalone: true,
@@ -28,9 +26,7 @@ interface TeamCompositionWithHighlight extends GetTeamCompositionDto {
   styleUrl: './team-composition.component.css'
 })
 export class TeamCompositionComponent {
-  teamCompositions: TeamCompositionWithHighlight[] = [];
-filteredTeams: TeamCompositionWithHighlight[] = [];
-  // teamCompositions: GetTeamCompositionDto[] = [];
+  teamCompositions: GetTeamCompositionDto[] = [];
   teamForm!: FormGroup;
   viewteamForm!: FormGroup;
   submitted = false;
@@ -43,7 +39,7 @@ filteredTeams: TeamCompositionWithHighlight[] = [];
   employeeList: any[] = [];
   divisions: any[] = [];
   teamLeaders: any[] = [];
-  // filteredTeams: any[] = [];
+  filteredTeams: any[] = [];
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [1, 5, 10, 25, 50];
   itemsPerPage: number = 5; // default value
@@ -409,122 +405,34 @@ onEdit(team: GetTeamCompositionDto ): void {
       teamMembers: this.teamForm.value.teamMembers,
     };
   
-    // if (this.isEditMode && this.selectedTeamId !== null) {
-    //   const updateDto: UpdateTeamCompositionDto = {
-    //               ...updatePayload,
-    //               updatedBy: 1
-    //             };
-    //   this.teamService.updateTeam(updateDto).subscribe({
-    //     next: () => {
-    //       this.loadTeamCompositions();
-    //       this.resetForm();
-    //       this.modal.hide();
-    //       this.cleanUpModal();
-    //       this.fetchTeamCompositions();
-    //       Swal.fire({
-    //                             toast: true,
-    //                             position: 'top',
-    //                             timer: 1000,
-    //                             timerProgressBar: true,
-    //                             showConfirmButton: false,
-    //                             icon: 'success',
-    //                             title: 'Updated',
-    //                             text: 'Team updated successfully!',
-    //                             confirmButtonColor: '#3085d6',
-    //                           }).then(() => {
-    //                             this.cleanUpModal();
-    //                           });
-    //     },
-    //     error: (err) => this.errorHandler.handleError(err),
-    //   });
-    // } 
     if (this.isEditMode && this.selectedTeamId !== null) {
       const updateDto: UpdateTeamCompositionDto = {
-        ...updatePayload,
-        updatedBy: 1
-      };
-      
-      // this.teamService.updateTeam(updateDto).subscribe({
-      //   next: () => {
-    
-      //     // Move the updated item to the top temporarily
-      //     const updatedTeam = this.teamCompositions.find(t => t.teamId === this.selectedTeamId);
-      //     if (updatedTeam) {
-      //       this.filteredTeams = [updatedTeam, ...this.filteredTeams.filter(t => t.teamId !== this.selectedTeamId)];
-    
-      //       // Mark it as highlighted
-      //       updatedTeam['highlight'] = true;
-    
-      //       // Remove highlight after few seconds
-      //       setTimeout(() => {
-      //         updatedTeam['highlight'] = false;
-      //       }, 3000);
-      //     }
-      //     this.fetchTeamCompositions(); // Refresh all
-      //     this.resetForm();
-      //     this.modal.hide();
-      //     this.cleanUpModal();
-      //     Swal.fire({
-      //       toast: true,
-      //       position: 'top',
-      //       timer: 1000,
-      //       timerProgressBar: true,
-      //       showConfirmButton: false,
-      //       icon: 'success',
-      //       title: 'Updated',
-      //       text: 'Team updated successfully!',
-      //       confirmButtonColor: '#3085d6',
-      //     }).then(() => this.cleanUpModal());
-      //   },
-      //   error: (err) => this.errorHandler.handleError(err),
-      // });
+                  ...updatePayload,
+                  updatedBy: 1
+                };
       this.teamService.updateTeam(updateDto).subscribe({
         next: () => {
-          // Clone the updated values manually
-          const updatedTeam: TeamCompositionWithHighlight = {
-            ...updatePayload,
-            teamId: this.selectedTeamId!,
-            teamLeaderName: this.teamLeaders.find(l => l.id === updatePayload.fk_TeamLeaderId)?.name || '',
-            branchName: this.branches.find(b => b.branchId === updatePayload.fk_BranchId)?.branchName || '',
-            divisionName: this.divisions.find(d => d.divisionId === updatePayload.fk_DivisionId)?.divisionName || '',
-            teamMemberIds: updatePayload.teamMembers,
-            highlight: true
-          };
-      
-          // Move to top and highlight
-          this.filteredTeams = [updatedTeam, ...this.filteredTeams.filter(t => t.teamId !== this.selectedTeamId)];
-      
-          setTimeout(() => {
-            updatedTeam.highlight = false;
-      
-            // Reapply teamCompositions to reset order
-            this.filteredTeams = this.teamCompositions.map(team => {
-              if (team.teamId === updatedTeam.teamId) {
-                return { ...updatedTeam, highlight: false };
-              }
-              return team;
-            });
-          }, 3000);
-      
+          this.loadTeamCompositions();
           this.resetForm();
           this.modal.hide();
           this.cleanUpModal();
-      
+          this.fetchTeamCompositions();
           Swal.fire({
-            toast: true,
-            position: 'top',
-            timer: 1000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-            icon: 'success',
-            title: 'Updated',
-            text: 'Team updated successfully!',
-            confirmButtonColor: '#3085d6',
-          });
+                                toast: true,
+                                position: 'top',
+                                timer: 1000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                icon: 'success',
+                                title: 'Updated',
+                                text: 'Team updated successfully!',
+                                confirmButtonColor: '#3085d6',
+                              }).then(() => {
+                                this.cleanUpModal();
+                              });
         },
         error: (err) => this.errorHandler.handleError(err),
       });
-      
     } else {
       const createDto: CreateTeamCompositionDto = {
                   ...createPayload,
@@ -555,30 +463,14 @@ onEdit(team: GetTeamCompositionDto ): void {
       });
     }
   }
-  // sortTeams(column: string): void {
-  //   if (this.selectedSortColumn === column) {
-  //     this.sortDirectionAsc = !this.sortDirectionAsc;
-  //   } else {
-  //     this.selectedSortColumn = column;
-  //     this.sortDirectionAsc = true;
-  //   }
-
-  //   this.filteredTeams.sort((a, b) => {
-  //     const aVal = a[column]?.toString().toLowerCase() || '';
-  //     const bVal = b[column]?.toString().toLowerCase() || '';
-  //     return this.sortDirectionAsc
-  //       ? aVal.localeCompare(bVal)
-  //       : bVal.localeCompare(aVal);
-  //   });
-  // }
-  sortTeams(column: keyof TeamCompositionWithHighlight): void {
+  sortTeams(column: string): void {
     if (this.selectedSortColumn === column) {
       this.sortDirectionAsc = !this.sortDirectionAsc;
     } else {
       this.selectedSortColumn = column;
       this.sortDirectionAsc = true;
     }
-  
+
     this.filteredTeams.sort((a, b) => {
       const aVal = a[column]?.toString().toLowerCase() || '';
       const bVal = b[column]?.toString().toLowerCase() || '';
@@ -587,7 +479,6 @@ onEdit(team: GetTeamCompositionDto ): void {
         : bVal.localeCompare(aVal);
     });
   }
-  
 
   getSortIcon(column: string): string {
     return this.selectedSortColumn !== column
