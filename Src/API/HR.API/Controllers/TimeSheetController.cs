@@ -1,7 +1,9 @@
 ﻿using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
+using HR.Application.Features.TimeSheet.Commands.UpdateTimeSheet;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Commands;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
 using HR.Application.Features.TimeSheets.Commands.PunchOut;
+using HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetSessionByEmp;
@@ -65,13 +67,34 @@ namespace HR.API.Controllers
             return Ok(session);
         }
 
-        [HttpGet("timesheet/{id}")]
-        public async Task<IActionResult> TimeSheetMasterGetById(int Id)
+        [HttpGet("timesheet/{code}")]
+        public async Task<IActionResult> TimeSheetMasterGetById(string code)
         {
-            var currentLoggedIn = Id;
+            var currentLoggedIn = code;
             var timesheetByEmpId = await _mediator.Send(new GetByIdTimeSheetQuery(currentLoggedIn));
             return Ok(timesheetByEmpId);
         }
 
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateTimeSheetMaster([FromBody] UpdateTimeSheetTaskDto timeSheetDto)
+        {
+
+            var result = await _mediator.Send(new UpdateTimeSheetCommandTask(timeSheetDto));
+            return Ok(result);
+
+            //if (result)
+            //    return Ok(new { message = "TimeSheet updated successfully" });
+            //else
+            //    return NotFound(new { message = "TimeSheet not found or update failed" });
+        }
+
+
+        [HttpPatch()]
+        public async Task<IActionResult> UpdateTimeSheet([FromBody] UpdateTimeSheetCommand timeSheet)
+        {
+            await _mediator.Send(timeSheet);
+            return Ok();
+        }
     }
+
 }

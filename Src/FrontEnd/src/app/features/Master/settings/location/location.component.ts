@@ -80,7 +80,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
       countryId: ['', Validators.required],
       stateId: ['', Validators.required],
       cityId: ['', Validators.required],
-      locationName: ['', [Validators.required, Validators.maxLength(20)]],
+      locationName: ['', Validators.required],
       locationStatus: ['1', Validators.required],
     });   
   }
@@ -200,7 +200,7 @@ onStateChange(): void {
         };
         if (this.isEditMode && this.selectedlocationId) {
           const updateDto: UpdateLocationDto = {
-            ...payload, locationId: this.selectedlocationId, updatedBy: 1,
+            ...payload, locationId: this.selectedlocationId, updatedBy: "1",
             stateId: 0
           };
           console.log("payload",updateDto);
@@ -208,14 +208,19 @@ onStateChange(): void {
             next:()=>{
                 this.loadLocations();
                 this.resetForm();
-                Swal.fire({
-                            icon: 'success',
-                            title: 'Updated',
-                            text: 'City updated successfully!',
-                            confirmButtonColor: '#3085d6'
-                          });
-            },
-            error: (err) => this.errorHandler.handleError(err)
+              Swal.fire({
+                        toast: true,
+                        position: 'top',
+                        timerProgressBar: true,
+                        icon: 'success',
+                        title: 'location updated successfully',
+                        timer: 1000,
+                        showConfirmButton: false,
+                      }).then(() => {
+                        this.cleanUpModal();
+                      });
+                    },
+            error: (err) => {this.errorHandler.handleError(err); console.error(err.error)}
             
           });
 
@@ -227,13 +232,20 @@ onStateChange(): void {
             next:(res:CreateLocationDto)=>{
               this.loadLocations();
               this.resetForm();
-              Swal.fire({
-                          icon: 'success',
-                          title: 'Created',
-                          text: 'City created successfully!',
-                          confirmButtonColor: '#3085d6'
-                        });
-          },
+            Swal.fire({
+                      toast: true,
+                      position: 'top',
+                      timer: 1000,
+                      timerProgressBar: true,
+                      showConfirmButton: false,
+                      icon: 'success',
+                      title: 'Created',
+                      text: 'location created successfully!',
+                      confirmButtonColor: '#3085d6',
+                    }).then(() => {
+                      this.cleanUpModal();
+                    });
+                  },
           error:(err) => this.errorHandler.handleError(err)       
           });
           
@@ -297,5 +309,16 @@ onStateChange(): void {
             }
           });
         }
+
+
+    private cleanUpModal(): void {
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = 'auto'; 
+    document.body.style.removeProperty('padding-right');
+
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach((backdrop) => backdrop.remove());
+  }
+
       }
       

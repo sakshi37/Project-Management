@@ -15,7 +15,7 @@ import { UpdateService } from '../../../../services/update-service';
 import { BranchService } from '../../../../services/branch-service';
 import { Branch } from '../../../../Models/branch-model';
 import { UserGroup } from '../../../../Models/get-user-group-dto';
-import { forkJoin } from 'rxjs';
+import { count, forkJoin } from 'rxjs';
 import { Shift } from '../../../../Models/get-shift-dto';
 import { CommonModule } from '@angular/common';
 import { Employee } from '../../../../Models/gmc-model';
@@ -51,6 +51,7 @@ import Swal from 'sweetalert2';
 export class UpdateEmployeeComponent implements OnInit {
   employeeForm!: FormGroup;
   selectedEmployeeCode: string = '';
+  selectedEmployeeName: string = '';
   designations: GetDesignationDto[] = [];
   imageBase64: string = '';
   signatureBase64: string = '';
@@ -78,14 +79,16 @@ export class UpdateEmployeeComponent implements OnInit {
     private cityService: CityService,
     private countryService: CountryService,
     private stateService: StateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    
     this.employeeForm = this.fb.group(
       {
+        Name: [{ value: '', disabled: true }], 
         address: [''],
         mobileNo: ['', [Validators.pattern(/^[6-9]\d{9}$/)]],
-        skypeId: ['', [Validators.minLength(16), Validators.maxLength(32)]],
+        skypeId: ['', [Validators.minLength(10), Validators.maxLength(32)]],
         email: [
           '',
           [
@@ -124,6 +127,11 @@ export class UpdateEmployeeComponent implements OnInit {
       { validators: this.validateAgeValidator.bind(this) }
     );
     const emp = history.state.employee;
+    console.log("Origin of emp : ", emp)
+    const empName = history.state.name;
+    if (empName) {
+  this.selectedEmployeeName = empName;
+}
 
     forkJoin({
       branches: this.branchService.getBranches(),
@@ -139,49 +147,76 @@ export class UpdateEmployeeComponent implements OnInit {
       divisions: this.divisionService.getAllDivisions(),
     }).subscribe(
       ({
-        branches,
-        designations,
-        userGroups,
-        shifts,
-        employeeTypes,
-        cities,
-        countries,
-        states,
-        locations,
-        divisions,
-        genders,
-      }) => {
-        // Filter/map branches
-        this.branches = branches
-          .filter((b) => b.branchStatus == true)
-          .map((b) => ({
-            branchId: b.branchId,
-            branchName: b.branchName,
-            cityId: b.cityId,
-            cityName: b.cityName,
-            stateName: b.stateName,
-            branchStatus: b.branchStatus,
-          }));
+  branches,
+  designations,
+  userGroups,
+  shifts,
+  employeeTypes,
+  cities,
+  countries,
+  states,
+  locations,
+  divisions,
+  genders,
+}) => {
+  // Filter/map branches
+  this.branches = branches
+    .filter((b) => b.branchStatus === true)
+    .map((b) => ({
+      branchId: b.branchId,
+      branchName: b.branchName,
+      cityId: b.cityId,
+      cityName: b.cityName,
+      stateName: b.stateName,
+      branchStatus: b.branchStatus,
+    }));
 
-        this.designations = designations;
-        this.userGroups = userGroups;
-        this.shifts = shifts;
-        this.employeeTypes = employeeTypes;
-        this.locations = locations;
-        this.divisions = divisions;
-        this.cities = cities;
-        this.countries = countries;
-        this.states = states;
-        this.genders = genders;
+  // Map and trim countries
+ this.countries = countries.map(c => ({
+  countryId: c.countryId,
+  countryName: c.countryName?.trim(),
+  countryCode: c.countryCode,      // Add this
+  countryStatus: c.countryStatus,  // Add this
+}));
+  // Map and trim states
+ this.states = states.map(s => ({
+  stateId: s.stateId,
+  stateName: s.stateName?.trim(),
+  stateCode: s.stateCode,  
+  stateStatus: s.stateStatus,    
+  countryId: s.countryId,
+  countryName: s.countryName,     
+}));
 
-        if (emp && emp.code) {
-          this.selectedEmployeeCode = emp.code;
-          this.employeeForm.reset();
-          this.populateEmployeeForm(emp);
-        } else {
-          console.warn('No employee data found in navigation state.');
-        }
-      }
+  // Map and trim cities
+ this.cities = cities.map(c => ({
+  cityId: c.cityId,
+  cityName: c.cityName?.trim(),
+  cityStatus: c.cityStatus,        // Add this
+  stateId: c.stateId,
+  stateName: c.stateName,          
+  countryId: c.countryId,          // Add this if required
+  countryName: c.countryName,      // Add this if required
+}));
+
+
+  this.designations = designations;
+  this.userGroups = userGroups;
+  this.shifts = shifts;
+  this.employeeTypes = employeeTypes;
+  this.locations = locations;
+  this.divisions = divisions;
+  this.genders = genders;
+
+  if (emp && emp.code) {
+    this.selectedEmployeeCode = emp.code;
+    this.employeeForm.reset();
+    this.populateEmployeeForm(emp);
+  } else {
+    console.warn('No employee data found in navigation state.');
+  }
+}
+
     );
     this.employeeForm.get('countryId')?.valueChanges.subscribe(() => {
       this.filterStates();
@@ -193,6 +228,7 @@ export class UpdateEmployeeComponent implements OnInit {
 
   populateEmployeeForm(emp: any): void {
     this.employeeForm.patchValue({
+Name: emp.name || this.selectedEmployeeName || '',
       address: emp.address || '',
       mobileNo: emp.mobileNo || '',
       skypeId: emp.skypeId || '',
@@ -222,6 +258,79 @@ export class UpdateEmployeeComponent implements OnInit {
     if (br) {
       this.employeeForm.get('branchId')!.setValue(br.branchId);
     }
+    // Country Name → countryId
+const country = this.countries.find(c => c.countryName?.trim().toLowerCase() === emp.countryName?.trim().toLowerCase());
+if(!country){console.log('emp.countryName:', emp.countryName);
+console.log('Available countries:', this.countries.map(c => c.countryName));}
+if(country){
+  this.employeeForm.get('countryId')!.setValue(country.countryId);
+  
+}
+
+// State Name → stateId
+const state = this.states.find((s) => s.stateName === emp.stateName);
+if (state) {
+  this.employeeForm.get('stateId')!.setValue(state.stateId);
+}
+
+// City Name → cityId
+const city = this.cities.find((c) => c.cityName === emp.cityName);
+if (city) {
+  this.employeeForm.get('cityId')!.setValue(city.cityId);
+}
+// Gender Name → genderId
+const gender = this.genders.find((g) => g.genderType === emp.genderType);
+if (gender) {
+  this.employeeForm.get('genderId')!.setValue(gender.genderId);
+}
+
+// Designation Name → designationId
+const designation = this.designations.find((d) => d.designationName === emp.designationName);
+if (designation) {
+  this.employeeForm.get('designationId')!.setValue(designation.designationId);
+}
+
+// Division Name → divisionId
+const division = this.divisions.find((d) => d.divisionName === emp.divisionName);
+if (division) {
+  this.employeeForm.get('divisionId')!.setValue(division.divisionId);
+  console.log("seleted division" ,division.divisionId)
+}
+// User Group Name → userGroupId
+const userGroup = this.userGroups.find((g) => g.userGroupName === emp.userGroupName);
+if (userGroup) {
+  this.employeeForm.get('userGroupId')!.setValue(userGroup.userGroupId);
+}
+//shift
+const shift=this.shifts.find((sf)=> sf.shiftType=== emp.shiftType);
+if(shift){
+  this.employeeForm.get('shiftId')!.setValue(shift.shiftId)
+}
+//employee type
+console.log('[DEBUG] emp object:', emp);
+console.log('[DEBUG] emp.employeeTypeId:', emp?.employeeTypeId);
+console.log('[DEBUG] this.employeeTypes:', this.employeeTypes);
+
+const emptype = this.employeeTypes.find(
+  (et) => et.employeeType.trim().toLowerCase() === emp.employeeType?.trim().toLowerCase()
+);
+
+if (emptype) {
+  this.employeeForm.get('employeeTypeId')!.setValue(emptype.employeeTypeId);
+  console.log(`Selected employeeType ID: ${emptype.employeeTypeId}`);
+} else {
+  console.warn(`EmployeeType '${emp.employeeType}' not found in employeeTypes list`);
+}
+
+//location
+const location = this.locations.find((l) => l.locationName === emp.locationName);
+
+if (location) {
+  this.employeeForm.get('locationId')!.setValue(location.locationId);
+  console.log(`Selected location ID: ${location.locationId}`);
+}
+
+
   }
 
   calculateAge(birthDate: Date, joinDate: Date): number {
@@ -290,6 +399,7 @@ export class UpdateEmployeeComponent implements OnInit {
   }
   filterCities(): void {
     const stateId = +this.employeeForm.get('stateId')?.value;
+    console.log("Selected state",stateId)
     this.filteredCities = this.cities.filter((c) => c.stateId === stateId);
   }
   loadShifts(): void {
@@ -385,7 +495,7 @@ export class UpdateEmployeeComponent implements OnInit {
       },
     });
   }
-  filterLocations() {}
+  filterLocations() { }
   imagePreview: string | ArrayBuffer | null = null;
   signaturePreview: string | ArrayBuffer | null = null;
 
@@ -432,6 +542,7 @@ export class UpdateEmployeeComponent implements OnInit {
       this.employeeForm.markAllAsTouched();
       return;
     }
+    console.log(this.employeeForm.value);
 
     if (this.selectedEmployeeCode) {
       const formValues = this.employeeForm.value;
@@ -471,9 +582,14 @@ export class UpdateEmployeeComponent implements OnInit {
             timer: 2000,
             showConfirmButton: false,
           }).then(() => {
-            this.router.navigate(['/employee']);
+            // Save updatedCode to sessionStorage as fallback
+            sessionStorage.setItem('updatedCode', this.selectedEmployeeCode);
+
+            this.router.navigate(['/employee'], {
+              state: { updatedCode: this.selectedEmployeeCode },
+            });
           });
-        },
+        }, 
         error: (err) => {
           console.error('Update failed:', err);
           Swal.fire({
@@ -486,6 +602,7 @@ export class UpdateEmployeeComponent implements OnInit {
           });
         },
       });
+
     }
   }
 

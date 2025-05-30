@@ -37,6 +37,7 @@ export class HolidayComponent implements OnInit, AfterViewInit {
 imagePreviewUrl: string | null = null;
 viewModeToggle: boolean = false; // false = Table, true = user
 userRole:string | null = null; 
+existingImagePath: string | null = null;
 
 
 
@@ -171,6 +172,18 @@ splitCardHolidays(): void {
     this.modal.show();
   }
 
+  // onEdit(h: GetHolidayDto): void {
+  //   this.holidayForm.patchValue({
+  //     holidayName: h.holidayName,
+  //     holidayDate: h.holidayDate.split('T')[0],
+  //     holidayListType: h.holidayListType ? 'true' : 'false',
+  //     holidayStatus: h.holidayStatus ? 'true' : 'false'
+  //   });
+  //   this.selectedHolidayId = h.holidayId;
+  //   this.isEditMode = true;
+  //   this.imagePreviewUrl = h.imagePath ? 'http://127.0.0.1:8080/' + h.imagePath : null;
+  //   this.modal.show();
+  // }
   onEdit(h: GetHolidayDto): void {
     this.holidayForm.patchValue({
       holidayName: h.holidayName,
@@ -180,7 +193,10 @@ splitCardHolidays(): void {
     });
     this.selectedHolidayId = h.holidayId;
     this.isEditMode = true;
-    this.imagePreviewUrl = h.imagePath ? 'http://127.0.0.1:8080/' + h.imagePath : null;
+
+    this.existingImagePath = h.imagePath || null;
+    this.imagePreviewUrl = this.existingImagePath ? 'http://127.0.0.1:8080/' + this.existingImagePath : null;
+    this.selectedImageFile = null; 
     this.modal.show();
   }
   handleSuccess(type: string): void {
@@ -205,62 +221,105 @@ splitCardHolidays(): void {
     }
   }
     
-
   // onSubmit(): void {
-  //   if (this.holidayForm.invalid){
+  //   if (this.holidayForm.invalid) {
   //     this.holidayForm.markAllAsTouched();
   //     return;
   //   }
-  //   const listTypeBool = this.holidayForm.value.holidayStatus === '1' ? true : false;
-  //   const payload = {
-  //     holidayName: this.holidayForm.value.holidayName,
-  //     holidayDate: this.holidayForm.value.holidayDate,
-  //     holidayListType: this.holidayForm.value.holidayListType === '1',
-  //     holidayStatus: listTypeBool
-  //   };
-
+  
+  //   const formData = new FormData();
+  //   formData.append('holidayName', this.holidayForm.value.holidayName);
+  //   formData.append('holidayDate', this.holidayForm.value.holidayDate);
+  //   formData.append('holidayListType', this.holidayForm.value.holidayListType);
+  //   formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
+  
+  //   if (this.selectedImageFile) {
+  //     formData.append('image', this.selectedImageFile);
+  //   }
+  
   //   if (this.isEditMode && this.selectedHolidayId) {
-  //     const dto: UpdateHolidayDto = { ...payload, holidayId: this.selectedHolidayId, updatedBy: 1 };
-      
-  //     this.holidayService.updateHoliday(dto).subscribe({
-  //       next: () => {
-  //         this.loadHolidays();
-  //         this.modal.hide();
-          
-  //                   Swal.fire({
-  //                     toast: true,
-  //                     position: 'top',
-  //                     timer: 1000,
-  //                     timerProgressBar: true,
-  //                     showConfirmButton: false,
-  //                     icon: 'success',
-  //                     title: 'Updated',
-  //                     text: 'Holiday updated successfully!',
-  //                     confirmButtonColor: '#3085d6',
-  //                   });
-  //       },
-  //       error: (err) => this.errorHandler.handleError(err)
+  //     formData.append('holidayId', this.selectedHolidayId.toString());
+  //     formData.append('updatedBy', '1');
+  //     this.holidayService.updateHoliday(formData).subscribe({
+  //       next: () => this.handleSuccess('Updated'),
+  //       error: err => this.errorHandler.handleError(err)
   //     });
   //   } else {
-  //     const dto: CreateHolidayDto = { ...payload, createdBy: 1 };
-  //     this.holidayService.createHoliday(dto).subscribe({
-  //       next: () => {
-  //         this.loadHolidays();
-  //         this.modal.hide();
-          
-  //                   Swal.fire({
-  //                     toast: true,
-  //                     position: 'top',
-  //                     timer: 1000,
-  //                     timerProgressBar: true,
-  //                     showConfirmButton: false,
-  //                     icon: 'success',
-  //                     title: 'Created',
-  //                     text: 'Holiday created successfully!',
-  //                     confirmButtonColor: '#3085d6',
-  //                   });
-  //       },
-  //       error: (err) => this.errorHandler.handleError(err)
+  //     formData.append('createdBy', '1');
+  //     this.holidayService.createHoliday(formData).subscribe({
+  //       next: () => this.handleSuccess('Created'),
+  //       error: err => this.errorHandler.handleError(err)
+  //     });
+  //   }
+  // }
+  // onSubmit(): void {
+  //   if (this.holidayForm.invalid) {
+  //     this.holidayForm.markAllAsTouched();
+  //     return;
+  //   }
+  
+  //   const formData = new FormData();
+  //   formData.append('holidayName', this.holidayForm.value.holidayName);
+  //   formData.append('holidayDate', this.holidayForm.value.holidayDate);
+  //   formData.append('holidayListType', this.holidayForm.value.holidayListType);
+  //   formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
+  
+  //   if (this.selectedImageFile) {
+  //     formData.append('image', this.selectedImageFile);
+  //   } else if (this.isEditMode && this.existingImagePath) {
+  //     // send existing image path to keep the old image
+  //     formData.append('existingImagePath', this.existingImagePath);
+  //   }
+  
+  //   if (this.isEditMode && this.selectedHolidayId) {
+  //     formData.append('holidayId', this.selectedHolidayId.toString());
+  //     formData.append('updatedBy', '1');
+  //     this.holidayService.updateHoliday(formData).subscribe({
+  //       next: () => this.handleSuccess('Updated'),
+  //       error: err => this.errorHandler.handleError(err)
+  //     });
+  //   } else {
+  //     formData.append('createdBy', '1');
+  //     this.holidayService.createHoliday(formData).subscribe({
+  //       next: () => this.handleSuccess('Created'),
+  //       error: err => this.errorHandler.handleError(err)
+  //     });
+  //   }
+  // }
+  // onSubmit(): void {
+  //   if (this.holidayForm.invalid) {
+  //     this.holidayForm.markAllAsTouched();
+  //     return;
+  //   }
+  
+  //   const formData = new FormData();
+  //   formData.append('holidayName', this.holidayForm.value.holidayName);
+  //   formData.append('holidayDate', this.holidayForm.value.holidayDate);
+  //   formData.append('holidayListType', this.holidayForm.value.holidayListType);
+  //   formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
+  
+  //   if (this.selectedImageFile) {
+  //     formData.append('image', this.selectedImageFile);
+  //   } else if (this.isEditMode && this.existingImagePath) {
+  //     // Send existing image path to keep the old image
+  //     formData.append('existingImagePath', this.existingImagePath);
+  //   } else if (this.isEditMode && !this.existingImagePath) {
+  //     // Explicitly send empty string or marker to indicate no image
+  //     formData.append('existingImagePath', '');
+  //   }
+  
+  //   if (this.isEditMode && this.selectedHolidayId) {
+  //     formData.append('holidayId', this.selectedHolidayId.toString());
+  //     formData.append('updatedBy', '1');
+  //     this.holidayService.updateHoliday(formData).subscribe({
+  //       next: () => this.handleSuccess('Updated'),
+  //       error: err => this.errorHandler.handleError(err)
+  //     });
+  //   } else {
+  //     formData.append('createdBy', '1');
+  //     this.holidayService.createHoliday(formData).subscribe({
+  //       next: () => this.handleSuccess('Created'),
+  //       error: err => this.errorHandler.handleError(err)
   //     });
   //   }
   // }
@@ -277,7 +336,13 @@ splitCardHolidays(): void {
     formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
   
     if (this.selectedImageFile) {
+      console.log('Appending new image file:', this.selectedImageFile);
       formData.append('image', this.selectedImageFile);
+    } else if (this.isEditMode) {
+      // Always send existingImagePath in edit mode (even empty)
+      const existingPathToSend = this.existingImagePath ? this.existingImagePath : '';
+      console.log('Appending existingImagePath:', existingPathToSend);
+      formData.append('existingImagePath', existingPathToSend);
     }
   
     if (this.isEditMode && this.selectedHolidayId) {
@@ -296,15 +361,9 @@ splitCardHolidays(): void {
     }
   }
   
-  // resetForm(): void {
-  //   this.holidayForm.reset({
-  //     holidayName: '',
-  //     holidayDate: '',
-  //     holidayListType: '1',
-  //     holidayStatus: '1'
-  //   });
-  //   this.selectedHolidayId = null;
-  // }
+  
+
+
   resetForm(): void {
     this.holidayForm.reset({
       holidayName: '',
@@ -314,8 +373,10 @@ splitCardHolidays(): void {
     });
     this.selectedHolidayId = null;
     this.selectedImageFile = null;
+    this.existingImagePath = null;
     this.imagePreviewUrl = null;
   }
+
   
   onStatusChange(holiday: GetHolidayDto): void {
     Swal.fire({

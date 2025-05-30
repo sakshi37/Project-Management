@@ -36,7 +36,7 @@ namespace HR.Application.Contracts.Persistence
 
         Task<int> ReadCurrentEmpCounter();
 
-        Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName();
+        Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName(int teamLeadId);
 
         Task IncrCurrentEmpCounter();
 

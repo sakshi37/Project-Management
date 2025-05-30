@@ -29,6 +29,7 @@ export class GmcService {
     return this.http.get<FamilyMemberType[]>(`${this.baseUrl}Gmc/FamilyMember`)
   }
    getEmployeeByCode(code: string): Observable<Employee> {
+      console.log('Calling API with employee code:', code);
     return this.http.get<Employee>(`${this.baseUrl}Employee/${code}`);
   }
 }

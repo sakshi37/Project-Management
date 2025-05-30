@@ -24,8 +24,14 @@ namespace HR.Persistence.Repositories
             _context = context;
         }
 
+        #region Create Location
+
+        /// <summary>
+        /// Creates a new location after checking for duplicate names.
+        /// </summary>
         public async Task<Location> CreateAsync(CreateLocationDto dto)
         {
+            // Validate input
             if (dto == null)
                 throw new LocationValidationException("Location data cannot be null.");
 
@@ -35,24 +41,24 @@ namespace HR.Persistence.Repositories
             if (dto.CityId <= 0)
                 throw new LocationValidationException("Invalid City ID.");
 
-
+            // Check for duplicate location name in the same city/state
             var existingLocation = await _context.Locations
                  .FromSqlRaw("EXEC CheckLocationDuplicate @LocationName = {0}", dto.LocationName)
                  .AsNoTracking()
                  .ToListAsync();
-            var foundcity = existingLocation.FirstOrDefault();
+            var foundCity = existingLocation.FirstOrDefault();
 
-
-            if (foundcity != null)
-            {
+            if (foundCity != null)
                 throw new LocationValidationException("A location with the same name already exists in the selected state.");
-            }
+
+            // Insert new location using stored procedure
             var sql = "EXEC SP_LocationInsert @Fk_CityId = {0}, @LocationName = {1}, @LocationStatus = {2}, @CreatedBy = {3}";
             int addLocation = await _context.Database.ExecuteSqlRawAsync(sql, dto.CityId, dto.LocationName, dto.LocationStatus, dto.CreatedBy);
-            if(addLocation < 0)
-            {
+
+            if (addLocation < 0)
                 throw new Exception("For some reasons, location not added.");
-            }
+
+            // Return created location (partial data)
             return new Location
             {
                 LocationName = dto.LocationName,
@@ -62,68 +68,86 @@ namespace HR.Persistence.Repositories
             };
         }
 
+        #endregion
+
+        #region Update Location
+
+        /// <summary>
+        /// Updates an existing location using a stored procedure.
+        /// </summary>
         public async Task<Location> UpdateAsync(UpdateLocationDto dto)
         {
+            // Validate input
+            if (dto == null)
+                throw new LocationValidationException("Location data cannot be null.");
+
+            if (dto.LocationId <= 0)
+                throw new LocationValidationException("Invalid Location ID.");
+
+            if (string.IsNullOrEmpty(dto.LocationName))
+                throw new LocationValidationException("Location name is required.");
+
+            if (dto.CityId <= 0)
+                throw new LocationValidationException("Invalid city ID.");
+
+            // Execute update stored procedure
+            string sql = "EXEC SP_LocationUpdate @LocationId = {0},@Fk_CityId = {1}, @LocationName = {2},  @LocationStatus = {3}, @UpdatedBy = {4}";
+            int rowsAffected = await _context.Database.ExecuteSqlRawAsync(sql, dto.LocationId, dto.CityId, dto.LocationName, dto.LocationStatus, dto.UpdatedBy);
+
+            if (rowsAffected < 1)
+                throw new Exception("Update Failed :(");
+
+            // Return updated location (partial data)
+            return new Location
             {
-                if (dto == null)
-                    throw new LocationValidationException("Location data cannot be null.");
-
-                if (dto.CityId <= 0)
-                    throw new LocationValidationException("Invalid Location ID.");
-
-                if (string.IsNullOrEmpty(dto.LocationName))
-                    throw new LocationValidationException("Location name is required.");
-
-                if (dto.CityId <= 0)
-                    throw new LocationValidationException("Invalid city ID.");
-
-
-                string sql = "EXEC SP_LocationUpdate @LocationId = {0},@Fk_CityId = {1}, @LocationName = {2},  @LocationStatus = {3}, @UpdatedBy = {4}";
-                int rowsAffected = await _context.Database.ExecuteSqlRawAsync(sql, dto.LocationId, dto.CityId, dto.LocationName, dto.LocationStatus, dto.UpdatedBy);
-
-                if (rowsAffected < 1)
-                {
-                    throw new Exception("Update Failed :(");
-                }
-
-                return new Location
-                {
-                    LocationId = dto.LocationId,
-                    Fk_CityId = dto.CityId,
-                    LocationName = dto.LocationName,
-                    LocationStatus = dto.LocationStatus,
-                    UpdatedBy = dto.UpdatedBy,
-                    UpdatedDate = DateTime.UtcNow
-                };
-            }
+                LocationId = dto.LocationId,
+                Fk_CityId = dto.CityId,
+                LocationName = dto.LocationName,
+                LocationStatus = dto.LocationStatus,
+                UpdatedBy = dto.UpdatedBy,
+                UpdatedDate = DateTime.UtcNow
+            };
         }
 
+        #endregion
 
+        #region Delete Location
+
+        /// <summary>
+        /// Deletes a location by ID using a stored procedure.
+        /// </summary>
         public async Task DeleteAsync(int id, int updatedBy)
         {
+            // Validate input
             if (id <= 0)
                 throw new LocationValidationException("Invalid Location ID.");
 
+            // Execute delete stored procedure
             var sql = "EXEC SP_LocationDelete @LocationId = {0}, @UpdatedBy = {1}";
             int rowsAffected = await _context.Database.ExecuteSqlRawAsync(sql, id, updatedBy);
 
             if (rowsAffected < 1)
-            {
                 throw new Exception("Delete Failed :(");
-            }
         }
 
+        #endregion
 
+        #region Get All Locations
 
-
+        /// <summary>
+        /// Retrieves all locations using a stored procedure.
+        /// </summary>
         public async Task<List<LocationDto>> GetAllAsync()
         {
+            // Execute stored procedure to get all locations
             var result = await _context.LocationDtos.FromSqlRaw("EXEC SP_LocationGetAll").ToListAsync();
-            if (result == null)
+
+            if (result == null || !result.Any())
                 throw new NotFoundException("Location Records not found");
+
             return result;
         }
 
-
+        #endregion
     }
 }

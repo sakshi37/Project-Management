@@ -26,6 +26,19 @@ export class RoleService {
       return null;
     }
   }
+  getEmpId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+  
+    try {
+      const decoded = jwtDecode<any>(token);
+      return decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"] || null;
+    } catch (err) {
+      console.error('Invalid token', err);
+      return null;
+    }
+  }
+  
 
   isInRole(allowedRoles: string[]): boolean {
     const role = this.getUserRole();

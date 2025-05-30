@@ -4,7 +4,7 @@ export interface UpdateLocationDto {
     locationId: number;
     locationName: string;
     locationStatus: boolean;
-    updatedBy: number; 
+    updatedBy: string; 
     // updateDto:string;
   }
   

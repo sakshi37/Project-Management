@@ -101,10 +101,27 @@ namespace HR.Persistence.Repositories
         //}
         public async Task<Holiday> UpdateAsync(UpdateHolidayDto dto)
         {
-            var imagePath = await SaveImageAsync(dto.Image);
+            string imagePath;
+
+            if (dto.Image != null)
+            {
+                imagePath = await SaveImageAsync(dto.Image);
+            }
+            else
+            {
+                imagePath = dto.ExistingImagePath; // keep the old image
+            }
 
             var sql = "EXEC SP_HolidayUpdate @HolidayId = {0}, @HolidayName = {1}, @HolidayDate = {2}, @HolidayListType = {3}, @HolidayStatus = {4}, @ImagePath = {5}, @UpdatedBy = {6}";
-            await _context.Database.ExecuteSqlRawAsync(sql, dto.HolidayId, dto.HolidayName, dto.HolidayDate, dto.HolidayListType, dto.HolidayStatus, imagePath, dto.UpdatedBy);
+            await _context.Database.ExecuteSqlRawAsync(sql,
+                dto.HolidayId,
+                dto.HolidayName,
+                dto.HolidayDate,
+                dto.HolidayListType,
+                dto.HolidayStatus,
+                imagePath,
+                dto.UpdatedBy
+            );
 
             return new Holiday
             {
