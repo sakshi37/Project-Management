@@ -89,6 +89,7 @@ export type Timesheets = {
   empId: number | null;
   timeSheetStatus: boolean | null;
   code: string;
+  remark:string;
 };
 
 export type ProjectWithStack = {

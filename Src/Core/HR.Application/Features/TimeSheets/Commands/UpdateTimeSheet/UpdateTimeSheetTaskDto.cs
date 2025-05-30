@@ -16,7 +16,7 @@ namespace HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet
         //public DateTime? StartTime { get; set; }
         //public DateTime? EndTime { get; set; }
         //public int? Hrs { get; set; }
-        //public int? Min { get; set; }
+        public string? Remark { get; set; }
         public int? Fk_EmpId { get; set; }
         //public bool? TimeSheetStatus { get; set; }
 

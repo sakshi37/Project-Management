@@ -70,6 +70,7 @@ export class AssignedTaskComponent implements OnInit {
       part: ['', Validators.required],
       activity: ['', Validators.required],
       type: ['', Validators.required],
+       remark: [''],
       fk_EmpId: [0]
     });
   }
@@ -183,17 +184,19 @@ export class AssignedTaskComponent implements OnInit {
 
   updateForm: FormGroup;
 
-
+selectedTaskIsCompleted: boolean = false;
 
     openUpdateModal(task: Timesheets) {
     // Patch the task properties into the update form dynamically
+    this.selectedTaskIsCompleted = !!task.endTime; 
     this.updateForm.patchValue({
       id: task.id,
       sequence: task.sequence,
       part: task.part,
       activity: task.activity,
       type: task.type,
-      fk_EmpId: task.empId
+      fk_EmpId: task.empId,
+      remark: task.remark || ''
     });
 
     this.modal.show();
