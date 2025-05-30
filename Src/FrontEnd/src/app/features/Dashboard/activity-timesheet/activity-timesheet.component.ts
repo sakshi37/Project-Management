@@ -245,6 +245,11 @@ export class ActivityTimesheetComponent implements OnInit {
     }
 
     Swal.fire({
+      toast: true,
+      position: 'top',
+      timer: 1000,
+      timerProgressBar: true,
+      showConfirmButton: false,
       icon: 'error',
       title: 'Error',
       text: 'Please fill all fields before submitting.',

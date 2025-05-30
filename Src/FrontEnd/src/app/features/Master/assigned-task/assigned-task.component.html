@@ -60,8 +60,14 @@
               {{ task.endTime ? "✔ Completed" : "❌ Incomplete" }}
             </span>
 
-            <span *ngIf="task.endTime" class="text-muted small">
-              (Ended on: {{ task.endTime | date : "medium" }})
+            <span
+              *ngIf="task.endTime && task.startTime"
+              class="text-muted small"
+            >
+              Started: {{ task.startTime | date : "dd MMM yyyy, hh:mm a" }}
+              <br />
+              Ended: {{ task.endTime | date : "dd MMM yyyy, hh:mm a" }} <br />
+              <!-- Duration: {{ getDuration(task.startTime, task.endTime) }} -->
             </span>
           </div>
 

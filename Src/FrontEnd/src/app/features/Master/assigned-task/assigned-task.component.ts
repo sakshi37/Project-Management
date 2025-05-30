@@ -118,25 +118,25 @@ export class AssignedTaskComponent implements OnInit {
 
   onSubmit(projectId: number) {
     console.log(this.taskForm.value);
+
     if (this.taskForm.invalid) return;
 
-    this.timesheetService
-      .InsertTimesheet({
-        timesheet: { ...this.taskForm.value, projectId },
-      })
+    const payload = {
+      timesheet: { ...this.taskForm.value, projectId },
+    };
 
-      .subscribe((res) => {
-        console.log(res);
-        this.timeSheet();
-        this.taskForm.reset();
-        this.addTaskProjectId = null;
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: 'Task Added successfully!',
-          confirmButtonColor: '#3085d6',
-        });
+    this.timesheetService.InsertTimesheet(payload).subscribe((res) => {
+      console.log(res);
+      this.taskForm.reset();
+      this.addTaskProjectId = null;
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Task Added successfully!',
+        confirmButtonColor: '#3085d6',
       });
+    });
   }
 
   initProjectForm(): void {
