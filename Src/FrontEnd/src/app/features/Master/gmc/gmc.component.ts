@@ -317,7 +317,7 @@ fetchEmployeeDetails(code: string): void {
           Swal.fire({
             toast: true,
             icon: 'error',
-            text: 'Validation failed. Check details.',
+            text: ' failed. Check details.',
             position: 'top',
             timer: 3000,
             showConfirmButton: false,
