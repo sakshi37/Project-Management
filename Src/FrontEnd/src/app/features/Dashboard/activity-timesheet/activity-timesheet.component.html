@@ -40,7 +40,7 @@
           <th>End Time</th>
           <th>Hrs</th>
           <th>Min</th>
-          <!-- <th>Remarks</th> -->
+          <th>Remarks</th>
           <th>Edit</th>
         </tr>
       </thead>
@@ -73,9 +73,10 @@
             <td>{{ timesheet.endTime | date : "short" }}</td>
             <td>{{ timesheet.hrs }}</td>
             <td>{{ timesheet.min }}</td>
-            <!-- <td>--</td> -->
+            <td>{{ timesheet.remark }}</td>
             <td>
               <button
+                *ngIf="!timesheet.endTime"
                 class="btn btn-info btn-sm"
                 (click)="toggleEditForm(timesheet.id)"
               >
@@ -104,6 +105,16 @@
                       type="datetime-local"
                       class="form-control"
                       [(ngModel)]="editFormData.endTime"
+                      name="editEndTime"
+                      (change)="onEditTimeChange()"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label>Remarks:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="editFormData.remark"
                       name="editEndTime"
                       (change)="onEditTimeChange()"
                     />
