@@ -8,6 +8,7 @@ namespace HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails
 {
    public class GetEmployeeBasicDetailsByCodeQueryVm
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
         public string DesignationName { get; set; }

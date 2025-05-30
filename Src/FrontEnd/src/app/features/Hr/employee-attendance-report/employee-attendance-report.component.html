@@ -133,7 +133,7 @@
               <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
             </td>
             <td>
-              <div class="tr-other-child">{{ ateendanceReport.inTime.toString().split('T')[0] }}</div>
+              <div class="tr-other-child">{{ ateendanceReport.inTime != null ? ateendanceReport.inTime.toString().split('T')[0] : '-' }}</div>
             </td>
             <td>
               <div class="tr-other-child">{{ ateendanceReport.divisionName }}</div>
@@ -148,7 +148,8 @@
               <div class="tr-other-child">{{ ateendanceReport.employeeName }}</div>
             </td>
             <td>
-              <div class="tr-other-child">{{ ateendanceReport.inTime | date:'shortTime' }}</div>
+              <div class="tr-other-child">{{ (ateendanceReport.inTime)?(ateendanceReport.inTime |
+                date:'shortTime'):'-- --' }}</div>
             </td>
             <td>
               <div class="tr-other-child">{{(ateendanceReport.outTime)?(ateendanceReport.outTime |

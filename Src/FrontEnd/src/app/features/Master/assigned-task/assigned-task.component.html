@@ -84,7 +84,7 @@
             <div class="col-md-6 mb-1">
               <strong>Code:</strong> {{ task.code }}
             </div>
-            <div class="col-md-6 mb-1">
+            <div class="col-md-6 mb-1" *ngIf="task.endTime">
               <strong>Remark:</strong> {{ task.remark }}
             </div>
           </div>
@@ -285,6 +285,20 @@
               class="text-danger"
             >
               Part is required.
+            </div>
+          </div>
+
+          <div class="mb-2" *ngIf="selectedTaskIsCompleted">
+            <label>Remark</label>
+            <input type="text" class="form-control" formControlName="remark" />
+            <div
+              *ngIf="
+                updateForm.get('remark')?.touched &&
+                updateForm.get('remark')?.invalid
+              "
+              class="text-danger"
+            >
+              Remark is required.
             </div>
           </div>
 

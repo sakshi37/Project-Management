@@ -1,5 +1,6 @@
 
 export interface GetAttendanceReportDtoService {
+id:number;
 employeeCode : string;
 employeeName:string;
 inTime:Date;

@@ -121,7 +121,7 @@ namespace HR.Persistence.Repositories
             //parameters.Add("@StartTime", timeSheetDto.StartTime);
             //parameters.Add("@EndTime", timeSheetDto.EndTime);
             //parameters.Add("@Hrs", timeSheetDto.Hrs);
-            //parameters.Add("@Min", timeSheetDto.Min);
+            parameters.Add("@Remark", timeSheetDto.Remark);
             parameters.Add("@Fk_EmpId", timeSheetDto.Fk_EmpId);
             //parameters.Add("@TimeSheetStatus", timeSheetDto.TimeSheetStatus);
 
