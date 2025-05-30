@@ -8,7 +8,7 @@ namespace HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttenda
 {
    public class EmployeeAttendanceReportDto
     {
-
+        public int Id { get; set; }
         public string? EmployeeCode { get; set; }
         public string? EmployeeName { get; set; }
         public DateTime? InTime { get; set; }
