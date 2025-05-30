@@ -10,6 +10,7 @@ using HR.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer; 
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -50,6 +51,13 @@ namespace HR.API
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads")),
+                RequestPath = "/wwwroot/uploads"
+            });
+
 
             app.UseCors(x => x
                 .AllowAnyOrigin()

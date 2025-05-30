@@ -2,7 +2,7 @@
 
 namespace HR.Application.Features.ProjectMaster.Query
 {
-    public record GetAllProjectQuery : IRequest<List<ProjectOutputDto>>
+    public record GetAllProjectQuery(int id) : IRequest<List<ProjectOutputDto>>
     {
     }
 }

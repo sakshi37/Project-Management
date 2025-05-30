@@ -12,7 +12,7 @@ import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
-import { EmployeeFull } from '../../../Models/employee-model';
+import { Employee, EmployeeFull } from '../../../Models/employee-model';
 
 @Component({
   selector: 'app-employee',
@@ -26,8 +26,6 @@ export class EmployeeComponent implements OnInit {
   pageSize = 10;
   totalCount = 0;
   fullEmployeeList: EmployeeFull[] = [];
-
-  
 
   searchText: string = '';
 
@@ -51,46 +49,74 @@ export class EmployeeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadEmployees();
+    let updatedCode =
+      this.Router.getCurrentNavigation()?.extras?.state?.['updatedCode'];
+
+    if (!updatedCode) {
+      updatedCode = sessionStorage.getItem('updatedCode') || undefined;
+      if (updatedCode) {
+        sessionStorage.removeItem('updatedCode');
+      }
+    }
+
+    console.log('Updated Code from navigation or sessionStorage:', updatedCode);
+    this.loadEmployees(updatedCode);
   }
 
-  loadEmployees() {
+  loadEmployees(updatedCode?: string) {
+    const pageSizeToUse = updatedCode ? 1000 : this.pageSize;
+
     this.employeeService
-      .getPagedEmployees(this.pageNumber, this.pageSize, this.searchText)
+      .getPagedEmployees(this.pageNumber, pageSizeToUse, this.searchText)
       .subscribe((res) => {
         this.fullEmployeeList = res.data;
-        this.employees = res.data;
+        this.employees = res.data.slice(0, this.pageSize); // display only first page
         this.totalCount = res.totalCount;
+
+        console.log('Loaded employees:', this.employees.length);
+
+        if (updatedCode) {
+          const index = res.data.findIndex(
+            (emp: Employee) => emp.code === updatedCode
+          );
+          console.log('Index of updated employee in full list:', index);
+
+          if (index > -1) {
+            const updatedEmp = res.data.splice(index, 1)[0];
+            this.employees.unshift(updatedEmp); // add to top of display
+            console.log('Moved updated employee to top:', updatedEmp);
+          }
+        }
       });
   }
 
   get totalPages(): number {
-  return Math.ceil(this.totalCount / this.pageSize);
-}
-  
+    return Math.ceil(this.totalCount / this.pageSize);
+  }
+
   onPageChange(newPage: number) {
-     const maxPage = Math.ceil(this.totalCount / this.pageSize);
-  if (newPage < 1 || newPage > maxPage) {
-    return; // do nothing, outside valid page range
-  }
-  this.pageNumber = newPage;
-  this.loadEmployees();
-  }
-
- editEmployee(emp: any): void {
-  if (!emp || !emp.code) {
-    console.error('Selected employee is missing code or is invalid:', emp);
-    return;
+    const maxPage = Math.ceil(this.totalCount / this.pageSize);
+    if (newPage < 1 || newPage > maxPage) {
+      return; // do nothing, outside valid page range
+    }
+    this.pageNumber = newPage;
+    this.loadEmployees();
   }
 
-  console.log('Selected Employee:', emp);
-  console.log('Selected Employee Code:', emp.code);
+  editEmployee(emp: any): void {
+    if (!emp || !emp.code) {
+      console.error('Selected employee is missing code or is invalid:', emp);
+      return;
+    }
 
-  this.Router.navigate(['/update-employee'], {
-    state: { employee: emp }  
-  });
-}
+    console.log('Selected Employee:', emp);
+    console.log('Selected Employee Code:', emp.code);
+    console.log('Selected Employee Name:', emp.name);
 
+    this.Router.navigate(['/update-employee'], {
+      state: { employee: emp, employeeName: emp.name },
+    });
+  }
 
   openInactivatePopup(emp: any): void {
     this.dialog
@@ -121,29 +147,28 @@ export class EmployeeComponent implements OnInit {
       });
   }
 
-onSearch() {
-  const search = this.searchText?.toLowerCase().trim();
+  onSearch() {
+    const search = this.searchText?.toLowerCase().trim();
 
-  this.employeeService
-    .getPagedEmployees(this.pageNumber, this.pageSize, search)
-    .subscribe((res) => {
-      this.employees = res.data.filter((emp: any) => {
-        const statusText = emp.loginStatus ? 'active' : 'inactive';
+    this.employeeService
+      .getPagedEmployees(this.pageNumber, this.pageSize, search)
+      .subscribe((res) => {
+        this.employees = res.data.filter((emp: any) => {
+          const statusText = emp.loginStatus ? 'active' : 'inactive';
 
-        return (
-          emp.code?.toLowerCase().includes(search) ||
-          emp.name?.toLowerCase().includes(search) ||
-          emp.branchName?.toLowerCase().includes(search) ||
-          emp.designationName?.toLowerCase().includes(search) ||
-          emp.divisionName?.toLowerCase().includes(search) ||
-          statusText.includes(search)
-        );
+          return (
+            emp.code?.toLowerCase().includes(search) ||
+            emp.name?.toLowerCase().includes(search) ||
+            emp.branchName?.toLowerCase().includes(search) ||
+            emp.designationName?.toLowerCase().includes(search) ||
+            emp.divisionName?.toLowerCase().includes(search) ||
+            statusText.includes(search)
+          );
+        });
+
+        this.totalCount = this.employees.length;
       });
-
-      this.totalCount = this.employees.length;
-    });
-}
-
+  }
 
   exportexceldata(): void {
     const exceldata = this.employees.map((emp, i) => {
@@ -245,6 +270,11 @@ onSearch() {
   }
   show() {
     Swal.fire({
+      toast: true,
+      position: 'top',
+      timer: 1000,
+      timerProgressBar: true,
+      showConfirmButton: false,
       title: 'Error!',
       text: 'Do you want to continue',
       icon: 'error',
@@ -259,57 +289,94 @@ onSearch() {
     );
   }
 
-getSelectedEmployees(): any[] {
-  return this.employees.filter(emp => emp.selected);
-}
-// Check if all rows are selected
-areAllSelected(): boolean {
-  return this.employees.length > 0 && this.employees.every(emp => emp.selected);
-}
+  getSelectedEmployees(): any[] {
+    return this.employees.filter((emp) => emp.selected);
+  }
+  // Check if all rows are selected
+  areAllSelected(): boolean {
+    return (
+      this.employees.length > 0 && this.employees.every((emp) => emp.selected)
+    );
+  }
 
-// Select/Deselect all
-toggleSelectAll(event: Event): void {
-  const checked = (event.target as HTMLInputElement).checked;
-  this.employees.forEach(emp => emp.selected = checked);
-}
+  // Select/Deselect all
+  toggleSelectAll(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.employees.forEach((emp) => (emp.selected = checked));
+  }
 
-// When an individual checkbox changes
-onCheckboxChange(): void {
-  // If needed, you could update some UI here
-}
+  // When an individual checkbox changes
+  onCheckboxChange(): void {
+    // If needed, you could update some UI here
+  }
 
-// Get selected employees
-selectedEmployees(): any[] {
-  return this.employees.filter(emp => emp.selected && emp.code);
-}
+  // Get selected employees
+  selectedEmployees(): any[] {
+    return this.employees.filter((emp) => emp.selected && emp.code);
+  }
 
-// Delete (inactivate) selected employees
-deleteSelectedEmployees() {
-  const selectedCodes = this.selectedEmployees().map(emp => emp.code);
+  // Delete (inactivate) selected employees
+  deleteSelectedEmployees() {
+    const selectedCodes = this.selectedEmployees().map((emp) => emp.code);
 
-if (selectedCodes.length === 0) {
-  alert('Please select at least one employee.');
-  return;
-}
-
-if (confirm('Are you sure you want to inactivate selected employees?')) {
-  this.employeeService.inactivateEmployees(selectedCodes).subscribe({
-    next: (response) => {
-      alert(response.message);
-      this.employees.forEach(emp => {
-        if (selectedCodes.includes(emp.code)) {
-          emp.loginStatus = false;
-        }
-        emp.selected = false;
+    if (selectedCodes.length === 0) {
+      Swal.fire({
+        toast: true,
+        icon: 'warning',
+        text: 'Please select at least one employee.',
+        position: 'top',
+        timer: 3000,
+        showConfirmButton: false,
       });
-    },
-    error: (error) => {
-      console.error('Error:', error);
-      alert('Something went wrong while inactivating employees.');
+      return;
     }
-  });
-}
 
-}
+    if (confirm('Are you sure you want to inactivate selected employees?')) {
+      const originalOrder = [...this.employees]; // Save original order
 
+      this.employeeService.inactivateEmployees(selectedCodes).subscribe({
+        next: (response) => {
+          Swal.fire({
+            toast: true,
+            icon: 'success',
+            text: response.message || 'Employees inactivated successfully.',
+            position: 'top',
+            timer: 3000,
+            showConfirmButton: false,
+          });
+
+          // Update loginStatus and deselect
+          this.employees.forEach((emp) => {
+            if (selectedCodes.includes(emp.code)) {
+              emp.loginStatus = false;
+            }
+            emp.selected = false;
+          });
+
+          // Move inactivated employees to top
+          this.employees.sort((a, b) => {
+            const aSelected = selectedCodes.includes(a.code) ? -1 : 1;
+            const bSelected = selectedCodes.includes(b.code) ? -1 : 1;
+            return aSelected - bSelected;
+          });
+
+          // Restore original order after 10 seconds
+          setTimeout(() => {
+            this.employees = [...originalOrder];
+          }, 10000);
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          Swal.fire({
+            toast: true,
+            icon: 'error',
+            text: 'Something went wrong while inactivating employees.',
+            position: 'top',
+            timer: 3000,
+            showConfirmButton: false,
+          });
+        },
+      });
+    }
+  }
 }

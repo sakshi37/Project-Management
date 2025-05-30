@@ -1,13 +1,13 @@
-﻿using Dapper;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using HR.Application.Contracts;
 using HR.Application.Contracts.Models;
 using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
 using HR.Application.Exceptions;
-using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employees.Dtos;
-using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +15,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace HR.Identity.Services
 {
@@ -39,7 +34,7 @@ namespace HR.Identity.Services
             _jwtSettings = jwtOptions.Value;
             _configuration = configuration;
         }
-
+        
         public async Task<LoginResponse> Login(Tbl_LoginMasterDto loginRequest)
         {
             var hasher = new PasswordHasher<string>();
@@ -234,7 +229,7 @@ namespace HR.Identity.Services
 
             var result = await _context.Database.ExecuteSqlRawAsync(
                 "exec SP_updateForgotPassword @Password = {0}, @EmpCode = {1}",
-                changePasswordRequest.NewPassword, changePasswordRequest.UserName);
+                hashedPassword, changePasswordRequest.UserName);
 
             return result > 0;
         }
@@ -253,10 +248,10 @@ namespace HR.Identity.Services
                 throw new UserNotFoundException("User not found");
 
             var hasher = new PasswordHasher<string>();
-            var hashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
             // Check default password case
             if (user.Password == null && request.OldPassword == _configuration["DefaultCredentials:DefaultPassword"])
             {
+                var hashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
                 var result = await _context.Database.ExecuteSqlRawAsync(
                     "exec SP_UpdatePassword @Password={0}, @EmpCode = {1}",
                     hashedPassword, request.UserName);
@@ -270,10 +265,11 @@ namespace HR.Identity.Services
             if (request.NewPassword != request.ConfirmPassword)
                 throw new PasswordNotMatchException("New and confirm passwords do not match");
 
+            var newHashedPassword = hasher.HashPassword(user.Code, request.NewPassword);
 
             var resultUpdate = await _context.Database.ExecuteSqlRawAsync(
                 "exec SP_UpdateOldPassword @Password={0}, @EmpCode = {1}, @OldPassword = {2}",
-                hashedPassword, request.UserName, request.OldPassword);
+                newHashedPassword, request.UserName, user.Password);
 
             return resultUpdate > 0;
         }
@@ -285,6 +281,9 @@ namespace HR.Identity.Services
 
             var claims = new List<Claim>
             {
+                new Claim("id", user.Id.ToString()),
+                new Claim(ClaimTypes.Sid, user.Id.ToString()),
+
                 new Claim(ClaimTypes.Name, user.Code),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.UserGroupName ?? "User"),

@@ -22,11 +22,12 @@ import { RoleGuard } from './services/role.guard';
 import { UpdateEmployeeComponent } from './features/Master/employee/update-employee/update-employee.component';
 import { ActivityTimesheetComponent } from './features/Dashboard/activity-timesheet/activity-timesheet.component';
 import { AttendanceComponent } from './features/Master/attendance/attendance/attendance.component';
-import { WorkTimesheetComponent } from './features/Master/work-timesheet/work-timesheet.component';
 import { EmployeeAttendanceReportComponent } from './features/Hr/employee-attendance-report/employee-attendance-report.component';
 import { DailyReportComponent } from './features/Hr/daily-report/daily-report.component';
 import { AdminComponent } from './features/admin/admin.component';
 import { NotificationComponent } from './features/notification/notification.component';
+import { AssignedTaskComponent } from './features/Master/assigned-task/assigned-task.component';
+import { WorkTimesheetComponent } from './features/Master/work-timesheet/work-timesheet.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -111,6 +112,8 @@ export const routes: Routes = [
   { path: 'attendance', component: AttendanceComponent },
 
   { path: 'work-timesheet', component: WorkTimesheetComponent },
+  { path: 'assigned-timesheet', component: AssignedTaskComponent },
+
   {
     path: 'dailyreport',
     component: DailyReportComponent,
