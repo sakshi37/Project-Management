@@ -51,6 +51,11 @@ export class TimeSheetService {
     return this.http.get<Stack[]>(`${this.diffUrl}/GetAllStack`);
   }
 
+
+updateTaskTimeSheet(data: UpdateTaskTimeSheetDto): Observable<any> {
+  return this.http.put(`${this.url}/update`, data);
+}
+
   updateTimeSheet(timeSheet: {
     timeSheet: {
       id: number;
@@ -104,3 +109,12 @@ export type Stack = {
   id: number;
   name: String;
 };
+
+export interface UpdateTaskTimeSheetDto{
+   id: number;
+  sequence: string;
+  part: string;
+  activity: string;
+  type: string;
+  fk_EmpId: number;
+}
