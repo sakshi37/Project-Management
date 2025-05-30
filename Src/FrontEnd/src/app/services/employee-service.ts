@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import {
   EmployeeFull,
   EmployeeModel,
@@ -9,6 +9,7 @@ import {
 } from '../Models/employee-model';
 import { CreateModel } from '../Models/create-model';
 import { API_URL } from '../../constant';
+import { error } from 'jquery';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +42,7 @@ export class EmployeeService {
     return this.http.get<GetEmployeesAll[]>(this.url + '/Employee/GetAll');
   }
   createEmployee(employee: CreateModel): Observable<any> {
+    console.log("Before Doing Harder do warmUp")
     return this.http.post(this.url + '/Employee', employee);
   }
   getTeamLeaders(): Observable<any[]> {

@@ -23,7 +23,7 @@ namespace HR.Application.Contracts.Persistence
         //Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(int id);
         Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(string Code);
         Task<IEnumerable<EmployeeDto>> GetEmployeeByDesignationId(int did);
-        Task<EmployeeDto> GetEmaployeeByEmail(string email);
+        //Task<EmployeeDto> GetEmaployeeByEmail(string email);
         Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto);
 
         Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code);

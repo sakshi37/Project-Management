@@ -58,11 +58,11 @@ namespace HR.API.Controllers
 
             if (!emailContainsAt || !emailContainsDot) return BadRequest("Email must be valid");
 
-            var existingEmployee = await _mediator.Send(new GetEmployeeByEmailQuery(dto.Email));
-            if (existingEmployee != null)
-            {
-                return BadRequest("Employee with that email already exists");
-            }
+            //var existingEmployee = await _mediator.Send(new GetEmployeeByEmailQuery(dto.Email));
+            //if (existingEmployee != null)
+            //{
+            //    return BadRequest("Employee with that email already exists");
+            //}
             try
             {
                 var response = await _mediator.Send(new CreateEmployeeCommand(dto));

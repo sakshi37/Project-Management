@@ -36,7 +36,7 @@ export const routes: Routes = [
     path: 'team-composition',
     component: TeamCompositionComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['HR', 'Admin'] },
+    data: { roles: ['HR'] },
   },
 
   {
@@ -66,7 +66,7 @@ export const routes: Routes = [
     path: 'holiday',
     component: HolidayComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['User', 'HR'] },
+    data: { roles: ['User', 'HR','Admin'] },
   },
   {
     path: 'changePassword',
@@ -92,20 +92,20 @@ export const routes: Routes = [
     path: 'employee',
     component: EmployeeComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['HR', 'Admin'] },
+    data: { roles: ['HR'] },
   },
   {
     path: 'employee-registration',
     component: EmployeeRegistrationComponent,
     // canActivate: [AuthGuard],
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['HR', 'Admin'] },
+    data: { roles: ['HR'] },
   },
   {
     path: 'update-employee',
     component: UpdateEmployeeComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['HR', 'Admin'] },
+    data: { roles: ['HR'] },
   },
 
   { path: 'activity-timesheet', component: ActivityTimesheetComponent },
