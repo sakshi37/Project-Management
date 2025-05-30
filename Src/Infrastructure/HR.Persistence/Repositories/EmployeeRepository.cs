@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
+using HR.Application.Exception;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
@@ -99,10 +100,10 @@ namespace HR.Persistence.Repositories
         }
 
         public async Task<Employee> AddEmployee(CreateEmployeeMasterDto employee)
-
         {
             Console.WriteLine($"Name: {employee.Name}");
             Console.WriteLine($"Code: {employee.Code}");
+            Console.WriteLine($"Email: {employee.Email}");
             Console.WriteLine($"MobileNo: {employee.MobileNo}");
             Console.WriteLine($"JoinDate: {employee.JoinDate}");
             Console.WriteLine($"Image is null? {employee.Image == null}");
@@ -113,56 +114,58 @@ namespace HR.Persistence.Repositories
             byte[] signatureBytes = employee.Signature != null ? Convert.FromBase64String(employee.Signature) : null;
 
             var parameters = new List<SqlParameter>
-{   new SqlParameter("@Name", employee.Name ?? (object)DBNull.Value),
-    new SqlParameter("@Code", employee.Code ?? (object)DBNull.Value),
+    {
+        new SqlParameter("@Name", employee.Name ?? (object)DBNull.Value),
+        new SqlParameter("@Code", employee.Code ?? (object)DBNull.Value),
+        new SqlParameter("@Address", employee.Address ?? (object)DBNull.Value),
+        new SqlParameter("@MobileNo", employee.MobileNo ?? (object)DBNull.Value),
+        new SqlParameter("@SkypeId", employee.SkypeId ?? (object)DBNull.Value),
+        new SqlParameter("@JoinDate", (object?)employee.JoinDate ?? DBNull.Value),
+        new SqlParameter("@Email", employee.Email ?? (object)DBNull.Value),
+        new SqlParameter("@PanNumber", employee.PanNumber ?? (object)DBNull.Value),
+        new SqlParameter("@BirthDate", (object?)employee.BirthDate ?? DBNull.Value),
+        new SqlParameter("@Image", SqlDbType.VarBinary) { Value = (object?)imageBytes ?? DBNull.Value },
+        new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
+        new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
+        new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
+        new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
+        new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value)
+    };
 
-    new SqlParameter("@Address", employee.Address ?? (object)DBNull.Value),
-    new SqlParameter("@MobileNo", employee.MobileNo ?? (object)DBNull.Value),
-    new SqlParameter("@SkypeId", employee.SkypeId ?? (object)DBNull.Value),
-    new SqlParameter("@JoinDate", (object?)employee.JoinDate ?? DBNull.Value),
-    new SqlParameter("@Email", employee.Email ?? (object)DBNull.Value),
-    new SqlParameter("@PanNumber", employee.PanNumber ?? (object)DBNull.Value),
-    new SqlParameter("@BirthDate", (object?)employee.BirthDate ?? DBNull.Value),
+            try
+            {
+                await _appDbContext.Database.ExecuteSqlRawAsync(
+                    @"EXEC dbo.SP_Employee_Insert 
+                @Name,
+                @Code, 
+                @Address, 
+                @MobileNo, 
+                @SkypeId, 
+                @JoinDate, 
+                @Email, 
+                @PanNumber, 
+                @BirthDate,
+                @Image, 
+                @Signature, 
+                @Fk_LocationId, 
+                @Fk_CountryId,
+                @Fk_StateId,
+                @Fk_CityId",
+                    parameters.ToArray()
+                );
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Message.Contains("Email already exists"))
+                    throw new EmployeeValidationException("Email is already registered.");
+                if (ex.Message.Contains("Mobile number already exists"))
+                    throw new EmployeeValidationException("Mobile number is already registered.");
+                if (ex.Message.Contains("PAN number already exists"))
+                    throw new EmployeeValidationException("PAN number is already registered.");
 
-
-    new SqlParameter("@Image", SqlDbType.VarBinary) { Value = (object?)imageBytes ?? DBNull.Value },
-    new SqlParameter("@Signature", SqlDbType.VarBinary) { Value = (object?)signatureBytes ?? DBNull.Value },
-
-    //new SqlParameter("@LeftCompany", (object?)employee.LeftCompany ?? DBNull.Value),
-    //new SqlParameter("@leftDate", (object?)employee.LeftCompany ?? DBNull.Value),
-
-    new SqlParameter("@Fk_LocationId", (object?)employee.LocationId ?? DBNull.Value),
-     new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
-    new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
-    new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value)
-
-
-};
-
-
-            await _appDbContext.Database.ExecuteSqlRawAsync(
-                @"EXEC dbo.SP_Employee_Insert 
-            @Name,
-            @Code, 
-            
-            @Address, 
-            @MobileNo, 
-            @SkypeId, 
-            @JoinDate, 
-            @Email, 
-            @PanNumber, 
-            @BirthDate,
-            @Image, 
-            @Signature, 
-            
-            @Fk_LocationId, 
-           
-            @Fk_CountryId,
-            @Fk_StateId,
-            @Fk_CityId
-            ",
-                parameters.ToArray()
-            );
+                // For any other SQL errors, rethrow
+                throw;
+            }
 
             return new Employee
             {
@@ -177,29 +180,26 @@ namespace HR.Persistence.Repositories
                 BirthDate = employee.BirthDate,
                 Image = imageBytes,
                 Signature = signatureBytes,
-                //LeftCompany = employee.LeftCompany,
-                //LeftDate = employee.LeftDate,
                 LocationId = employee.LocationId,
-
                 CountryId = employee.CountryId,
                 StateId = employee.StateId,
                 CityId = employee.CityId
             };
         }
 
-        public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
-        {
-            var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
-            Console.WriteLine($"SQL Query: {sql}", email);
-            var employee = _appDbContext.Employees
-                .FromSqlRaw(sql, email)
-                .AsNoTracking()
-                .AsEnumerable()
-                .ToList();
+        //public async Task<EmployeeDto> GetEmaployeeByEmail(string email)
+        //{
+        //    var sql = "EXEC SP_EmployeeGetByEmail @Email = {0}";
+        //    Console.WriteLine($"SQL Query: {sql}", email);
+        //    var employee = _appDbContext.Employees
+        //        .FromSqlRaw(sql, email)
+        //        .AsNoTracking()
+        //        .AsEnumerable()
+        //        .ToList();
 
 
-            return employee.FirstOrDefault();
-        }
+        //    return employee.FirstOrDefault();
+        //}
 
 
         public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommandDto dto)
