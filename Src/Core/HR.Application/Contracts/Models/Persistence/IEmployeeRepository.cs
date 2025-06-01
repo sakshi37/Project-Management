@@ -3,10 +3,12 @@ using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
+using HR.Application.Features.Employees.Dtos;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeesAll;
+using HR.Application.Features.Employees.Queries.SearchEmployee;
 using HR.Domain.Entities;
 
 namespace HR.Application.Contracts.Persistence
@@ -39,6 +41,9 @@ namespace HR.Application.Contracts.Persistence
         Task<List<GetAllEmployeeByIdNameDto>> GetAllEmployeeByIdName(int teamLeadId);
 
         Task IncrCurrentEmpCounter();
+
+        Task<List<SearchEmployeeVm>> SearchEmployeesAsync(SearchEmployeesDto dto);
+
 
     }
 }

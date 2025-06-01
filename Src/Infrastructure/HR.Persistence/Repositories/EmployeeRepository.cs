@@ -2,14 +2,17 @@
 using HR.Application.Contracts.Models.Common;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Exception;
+using HR.Application.Exceptions;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
+using HR.Application.Features.Employees.Dtos;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeesAll;
+using HR.Application.Features.Employees.Queries.SearchEmployee;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.Data.SqlClient;
@@ -29,9 +32,17 @@ namespace HR.Persistence.Repositories
         }
         public async Task<PaginatedResult<GetAllEmployeeVm>> GetAllEmployeeSummaryPagedAsync(int pageNumber, int pageSize)
         {
+            // Validate input parameters (example)
+            if (pageNumber <= 0 || pageSize <= 0)
+                throw new EmployeeValidationException("Page number and page size must be greater than zero.");
+
+            // Fetch all data from stored procedure
             var allData = await _appDbContext.GetAllEmployeeVms
                 .FromSqlRaw("EXEC SP_GetAllEmployeeSummary")
                 .ToListAsync();
+
+            if (allData == null || allData.Count == 0)
+                throw new NotFoundException("No employee data found.");
 
             var totalCount = allData.Count;
 
@@ -41,8 +52,8 @@ namespace HR.Persistence.Repositories
                 .ToList();
 
             return new PaginatedResult<GetAllEmployeeVm>(pagedData, totalCount, pageNumber, pageSize);
-
         }
+
         public async Task<List<GetEmployeeDto>> GetAllEmployeesAsync()
         {
             var result = new List<GetEmployeeDto>();
@@ -73,31 +84,52 @@ namespace HR.Persistence.Repositories
         }
         public async Task<string> MakeEmployeeActiveAsync(string code)
         {
+            if (string.IsNullOrWhiteSpace(code))
+                throw new EmployeeValidationException("Employee code must be provided.");
+
             var result = await _appDbContext
                 .Database
-                .ExecuteSqlRawAsync("Exec dbo.SP_MakeEmployeeActive @Code={0}", code);
-            return result > 0 ? "Employee is Activated Successfully" : "Failed to activate Employee";
+                .ExecuteSqlRawAsync("EXEC dbo.SP_MakeEmployeeActive @Code={0}", code);
+
+            if (result <= 0)
+                throw new NotFoundException($"Employee with code '{code}' not found or could not be activated.");
+
+            return "Employee is Activated Successfully";
         }
 
         public async Task<string> MakeEmployeeInactiveAsync(string code)
         {
+            if (string.IsNullOrWhiteSpace(code))
+                throw new EmployeeValidationException("Employee code must be provided.");
+
             var result = await _appDbContext
                  .Database
                  .ExecuteSqlRawAsync("EXEC dbo.SP_MakeEmployeeInactive @Code = {0}", code);
 
-            return result > 0 ? "Employee is inactive successfully" : "Failed to inactivate employee";
+            if (result <= 0)
+                throw new NotFoundException($"Employee with code '{code}' not found or could not be inactivated.");
+
+            return "Employee is inactive successfully";
         }
+
         public async Task<GetEmployeeProfileQueryVm> GetEmployeeProfileAsync(string code)
         {
+            if (string.IsNullOrWhiteSpace(code))
+                throw new EmployeeValidationException("Employee code must be provided.");
+
             var employeeProfile = _appDbContext
-        .Set<GetEmployeeProfileQueryVm>()
-        .FromSqlRaw("EXEC GetEmployeeProfile @Code = {0}", code)
-        .AsNoTracking()
-        .AsEnumerable()
-        .FirstOrDefault();
+                .Set<GetEmployeeProfileQueryVm>()
+                .FromSqlRaw("EXEC GetEmployeeProfile @Code = {0}", code)
+                .AsNoTracking()
+                .AsEnumerable()
+                .FirstOrDefault();
+
+            if (employeeProfile == null)
+                throw new NotFoundException($"Employee profile with code '{code}' not found.");
 
             return await Task.FromResult(employeeProfile);
         }
+
 
         public async Task<Employee> AddEmployee(CreateEmployeeMasterDto employee)
         {
@@ -241,6 +273,7 @@ namespace HR.Persistence.Repositories
             var parameters = new List<SqlParameter>
     {
         new SqlParameter("@Code", dto.Code ?? (object)DBNull.Value),
+        new SqlParameter("@Name", dto.Name ?? (object)DBNull.Value),
         new SqlParameter("@Address", dto.Address ?? (object)DBNull.Value),
         new SqlParameter("@MobileNo", dto.MobileNo ?? (object)DBNull.Value),
         new SqlParameter("@SkypeId", dto.SkypeId ?? (object)DBNull.Value),
@@ -274,7 +307,7 @@ namespace HR.Persistence.Repositories
             {
                 var result = await _appDbContext.Database.ExecuteSqlRawAsync(
                     @"EXEC SP_Employee_update 
-              @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber,@AadharCardNo, @BirthDate, 
+              @Code,@Name, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber,@AadharCardNo, @BirthDate, 
               @Image, @Signature, @LoginStatus, @LeftCompany, @LeftDate, 
               @Fk_LocationId, @Fk_DesignationId, 
               @Fk_ShiftId, @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId,@Fk_CountryId,@Fk_StateId,@Fk_CityId,@Fk_GenderId",
@@ -294,11 +327,19 @@ namespace HR.Persistence.Repositories
 
         public async Task<GetEmployeeBasicDetailsByCodeQueryVm?> GetDetailsAsync(string code)
         {
-            return _appDbContext.EmployeeBasicDetails
+            if (string.IsNullOrWhiteSpace(code))
+                throw new EmployeeValidationException("Employee code must be provided.");
+
+            var employee = _appDbContext.EmployeeBasicDetails
                 .FromSqlRaw("EXEC dbo.SP_GetEmployeeBasicDetailsByCode @Code = {0}", code)
                 .AsNoTracking()
                 .AsEnumerable()
                 .FirstOrDefault();
+
+            if (employee == null)
+                throw new NotFoundException($"Employee with code '{code}' not found.");
+
+            return await Task.FromResult(employee);
         }
 
 
@@ -321,23 +362,30 @@ namespace HR.Persistence.Repositories
 
         public async Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee)
         {
-            await _appDbContext.Database.ExecuteSqlRawAsync(
-    "EXEC [dbo].[SP_InsertEmployeeDetails] @p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8 ,@p9",
-    employee.Code,
-    employee.Address,
-    employee.PanNumber,
-    employee.AadharCardNo,
-    employee.JoinDate,
-    employee.BirthDate,
-    employee.Email,
-    employee.EmergencyNo,
-    employee.Age,
-    employee.Fk_GenderId
+            if (employee == null)
+                throw new EmployeeValidationException("Employee details must be provided.");
 
-);
+            if (string.IsNullOrWhiteSpace(employee.Code))
+                throw new EmployeeValidationException("Employee code must be provided.");
+
+            var result = await _appDbContext.Database.ExecuteSqlRawAsync(
+                "EXEC [dbo].[SP_InsertEmployeeDetails] @p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8 ,@p9",
+                employee.Code,
+                employee.Address ?? (object)DBNull.Value,
+                employee.PanNumber ?? (object)DBNull.Value,
+                employee.AadharCardNo ?? (object)DBNull.Value,
+                (object?)employee.JoinDate ?? DBNull.Value,
+                (object?)employee.BirthDate ?? DBNull.Value,
+                employee.Email ?? (object)DBNull.Value,
+                employee.EmergencyNo ?? (object)DBNull.Value,
+                (object?)employee.Age ?? DBNull.Value,
+                (object?)employee.Fk_GenderId ?? DBNull.Value
+            );
+
+            if (result <= 0)
+                throw new ApplicationException("Failed to insert employee details.");
 
             return true;
-
         }
 
 
@@ -418,6 +466,21 @@ namespace HR.Persistence.Repositories
 
 
             return employee;
+        }
+        public async Task<List<SearchEmployeeVm>> SearchEmployeesAsync(SearchEmployeesDto filter)
+        {
+            var result = await _appDbContext.Set<SearchEmployeeVm>().FromSqlInterpolated($@"
+        EXEC SP_SearchEmployees 
+            @Name = {filter.Name}, 
+            @Code = {filter.Code}, 
+            @BranchName = {filter.BranchName}, 
+            @DesignationName = {filter.DesignationName}, 
+            @UserGroupName = {filter.UserGroupName}, 
+            @DivisionName = {filter.DivisionName},
+            @LoginStatus = {filter.LoginStatus}
+    ").ToListAsync();
+
+            return result;
         }
 
     }
