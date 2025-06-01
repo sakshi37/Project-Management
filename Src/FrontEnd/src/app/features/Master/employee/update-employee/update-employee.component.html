@@ -11,10 +11,8 @@
         </div>
         <div class="col-md-6 form-group">
           <label for="employeeName">Employee Name</label>
-          <input type="text" id="Name" class="form-control" formControlName="Name" readonly />
+          <input type="text" id="Name" class="form-control" formControlName="name" />
         </div>
-
-        
       </div>
 
       <!-- Mobile Number & Skype ID -->
@@ -373,7 +371,7 @@
           Cancel
         </button>
         <button type="submit" class="btn btn-success" [disabled]="employeeForm.invalid">
-          Save
+          Update
         </button>
       </div>
     </form>

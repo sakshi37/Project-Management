@@ -41,22 +41,27 @@ namespace HR.Persistence.Repositories
             }
             catch (SqlException ex)
             {
-                // Optional: Log the error message
                 Console.WriteLine("SQL Error: " + ex.Message);
 
-                // Handle specific business errors from SQL
                 if (ex.Message.Contains("Invalid Employee Code"))
                 {
+                    // Known business rule violation
                     throw new InvalidOperationException("The provided employee code is invalid.");
                 }
                 else if (ex.Message.Contains("family member type already exists"))
                 {
                     throw new InvalidOperationException("This family member type already exists for the employee.");
                 }
+                else if (ex.Message.Contains("FOREIGN KEY constraint") || ex.Message.Contains("FK_Tbl_FamilyMaster_FamilyMemberTypeMaster"))
+                {
+                    // Clean message for front-end
+                    throw new InvalidOperationException("Please select a valid family member type.");
+                }
 
-                // Re-throw if it's an unexpected SQL error
-                throw;
+                // For all other SQL exceptions, return a general message
+                throw new InvalidOperationException("An unexpected error occurred while saving family member details.");
             }
+
         }
 
         public async Task<List<GetAllFamilyMemberTypeQueryVm>> GetAllAsync()

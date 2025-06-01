@@ -5,7 +5,7 @@ namespace HR.Application.Features.Employees.Commands.UpdateEmployee
     public class UpdateEmployeeCommandDto
     {
         public string Code { get; set; }
-
+        public string Name { get; set; }
         public string? Address { get; set; }
         public string? MobileNo { get; set; }
         public string? SkypeId { get; set; }
