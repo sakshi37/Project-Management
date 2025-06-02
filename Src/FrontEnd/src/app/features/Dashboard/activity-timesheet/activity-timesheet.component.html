@@ -18,18 +18,18 @@
       ✖ Punch-Out
     </button>
     <button
-    class="btn custom-add-btn"
-    *ngIf="sessionStatus !== null"
-    (click)="toggleCompleted()"
-  ><i class="fa-solid fa-list"></i>
-    {{ showCompleted ? "Hide Completed" : "Show Completed" }}
-  </button>
+      class="btn custom-add-btn"
+      *ngIf="sessionStatus !== null"
+      (click)="toggleCompleted()"
+    >
+      <i class="fa-solid fa-list"></i>
+      {{ showCompleted ? "Hide Completed" : "Show Completed" }}
+    </button>
   </div>
 
   <div class="table-wrapper">
-   
-    <table class="table table-bordered table-sm custom-rounded-table" >
-      <thead class="table-light"  style="text-align: center;">
+    <table class="table table-bordered table-sm custom-rounded-table">
+      <thead class="table-light" style="text-align: center">
         <tr>
           <th>Sr.No</th>
           <!-- <th>Job No</th> -->
@@ -42,7 +42,7 @@
           <th>Hrs</th>
           <th>Min</th>
           <th>Remarks</th>
-          <th>Edit</th>
+          <th *ngIf="hasPendingTimesheets()">Edit</th>
         </tr>
       </thead>
 
@@ -63,7 +63,7 @@
               showCompleted ? timesheet.endTime : timesheet.endTime == null
             "
           >
-            <td style="text-align: center;">{{ i + 1 }}</td>
+            <td style="text-align: center">{{ i + 1 }}</td>
             <!-- <td>{{ timesheet.projectId }}</td> -->
             <td>{{ timesheet.part }}</td>
             <td>{{ timesheet.sequence }}</td>
@@ -75,7 +75,7 @@
             <td>{{ timesheet.hrs }}</td>
             <td>{{ timesheet.min }}</td>
             <td>{{ timesheet.remark }}</td>
-            <td style="text-align: center;">
+            <td style="text-align: center">
               <button
                 *ngIf="!timesheet.endTime"
                 class="btn custom-add-btn3"
@@ -107,9 +107,11 @@
                       class="form-control"
                       [(ngModel)]="editFormData.endTime"
                       name="editEndTime"
+                      [min]="editFormData.endTime"
                       (change)="onEditTimeChange()"
                     />
                   </div>
+
                   <div class="col-md-4">
                     <label>Remarks:</label>
                     <input
@@ -137,7 +139,7 @@
                     </button>
                     <div class="me-auto" style="align-self: center">
                       <label>Duration:</label>
-                      <strong 
+                      <strong
                         *ngIf="
                           editFormData.Hrs !== null &&
                           editFormData.Mins !== null
@@ -146,7 +148,6 @@
                         {{ editFormData.Hrs }}h {{ editFormData.Mins }}m
                       </strong>
                     </div>
-                    
                   </div>
                 </div>
               </form>

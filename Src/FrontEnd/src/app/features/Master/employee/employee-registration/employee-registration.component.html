@@ -40,6 +40,15 @@
             />
             <div
               class="text-danger small mt-1"
+              *ngIf="
+                employeeForm.get('birthDate')?.touched &&
+                employeeForm.get('birthDate')?.hasError('required')
+              "
+            >
+              Birth date is required.
+            </div>
+            <div
+              class="text-danger small mt-1"
               *ngIf="employeeForm.get('birthDate')?.hasError('minAge')"
             >
               Employee must be at least 18 years old.
@@ -83,6 +92,17 @@
             >
               <div *ngIf="employeeForm.get('panNumber')?.errors?.['pattern']">
                 PAN must be in format ABCDE1234F.
+              </div>
+            </div>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="employeeForm.get('email')?.touched"
+            >
+              <div *ngIf="employeeForm.get('email')?.hasError('required')">
+                Email is required.
+              </div>
+              <div *ngIf="employeeForm.get('email')?.hasError('email')">
+                Enter a valid email.
               </div>
             </div>
           </div>
@@ -218,6 +238,15 @@
                 {{ c.name }}
               </option>
             </select>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="
+                employeeForm.get('CountryId')?.touched &&
+                employeeForm.get('CountryId')?.hasError('required')
+              "
+            >
+              Country is required.
+            </div>
           </div>
 
           <div class="col-md-6">
@@ -228,6 +257,15 @@
                 {{ s.name }}
               </option>
             </select>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="
+                employeeForm.get('StateId')?.touched &&
+                employeeForm.get('StateId')?.hasError('required')
+              "
+            >
+              State is required.
+            </div>
           </div>
 
           <div class="col-md-6">
@@ -238,6 +276,15 @@
                 {{ city.name }}
               </option>
             </select>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="
+                employeeForm.get('CityId')?.touched &&
+                employeeForm.get('CityId')?.hasError('required')
+              "
+            >
+              City is required.
+            </div>
           </div>
 
           <div class="col-md-6">
