@@ -280,6 +280,8 @@ this.familyLists.push({
           id: type.familyMemberTypeId,
           label: type.familyMemberTypeName,
         }));
+          console.log('Mapped familyTypes:', this.familyTypes); // Check content
+
       },
       error: (err) => {
         console.error('Error loading family member types:', err);
@@ -293,10 +295,10 @@ this.familyLists.push({
       },
     });
   }
-  getFamilyMemberTypeName(typeId: number): string {
-    const type = this.familyTypes.find((t) => t.id === typeId);
-    return type ? type.label :'';
-  }
+  getFamilyMemberTypeName(typeId: any): string {
+  const type = this.familyTypes.find((t) => t.id === +typeId); // Ensure number
+  return type ? type.label : '';
+}
 
   saveEmployeeDetails(): void {
     // Sync values from display-only employee object to the DTO
