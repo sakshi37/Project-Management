@@ -52,6 +52,10 @@ export class ActivityTimesheetComponent implements OnInit {
     this.getTimesheetByEmpId(empCode);
   }
 
+  hasPendingTimesheets(): boolean {
+    return this.timeSheets && this.timeSheets?.length > 0;
+  }
+
   calculateTimeDifferences() {
     this.timeSheets.forEach((timesheet) => {
       if (timesheet.startTime && timesheet.endTime) {
@@ -245,9 +249,14 @@ export class ActivityTimesheetComponent implements OnInit {
     }
 
     Swal.fire({
+      toast: true,
+      position: 'top',
+      timer: 1000,
+      timerProgressBar: true,
+      showConfirmButton: false,
       icon: 'error',
       title: 'Error',
-      text: 'Please fill all fields before submitting.',
+      text: 'Please fill  end Date fields before submitting.',
     });
   }
 }

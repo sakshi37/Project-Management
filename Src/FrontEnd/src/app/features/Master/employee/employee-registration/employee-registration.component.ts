@@ -89,7 +89,7 @@ export class EmployeeRegistrationComponent implements OnInit {
         '',
         [
           Validators.required,
-         Validators.pattern(/^[6-9]\d{9}$/),
+          Validators.pattern(/^[6-9]\d{9}$/),
           Validators.minLength(10),
           Validators.maxLength(10),
         ],
@@ -98,25 +98,29 @@ export class EmployeeRegistrationComponent implements OnInit {
         '',
         [
           Validators.required,
-           Validators.pattern('^[a-zA-Z][a-zA-Z0-9._-]{5,31}$'),
+          Validators.pattern('^[a-zA-Z][a-zA-Z0-9._-]{5,31}$'),
         ],
       ],
-      email: ['', [
-        Validators.required, 
-        Validators.email
-      ]],
-      joinDate: ['', [Validators.required, 
-        //this.noFutureDateValidator
-      ]],
+      email: ['', [Validators.required, Validators.email]],
+      joinDate: [
+        '',
+        [
+          Validators.required,
+          //this.noFutureDateValidator
+        ],
+      ],
       birthDate: ['', [Validators.required, this.minAgeValidator(18)]],
-      panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
+      panNumber: [
+        '',
+        [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)],
+      ],
       image: [''],
-      signature: [''],
-      locationId: [''],
+      signature: ['', [Validators.required]],
+      locationId: ['', [Validators.required]],
 
-      CountryId: [''],
-      StateId: [''],
-      CityId: [''],
+      CountryId: ['', [Validators.required]],
+      StateId: ['', [Validators.required]],
+      CityId: ['', [Validators.required]],
     });
   }
   getLocation() {
@@ -241,10 +245,10 @@ export class EmployeeRegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.employeeForm.value.code = "0"
-    console.log("Going for a bangar ",this.employeeForm.value)
+    this.employeeForm.value.code = '0';
+    console.log('Going for a bangar ', this.employeeForm.value);
     if (this.employeeForm.invalid) {
-      console.log("No bangar for you ",this.employeeForm.value)
+      console.log('No bangar for you ', this.employeeForm.value);
       this.employeeForm.markAllAsTouched();
       return;
     }
