@@ -111,14 +111,14 @@ export class AssignedTaskComponent implements OnInit {
       activity: ['', Validators.required],
       type: ['', Validators.required],
 
-      empId: [],
+      empId: ['', Validators.required],
       timeSheetStatus: [],
     });
   }
-
+  submitted = false;
   onSubmit(projectId: number) {
     console.log(this.taskForm.value);
-
+    this.submitted = true;
     if (this.taskForm.invalid) return;
 
     const payload = {
