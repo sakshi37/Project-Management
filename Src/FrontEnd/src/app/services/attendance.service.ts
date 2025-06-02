@@ -16,6 +16,8 @@ export class AttendanceService {
 }
 
 export type Attendance = {
+  name: string;
+  code: string;
   fk_EmpId: number;
   startDate: string;
   endDate: null;
