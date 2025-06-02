@@ -81,6 +81,10 @@ export class UpdateEmployeeComponent implements OnInit {
     private stateService: StateService
   ) { }
 
+  isActive(item: any, key: string): boolean {
+  return item[key] === true || item[key] === 1;
+}
+
   ngOnInit(): void {
     
     this.employeeForm = this.fb.group(
@@ -131,6 +135,7 @@ export class UpdateEmployeeComponent implements OnInit {
     const empName = history.state.name;
     if (empName) {
   this.selectedEmployeeName = empName;
+  
 }
 
     forkJoin({
@@ -158,11 +163,12 @@ export class UpdateEmployeeComponent implements OnInit {
   locations,
   divisions,
   genders,
+  
 }) => {
-  // Filter/map branches
+  // ✅ Filter active branches
   this.branches = branches
-    .filter((b) => b.branchStatus === true)
-    .map((b) => ({
+    .filter(b => this.isActive(b, 'branchStatus'))
+    .map(b => ({
       branchId: b.branchId,
       branchName: b.branchName,
       cityId: b.cityId,
@@ -171,41 +177,55 @@ export class UpdateEmployeeComponent implements OnInit {
       branchStatus: b.branchStatus,
     }));
 
-  // Map and trim countries
- this.countries = countries.map(c => ({
-  countryId: c.countryId,
-  countryName: c.countryName?.trim(),
-  countryCode: c.countryCode,      // Add this
-  countryStatus: c.countryStatus,  // Add this
-}));
-  // Map and trim states
- this.states = states.map(s => ({
-  stateId: s.stateId,
-  stateName: s.stateName?.trim(),
-  stateCode: s.stateCode,  
-  stateStatus: s.stateStatus,    
-  countryId: s.countryId,
-  countryName: s.countryName,     
-}));
+  // ✅ Filter active countries
+  this.countries = countries
+    .filter(c => this.isActive(c, 'countryStatus'))
+    .map(c => ({
+      countryId: c.countryId,
+      countryName: c.countryName?.trim(),
+      countryCode: c.countryCode,
+      countryStatus: c.countryStatus,
+    }));
 
-  // Map and trim cities
- this.cities = cities.map(c => ({
-  cityId: c.cityId,
-  cityName: c.cityName?.trim(),
-  cityStatus: c.cityStatus,        // Add this
-  stateId: c.stateId,
-  stateName: c.stateName,          
-  countryId: c.countryId,          // Add this if required
-  countryName: c.countryName,      // Add this if required
-}));
+  // ✅ Filter active states
+  this.states = states
+    .filter(s => this.isActive(s, 'stateStatus'))
+    .map(s => ({
+      stateId: s.stateId,
+      stateName: s.stateName?.trim(),
+      stateCode: s.stateCode,
+      stateStatus: s.stateStatus,
+      countryId: s.countryId,
+      countryName: s.countryName,
+    }));
 
+  // ✅ Filter active cities
+  this.cities = cities
+    .filter(c => this.isActive(c, 'cityStatus'))
+    .map(c => ({
+      cityId: c.cityId,
+      cityName: c.cityName?.trim(),
+      cityStatus: c.cityStatus,
+      stateId: c.stateId,
+      stateName: c.stateName,
+      countryId: c.countryId,
+      countryName: c.countryName,
+    }));
 
-  this.designations = designations;
+  // ✅ Filter active designations
+  this.designations = designations
+    .filter(d => this.isActive(d, 'designationStatus'));
+
+  // ✅ Filter active locations
+  this.locations = locations
+    .filter(l => this.isActive(l, 'locationStatus'));
+
+  // 🟡 Use raw values (or filter if needed)
   this.userGroups = userGroups;
   this.shifts = shifts;
   this.employeeTypes = employeeTypes;
-  this.locations = locations;
-  this.divisions = divisions;
+  this.divisions = divisions
+   .filter(l => this.isActive(l, 'divisionStatus'));
   this.genders = genders;
 
   if (emp && emp.code) {
@@ -278,7 +298,7 @@ const city = this.cities.find((c) => c.cityName === emp.cityName);
 if (city) {
   this.employeeForm.get('cityId')!.setValue(city.cityId);
 }
-// Gender Name → genderId
+// Gender Name → s
 const gender = this.genders.find((g) => g.genderType === emp.genderType);
 if (gender) {
   this.employeeForm.get('genderId')!.setValue(gender.genderId);
