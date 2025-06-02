@@ -85,7 +85,7 @@ export class UpdateEmployeeComponent implements OnInit {
     
     this.employeeForm = this.fb.group(
       {
-        Name: [{ value: '', disabled: true }], 
+      name: [''], 
         address: [''],
         mobileNo: ['', [Validators.pattern(/^[6-9]\d{9}$/)]],
         skypeId: ['', [Validators.minLength(10), Validators.maxLength(32)]],
@@ -228,7 +228,7 @@ export class UpdateEmployeeComponent implements OnInit {
 
   populateEmployeeForm(emp: any): void {
     this.employeeForm.patchValue({
-Name: emp.name || this.selectedEmployeeName || '',
+name: emp.name || this.selectedEmployeeName || '',
       address: emp.address || '',
       mobileNo: emp.mobileNo || '',
       skypeId: emp.skypeId || '',

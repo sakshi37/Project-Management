@@ -30,7 +30,6 @@ import * as bootstrap from 'bootstrap';
   styleUrl: './assigned-task.component.css',
 })
 export class AssignedTaskComponent implements OnInit {
-  
   @ViewChild('updateModal') updateModalRef!: ElementRef;
   currentEmpId: number | undefined;
   sessionStatus: any;
@@ -53,11 +52,9 @@ export class AssignedTaskComponent implements OnInit {
   addTaskProjectId: number | null = null;
   projects: ProjectWithStack[] = [];
   stacks: Stack[] = [];
-    private modal!: bootstrap.Modal;
-  
+  private modal!: bootstrap.Modal;
 
   constructor(
-
     private timeSheetService: TimeSheetService,
     private employeeService: EmployeeService,
     private timesheetService: TimeSheetService,
@@ -70,8 +67,8 @@ export class AssignedTaskComponent implements OnInit {
       part: ['', Validators.required],
       activity: ['', Validators.required],
       type: ['', Validators.required],
-       remark: [''],
-      fk_EmpId: [0]
+      remark: [''],
+      fk_EmpId: [0],
     });
   }
 
@@ -101,9 +98,9 @@ export class AssignedTaskComponent implements OnInit {
     this.timeSheet();
     this.getAllStack();
     const modalElement = document.getElementById('updateModal');
-        if (modalElement) {
-          this.modal = new bootstrap.Modal(modalElement);
-        }
+    if (modalElement) {
+      this.modal = new bootstrap.Modal(modalElement);
+    }
   }
 
   initForm(): void {
@@ -120,8 +117,6 @@ export class AssignedTaskComponent implements OnInit {
   }
 
   onSubmit(projectId: number) {
-
-
     console.log(this.taskForm.value);
     if (this.taskForm.invalid) return;
 
@@ -184,11 +179,11 @@ export class AssignedTaskComponent implements OnInit {
 
   updateForm: FormGroup;
 
-selectedTaskIsCompleted: boolean = false;
+  selectedTaskIsCompleted: boolean = false;
 
-    openUpdateModal(task: Timesheets) {
+  openUpdateModal(task: Timesheets) {
     // Patch the task properties into the update form dynamically
-    this.selectedTaskIsCompleted = !!task.endTime; 
+    this.selectedTaskIsCompleted = !!task.endTime;
     this.updateForm.patchValue({
       id: task.id,
       sequence: task.sequence,
@@ -196,12 +191,11 @@ selectedTaskIsCompleted: boolean = false;
       activity: task.activity,
       type: task.type,
       fk_EmpId: task.empId,
-      remark: task.remark || ''
+      remark: task.remark || '',
     });
 
     this.modal.show();
   }
-
 
   // model: UpdateTaskTimeSheetDto = {
   //   id: 2,
@@ -212,14 +206,12 @@ selectedTaskIsCompleted: boolean = false;
   //   fk_EmpId: 1
   // };
 
-
-
   submitUpdate() {
     const updatePayload: UpdateTaskTimeSheetDto = this.updateForm.value;
     console.log(this.updateForm.value);
     this.timeSheetService.updateTaskTimeSheet(updatePayload).subscribe({
       next: () => {
-         this.timeSheet();
+        this.timeSheet();
         Swal.fire({
           toast: true,
           icon: 'success',
@@ -227,11 +219,11 @@ selectedTaskIsCompleted: boolean = false;
           position: 'top-end',
           showConfirmButton: false,
           timer: 3000,
-          timerProgressBar: true
+          timerProgressBar: true,
         });
         this.modal.hide();
       },
-      error: err => {
+      error: (err) => {
         Swal.fire({
           toast: true,
           icon: 'error',
@@ -239,11 +231,10 @@ selectedTaskIsCompleted: boolean = false;
           position: 'top-end',
           showConfirmButton: false,
           timer: 3000,
-          timerProgressBar: true
+          timerProgressBar: true,
         });
         console.error('Update error:', err);
-      }
+      },
     });
   }
-
 }

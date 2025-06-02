@@ -40,6 +40,7 @@ namespace ArtSystem.Api.Middleware
                 case StateValidationException:
                 case CountryValidationException:
                 case HolidayValidationException:
+                case EmployeeValidationException:
                 case PunchInValidationException:
                     statusCode = HttpStatusCode.BadRequest;
                     break;

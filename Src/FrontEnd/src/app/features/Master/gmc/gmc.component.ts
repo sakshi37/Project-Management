@@ -68,14 +68,14 @@ export class GmcComponent implements OnInit {
   constructor(
     private gmcService: GmcService,
     private updateService: UpdateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const decodedToken = jwtDecode(String(localStorage.getItem('token')));
     const code = decodedToken.sub;
     if (code) {
       this.family.employeeCode = code;
-          this.fetchEmployeeDetails(code);
+      this.fetchEmployeeDetails(code);
 
     } else {
       alert('employee code not in the local storage');
@@ -87,48 +87,48 @@ export class GmcComponent implements OnInit {
 
   }
 
-fetchEmployeeDetails(code: string): void {
-  console.log('Fetching employee details for code:', code);
+  fetchEmployeeDetails(code: string): void {
+    console.log('Fetching employee details for code:', code);
 
-  this.gmcService.getEmployeeByCode(code).subscribe({
-    next: (res: any) => {
-      console.log('Raw response from API:', res);
-      console.log('Raw API response:', JSON.stringify(res, null, 2));
+    this.gmcService.getEmployeeByCode(code).subscribe({
+      next: (res: any) => {
+        console.log('Raw response from API:', res);
+        console.log('Raw API response:', JSON.stringify(res, null, 2));
 
 
-      if (!res) {
-        console.warn('No data received from API.');
-        return;
-      }
+        if (!res) {
+          console.warn('No data received from API.');
+          return;
+        }
 
-      if (!res.name || !res.code || !res.designationName) {
-        console.warn('Some fields are missing in the API response:', {
+        if (!res.name || !res.code || !res.designationName) {
+          console.warn('Some fields are missing in the API response:', {
+            name: res.name,
+            code: res.code,
+            designationName: res.designationName,
+          });
+        }
+
+        this.employee = {
           name: res.name,
           code: res.code,
-          designationName: res.designationName,
+          designation: res.designationName, // Make sure this matches actual API response
+        };
+
+        console.log('Mapped employee object:', this.employee);
+      },
+      error: (err) => {
+        console.error('Failed to fetch employee:', err);
+        Swal.fire({
+          toast: true,
+          text: 'Could not fetch employee data.',
+          position: 'top',
+          timer: 3000,
+          showConfirmButton: false,
         });
-      }
-
-      this.employee = {
-        name: res.name,
-        code: res.code,
-        designation: res.designationName, // Make sure this matches actual API response
-      };
-
-      console.log('Mapped employee object:', this.employee);
-    },
-    error: (err) => {
-      console.error('Failed to fetch employee:', err);
-      Swal.fire({
-        toast: true,
-        text: 'Could not fetch employee data.',
-        position: 'top',
-        timer: 3000,
-        showConfirmButton: false,
-      });
-    },
-  });
-}
+      },
+    });
+  }
   loadGenders(): void {
     this.updateService.getAllGenders().subscribe((data: Gender[]) => {
       this.genders = data;
@@ -163,8 +163,13 @@ fetchEmployeeDetails(code: string): void {
       },
       error: (err) => {
         console.error('Error saving family member:', err);
+
+        // Try to read a clean message from different shapes
         const errorMessage =
-          err.error?.message || 'Failed to save family member.';
+          err?.error?.message || // most common
+          err?.error?.error ||   // alternative
+          err?.message ||        // fallback
+          'Failed to save family member.';
 
         Swal.fire({
           toast: true,
@@ -174,7 +179,7 @@ fetchEmployeeDetails(code: string): void {
           timer: 3000,
           showConfirmButton: false,
         });
-      },
+      }
     });
   }
 
@@ -285,7 +290,7 @@ fetchEmployeeDetails(code: string): void {
       Swal.fire({
         toast: true,
         icon: 'error',
-        text: 'Employee code and gender are required.',
+        text: 'All fields  are required.',
         position: 'top',
         timer: 3000,
         showConfirmButton: false,

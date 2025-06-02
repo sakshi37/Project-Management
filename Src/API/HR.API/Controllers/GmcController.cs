@@ -32,13 +32,27 @@ namespace HR.API.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddFamilyMember([FromBody] AddFamilyDetailsCommandDto dto)
         {
-            var command = new AddFamilyDetailsCommand(dto);
-            var result = await _mediator.Send(command);
+            
 
-            if (result)
-                return Ok(new { message = "Family member inserted successfully." });
+          
+            try
+            {
+                var command = new AddFamilyDetailsCommand(dto);
+                var result = await _mediator.Send(command); if (result)
+                    return Ok(new { message = "Family member added successfully." });
 
-            return BadRequest(new { message = "Failed to insert family member." });
+                return BadRequest(new { message = "Failed to add family member." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return user-friendly message from service
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                // Return fallback error
+                return StatusCode(500, new { message = "Something went wrong. Please try again later." });
+            }
         }
         [HttpGet("FamilyMember")]
         public async Task<IActionResult> GetAll()
