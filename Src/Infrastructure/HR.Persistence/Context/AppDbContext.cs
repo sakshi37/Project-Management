@@ -50,6 +50,7 @@ using HR.Application.Features.Notification.Queries;
 using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
 
 using Microsoft.EntityFrameworkCore;
+using HR.Application.Features.Employees.Queries.SearchEmployee;
 
 
 namespace HR.Persistence.Context;
@@ -132,6 +133,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<EmployeeAttendanceReportDto> attendanceRepoertdtos { get; set; }
     public DbSet<ParticularEmployeeDto> ParticularEmployee { get; set; }
+    public DbSet<SearchEmployeeVm> SearchEmployeeVm { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -206,7 +209,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<GetNotificationByCodeVm>().HasNoKey();
         modelBuilder.Entity<HalfDayQueryVm>().HasNoKey();
 
-
+        modelBuilder.Entity<SearchEmployeeVm>().HasNoKey();
     }
 
 }

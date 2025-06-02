@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GmcService } from '../../../services/gmc-service';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { FamilyList, FamilyMember } from '../../../Models/family-member-dto';
 import { Employee, EmployeeSaveDto } from '../../../Models/gmc-model';
 
@@ -68,14 +68,14 @@ export class GmcComponent implements OnInit {
   constructor(
     private gmcService: GmcService,
     private updateService: UpdateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const decodedToken = jwtDecode(String(localStorage.getItem('token')));
     const code = decodedToken.sub;
     if (code) {
       this.family.employeeCode = code;
-          this.fetchEmployeeDetails(code);
+      this.fetchEmployeeDetails(code);
 
     } else {
       alert('employee code not in the local storage');
@@ -87,41 +87,108 @@ export class GmcComponent implements OnInit {
 
   }
 
-fetchEmployeeDetails(code: string): void {
-  console.log('Fetching employee details for code:', code);
+  fetchEmployeeDetails(code: string): void {
+    console.log('Fetching employee details for code:', code);
 
-  this.gmcService.getEmployeeByCode(code).subscribe({
-    next: (res: any) => {
-      console.log('Raw response from API:', res);
-      console.log('Raw API response:', JSON.stringify(res, null, 2));
+    this.gmcService.getEmployeeByCode(code).subscribe({
+      next: (res: any) => {
+        console.log('Raw response from API:', res);
+        console.log('Raw API response:', JSON.stringify(res, null, 2));
 
 
-      if (!res) {
-        console.warn('No data received from API.');
-        return;
-      }
+        if (!res) {
+          console.warn('No data received from API.');
+          return;
+        }
 
-      if (!res.name || !res.code || !res.designationName) {
-        console.warn('Some fields are missing in the API response:', {
+        if (!res.name || !res.code || !res.designationName) {
+          console.warn('Some fields are missing in the API response:', {
+            name: res.name,
+            code: res.code,
+            designationName: res.designationName,
+          });
+        }
+
+        this.employee = {
           name: res.name,
           code: res.code,
-          designationName: res.designationName,
+          designation: res.designationName, // Make sure this matches actual API response
+        };
+
+        console.log('Mapped employee object:', this.employee);
+      },
+      error: (err) => {
+        console.error('Failed to fetch employee:', err);
+        Swal.fire({
+          toast: true,
+          text: 'Could not fetch employee data.',
+          position: 'top',
+          timer: 3000,
+          showConfirmButton: false,
         });
-      }
+      },
+    });
+  }
+  loadGenders(): void {
+    this.updateService.getAllGenders().subscribe((data: Gender[]) => {
+      this.genders = data;
+    });
+  }
 
-      this.employee = {
-        name: res.name,
-        code: res.code,
-        designation: res.designationName, // Make sure this matches actual API response
-      };
+ saveFamilyDetails(form: NgForm): void {
+  if (form.invalid) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      text: 'Please fill out all required fields correctly.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
 
-      console.log('Mapped employee object:', this.employee);
+  if (!this.family.employeeCode) {
+    Swal.fire({
+      toast: true,
+      text: 'Employee code missing.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
+
+  this.gmcService.saveFamilyMemberDetails(this.family).subscribe({
+    next: (res) => {
+      console.log('Saved:', res);
+this.familyLists.push({
+  familyMemberTypeName: this.getFamilyMemberTypeName(this.family.fk_FamilyMemberTypeId),
+  familyMemberName: this.family.familyMemberName,
+  birthDate: this.family.birthDate,
+  age: this.family.age,
+  relationWithEmployee: this.family.relationWithEmployee,
+});      Swal.fire({
+        toast: true,
+        icon: 'success',
+        text: 'Family member details saved successfully!',
+        position: 'top',
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      this.clearFamilyForm();
     },
     error: (err) => {
-      console.error('Failed to fetch employee:', err);
+      const errorMessage =
+        err?.error?.message ||
+        err?.error?.error ||
+        err?.message ||
+        'Failed to save family member.';
+
       Swal.fire({
         toast: true,
-        text: 'Could not fetch employee data.',
+        icon: 'error',
+        text: errorMessage,
         position: 'top',
         timer: 3000,
         showConfirmButton: false,
@@ -129,54 +196,7 @@ fetchEmployeeDetails(code: string): void {
     },
   });
 }
-  loadGenders(): void {
-    this.updateService.getAllGenders().subscribe((data: Gender[]) => {
-      this.genders = data;
-    });
-  }
 
-  saveFamilyDetails(): void {
-    if (!this.family.employeeCode) {
-      Swal.fire({
-        toast: true,
-        text: 'Employee code missing.',
-        position: 'top',
-        timer: 3000,
-        showConfirmButton: false,
-      });
-      return;
-    }
-
-    this.gmcService.saveFamilyMemberDetails(this.family).subscribe({
-      next: (res) => {
-        console.log('Saved:', res);
-        this.familyLists.push({ ...this.familyList });
-        Swal.fire({
-          toast: true,
-          icon: 'success',
-          text: 'Family member details saved successfully!',
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        this.clearFamilyForm();
-      },
-      error: (err) => {
-        console.error('Error saving family member:', err);
-        const errorMessage =
-          err.error?.message || 'Failed to save family member.';
-
-        Swal.fire({
-          toast: true,
-          icon: 'error',
-          text: errorMessage,
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-      },
-    });
-  }
 
   clearFamilyForm(): void {
     this.family = {
@@ -273,6 +293,10 @@ fetchEmployeeDetails(code: string): void {
       },
     });
   }
+  getFamilyMemberTypeName(typeId: number): string {
+    const type = this.familyTypes.find((t) => t.id === typeId);
+    return type ? type.label : 'Unknown';
+  }
 
   saveEmployeeDetails(): void {
     // Sync values from display-only employee object to the DTO
@@ -285,7 +309,7 @@ fetchEmployeeDetails(code: string): void {
       Swal.fire({
         toast: true,
         icon: 'error',
-        text: 'Employee code and gender are required.',
+        text: 'All fields  are required.',
         position: 'top',
         timer: 3000,
         showConfirmButton: false,

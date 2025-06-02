@@ -10,6 +10,7 @@ namespace HR.API.Helper
             if (dto == null) return;
 
             dto.Code = CleanString(dto.Code);
+            dto.Name = CleanString(dto.Name);
             dto.Address = CleanString(dto.Address);
             dto.MobileNo = CleanString(dto.MobileNo);
             dto.SkypeId = CleanString(dto.SkypeId);

@@ -64,31 +64,19 @@ export class EmployeeComponent implements OnInit {
   }
 
   loadEmployees(updatedCode?: string) {
-    const pageSizeToUse = updatedCode ? 1000 : this.pageSize;
+  const pageSizeToUse = updatedCode ? 1000 : this.pageSize;
 
-    this.employeeService
-      .getPagedEmployees(this.pageNumber, pageSizeToUse, this.searchText)
-      .subscribe((res) => {
-        this.fullEmployeeList = res.data;
-        this.employees = res.data.slice(0, this.pageSize); // display only first page
-        this.totalCount = res.totalCount;
+  this.employeeService
+    .getPagedEmployees(this.pageNumber, pageSizeToUse, this.searchText)
+    .subscribe((res) => {
+      this.fullEmployeeList = res.data;
+      this.employees = res.data.slice(0, this.pageSize); // display only first page
+      this.totalCount = res.totalCount;
 
-        console.log('Loaded employees:', this.employees.length);
+      console.log('Loaded employees:', this.employees.length);
+    });
+}
 
-        if (updatedCode) {
-          const index = res.data.findIndex(
-            (emp: Employee) => emp.code === updatedCode
-          );
-          console.log('Index of updated employee in full list:', index);
-
-          if (index > -1) {
-            const updatedEmp = res.data.splice(index, 1)[0];
-            this.employees.unshift(updatedEmp); // add to top of display
-            console.log('Moved updated employee to top:', updatedEmp);
-          }
-        }
-      });
-  }
 
   get totalPages(): number {
     return Math.ceil(this.totalCount / this.pageSize);

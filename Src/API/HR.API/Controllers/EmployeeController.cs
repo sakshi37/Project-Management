@@ -5,12 +5,14 @@ using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
 using HR.Application.Features.Employees.Commands.MakeMultipleEmployeesInactive;
 using HR.Application.Features.Employees.Commands.UpdateEmployee;
+using HR.Application.Features.Employees.Dtos;
 using HR.Application.Features.Employees.Queries;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
 using HR.Application.Features.Employees.Queries.GetEmployeeByDesignation;
 using HR.Application.Features.Employees.Queries.GetEmployeesAll;
+using HR.Application.Features.Employees.Queries.SearchEmployee;
 using HR.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -187,5 +189,11 @@ namespace HR.API.Controllers
             return Ok(new { message = result });
         }
 
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchEmployees([FromBody] SearchEmployeesDto dto)
+        {
+            var results = await _mediator.Send(new SearchEmployeesQuery(dto));
+            return Ok(results);
+        }
     }
 }
