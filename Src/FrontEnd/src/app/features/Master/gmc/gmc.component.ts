@@ -300,67 +300,61 @@ this.familyLists.push({
   return type ? type.label : '';
 }
 
-  saveEmployeeDetails(): void {
-    // Sync values from display-only employee object to the DTO
-    this.employees.code = this.employee.code;
-    this.employees.fk_GenderId =
-      this.employees.fk_GenderId ?? this.employee.fk_GenderId;
+  saveEmployeeDetails(form: NgForm): void {
+  if (form.invalid) {
+    form.control.markAllAsTouched(); // Show validation errors on all fields
+    Swal.fire({
+      toast: true,
+      icon: 'error',
+      text: 'Please fill out all required fields correctly.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
 
-    // Optional: add validation check
-    if (!this.employees.code || !this.employees.fk_GenderId) {
+  // Sync values from display-only employee object to the DTO
+  this.employees.code = this.employee.code;
+  this.employees.fk_GenderId =
+    this.employees.fk_GenderId ?? this.employee.fk_GenderId;
+
+  console.log('Sending employee data to backend:', this.employees);
+
+  this.gmcService.saveEmployeeDetails(this.employees).subscribe({
+    next: (res) => {
       Swal.fire({
         toast: true,
-        icon: 'error',
-        text: 'All fields  are required.',
+        icon: 'success',
+        text: 'Employee details are saved!',
         position: 'top',
         timer: 3000,
         showConfirmButton: false,
       });
-      return;
-    }
+      this.employees = {
+        code: '',
+        fk_GenderId: 0,
+      };
+      form.resetForm(); // Reset the form after save
+    },
+    error: (err) => {
+  console.error('Error saving employee:', err);
 
-    console.log('Sending employee data to backend:', this.employees);
+  const backendMessage =
+    err?.error?.message || err?.error?.title || 'Failed to save employee.';
 
-    this.gmcService.saveEmployeeDetails(this.employees).subscribe({
-      next: (res) => {
-        Swal.fire({
-          toast: true,
-          icon: 'success',
-          text: 'Employee details are saved!',
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        this.employees = {
-          code: '',
-          fk_GenderId: 0,
-        };
-      },
-      error: (err) => {
-        console.error('Error saving employee:', err);
-        if (err.error?.errors) {
-          console.table(err.error.errors);
-          Swal.fire({
-            toast: true,
-            icon: 'error',
-            text: ' failed. Check details.',
-            position: 'top',
-            timer: 3000,
-            showConfirmButton: false,
-          });
-        } else {
-          Swal.fire({
-            toast: true,
-            icon: 'error',
-            text: 'Failed to save employee.',
-            position: 'top',
-            timer: 3000,
-            showConfirmButton: false,
-          });
-        }
-      },
-    });
-  }
+  Swal.fire({
+    toast: true,
+    icon: 'error',
+    text: backendMessage,
+    position: 'top',
+    timer: 3000,
+    showConfirmButton: false,
+  });
+}
+,
+  });
+}
 
   exportToExcel(): void {
     const employeeData = [

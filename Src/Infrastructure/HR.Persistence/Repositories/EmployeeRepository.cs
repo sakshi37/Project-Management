@@ -362,30 +362,23 @@ namespace HR.Persistence.Repositories
 
         public async Task<bool> InsertEmployeeDetailsGmcAsync(InsertEmployeeDetailsGmcCommandDto employee)
         {
-            if (employee == null)
-                throw new EmployeeValidationException("Employee details must be provided.");
+            await _appDbContext.Database.ExecuteSqlRawAsync(
+    "EXEC [dbo].[SP_InsertEmployeeDetails] @p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8 ,@p9",
+    employee.Code,
+    employee.Address,
+    employee.PanNumber,
+    employee.AadharCardNo,
+    employee.JoinDate,
+    employee.BirthDate,
+    employee.Email,
+    employee.EmergencyNo,
+    employee.Age,
+    employee.Fk_GenderId
 
-            if (string.IsNullOrWhiteSpace(employee.Code))
-                throw new EmployeeValidationException("Employee code must be provided.");
-
-            var result = await _appDbContext.Database.ExecuteSqlRawAsync(
-                "EXEC [dbo].[SP_InsertEmployeeDetails] @p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8 ,@p9",
-                employee.Code,
-                employee.Address ?? (object)DBNull.Value,
-                employee.PanNumber ?? (object)DBNull.Value,
-                employee.AadharCardNo ?? (object)DBNull.Value,
-                (object?)employee.JoinDate ?? DBNull.Value,
-                (object?)employee.BirthDate ?? DBNull.Value,
-                employee.Email ?? (object)DBNull.Value,
-                employee.EmergencyNo ?? (object)DBNull.Value,
-                (object?)employee.Age ?? DBNull.Value,
-                (object?)employee.Fk_GenderId ?? DBNull.Value
-            );
-
-            if (result <= 0)
-                throw new ApplicationException("Failed to insert employee details.");
+);
 
             return true;
+
         }
 
 
