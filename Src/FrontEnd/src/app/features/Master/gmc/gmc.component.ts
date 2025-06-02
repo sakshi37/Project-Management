@@ -295,7 +295,7 @@ this.familyLists.push({
   }
   getFamilyMemberTypeName(typeId: number): string {
     const type = this.familyTypes.find((t) => t.id === typeId);
-    return type ? type.label : 'Unknown';
+    return type ? type.label :'';
   }
 
   saveEmployeeDetails(): void {
