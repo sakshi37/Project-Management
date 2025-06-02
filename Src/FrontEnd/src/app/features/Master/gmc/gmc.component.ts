@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GmcService } from '../../../services/gmc-service';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { FamilyList, FamilyMember } from '../../../Models/family-member-dto';
 import { Employee, EmployeeSaveDto } from '../../../Models/gmc-model';
 
@@ -135,53 +135,68 @@ export class GmcComponent implements OnInit {
     });
   }
 
-  saveFamilyDetails(): void {
-    if (!this.family.employeeCode) {
-      Swal.fire({
+ saveFamilyDetails(form: NgForm): void {
+  if (form.invalid) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      text: 'Please fill out all required fields correctly.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
+
+  if (!this.family.employeeCode) {
+    Swal.fire({
+      toast: true,
+      text: 'Employee code missing.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
+
+  this.gmcService.saveFamilyMemberDetails(this.family).subscribe({
+    next: (res) => {
+      console.log('Saved:', res);
+this.familyLists.push({
+  familyMemberTypeName: this.getFamilyMemberTypeName(this.family.fk_FamilyMemberTypeId),
+  familyMemberName: this.family.familyMemberName,
+  birthDate: this.family.birthDate,
+  age: this.family.age,
+  relationWithEmployee: this.family.relationWithEmployee,
+});      Swal.fire({
         toast: true,
-        text: 'Employee code missing.',
+        icon: 'success',
+        text: 'Family member details saved successfully!',
         position: 'top',
         timer: 3000,
         showConfirmButton: false,
       });
-      return;
-    }
+      this.clearFamilyForm();
+    },
+    error: (err) => {
+      const errorMessage =
+        err?.error?.message ||
+        err?.error?.error ||
+        err?.message ||
+        'Failed to save family member.';
 
-    this.gmcService.saveFamilyMemberDetails(this.family).subscribe({
-      next: (res) => {
-        console.log('Saved:', res);
-        this.familyLists.push({ ...this.familyList });
-        Swal.fire({
-          toast: true,
-          icon: 'success',
-          text: 'Family member details saved successfully!',
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        this.clearFamilyForm();
-      },
-      error: (err) => {
-        console.error('Error saving family member:', err);
+      Swal.fire({
+        toast: true,
+        icon: 'error',
+        text: errorMessage,
+        position: 'top',
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    },
+  });
+}
 
-        // Try to read a clean message from different shapes
-        const errorMessage =
-          err?.error?.message || // most common
-          err?.error?.error ||   // alternative
-          err?.message ||        // fallback
-          'Failed to save family member.';
-
-        Swal.fire({
-          toast: true,
-          icon: 'error',
-          text: errorMessage,
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-      }
-    });
-  }
 
   clearFamilyForm(): void {
     this.family = {
@@ -277,6 +292,10 @@ export class GmcComponent implements OnInit {
         });
       },
     });
+  }
+  getFamilyMemberTypeName(typeId: number): string {
+    const type = this.familyTypes.find((t) => t.id === typeId);
+    return type ? type.label : 'Unknown';
   }
 
   saveEmployeeDetails(): void {
