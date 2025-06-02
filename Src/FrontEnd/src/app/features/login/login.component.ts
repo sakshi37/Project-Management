@@ -122,7 +122,7 @@ loginUser(loginForm: NgForm) {
         Swal.fire({
           icon: 'error',
           title: 'Account Blocked',
-          text: 'You have entered incorrect credentials 3 times. Your account has been blocked.',
+          text: 'You have entered incorrect credentials 3 times. Your account has been blocked, Please contact HR.',
           confirmButtonColor: '#d33'
         });
       } else {

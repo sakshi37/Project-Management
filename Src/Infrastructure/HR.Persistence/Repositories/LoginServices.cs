@@ -110,8 +110,6 @@ namespace HR.Identity.Services
                 }
 
 
-
-
                 var token = GenerateToken(user);
 
                 return new LoginResponse

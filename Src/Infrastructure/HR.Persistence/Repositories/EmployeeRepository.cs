@@ -135,8 +135,6 @@ namespace HR.Persistence.Repositories
      new SqlParameter("@Fk_CountryId", (object?)employee.CountryId ?? DBNull.Value),
     new SqlParameter("@Fk_StateId", (object?)employee.StateId ?? DBNull.Value),
     new SqlParameter("@Fk_CityId", (object?)employee.CityId ?? DBNull.Value)
-
-
 };
 
 
@@ -144,7 +142,7 @@ namespace HR.Persistence.Repositories
                 @"EXEC dbo.SP_Employee_Insert 
             @Name,
             @Code, 
-            
+             
             @Address, 
             @MobileNo, 
             @SkypeId, 
@@ -196,8 +194,6 @@ namespace HR.Persistence.Repositories
                 .AsNoTracking()
                 .AsEnumerable()
                 .ToList();
-
-
             return employee.FirstOrDefault();
         }
 
@@ -267,18 +263,17 @@ namespace HR.Persistence.Repositories
         new SqlParameter("@Fk_DivisionId", (object?)dto.DivisionId ?? DBNull.Value),
         new SqlParameter("@Fk_GenderId", (object?)dto.GenderId ?? DBNull.Value),
 
-
     };
 
             try
             {
                 var result = await _appDbContext.Database.ExecuteSqlRawAsync(
-                    @"EXEC SP_Employee_update 
+              @"EXEC SP_Employee_update 
               @Code, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber,@AadharCardNo, @BirthDate, 
               @Image, @Signature, @LoginStatus, @LeftCompany, @LeftDate, 
-              @Fk_LocationId, @Fk_DesignationId, 
+              @Fk_LocationId, @Fk_DesignationId,
               @Fk_ShiftId, @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId,@Fk_CountryId,@Fk_StateId,@Fk_CityId,@Fk_GenderId",
-                    parameters.ToArray()
+               parameters.ToArray()
                 );
 
                 Console.WriteLine($"[DEBUG] Rows affected: {result}");
@@ -333,7 +328,6 @@ namespace HR.Persistence.Repositories
     employee.EmergencyNo,
     employee.Age,
     employee.Fk_GenderId
-
 );
 
             return true;
@@ -356,10 +350,6 @@ namespace HR.Persistence.Repositories
         {
             return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployees @TeamLeadId = {0}", teamLeadId).ToListAsync();
         }
-
-
-
-
 
         public async Task<string> MakeMultipleEmployeesInactiveAsync(string codes)
         {
