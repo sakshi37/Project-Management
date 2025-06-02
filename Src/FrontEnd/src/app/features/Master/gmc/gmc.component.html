@@ -139,19 +139,14 @@
   <div class="p-4 border rounded shadow-sm bg-white">
     <h4 class="mb-3">Add GMC Details - Family</h4>
     <hr class="my-3" />
-    <form (ngSubmit)="saveFamilyDetails()" #famForm="ngForm">
+    <form (ngSubmit)="saveFamilyDetails(famForm)" #famForm="ngForm">
       <div class="row g-3">
         <div class="col-md-6">
           <label>Family Member</label>
-          <select class="form-control" [(ngModel)]="family.fk_FamilyMemberTypeId" name="familyMemberId"
-            placeholder="Select type">
-            <option value="0" disabled selected>
-              Select Family Member Type
-            </option>
-            <option *ngFor="let type of familyTypes" [value]="type.id">
-              {{ type.label }}
-            </option>
-          </select>
+          <select class="form-control" [(ngModel)]="family.fk_FamilyMemberTypeId" name="familyMemberId" required>
+  <option value="" disabled selected>Select Family Member Type</option>
+  <option *ngFor="let type of familyTypes" [value]="type.id">{{ type.label }}</option>
+</select>
         </div>
 
         <div class="col-md-6">
