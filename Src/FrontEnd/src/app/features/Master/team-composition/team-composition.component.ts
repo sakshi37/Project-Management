@@ -17,11 +17,12 @@ import { CreateTeamCompositionDto } from './Models/create-team-composition.dto';
 import { UpdateTeamCompositionDto } from './Models/update-team-composition.dto';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { EmployeeService } from '../../../services/employee-service';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-team-composition',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule,NgSelectModule,NgxPaginationModule],
+  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule,NgSelectModule,NgxPaginationModule,MultiSelectModule],
   templateUrl: './team-composition.component.html',
   styleUrl: './team-composition.component.css'
 })
@@ -36,6 +37,7 @@ export class TeamCompositionComponent {
   searchText: string = '';
 
   branches: any[] = [];
+  Employee: any[] = [];
   employeeList: any[] = [];
   divisions: any[] = [];
   teamLeaders: any[] = [];
@@ -385,7 +387,7 @@ onEdit(team: GetTeamCompositionDto ): void {
       this.teamForm.markAllAsTouched();
       return;
     }
-  
+    const teamMemberIds = this.teamForm.value.teamMembers.map((member: any) => member.id);
     const statusBool = this.teamForm.value.teamStatus === '1' ? true : false;  
     const updatePayload = {
       teamId: this.selectedTeamId,
@@ -393,7 +395,7 @@ onEdit(team: GetTeamCompositionDto ): void {
       fk_BranchId: this.teamForm.value.fk_BranchId,
       fk_DivisionId: this.teamForm.value.fk_DivisionId,
       fk_TeamLeaderId: this.teamForm.value.fk_TeamLeaderId,
-      teamMembers: this.teamForm.value.teamMembers,
+      teamMembers: teamMemberIds,
       teamStatus: statusBool,
     };
   
@@ -402,7 +404,7 @@ onEdit(team: GetTeamCompositionDto ): void {
       fk_BranchId: this.teamForm.value.fk_BranchId,
       fk_DivisionId: this.teamForm.value.fk_DivisionId,
       fk_TeamLeaderId: this.teamForm.value.fk_TeamLeaderId,
-      teamMembers: this.teamForm.value.teamMembers,
+      teamMembers: teamMemberIds,
     };
   
     if (this.isEditMode && this.selectedTeamId !== null) {
