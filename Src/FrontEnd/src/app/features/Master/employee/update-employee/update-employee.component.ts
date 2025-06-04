@@ -177,7 +177,7 @@ export class UpdateEmployeeComponent implements OnInit {
       branchStatus: b.branchStatus,
     }));
 
-  // ✅ Filter active countries
+  
   this.countries = countries
     .filter(c => this.isActive(c, 'countryStatus'))
     .map(c => ({
@@ -186,8 +186,7 @@ export class UpdateEmployeeComponent implements OnInit {
       countryCode: c.countryCode,
       countryStatus: c.countryStatus,
     }));
-
-  // ✅ Filter active states
+ 
   this.states = states
     .filter(s => this.isActive(s, 'stateStatus'))
     .map(s => ({
@@ -199,7 +198,7 @@ export class UpdateEmployeeComponent implements OnInit {
       countryName: s.countryName,
     }));
 
-  // ✅ Filter active cities
+  
   this.cities = cities
     .filter(c => this.isActive(c, 'cityStatus'))
     .map(c => ({
@@ -212,16 +211,13 @@ export class UpdateEmployeeComponent implements OnInit {
       countryName: c.countryName,
     }));
 
-  // ✅ Filter active designations
-  this.designations = designations
+   this.designations = designations
     .filter(d => this.isActive(d, 'designationStatus'));
-
-  // ✅ Filter active locations
+ 
   this.locations = locations
     .filter(l => this.isActive(l, 'locationStatus'));
 
-  // 🟡 Use raw values (or filter if needed)
-  this.userGroups = userGroups;
+   this.userGroups = userGroups;
   this.shifts = shifts;
   this.employeeTypes = employeeTypes;
   this.divisions = divisions
