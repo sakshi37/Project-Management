@@ -21,12 +21,17 @@ namespace HR.API.Controllers
             _mediator = mediator;
         }
         [HttpPost("AddGmcDetails")]
-       
         public async Task<IActionResult> AddGmcDetails([FromBody] InsertEmployeeDetailsGmcCommandDto dto)
         {
-            var result = await _mediator.Send(new InsertEmployeeDetailsGmcCommand(dto));
-            return result ? Ok(new { message = "Employee updated." }) : NotFound(new { message = "Employee not found."});
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // returns all validation errors (PAN, Aadhar, etc.)
+            }
 
+            var result = await _mediator.Send(new InsertEmployeeDetailsGmcCommand(dto));
+            return result
+                ? Ok(new { message = "Employee updated." })
+                : NotFound(new { message = "Employee not found." });
         }
 
         [HttpPost("add")]
