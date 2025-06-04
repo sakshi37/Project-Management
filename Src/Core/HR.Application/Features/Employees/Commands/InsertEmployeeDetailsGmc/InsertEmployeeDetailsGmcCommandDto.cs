@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HR.Application.Features.Employees.Commands.UpdateEmployee;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc
@@ -17,11 +18,13 @@ namespace HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc
         [RegularExpression(@"^\d{12}$", ErrorMessage = "Aadhar card number must be exactly 12 digits.")]
         public string AadharCardNo { get; set; }
 
-        [Required]
-        public DateTime JoinDate { get; set; }
+        [DataType(DataType.Date)]
+        [CustomValidation(typeof(InsertEmployeeDetailsGmcCommandDto), nameof(ValidateDateNotInFuture))]
+        public DateTime? BirthDate { get; set; }
 
-        [Required]
-        public DateTime BirthDate { get; set; }
+        [DataType(DataType.Date)]
+        [CustomValidation(typeof(InsertEmployeeDetailsGmcCommandDto), nameof(ValidateDateNotInFuture))]
+        public DateTime? JoinDate { get; set; }
 
         [Required]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
@@ -36,5 +39,16 @@ namespace HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc
 
         [Required(ErrorMessage = "Gender is required.")]
         public int Fk_GenderId { get; set; }
+
+
+        // ✨ Custom validation method for BirthDate and JoinDate
+        public static ValidationResult? ValidateDateNotInFuture(DateTime? date, ValidationContext context)
+        {
+            if (date.HasValue && date.Value > DateTime.Now)
+            {
+                return new ValidationResult("Date cannot be in the future.");
+            }
+            return ValidationResult.Success;
+        }
     }
 }
