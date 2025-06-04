@@ -126,9 +126,32 @@
 
             <div class="col-md-12">
               <label class="form-label">Team Members:</label>
-              <ng-select class="form-select" [items]="employeeList" bindLabel="name" bindValue="id" [multiple]="true"
+              <!-- <ng-select class="form-select" [items]="employeeList" bindLabel="name" bindValue="id" [multiple]="true"
                 placeholder="Select Employees" formControlName="teamMembers">
-              </ng-select>
+              </ng-select> -->
+              <div class="card flex justify-center">
+                <!-- <p-multiselect [options]="employeeList" bindValue="id" [(ngModel)]="Employee" placeholder="Select Team Members" formControlName="teamMembers" optionLabel="name" display="chip" styleClass="w-full md:w-80" /> -->
+                <!-- <p-multiselect
+                [options]="employeeList"
+                bindValue="id"
+                optionLabel="name"
+                placeholder="Select Team Members"
+                formControlName="teamMembers"
+                display="chip"
+                styleClass="w-full md:w-80"
+              /> -->
+              <p-multiSelect
+  [options]="employeeList"
+  optionLabel="name"
+  optionValue="id"
+  formControlName="teamMembers"
+  placeholder="Select Team Members"
+  display="chip"
+>
+</p-multiSelect>
+
+              
+              </div>
               <div class="text-danger"
                 *ngIf="teamForm.get('teamMembers')?.touched && teamForm.get('teamMembers')?.hasError('required')">
                 At least one Team Member is required.

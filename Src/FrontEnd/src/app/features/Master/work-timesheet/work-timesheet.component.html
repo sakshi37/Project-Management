@@ -16,7 +16,7 @@
 
         <div class="form-group mb-3">
           <label for="stack">Select Stack</label>
-          <ng-select
+          <!-- <ng-select
             [items]="stacks"
             bindLabel="name"
             bindValue="id"
@@ -24,7 +24,19 @@
             placeholder="Choose technology stacks"
             formControlName="StackIds"
             class="custom-ng-select"
-          ></ng-select>
+          ></ng-select> -->
+        <div class="card flex justify-center">
+
+          <p-multiselect
+                [options]="stacks"
+                bindValue="id"
+                optionLabel="name"
+                placeholder="Choose technology stacks"
+                formControlName="StackIds"
+                display="chip"
+                class="custom-ng-select"
+              />
+        </div>
         </div>
 
         <div class="d-grid gap-2">

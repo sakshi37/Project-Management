@@ -10,10 +10,10 @@
     background-color: red !important;
 } */
 
-::ng-deep .p-datepicker-panel {
+/* ::ng-deep .p-datepicker-panel {
     background-color: rgb(255, 255, 255) !important; 
     border-radius: 10px !important; 
-  }
+  } */
 
 
 /* .bg-light-gray {
