@@ -1,22 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc
 {
     public class InsertEmployeeDetailsGmcCommandDto
     {
         public string Code { get; set; }
+
         public string Address { get; set; }
+
+        [Required]
+        [RegularExpression(@"^[A-Z]{5}[0-9]{4}[A-Z]{1}$", ErrorMessage = "PAN number must be 5 capital letters, 4 digits, followed by 1 capital letter (e.g., ABCDE1234F).")]
         public string PanNumber { get; set; }
+
+        [Required]
+        [RegularExpression(@"^\d{12}$", ErrorMessage = "Aadhar card number must be exactly 12 digits.")]
         public string AadharCardNo { get; set; }
+
+        [Required]
         public DateTime JoinDate { get; set; }
+
+        [Required]
         public DateTime BirthDate { get; set; }
+
+        [Required]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string Email { get; set; }
+
+        [Required]
+        [RegularExpression(@"^[6-9]\d{9}$", ErrorMessage = "Emergency number must be 10 digits starting with 6-9.")]
         public string EmergencyNo { get; set; }
-        public int Age{    get; set; }
-        public int Fk_GenderId { get; set; } // Add Fk_GenderId here
-}
+
+        [Range(18, 100, ErrorMessage = "Age must be between 18 and 100.")]
+        public int Age { get; set; }
+
+        [Required(ErrorMessage = "Gender is required.")]
+        public int Fk_GenderId { get; set; }
+    }
 }
