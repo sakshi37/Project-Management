@@ -131,7 +131,7 @@
               </ng-select> -->
               <div class="card flex justify-center">
                 <!-- <p-multiselect [options]="employeeList" bindValue="id" [(ngModel)]="Employee" placeholder="Select Team Members" formControlName="teamMembers" optionLabel="name" display="chip" styleClass="w-full md:w-80" /> -->
-                <p-multiselect
+                <!-- <p-multiselect
                 [options]="employeeList"
                 bindValue="id"
                 optionLabel="name"
@@ -139,7 +139,17 @@
                 formControlName="teamMembers"
                 display="chip"
                 styleClass="w-full md:w-80"
-              />
+              /> -->
+              <p-multiSelect
+  [options]="employeeList"
+  optionLabel="name"
+  optionValue="id"
+  formControlName="teamMembers"
+  placeholder="Select Team Members"
+  display="chip"
+>
+</p-multiSelect>
+
               
               </div>
               <div class="text-danger"

@@ -316,25 +316,46 @@ export class TeamCompositionComponent {
     this.isEditMode = true;
     // this.teamModal?.show();
   }
-onEdit(team: GetTeamCompositionDto ): void {
-    this.selectedTeamId = team.teamId;
-    this.isEditMode = true;
-    // this.teamModal?.show();
+// onEdit(team: GetTeamCompositionDto ): void {
+//     this.selectedTeamId = team.teamId;
+//     this.isEditMode = true;
+//     // this.teamModal?.show();
 
-    this.loadEmployees(); // ensure dropdown is populated
-
-    setTimeout(() => {
-      this.teamForm.patchValue({
-        teamName: team.teamName,
-        fk_BranchId: team.fk_BranchId,
-        fk_DivisionId: team.fk_DivisionId,
-        fk_TeamLeaderId: team.fk_TeamLeaderId,
-        teamStatus: team.teamStatus ? '1' : '0',
-        teamMembers: team.teamMemberIds || []
-      });
+//     this.loadEmployees(); // ensure dropdown is populated
+  
+//     setTimeout(() => {
+//       this.teamForm.patchValue({
+//         teamName: team.teamName,
+//         fk_BranchId: team.fk_BranchId,
+//         fk_DivisionId: team.fk_DivisionId,
+//         fk_TeamLeaderId: team.fk_TeamLeaderId,
+//         teamStatus: team.teamStatus ? '1' : '0',
+//         teamMembers: team.teamMemberIds || []
+//       });
       
-    }, 200);
-  }
+//     }, 200);
+//   }
+  onEdit(team: GetTeamCompositionDto): void {
+  this.selectedTeamId = team.teamId;
+  this.isEditMode = true;
+
+  // Load employees and then patch the form
+  this.employeeService.getAllEmployees().subscribe(data => {
+    this.employeeList = data;
+
+    this.teamForm.patchValue({
+      teamName: team.teamName,
+      fk_BranchId: team.fk_BranchId,
+      fk_DivisionId: team.fk_DivisionId,
+      fk_TeamLeaderId: team.fk_TeamLeaderId,
+      teamStatus: team.teamStatus ? '1' : '0',
+      teamMembers: team.teamMemberIds || []
+    });
+
+    this.modal.show(); // open modal only after everything is ready
+  });
+}
+
   // onSubmit(): void {
   //   this.submitted = true;
 
