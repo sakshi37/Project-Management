@@ -195,7 +195,7 @@ namespace HR.Persistence.Repositories
                 if (ex.Message.Contains("PAN number already exists"))
                     throw new EmployeeValidationException("PAN number is already registered.");
 
-                // For any other SQL errors, rethrow
+
                 throw;
             }
 
