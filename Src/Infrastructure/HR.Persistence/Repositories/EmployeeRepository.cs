@@ -151,7 +151,7 @@ namespace HR.Persistence.Repositories
         new SqlParameter("@Code", employee.Code ?? (object)DBNull.Value),
         new SqlParameter("@Address", employee.Address ?? (object)DBNull.Value),
         new SqlParameter("@MobileNo", employee.MobileNo ?? (object)DBNull.Value),
-        new SqlParameter("@SkypeId", employee.SkypeId ?? (object)DBNull.Value),
+        //new SqlParameter("@SkypeId", employee.SkypeId ?? (object)DBNull.Value),
         new SqlParameter("@JoinDate", (object?)employee.JoinDate ?? DBNull.Value),
         new SqlParameter("@Email", employee.Email ?? (object)DBNull.Value),
         new SqlParameter("@PanNumber", employee.PanNumber ?? (object)DBNull.Value),
@@ -172,7 +172,7 @@ namespace HR.Persistence.Repositories
                 @Code, 
                 @Address, 
                 @MobileNo, 
-                @SkypeId, 
+               
                 @JoinDate, 
                 @Email, 
                 @PanNumber, 
@@ -205,7 +205,7 @@ namespace HR.Persistence.Repositories
                 Code = employee.Code,
                 Address = employee.Address,
                 MobileNo = employee.MobileNo,
-                SkypeId = employee.SkypeId,
+
                 JoinDate = employee.JoinDate,
                 Email = employee.Email,
                 PanNumber = employee.PanNumber,
