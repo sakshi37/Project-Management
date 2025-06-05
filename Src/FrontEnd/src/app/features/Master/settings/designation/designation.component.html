@@ -66,10 +66,12 @@
                   id="designationName"
                   class="form-control"
                   formControlName="designationName"
+                  (input)="capitalizeEachWord()"
                   [ngClass]="{
                     'is-invalid':
                       designationForm.get('designationName')?.touched &&
-                      designationForm.get('designationName')?.invalid
+                      designationForm.get('designationName')?.invalid,
+                    'is-valid': designationForm.get('designationName')?.touched && designationForm.get('designationName')?.valid
                   }"
                 />
               </div>
@@ -84,9 +86,24 @@
                 <div *ngIf="designationForm.get('designationName')?.errors?.['required']">
                   Designation Name is required.
                 </div>
-                <div *ngIf="designationForm.get('designationName')?.errors?.['maxlength']">
-                  Max 100 characters allowed.
+                <div
+                class="text-danger"
+                *ngIf="designationForm.get('designationName')?.touched && designationForm.controls['designationName'].errors?.['maxLetterLength']"
+              >
+                Maximum 30 letters allowed.<br />
+                <!-- You entered {{ designationForm.controls['designationName'].errors?.['maxLetterLength']?.actualLength }} letters. -->
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="designationForm.get('designationName')?.touched && designationForm.controls['designationName'].errors?.['minLetterLength']"
+              >
+                Minimum 2 letters required.<br />
+                <!-- You entered {{ designationForm.controls['designationName'].errors?.['minLetterLength']?.actualLength }} letters. -->
+              </div>
+                <div *ngIf="designationForm.get('designationName')?.errors?.['pattern']">
+                  Only alphanumeric characters
                 </div>
+                
               </div>
             </div>
             

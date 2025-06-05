@@ -50,6 +50,7 @@ export class EmployeeRegistrationComponent implements OnInit {
   };
 
   today: string = new Date().toISOString().split('T')[0];
+  name: any;
 
   constructor(
     private fb: FormBuilder,
@@ -82,7 +83,15 @@ export class EmployeeRegistrationComponent implements OnInit {
 
   initForm(): void {
     this.employeeForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+          Validators.pattern('^[a-zA-Z ]+$'),
+        ],
+      ],
       code: [''],
       address: ['Vikroli (w)', Validators.required],
       mobileNo: [
@@ -258,8 +267,8 @@ export class EmployeeRegistrationComponent implements OnInit {
       birthDate: this.formatDate(this.employeeForm.value.birthDate),
       joinDate: this.formatDate(this.employeeForm.value.joinDate),
 
-      image: this.selectedImage || null,
-      signature: this.selectedSignature || null,
+      image: this.employeeForm.value.image,
+      signature: this.employeeForm.value.signature,
     };
     this.employeeService.createEmployee(emp).subscribe({
       next: () => {
