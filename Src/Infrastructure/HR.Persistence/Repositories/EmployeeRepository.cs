@@ -429,7 +429,7 @@ namespace HR.Persistence.Repositories
             catch (SqlException ex)
             {
 
-                return $"SQL Error: {ex.Message}";
+                return $" {ex.Message}";
             }
             catch (Exception ex)
             {

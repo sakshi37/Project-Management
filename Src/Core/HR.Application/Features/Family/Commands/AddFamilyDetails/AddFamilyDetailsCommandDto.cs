@@ -10,6 +10,7 @@ namespace HR.Application.Features.Family.Commands.AddFamilyDetails
     int Fk_FamilyMemberTypeId,
     string EmployeeCode,
     string FamilyMemberName,
+    int Fk_GenderId,
     DateTime BirthDate,
     int Age,
     string RelationWithEmployee,
