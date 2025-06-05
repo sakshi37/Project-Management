@@ -28,7 +28,7 @@ namespace HR.API
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connString),
                 ServiceLifetime.Scoped
-            );
+            );   
 
             // Register Application Services
             builder.Services.AddApplicationServices();

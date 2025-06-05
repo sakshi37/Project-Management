@@ -59,4 +59,7 @@ export class UserService {
       ChangePassword
     );
   }
+    getUserByUsername(username: string): Observable<AuthResponseModel> {
+    return this.http.get<AuthResponseModel>(`https://localhost:7292/api/Login/user/${username}`); 
+  }
 }

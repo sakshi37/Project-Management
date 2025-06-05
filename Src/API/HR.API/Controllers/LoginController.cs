@@ -4,9 +4,11 @@ using HR.Application.Contracts.Persistence;
 using HR.Application.Dtos;
 using HR.Application.Exceptions;
 using HR.Application.Features.Employees.Dtos;
+using HR.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.SharePoint.Client;
 
 namespace HR.API.Controllers
@@ -17,12 +19,14 @@ namespace HR.API.Controllers
     {
         readonly ILoginService _loginService;
         readonly IMediator _mediator;
+        private readonly AppDbContext _context;
 
 
-        public LoginController(ILoginService loginService, IMediator mediator)
+        public LoginController(ILoginService loginService, IMediator mediator, AppDbContext context)
         {
             _loginService = loginService;
             _mediator = mediator;
+            _context = context;
 
         }
 
@@ -147,14 +151,19 @@ namespace HR.API.Controllers
         }
 
 
-       
+        [HttpGet("user/{username}")]
+        public async Task<IActionResult> GetUserByUsername(string username)
+        {
+            var employees = await _context.employeesDto
+                .FromSqlRaw("exec SP_GetAllEmployeeforLogin")
+                .ToListAsync();
 
-        //[HttpPost("insert-login")]
-       
-        //public async Task<IActionResult> InsertLogin([FromBody] InsertLoginCommand command)
-        //{
-        //    await _mediator.Send(command);
-        //    return Ok("Login inserted successfully.");
-        //}
+            var user = employees.FirstOrDefault(u => u.Code == username);
+            if (user == null)
+                return NotFound();
+
+            return Ok(new { firstLogin = user.FirstLogin });
+        }
+
     }
 }
