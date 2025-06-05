@@ -24,6 +24,12 @@
               <div *ngIf="employeeForm.get('name')?.hasError('required')">
                 Name is required.
               </div>
+              <div *ngIf="employeeForm.get('name')?.hasError('minlength')">
+                Name must be at least 4 characters long.
+              </div>
+              <div *ngIf="employeeForm.get('name')?.hasError('maxlength')">
+                Name must be at least 20 characters long.
+              </div>
               <div *ngIf="employeeForm.get('name')?.hasError('pattern')">
                 Only letters and spaces allowed.
               </div>
@@ -90,19 +96,11 @@
                   employeeForm.get('panNumber')?.dirty)
               "
             >
+              <div *ngIf="employeeForm.get('panNumber')?.errors?.['required']">
+                PAN is required.
+              </div>
               <div *ngIf="employeeForm.get('panNumber')?.errors?.['pattern']">
                 PAN must be in format ABCDE1234F.
-              </div>
-            </div>
-            <div
-              class="text-danger small mt-1"
-              *ngIf="employeeForm.get('email')?.touched"
-            >
-              <div *ngIf="employeeForm.get('email')?.hasError('required')">
-                Email is required.
-              </div>
-              <div *ngIf="employeeForm.get('email')?.hasError('email')">
-                Enter a valid email.
               </div>
             </div>
           </div>
