@@ -89,26 +89,13 @@ export class UpdateEmployeeComponent implements OnInit {
     
     this.employeeForm = this.fb.group(
       {
-      name: [''], 
+      name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+
         address: [''],
         mobileNo: ['', [Validators.pattern(/^[6-9]\d{9}$/)]],
-        skypeId: ['', [Validators.minLength(10), Validators.maxLength(32)]],
-        email: [
-          '',
-          [
-            Validators.pattern(
-              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$/
-            ),
-          ],
-        ],
-        bccEmail: [
-          '',
-          [
-            Validators.pattern(
-              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$/
-            ),
-          ],
-        ],
+        // skypeId: ['', [Validators.minLength(10), Validators.maxLength(32)]],
+        email:['', [Validators, Validators.email]],
+        bccEmail:['', [Validators, Validators.email]],
         panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
         joinDate: ['', [this.noFutureDateValidator]],
         birthDate: ['', [this.noFutureDateValidator]],
@@ -117,14 +104,14 @@ export class UpdateEmployeeComponent implements OnInit {
         countryId: [''],
         stateId: [''],
         cityId: [''],
-        loginStatus: [false],
+        //loginStatus: [false],
         leftCompany: [false],
         leaveCompany: ['', [this.noFutureDateValidator]],
         locationId: [''],
         designationId: [''],
         shiftId: [''],
         employeeTypeId: [''],
-        userGroupId: [''],
+        // userGroupId: [''],
         branchId: [''],
         divisionId: [''],
       },
@@ -238,12 +225,20 @@ export class UpdateEmployeeComponent implements OnInit {
 }
 
     );
-    this.employeeForm.get('countryId')?.valueChanges.subscribe(() => {
-      this.filterStates();
-    });
-    this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
-      this.filterCities();
-    });
+   this.employeeForm.get('countryId')?.valueChanges.subscribe(() => {
+  this.employeeForm.get('stateId')?.reset();     
+  this.employeeForm.get('cityId')?.reset();      
+  this.filteredStates = [];
+  this.filteredCities = [];                      
+  this.filterStates();
+});
+
+this.employeeForm.get('stateId')?.valueChanges.subscribe(() => {
+  this.employeeForm.get('cityId')?.reset();      
+  this.filteredCities = [];                      
+  this.filterCities();
+});
+
   }
 
   populateEmployeeForm(emp: any): void {
@@ -251,20 +246,20 @@ export class UpdateEmployeeComponent implements OnInit {
 name: emp.name || this.selectedEmployeeName || '',
       address: emp.address || '',
       mobileNo: emp.mobileNo || '',
-      skypeId: emp.skypeId || '',
+      // skypeId: emp.skypeId || '',
       email: emp.email || '',
       joinDate: emp.joinDate?.split('T')[0] || '',
       bccEmail: emp.bccEmail || '',
       panNumber: emp.panNumber || '',
       birthDate: emp.birthDate?.split('T')[0] || '',
-      loginStatus: emp.loginStatus || false,
+      //loginStatus: emp.loginStatus || false,
       leftCompany: emp.leftCompany || false,
       leaveCompany: emp.leftDate?.split('T')[0] || '',
       locationId: emp.locationId || '',
       designationId: emp.designationId || '',
       shiftId: emp.shiftId || '',
       employeeTypeId: emp.employeeTypeId || '',
-      userGroupId: emp.userGroupId || '',
+      // userGroupId: emp.userGroupId || '',
       divisionId: emp.divisionId || '',
       aadharCardNo: emp.aadharCardNo || '',
       countryId: emp.countryId || '',
@@ -317,10 +312,10 @@ if (division) {
   console.log("seleted division" ,division.divisionId)
 }
 // User Group Name → userGroupId
-const userGroup = this.userGroups.find((g) => g.userGroupName === emp.userGroupName);
-if (userGroup) {
-  this.employeeForm.get('userGroupId')!.setValue(userGroup.userGroupId);
-}
+// const userGroup = this.userGroups.find((g) => g.userGroupName === emp.userGroupName);
+// if (userGroup) {
+//   this.employeeForm.get('userGroupId')!.setValue(userGroup.userGroupId);
+// }
 //shift
 const shift=this.shifts.find((sf)=> sf.shiftType=== emp.shiftType);
 if(shift){
@@ -550,12 +545,28 @@ if (location) {
   }
 
   // Validator to disallow future dates
-  noFutureDateValidator(control: AbstractControl): ValidationErrors | null {
-    const val = control.value;
-    if (!val) return null;
-    const date = new Date(val);
-    return date > new Date() ? { futureDate: true } : null;
+ noFutureDateValidator(control: AbstractControl): ValidationErrors | null {
+  const val = control.value;
+  if (!val) return null;
+
+  const date = new Date(val);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to midnight
+
+  const hundredYearsAgo = new Date();
+  hundredYearsAgo.setFullYear(today.getFullYear() - 100);
+
+  if (date > today) {
+    return { futureDate: true };
   }
+
+  if (date < hundredYearsAgo) {
+    return { tooOld: true };
+  }
+
+  return null;
+}
+
 
   onSubmit() {
     if (this.employeeForm.invalid) {
@@ -588,7 +599,7 @@ if (location) {
         updatedEmployee.signature = this.signatureBase64;
 
       // Ensure boolean fields are explicitly set (since false might be filtered out above)
-      updatedEmployee.loginStatus = formValues.loginStatus;
+      //updatedEmployee.loginStatus = formValues.loginStatus;
       updatedEmployee.leftCompany = formValues.leftCompany;
 
       // Submit the update (assuming updateService has updateEmployee method)
@@ -625,6 +636,15 @@ if (location) {
 
     }
   }
+  //pan lower  to upper 
+  toUppercase(controlName: string): void {
+  const control = this.employeeForm.get(controlName);
+  const value = control?.value;
+  if (value) {
+    control?.setValue(value.toUpperCase(), { emitEvent: false });
+  }
+}
+
 
   cancel() {
     this.employeeForm.reset();

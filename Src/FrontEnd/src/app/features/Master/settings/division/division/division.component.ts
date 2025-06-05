@@ -68,7 +68,7 @@ export class DivisionComponent implements OnInit, AfterViewInit {
       divisionName: ['', [Validators.required,Validators.pattern(/^.{0,26}$/)]],
       projectManagerName: ['', Validators.required],
       prefixName: ['', [Validators.required,Validators.pattern(/^.{0,20}$/)]],
-      manHours: ['', [Validators.required,Validators.pattern(/^(0?[0-9]|1[0-9]|2[0-3])$/)]],
+      manHours: ['', [Validators.required,Validators.pattern(/^(0?[0-9]|1[0-9]|2[0-4])$/)]],
       holidayListType: ['', Validators.required],
       divisionStatus: ['', Validators.required],
       branchId:['',Validators.required]

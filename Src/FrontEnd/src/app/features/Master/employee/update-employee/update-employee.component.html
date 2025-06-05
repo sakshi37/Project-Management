@@ -10,9 +10,27 @@
           <input type="text" id="employeeCode" class="form-control" [value]="selectedEmployeeCode" readonly />
         </div>
         <div class="col-md-6 form-group">
-          <label for="employeeName">Employee Name</label>
-          <input type="text" id="Name" class="form-control" formControlName="name" />
-        </div>
+  <label for="employeeName">Employee Name</label>
+  <input
+    type="text"
+    id="Name"
+    class="form-control"
+    formControlName="name"
+    placeholder="Enter at least 5 characters"
+  />
+  <div
+    *ngIf="employeeForm.get('name')?.touched && employeeForm.get('name')?.invalid"
+    class="text-danger mt-1"
+  >
+    <div *ngIf="employeeForm.get('name')?.errors?.['required']">
+      Name is required.
+    </div>
+    <div *ngIf="employeeForm.get('name')?.errors?.['minlength']">
+      Name must be at least 5 characters long. Max 16
+    </div>
+  </div>
+</div>
+
       </div>
 
       <!-- Mobile Number & Skype ID -->
@@ -77,7 +95,7 @@
         <div class="col-md-6 form-group">
           <label for="panNumber">PAN Number</label>
           <input type="text" id="panNumber" class="form-control" formControlName="panNumber"
-            placeholder="Enter PAN number" />
+            placeholder="Enter PAN number"   (input)="toUppercase('panNumber')"/>
           <div *ngIf="
               employeeForm.get('panNumber')?.invalid &&
               (employeeForm.get('panNumber')?.touched ||
@@ -104,7 +122,7 @@
         </div>
       </div>
       <div class="form-row">
-         <div class="col-md-6 form-group">
+         <!-- <div class="col-md-6 form-group">
           <label for="skypeId">Skype ID</label>
           <input type="text" id="skypeId" class="form-control" formControlName="skypeId" placeholder="Enter Skype ID" />
           <div *ngIf="
@@ -113,13 +131,14 @@
                 employeeForm.get('skypeId')?.dirty)
             " class="text-danger small">
             <div *ngIf="employeeForm.get('skypeId')?.errors?.['minlength']">
-              Skype ID must be at least 16 characters.
+              Skype ID must be at least 10 characters.
             </div>
             <div *ngIf="employeeForm.get('skypeId')?.errors?.['maxlength']">
               Skype ID cannot exceed 32 characters.
             </div>
           </div>
-        </div>
+        </div> -->
+        
         <!-- Gender -->
         <div class="col-md-6 form-group">
           <label for="genderId">Gender</label>
@@ -127,6 +146,15 @@
             <option value="">Select Gender</option>
             <option *ngFor="let g of genders" [value]="g.genderId">
               {{ g.genderType }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="designationId">Designation</label>
+          <select id="designationId" class="form-control" formControlName="designationId">
+            <option value="">Select Designation</option>
+            <option *ngFor="let des of designations" [value]="des.designationId">
+              {{ des.designationName }}
             </option>
           </select>
         </div>
@@ -147,6 +175,9 @@
             <div *ngIf="employeeForm.get('birthDate')?.errors?.['required']">
               Birth date is required.
             </div>
+            <div *ngIf="employeeForm.get('birthDate')?.errors?.['tooOld']" class="text-danger small">
+    Birth date cannot be more than 100 years ago.
+  </div>
           </div>
         </div>
         <div class="col-md-6 form-group">
@@ -163,11 +194,22 @@
           </div>
 
           <!-- Show errors for the form group -->
-          <div
-            *ngIf="employeeForm.errors?.['futureDate'] && (employeeForm.get('birthDate')?.touched || employeeForm.get('joinDate')?.touched)"
-            class="text-danger small">
-            Birth date or Join date cannot be a future date.
-          </div>
+          <div *ngIf="
+  employeeForm.get('birthDate')?.errors?.['futureDate'] &&
+  (employeeForm.get('birthDate')?.touched || employeeForm.get('birthDate')?.dirty)"
+  class="text-danger small">
+  Birth date cannot be a future date.
+</div>
+ 
+<div *ngIf="
+  employeeForm.get('joinDate')?.errors?.['futureDate'] &&
+  (employeeForm.get('joinDate') || employeeForm.get('joinDate')?.dirty)"
+  class="text-danger small">
+  Join date cannot be a future date.
+</div>
+<div *ngIf="employeeForm.get('joinDate')?.errors?.['tooOld']" class="text-danger small">
+    Join date cannot be more than 100 years ago.
+  </div>
           <div
             *ngIf="employeeForm.errors?.['minAgeGap'] && (employeeForm.get('birthDate')?.touched || employeeForm.get('joinDate')?.touched)"
             class="text-danger small">
@@ -180,21 +222,15 @@
 
       <!-- Remaining dropdowns (Status, Branch, etc.) -->
       <div class="form-row">
-        <div class="col-md-6 form-group">
+        <!-- <div class="col-md-6 form-group">
           <label for="loginStatus">Login Status</label>
           <select id="loginStatus" class="form-control" formControlName="loginStatus">
             <option [ngValue]="true">Active</option>
             <option [ngValue]="false">Inactive</option>
           </select>
-        </div>
+        </div> -->
 
-        <div class="col-md-6 form-group">
-          <label for="leftCompany">Left Company</label>
-          <select id="leftCompany" class="form-control" formControlName="leftCompany">
-            <option [value]="true">Yes</option>
-            <option [value]="false">No</option>
-          </select>
-        </div>
+        
       </div>
 
       <!-- File Uploads -->
@@ -283,21 +319,22 @@
       </div>
 
       <div class="form-row">
-        <div class="col-md-6 form-group">
-          <label for="designationId">Designation</label>
-          <select id="designationId" class="form-control" formControlName="designationId">
-            <option value="">Select Designation</option>
-            <option *ngFor="let des of designations" [value]="des.designationId">
-              {{ des.designationName }}
-            </option>
-          </select>
-        </div>
+        
         <div class="col-md-6 form-group">
           <label for="branchId">Branch</label>
           <select id="branchId" class="form-control" formControlName="branchId" aria-placeholder="">
             <option value="">Select Branch</option>
             <option *ngFor="let b of branches" [value]="b.branchId">
               {{ b.branchName }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="divisionId">Division</label>
+          <select id="divisionId" class="form-control" formControlName="divisionId">
+            <option value="">Select Division</option>
+            <option *ngFor="let d of divisions" [value]="d.divisionId">
+              {{ d.divisionName }}
             </option>
           </select>
         </div>
@@ -326,7 +363,7 @@
       </div>
 
       <div class="form-row">
-        <div class="col-md-6 form-group">
+        <!-- <div class="col-md-6 form-group">
           <label for="userGroupId">User Group</label>
           <select id="userGroupId" class="form-control" formControlName="userGroupId">
             <option value="">Select User Group</option>
@@ -334,18 +371,17 @@
               {{ ug.userGroupName }}
             </option>
           </select>
-        </div>
-        <div class="col-md-6 form-group">
-          <label for="divisionId">Division</label>
-          <select id="divisionId" class="form-control" formControlName="divisionId">
-            <option value="">Select Division</option>
-            <option *ngFor="let d of divisions" [value]="d.divisionId">
-              {{ d.divisionName }}
-            </option>
-          </select>
-        </div>
+        </div> -->
+        
       </div>
       <div class="form-row">
+        <div class="col-md-6 form-group">
+          <label for="leftCompany">Left Company</label>
+          <select id="leftCompany" class="form-control" formControlName="leftCompany">
+            <option [value]="true">Yes</option>
+            <option [value]="false">No</option>
+          </select>
+        </div>
          <div class="col-md-6 form-group">
           <label for="leaveCompany">Leave Company Date</label>
           <input type="date" id="leaveCompany" class="form-control" formControlName="leaveCompany" />
