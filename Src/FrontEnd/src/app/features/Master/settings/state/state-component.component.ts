@@ -236,6 +236,8 @@ export class StateComponent implements OnInit, AfterViewInit {
       stateCode: '',
       stateStatus: '1',
     });
+     this.stateForm.get('countryId')?.enable();
+     this.stateForm.get('stateName')?.enable();
     this.selectedStateId = null;
     this.validStateList = [];
     this.isEditMode = false;
@@ -276,7 +278,6 @@ export class StateComponent implements OnInit, AfterViewInit {
     }
     
     this.onCountryChange(state.countryId); // load valid states
-  
     this.stateForm.patchValue({
       countryId: state.countryId,
       stateName: state.stateName,
@@ -287,6 +288,8 @@ export class StateComponent implements OnInit, AfterViewInit {
     this.onStateNameChange(state.stateName);
   
     this.stateModal.show();
+     this.stateForm.get('countryId')?.disable();
+     this.stateForm.get('stateName')?.disable();
   }
   
   private cleanUpModal(): void {
@@ -303,21 +306,23 @@ export class StateComponent implements OnInit, AfterViewInit {
       this.stateForm.markAllAsTouched();
       return;
     }
+     const formValues = this.stateForm.getRawValue();
+  const stateName = formValues.stateName;
 
     const statusBool = this.stateForm.value.stateStatus === '1';
     const statePayload = {
       stateId: this.selectedStateId!,
-      countryId: this.stateForm.value.countryId,
-      stateName: this.stateForm.value.stateName,
-      stateCode: this.stateForm.value.stateCode.toUpperCase(),
+      countryId: formValues.countryId,
+      stateName: stateName,
+      stateCode: formValues.stateCode.toUpperCase(),
       stateStatus: statusBool,
       updatedBy: 1,
     };
 
     const createDto: CreateStateDto = {
-      countryId: this.stateForm.value.countryId,
-      stateName: this.stateForm.value.stateName,
-      stateCode: this.stateForm.value.stateCode,
+      countryId: formValues.countryId,
+      stateName: stateName,
+      stateCode: formValues.stateCode,
       createdBy: 1,
     };
 
