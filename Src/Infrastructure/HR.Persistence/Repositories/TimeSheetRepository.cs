@@ -1,15 +1,15 @@
-﻿using Dapper;
-using System.Data;
+﻿using System.Data;
+using Dapper;
 using HR.Application.Contracts.Persistence;
 using HR.Application.Features.TimeSheet.Commands.CreateTimeSheet;
 using HR.Application.Features.TimeSheet.Commands.UpdateTimeSheet;
 using HR.Application.Features.TimeSheets.Commands.PunchIn.Queries;
+using HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetAllTimeSheet;
 using HR.Application.Features.TimeSheets.Queries.GetByIdTimeSheet;
 using HR.Domain.Entities;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using HR.Application.Features.TimeSheets.Commands.UpdateTimeSheet;
 
 namespace HR.Persistence.Repositories
 {
@@ -51,8 +51,8 @@ namespace HR.Persistence.Repositories
 
         public async Task UpdateTimeSheet(UpdateTimeSheetDto timeSheet)
         {
-            string sql = "EXEC SP_TimeSheetUpdate @Id = {0}, @StartTime = {1}, @EndTime = {2}, @Hrs = {3}, @Min = {4}";
-            await _DbContext.Database.ExecuteSqlRawAsync(sql, timeSheet.Id, timeSheet.StartTime, timeSheet.EndTime, timeSheet.Hrs, timeSheet.Mins);
+            string sql = "EXEC SP_TimeSheetUpdate @Id = {0}, @StartTime = {1}, @EndTime = {2}, @Hrs = {3}, @Min = {4}, @Remark = {5}";
+            await _DbContext.Database.ExecuteSqlRawAsync(sql, timeSheet.Id, timeSheet.StartTime, timeSheet.EndTime, timeSheet.Hrs, timeSheet.Mins, timeSheet.Remark);
         }
 
 
@@ -121,12 +121,12 @@ namespace HR.Persistence.Repositories
             //parameters.Add("@StartTime", timeSheetDto.StartTime);
             //parameters.Add("@EndTime", timeSheetDto.EndTime);
             //parameters.Add("@Hrs", timeSheetDto.Hrs);
-            //parameters.Add("@Min", timeSheetDto.Min);
+            parameters.Add("@Remark", timeSheetDto.Remark);
             parameters.Add("@Fk_EmpId", timeSheetDto.Fk_EmpId);
             //parameters.Add("@TimeSheetStatus", timeSheetDto.TimeSheetStatus);
 
             var affectedRows = await connection.ExecuteAsync(
-                "SP_TimeSheetMasterUpdate",parameters,commandType: CommandType.StoredProcedure
+                "SP_TimeSheetMasterUpdate", parameters, commandType: CommandType.StoredProcedure
             );
 
             return affectedRows > 0;

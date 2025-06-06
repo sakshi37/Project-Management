@@ -1,14 +1,16 @@
 <table class="table table-striped table-hover table-bordered align-middle">
   <thead class="table-dark text-uppercase">
     <tr>
-      <th scope="col">Employee ID</th>
+      <th scope="col">Employee Code</th>
+      <th scope="col">Employee Name</th>
       <th scope="col">Start Date &amp; Time</th>
       <th scope="col">End Date &amp; Time</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let attendance of attendance">
-      <td class="fw-bold text-secondary">{{ attendance.fk_EmpId }}</td>
+      <td class="fw-bold text-secondary">{{ attendance.code }}</td>
+      <td>{{ attendance.name }}</td>
       <td>{{ attendance.startDate | date : "medium" }}</td>
       <td>{{ attendance.endDate | date : "medium" }}</td>
     </tr>

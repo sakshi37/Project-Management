@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GmcService } from '../../../services/gmc-service';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FamilyList, FamilyMember } from '../../../Models/family-member-dto';
 import { Employee, EmployeeSaveDto } from '../../../Models/gmc-model';
 
@@ -27,11 +27,11 @@ export class GmcComponent implements OnInit {
     name: '',
     code: '',
     designation: '',
-    fk_GenderId: 0,
+    gender: ''
   };
   employees: EmployeeSaveDto = {
     code: '',
-    address: '',
+address: '',
     panNumber: '',
     aadharCardNo: '',
     joinDate: '',
@@ -45,6 +45,7 @@ export class GmcComponent implements OnInit {
     fk_FamilyMemberTypeId: 0,
     employeeCode: '',
     familyMemberName: '',
+    fk_GenderId:0,
     birthDate: new Date(),
     age: 0,
     relationWithEmployee: '',
@@ -68,14 +69,14 @@ export class GmcComponent implements OnInit {
   constructor(
     private gmcService: GmcService,
     private updateService: UpdateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const decodedToken = jwtDecode(String(localStorage.getItem('token')));
     const code = decodedToken.sub;
     if (code) {
       this.family.employeeCode = code;
-          this.fetchEmployeeDetails(code);
+      this.fetchEmployeeDetails(code);
 
     } else {
       alert('employee code not in the local storage');
@@ -86,6 +87,7 @@ export class GmcComponent implements OnInit {
     this.loadGenders();
 
   }
+  
 
 fetchEmployeeDetails(code: string): void {
   console.log('Fetching employee details for code:', code);
@@ -93,29 +95,46 @@ fetchEmployeeDetails(code: string): void {
   this.gmcService.getEmployeeByCode(code).subscribe({
     next: (res: any) => {
       console.log('Raw response from API:', res);
-      console.log('Raw API response:', JSON.stringify(res, null, 2));
-
 
       if (!res) {
         console.warn('No data received from API.');
         return;
       }
 
-      if (!res.name || !res.code || !res.designationName) {
-        console.warn('Some fields are missing in the API response:', {
-          name: res.name,
-          code: res.code,
-          designationName: res.designationName,
-        });
-      }
+      // Format MMDDYYYY helper
+     const formatDateForInput = (dateStr: string): string => {
+  const d = new Date(dateStr);
+  const yyyy = d.getFullYear();
+  const mm = ('0' + (d.getMonth() + 1)).slice(-2);
+  const dd = ('0' + d.getDate()).slice(-2);
+  return `${yyyy}-${mm}-${dd}`;  // required format for input[type="date"]
+};
 
+
+      // Display object
       this.employee = {
         name: res.name,
         code: res.code,
-        designation: res.designationName, // Make sure this matches actual API response
+        designation: res.designationName,
+        gender: res.genderType,
       };
 
-      console.log('Mapped employee object:', this.employee);
+      // Save object
+      this.employees = {
+        code: res.code,
+        address: res.address,
+        panNumber: res.panNumber,
+        aadharCardNo: res.aadharCardNo,
+        joinDate: formatDateForInput(res.joinDate),  
+  birthDate: formatDateForInput(res.birthDate), 
+        email: res.email,
+        emergencyNo: '', // Fill if available
+        age: this.calculateAge(new Date(res.birthDate), new Date()),
+        fk_GenderId: this.getGenderId(res.genderType),
+      };
+
+      console.log('Mapped display object:', this.employee);
+      console.log('Mapped save object:', this.employees);
     },
     error: (err) => {
       console.error('Failed to fetch employee:', err);
@@ -129,60 +148,115 @@ fetchEmployeeDetails(code: string): void {
     },
   });
 }
+
+
   loadGenders(): void {
     this.updateService.getAllGenders().subscribe((data: Gender[]) => {
       this.genders = data;
     });
   }
 
-  saveFamilyDetails(): void {
-    if (!this.family.employeeCode) {
+saveFamilyDetails(form: NgForm): void {
+  if (form.invalid) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      text: 'Please fill out all required fields correctly.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
+
+  if (!this.family.employeeCode) {
+    Swal.fire({
+      toast: true,
+      text: 'Employee code missing.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
+
+  // ✅ Add this block here
+  const birthDate = new Date(this.family.birthDate);
+  const today = new Date();
+  const hundredYearsAgo = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
+
+  if (birthDate < hundredYearsAgo || birthDate > today) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      text: 'Birth Date must be within the past 100 years.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
+
+  // ✅ Recalculate age for accuracy before saving
+  this.family.age = this.calculateAge(birthDate, today);
+
+  this.gmcService.saveFamilyMemberDetails(this.family).subscribe({
+    next: (res) => {
+      console.log('Saved:', res);
+      this.familyLists.push({
+        familyMemberTypeName: this.getFamilyMemberTypeName(this.family.fk_FamilyMemberTypeId),
+        familyMemberName: this.family.familyMemberName,
+        birthDate: this.family.birthDate,
+        age: this.family.age,
+        relationWithEmployee: this.family.relationWithEmployee,
+      });
       Swal.fire({
         toast: true,
-        text: 'Employee code missing.',
+        icon: 'success',
+        text: 'Family member details saved successfully!',
         position: 'top',
         timer: 3000,
         showConfirmButton: false,
       });
-      return;
-    }
+      this.clearFamilyForm();
+    },
+    error: (err) => {
+      const errorMessage =
+        err?.error?.message ||
+        err?.error?.error ||
+        err?.message ||
+        'Failed to save family member.';
 
-    this.gmcService.saveFamilyMemberDetails(this.family).subscribe({
-      next: (res) => {
-        console.log('Saved:', res);
-        this.familyLists.push({ ...this.familyList });
-        Swal.fire({
-          toast: true,
-          icon: 'success',
-          text: 'Family member details saved successfully!',
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        this.clearFamilyForm();
-      },
-      error: (err) => {
-        console.error('Error saving family member:', err);
-        const errorMessage =
-          err.error?.message || 'Failed to save family member.';
+      Swal.fire({
+        toast: true,
+        icon: 'error',
+        text: errorMessage,
+        position: 'top',
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    },
+  });
+}
 
-        Swal.fire({
-          toast: true,
-          icon: 'error',
-          text: errorMessage,
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-      },
-    });
+
+getGenderId(gender: string): number {
+  switch (gender.toLowerCase()) {
+    case 'male':
+      return 1;
+    case 'female':
+      return 2;
+    default:
+      return 0;
   }
+}
 
   clearFamilyForm(): void {
     this.family = {
       fk_FamilyMemberTypeId: 0,
       employeeCode: localStorage.getItem('employeeCode') || '',
       familyMemberName: '',
+      fk_GenderId:0,
       birthDate: new Date(),
       age: 0,
       relationWithEmployee: '',
@@ -190,14 +264,21 @@ fetchEmployeeDetails(code: string): void {
     };
   }
 
-  calculateAge(birthDate: Date, referenceDate: Date): number {
-    let age = referenceDate.getFullYear() - birthDate.getFullYear();
-    const m = referenceDate.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && referenceDate.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
+ calculateAge(birthDate: Date, referenceDate: Date): number {
+  let age = referenceDate.getFullYear() - birthDate.getFullYear();
+  const m = referenceDate.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && referenceDate.getDate() < birthDate.getDate())) {
+    age--;
   }
+
+  // Ensure age is within 0 to 100
+  if (age < 0 || age > 100) {
+    return 0;
+  }
+
+  return age;
+}
+
 
   onFamilyBirthDateChange(birthDateStr: string) {
     const birthDate = new Date(birthDateStr);
@@ -227,8 +308,8 @@ fetchEmployeeDetails(code: string): void {
   }
 
   loadFamilyList(): void {
-    const decodedToken = jwtDecode(String(localStorage.getItem('token')));
-    const employeeCode = decodedToken.sub;
+    const decodedToken: { sub: string } = jwtDecode(String(localStorage.getItem('token')));
+const employeeCode: string = decodedToken.sub;
     if (!employeeCode) {
       console.error('Employee code not found in localStorage.');
       return;
@@ -260,6 +341,8 @@ fetchEmployeeDetails(code: string): void {
           id: type.familyMemberTypeId,
           label: type.familyMemberTypeName,
         }));
+          console.log('Mapped familyTypes:', this.familyTypes); // Check content
+
       },
       error: (err) => {
         console.error('Error loading family member types:', err);
@@ -273,68 +356,92 @@ fetchEmployeeDetails(code: string): void {
       },
     });
   }
+  getFamilyMemberTypeName(typeId: any): string {
+  const type = this.familyTypes.find((t) => t.id === +typeId); // Ensure number
+  return type ? type.label : '';
+}
 
-  saveEmployeeDetails(): void {
-    // Sync values from display-only employee object to the DTO
-    this.employees.code = this.employee.code;
-    this.employees.fk_GenderId =
-      this.employees.fk_GenderId ?? this.employee.fk_GenderId;
+//  saveEmployeeDetails(form: NgForm): void {
+//   if (form.invalid) {
+//     form.control.markAllAsTouched();
+//     Swal.fire({
+//       toast: true,
+//       icon: 'error',
+//       text: 'Please fill out all required fields correctly.',
+//       position: 'top',
+//       timer: 3000,
+//       showConfirmButton: false,
+//     });
+//     return;
+//   }
 
-    // Optional: add validation check
-    if (!this.employees.code || !this.employees.fk_GenderId) {
-      Swal.fire({
-        toast: true,
-        icon: 'error',
-        text: 'Employee code and gender are required.',
-        position: 'top',
-        timer: 3000,
-        showConfirmButton: false,
-      });
-      return;
-    }
+//   // Sync code from employee (readonly) to employees before saving
+//   this.employees.code = this.employee.code;
+//   this.employees.fk_GenderId = this.employees.fk_GenderId ?? this.employee.fk_GenderId;
 
-    console.log('Sending employee data to backend:', this.employees);
+//   console.log('Sending employee data to backend:', this.employees);
 
-    this.gmcService.saveEmployeeDetails(this.employees).subscribe({
-      next: (res) => {
-        Swal.fire({
-          toast: true,
-          icon: 'success',
-          text: 'Employee details are saved!',
-          position: 'top',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        this.employees = {
-          code: '',
-          fk_GenderId: 0,
-        };
-      },
-      error: (err) => {
-        console.error('Error saving employee:', err);
-        if (err.error?.errors) {
-          console.table(err.error.errors);
-          Swal.fire({
-            toast: true,
-            icon: 'error',
-            text: ' failed. Check details.',
-            position: 'top',
-            timer: 3000,
-            showConfirmButton: false,
-          });
-        } else {
-          Swal.fire({
-            toast: true,
-            icon: 'error',
-            text: 'Failed to save employee.',
-            position: 'top',
-            timer: 3000,
-            showConfirmButton: false,
-          });
-        }
-      },
-    });
+//   this.gmcService.saveEmployeeDetails(this.employees).subscribe({
+//     next: (res) => {
+//       Swal.fire({
+//         toast: true,
+//         icon: 'success',
+//         text: 'Employee details are saved!',
+//         position: 'top',
+//         timer: 3000,
+//         showConfirmButton: false,
+//       });
+
+//       // Reset only editable fields in employees, keep code/name/designation untouched (they are in employee)
+//       this.employees = {
+//         code: this.employee.code,      // keep original code
+//         fk_GenderId: 0,               // reset gender selection
+//         address: '',
+//         panNumber: '',
+//         aadharCardNo: '',
+//         joinDate: '',
+//         birthDate: '',
+//         email: '',
+//         emergencyNo: '',
+//         age: 0,
+//       };
+
+//       // Reset form with new values for employees (excluding employee fields)
+//       form.resetForm({
+//         address: '',
+//         panNumber: '',
+//         aadharCardNo: '',
+//         joinDate: '',
+//         birthDate: '',
+//         email: '',
+//         emergencyNo: '',
+//         age: 0,
+//         fk_GenderId: 0,
+//       });
+//     },
+//     error: (err) => {
+//       console.error('Error saving employee:', err);
+//       const backendMessage = err?.error?.message || err?.error?.title || 'Failed to save employee.';
+//       Swal.fire({
+//         toast: true,
+//         icon: 'error',
+//         text: backendMessage,
+//         position: 'top',
+//         timer: 3000,
+//         showConfirmButton: false,
+//       });
+//     },
+//   });
+// }
+getGenderLabel(genderId: number | undefined): string {
+  switch (genderId) {
+    case 1: return 'Male';
+    case 2: return 'Female';
+    case 3: return 'Other';
+    default: return 'Unknown';
   }
+}
+
 
   exportToExcel(): void {
     const employeeData = [
@@ -343,7 +450,7 @@ fetchEmployeeDetails(code: string): void {
         Code: this.employee.code,
         Address: this.employees.address,
         Designation: this.employee.designation,
-        Gender: this.employees.fk_GenderId,
+      Gender: this.getGenderLabel(this.employees.fk_GenderId), // ⬅️ Use label
         PAN: this.employees.panNumber,
         'Join Date': this.employees.joinDate,
         'Birth Date': this.employees.birthDate,
@@ -378,3 +485,4 @@ fetchEmployeeDetails(code: string): void {
     );
   }
 }
+  

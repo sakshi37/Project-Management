@@ -27,7 +27,7 @@
     <span class="position-relative">
       <i
         class="fas fa-bell me-2"
-        [ngClass]="{ 'text-danger': unreadCount > 0 }"
+       
       ></i>
 
       <span
@@ -50,6 +50,19 @@
   >
     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
   </a>
+     <!-- Admin -->
+    <div
+      class="accordion-item bg-transparent border-0"
+      *ngIf="userRole === 'Admin'"
+    >
+      <a
+        routerLink="/admin"
+        routerLinkActive="active-link"
+        class="sidebar-link mb-2"
+      >
+        <i class="fas fa-user-shield me-2"></i> Admin
+      </a>
+    </div>
 
   <!-- Accordion -->
   <div class="accordion accordion-flush" id="sidebarMenu" #sidebarMenu>
@@ -118,7 +131,7 @@
           <a
             routerLink="/employee"
             class="sidebar-link-text sidebar-link d-block mb-2"
-            *ngIf="userRole === 'HR' || userRole === 'Admin'"
+            *ngIf="userRole === 'HR'"
           >
             <i class="fas fa-user-tie me-2"></i> Employee Master
           </a>
@@ -141,7 +154,7 @@
           <a
             routerLink="/team-composition"
             class="sidebar-link-text sidebar-link d-block mb-2"
-            *ngIf="userRole === 'HR' || userRole === 'Admin'"
+            *ngIf="userRole === 'HR'"
           >
             <i class="fas fa-users-cog me-2"></i> Team Composition
           </a>
@@ -156,7 +169,7 @@
     <!-- HR -->
     <div
       class="accordion-item bg-transparent border-0"
-      *ngIf="userRole === 'HR' || userRole === 'Admin'"
+      *ngIf="userRole === 'HR'"
     >
       <h2 class="accordion-header">
         <button
@@ -244,18 +257,6 @@
       </div>
     </div>
 
-    <!-- Admin -->
-    <div
-      class="accordion-item bg-transparent border-0"
-      *ngIf="userRole === 'Admin'"
-    >
-      <a
-        routerLink="/admin"
-        routerLinkActive="active-link"
-        class="sidebar-link mb-2"
-      >
-        <i class="fas fa-user-shield me-2"></i> Admin
-      </a>
-    </div>
+ 
   </div>
 </div>

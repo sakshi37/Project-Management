@@ -27,10 +27,11 @@ namespace HR.Persistence.Repositories
             try
             {
                 var result = await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC sp_InsertFamilyMember @Fk_FamilyMemberTypeId = {0}, @EmployeeCode = {1}, @FamilyMemberName = {2}, @BirthDate = {3}, @Age = {4}, @RelationWithEmployee = {5}, @FamilyStatus = {6}",
+                    "EXEC sp_InsertFamilyMember @Fk_FamilyMemberTypeId = {0}, @EmployeeCode = {1}, @FamilyMemberName = {2}, @Fk_GenderId={3},@BirthDate = {4}, @Age = {5}, @RelationWithEmployee = {6}, @FamilyStatus = {7}",
                     dto.Fk_FamilyMemberTypeId,
                     dto.EmployeeCode,
                     dto.FamilyMemberName,
+                    dto.Fk_GenderId,
                     dto.BirthDate,
                     dto.Age,
                     dto.RelationWithEmployee,
@@ -41,22 +42,27 @@ namespace HR.Persistence.Repositories
             }
             catch (SqlException ex)
             {
-                // Optional: Log the error message
                 Console.WriteLine("SQL Error: " + ex.Message);
 
-                // Handle specific business errors from SQL
                 if (ex.Message.Contains("Invalid Employee Code"))
                 {
+                    // Known business rule violation
                     throw new InvalidOperationException("The provided employee code is invalid.");
                 }
                 else if (ex.Message.Contains("family member type already exists"))
                 {
                     throw new InvalidOperationException("This family member type already exists for the employee.");
                 }
+                else if (ex.Message.Contains("FOREIGN KEY constraint") || ex.Message.Contains("FK_Tbl_FamilyMaster_FamilyMemberTypeMaster"))
+                {
+                    // Clean message for front-end
+                    throw new InvalidOperationException("Please select a valid family member type.");
+                }
 
-                // Re-throw if it's an unexpected SQL error
-                throw;
+                // For all other SQL exceptions, return a general message
+                throw new InvalidOperationException("An unexpected error occurred while saving family member details.");
             }
+
         }
 
         public async Task<List<GetAllFamilyMemberTypeQueryVm>> GetAllAsync()

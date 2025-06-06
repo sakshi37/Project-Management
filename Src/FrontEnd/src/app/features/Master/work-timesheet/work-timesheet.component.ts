@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { EmployeeService } from '../../../services/employee-service';
 import { Stack, TimeSheetService } from '../../../services/time-sheet.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import Swal from 'sweetalert2';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CommonModule } from '@angular/common';
@@ -11,10 +16,16 @@ import { GetAttendanceReportService } from '../../../services/get-attendance-rep
 import { RoleService } from '../../../services/role.service';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { EmployeeModel } from '../../../Models/employee-model';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-assigned-task',
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgSelectModule,
+    MultiSelectModule,
+  ],
   templateUrl: './work-timesheet.component.html',
   styleUrl: './work-timesheet.component.css',
 })
@@ -49,7 +60,13 @@ export class WorkTimesheetComponent {
 
   initProjectForm(): void {
     this.projectForm = this.fb.group({
-      Name: [''],
+      Name: [
+        '',
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+        Validators.pattern('^[a-zA-Z0-9 ]+$'), // allows letters, numbers, spaces
+      ],
       StackIds: [[]],
     });
   }
@@ -60,12 +77,15 @@ export class WorkTimesheetComponent {
     const token = this.roleService.getToken();
     const decodeToken = jwtDecode<JwtPayload>(token != null ? token : '');
     const empId: string | undefined = (decodeToken as any).id;
-
+    const StackIds = this.projectForm.value.StackIds.map(
+      (stack: any) => stack.id
+    );
     if (!empId) return;
 
     this.timesheetService
       .InserProject({
         ...this.projectForm.value,
+        StackIds: StackIds,
         fk_TeamLeaderId: Number(empId),
       })
       .subscribe((res) => {

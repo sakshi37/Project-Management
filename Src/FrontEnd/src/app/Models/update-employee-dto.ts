@@ -1,5 +1,6 @@
 export interface UpdateEmployeeDto {
     code: string;
+    name:string;
     address: string;
     mobileNo: string;
     skypeId: string;

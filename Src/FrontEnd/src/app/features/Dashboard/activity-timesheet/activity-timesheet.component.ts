@@ -29,7 +29,15 @@ export class ActivityTimesheetComponent implements OnInit {
     endTime: string | null;
     Hrs: number | null;
     Mins: number | null;
-  } = { id: null, startTime: null, endTime: null, Hrs: null, Mins: null };
+    remark: string | null;
+  } = {
+    id: null,
+    startTime: null,
+    endTime: null,
+    Hrs: null,
+    Mins: null,
+    remark: null,
+  };
 
   constructor(
     private timeSheetService: TimeSheetService,
@@ -42,6 +50,10 @@ export class ActivityTimesheetComponent implements OnInit {
     const empCode = this.getEmpCode();
     if (!empCode) return;
     this.getTimesheetByEmpId(empCode);
+  }
+
+  hasPendingTimesheets(): boolean {
+    return this.timeSheets && this.timeSheets?.length > 0;
   }
 
   calculateTimeDifferences() {
@@ -156,6 +168,7 @@ export class ActivityTimesheetComponent implements OnInit {
         endTime: null,
         Hrs: null,
         Mins: null,
+        remark: null,
       };
       return;
     }
@@ -174,6 +187,7 @@ export class ActivityTimesheetComponent implements OnInit {
         ),
         Hrs: timesheet.hrs ?? null,
         Mins: timesheet.min ?? null,
+        remark: timesheet.remark ?? null,
       };
     }
   }
@@ -221,6 +235,7 @@ export class ActivityTimesheetComponent implements OnInit {
         endTime: string;
         Hrs: number;
         Mins: number;
+        remark: string | null;
       };
 
       console.log('updating');
@@ -234,9 +249,14 @@ export class ActivityTimesheetComponent implements OnInit {
     }
 
     Swal.fire({
+      toast: true,
+      position: 'top',
+      timer: 1000,
+      timerProgressBar: true,
+      showConfirmButton: false,
       icon: 'error',
       title: 'Error',
-      text: 'Please fill all fields before submitting.',
+      text: 'Please fill  end Date fields before submitting.',
     });
   }
 }

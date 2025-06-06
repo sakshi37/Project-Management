@@ -13,5 +13,6 @@
         public int? Hrs { get; set; }
         public int? Min { get; set; }
         public int? EmpId { get; set; }
+        public string? Remark { get; set; }
     }
 }

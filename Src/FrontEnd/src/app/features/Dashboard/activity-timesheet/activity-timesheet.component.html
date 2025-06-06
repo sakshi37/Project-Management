@@ -17,22 +17,23 @@
     >
       ✖ Punch-Out
     </button>
-  </div>
-
-  <div class="table-wrapper">
     <button
       class="btn custom-add-btn"
       *ngIf="sessionStatus !== null"
       (click)="toggleCompleted()"
     >
+      <i class="fa-solid fa-list"></i>
       {{ showCompleted ? "Hide Completed" : "Show Completed" }}
     </button>
-    <table class="table table-bordered table-sm">
-      <thead class="table-light">
+  </div>
+
+  <div class="table-wrapper">
+    <table class="table table-bordered table-sm custom-rounded-table">
+      <thead class="table-light" style="text-align: center">
         <tr>
           <th>Sr.No</th>
-          <th>Job No</th>
-          <th>Sequence</th>
+          <!-- <th>Job No</th> -->
+          <th>Task</th>
           <th>Part</th>
           <th>Activity</th>
           <th>Type</th>
@@ -41,7 +42,7 @@
           <th>Hrs</th>
           <th>Min</th>
           <th>Remarks</th>
-          <th>Edit</th>
+          <th *ngIf="hasPendingTimesheets()">Edit</th>
         </tr>
       </thead>
 
@@ -62,20 +63,22 @@
               showCompleted ? timesheet.endTime : timesheet.endTime == null
             "
           >
-            <td>{{ i + 1 }}</td>
-            <td>{{ timesheet.projectId }}</td>
-            <td>{{ timesheet.sequence }}</td>
+            <td style="text-align: center">{{ i + 1 }}</td>
+            <!-- <td>{{ timesheet.projectId }}</td> -->
             <td>{{ timesheet.part }}</td>
+            <td>{{ timesheet.sequence }}</td>
+
             <td>{{ timesheet.activity }}</td>
             <td>{{ timesheet.type }}</td>
             <td>{{ timesheet.startTime | date : "short" }}</td>
             <td>{{ timesheet.endTime | date : "short" }}</td>
             <td>{{ timesheet.hrs }}</td>
             <td>{{ timesheet.min }}</td>
-            <td>--</td>
-            <td>
+            <td>{{ timesheet.remark }}</td>
+            <td style="text-align: center">
               <button
-                class="btn btn-info btn-sm"
+                *ngIf="!timesheet.endTime"
+                class="btn custom-add-btn3"
                 (click)="toggleEditForm(timesheet.id)"
               >
                 Edit
@@ -104,11 +107,38 @@
                       class="form-control"
                       [(ngModel)]="editFormData.endTime"
                       name="editEndTime"
+                      [min]="editFormData.endTime"
+                      (change)="onEditTimeChange()"
+                    />
+                  </div>
+
+                  <div class="col-md-4">
+                    <label>Remarks:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="editFormData.remark"
+                      name="editEndTime"
                       (change)="onEditTimeChange()"
                     />
                   </div>
                   <div class="col-md-4 d-flex align-items-end gap-2">
-                    <div class="me-auto">
+                    <button
+                      type="submit"
+                      class="btn custom-sub-btn"
+                      (click)="submitEditForm()"
+                    >
+                      Submit
+                    </button>
+                    <button
+                      type="button"
+                      class="btn custom-add-btn2"
+                      (click)="toggleEditForm(i)"
+                    >
+                      Cancel
+                    </button>
+                    <div class="me-auto" style="align-self: center">
+                      <label>Duration:</label>
                       <strong
                         *ngIf="
                           editFormData.Hrs !== null &&
@@ -118,20 +148,6 @@
                         {{ editFormData.Hrs }}h {{ editFormData.Mins }}m
                       </strong>
                     </div>
-                    <button
-                      type="submit"
-                      class="btn btn-success"
-                      (click)="submitEditForm()"
-                    >
-                      Submit
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      (click)="toggleEditForm(i)"
-                    >
-                      Cancel
-                    </button>
                   </div>
                 </div>
               </form>

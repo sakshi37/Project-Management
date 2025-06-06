@@ -7,15 +7,25 @@
         <p class="text-muted mb-2">Project ID: {{ project.id }}</p>
         <p>Team Lead: {{ project.teamLeaderName }}</p>
         <div class="d-flex flex-wrap gap-2">
-          <span class="badge bg-secondary" *ngFor="let stack of project.stack">{{ stack.name }}</span>
+          <span
+            class="badge bg-secondary"
+            *ngFor="let stack of project.stack"
+            >{{ stack.name }}</span
+          >
         </div>
       </div>
 
-      <div class="d-flex flex-column align-items-end gap-2">
-        <button class="btn btn-outline-primary btn-sm" (click)="toggleTaskList(project.id)">
+      <div class="d-flex flex-row align-items-end gap-2">
+        <button
+          class="btn btn-outline-primary btn-sm"
+          (click)="toggleTaskList(project.id)"
+        >
           {{ openProjectId === project.id ? "Hide Tasks" : "Show Tasks" }}
         </button>
-        <button class="btn btn-outline-success btn-sm" (click)="toggleAddTaskForm(project.id)">
+        <button
+          class="btn btn-outline-success btn-sm"
+          (click)="toggleAddTaskForm(project.id)"
+        >
           {{ addTaskProjectId === project.id ? "Cancel Add Task" : "Add Task" }}
         </button>
       </div>
@@ -25,27 +35,39 @@
     <div *ngIf="project.id === openProjectId" class="card-body border-top">
       <h6 class="text-secondary mb-3">Tasks</h6>
 
-
-
       <ng-container *ngFor="let task of taskList">
-        <div *ngIf="task.projectId === project.id" class="mb-3 p-3 border rounded bg-light-subtle shadow-sm">
+        <div
+          *ngIf="task.projectId === project.id"
+          class="mb-3 p-3 border rounded bg-light-subtle shadow-sm"
+        >
           <div class="col-md-12 text-end mb-2">
-            <button class="btn btn-outline-info btn-sm update-btn" (click)="openUpdateModal(task)">
+            <button
+              class="btn btn-outline-info btn-sm update-btn"
+              (click)="openUpdateModal(task)"
+            >
               <i class="bi bi-pencil-square me-1"></i> Update
             </button>
           </div>
 
-
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="badge" [ngClass]="{
+            <span
+              class="badge"
+              [ngClass]="{
                 'bg-success': task.endTime,
                 'bg-danger': !task.endTime
-              }">
+              }"
+            >
               {{ task.endTime ? "✔ Completed" : "❌ Incomplete" }}
             </span>
 
-            <span *ngIf="task.endTime" class="text-muted small">
-              (Ended on: {{ task.endTime | date : "medium" }})
+            <span
+              *ngIf="task.endTime && task.startTime"
+              class="text-muted small"
+            >
+              Started: {{ task.startTime | date : "dd MMM yyyy, hh:mm a" }}
+              <br />
+              Ended: {{ task.endTime | date : "dd MMM yyyy, hh:mm a" }} <br />
+              <!-- Duration: {{ getDuration(task.startTime, task.endTime) }} -->
             </span>
           </div>
 
@@ -54,9 +76,6 @@
               <strong>time:</strong> {{ task.startTime }}
             </div> -->
             <div class="col-md-6 mb-1">
-
-
-
               <strong>Activity:</strong> {{ task.activity }}
             </div>
             <div class="col-md-6 mb-1">
@@ -70,6 +89,9 @@
             </div>
             <div class="col-md-6 mb-1">
               <strong>Code:</strong> {{ task.code }}
+            </div>
+            <div class="col-md-6 mb-1" *ngIf="task.endTime">
+              <strong>Remark:</strong> {{ task.remark }}
             </div>
           </div>
         </div>
@@ -164,14 +186,30 @@
             <label for="empId" class="form-label">Employee</label>
             <select id="empId" formControlName="empId" class="form-select">
               <option value="">Select Employee</option>
-              <option *ngFor="let employee of employees" [ngValue]="employee.id">
+              <option
+                *ngFor="let employee of employees"
+                [ngValue]="employee.id"
+              >
                 {{ employee.id }} - {{ employee.name }}
               </option>
             </select>
+            <div
+              *ngIf="
+                taskForm.get('empId')?.invalid &&
+                (taskForm.get('empId')?.touched || submitted)
+              "
+              class="text-danger mt-1"
+            >
+              Please select an employee.
+            </div>
           </div>
         </div>
         <div class="mt-4">
-          <button type="submit" class="btn btn-primary" [disabled]="taskForm.invalid">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="taskForm.invalid"
+          >
             Add Task
           </button>
         </div>
@@ -182,27 +220,57 @@
 
 <!-- =============================================================================================== -->
 <!-- update-timesheet-modal.component.html -->
-<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="updateModal"
+  tabindex="-1"
+  aria-labelledby="updateModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content p-3">
       <div class="modal-header">
         <h5 class="modal-title" id="updateModalLabel">Edit TimeSheet Entry</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="updateForm" (ngSubmit)="submitUpdate()">
           <div class="mb-2">
             <label>Activity</label>
-            <input type="text" class="form-control" formControlName="activity" />
-            <div *ngIf="updateForm.get('activity')?.touched && updateForm.get('activity')?.invalid" class="text-danger">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="activity"
+            />
+            <div
+              *ngIf="
+                updateForm.get('activity')?.touched &&
+                updateForm.get('activity')?.invalid
+              "
+              class="text-danger"
+            >
               Activity is required.
             </div>
           </div>
 
           <div class="mb-2">
             <label>Task</label>
-            <input type="text" class="form-control" formControlName="sequence" />
-            <div *ngIf="updateForm.get('sequence')?.touched && updateForm.get('sequence')?.invalid" class="text-danger">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sequence"
+            />
+            <div
+              *ngIf="
+                updateForm.get('sequence')?.touched &&
+                updateForm.get('sequence')?.invalid
+              "
+              class="text-danger"
+            >
               Sequence is required.
             </div>
           </div>
@@ -210,7 +278,13 @@
           <div class="mb-2">
             <label>Type</label>
             <input type="text" class="form-control" formControlName="type" />
-            <div *ngIf="updateForm.get('type')?.touched && updateForm.get('type')?.invalid" class="text-danger">
+            <div
+              *ngIf="
+                updateForm.get('type')?.touched &&
+                updateForm.get('type')?.invalid
+              "
+              class="text-danger"
+            >
               Type is required.
             </div>
           </div>
@@ -218,21 +292,43 @@
           <div class="mb-2">
             <label>Part</label>
             <input type="text" class="form-control" formControlName="part" />
-            <div *ngIf="updateForm.get('part')?.touched && updateForm.get('part')?.invalid" class="text-danger">
+            <div
+              *ngIf="
+                updateForm.get('part')?.touched &&
+                updateForm.get('part')?.invalid
+              "
+              class="text-danger"
+            >
               Part is required.
+            </div>
+          </div>
+
+          <div class="mb-2" *ngIf="selectedTaskIsCompleted">
+            <label>Remark</label>
+            <input type="text" class="form-control" formControlName="remark" />
+            <div
+              *ngIf="
+                updateForm.get('remark')?.touched &&
+                updateForm.get('remark')?.invalid
+              "
+              class="text-danger"
+            >
+              Remark is required.
             </div>
           </div>
 
           <!-- You can add hidden or disabled field for id and fk_EmpId if needed -->
           <input type="hidden" formControlName="id" />
           <input type="hidden" formControlName="fk_EmpId" />
-
         </form>
-
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" (click)="submitUpdate()">Save Changes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="submitUpdate()">
+          Save Changes
+        </button>
       </div>
     </div>
   </div>

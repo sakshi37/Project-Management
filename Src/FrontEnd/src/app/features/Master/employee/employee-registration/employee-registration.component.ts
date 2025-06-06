@@ -17,6 +17,7 @@ import { StateService } from '../../../../services/state.service';
 import { CityService } from '../../../../services/city.service';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LocationService } from '../../../../services/location-service';
+import { ErrorHandlerService } from '../../../../services/error-handler.service';
 
 @Component({
   selector: 'app-employee',
@@ -49,6 +50,7 @@ export class EmployeeRegistrationComponent implements OnInit {
   };
 
   today: string = new Date().toISOString().split('T')[0];
+  name: any;
 
   constructor(
     private fb: FormBuilder,
@@ -57,7 +59,8 @@ export class EmployeeRegistrationComponent implements OnInit {
     private stateService: StateService,
     private cityService: CityService,
     private locationService: LocationService,
-    private router: Router
+    private router: Router,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +83,15 @@ export class EmployeeRegistrationComponent implements OnInit {
 
   initForm(): void {
     this.employeeForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+          Validators.pattern('^[a-zA-Z ]+$'),
+        ],
+      ],
       code: [''],
       address: ['Vikroli (w)', Validators.required],
       mobileNo: [
@@ -100,16 +111,25 @@ export class EmployeeRegistrationComponent implements OnInit {
         ],
       ],
       email: ['', [Validators.required, Validators.email]],
-      joinDate: ['', [Validators.required, this.noFutureDateValidator]],
+      joinDate: [
+        '',
+        [
+          Validators.required,
+          //this.noFutureDateValidator
+        ],
+      ],
       birthDate: ['', [Validators.required, this.minAgeValidator(18)]],
-      panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
+      panNumber: [
+        '',
+        [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)],
+      ],
       image: [''],
-      signature: [''],
-      locationId: [''],
+      signature: ['', [Validators.required]],
+      locationId: ['', [Validators.required]],
 
-      CountryId: [''],
-      StateId: [''],
-      CityId: [''],
+      CountryId: ['', [Validators.required]],
+      StateId: ['', [Validators.required]],
+      CityId: ['', [Validators.required]],
     });
   }
   getLocation() {
@@ -234,7 +254,10 @@ export class EmployeeRegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.employeeForm.value.code = '0';
+    console.log('Going for a bangar ', this.employeeForm.value);
     if (this.employeeForm.invalid) {
+      console.log('No bangar for you ', this.employeeForm.value);
       this.employeeForm.markAllAsTouched();
       return;
     }
@@ -244,10 +267,9 @@ export class EmployeeRegistrationComponent implements OnInit {
       birthDate: this.formatDate(this.employeeForm.value.birthDate),
       joinDate: this.formatDate(this.employeeForm.value.joinDate),
 
-      image: this.selectedImage || null,
-      signature: this.selectedSignature || null,
+      image: this.employeeForm.value.image,
+      signature: this.employeeForm.value.signature,
     };
-
     this.employeeService.createEmployee(emp).subscribe({
       next: () => {
         this.resetForm();
@@ -264,23 +286,7 @@ export class EmployeeRegistrationComponent implements OnInit {
         });
         this.router.navigate(['/employee']);
       },
-      error: (err) => {
-        let errorMsg = 'Failed to create employee. Please try again.';
-        if (err instanceof HttpErrorResponse && typeof err.error === 'string') {
-          errorMsg = err.error;
-        }
-        Swal.fire({
-          toast: true,
-          position: 'top',
-          timer: 1000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-          icon: 'error',
-          title: 'Error!',
-          text: errorMsg,
-          confirmButtonColor: '#d33',
-        });
-      },
+      error: (err) => this.errorHandler.handleError(err),
     });
   }
   cancel() {

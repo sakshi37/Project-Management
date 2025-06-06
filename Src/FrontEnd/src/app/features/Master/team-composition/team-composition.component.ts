@@ -17,20 +17,38 @@ import { CreateTeamCompositionDto } from './Models/create-team-composition.dto';
 import { UpdateTeamCompositionDto } from './Models/update-team-composition.dto';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { EmployeeService } from '../../../services/employee-service';
-interface TeamCompositionWithHighlight extends GetTeamCompositionDto {
-  highlight?: boolean;
+import { MultiSelectModule } from 'primeng/multiselect';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+
+function letterLengthValidator(minLength: number, maxLength: number) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value: string = control.value || '';
+
+    // Count only letters a-z, A-Z
+    const lettersOnly = value.replace(/[^a-zA-Z]/g, '');
+
+    if (lettersOnly.length < minLength) {
+      return { minLetterLength: { requiredLength: minLength, actualLength: lettersOnly.length } };
+    }
+
+    if (lettersOnly.length > maxLength) {
+      return { maxLetterLength: { requiredLength: maxLength, actualLength: lettersOnly.length } };
+    }
+
+    return null;
+  };
 }
+
+
 @Component({
   selector: 'app-team-composition',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule,NgSelectModule,NgxPaginationModule],
+  imports: [RouterLink, FormsModule, CommonModule, ReactiveFormsModule,NgSelectModule,NgxPaginationModule,MultiSelectModule],
   templateUrl: './team-composition.component.html',
   styleUrl: './team-composition.component.css'
 })
 export class TeamCompositionComponent {
-  teamCompositions: TeamCompositionWithHighlight[] = [];
-filteredTeams: TeamCompositionWithHighlight[] = [];
-  // teamCompositions: GetTeamCompositionDto[] = [];
+  teamCompositions: GetTeamCompositionDto[] = [];
   teamForm!: FormGroup;
   viewteamForm!: FormGroup;
   submitted = false;
@@ -40,10 +58,11 @@ filteredTeams: TeamCompositionWithHighlight[] = [];
   searchText: string = '';
 
   branches: any[] = [];
+  Employee: any[] = [];
   employeeList: any[] = [];
   divisions: any[] = [];
   teamLeaders: any[] = [];
-  // filteredTeams: any[] = [];
+  filteredTeams: any[] = [];
   currentPage: number = 1;
   itemsPerPageOptions: number[] = [1, 5, 10, 25, 50];
   itemsPerPage: number = 5; // default value
@@ -83,7 +102,7 @@ filteredTeams: TeamCompositionWithHighlight[] = [];
 
   initForm() {
     this.teamForm = this.fb.group({
-      teamName: ['', Validators.required],
+      teamName: ['', [Validators.required,letterLengthValidator(4, 30), Validators.pattern('^[a-zA-Z ]+$')]],
       fk_BranchId: ['', Validators.required],
       fk_DivisionId: ['', Validators.required],
       fk_TeamLeaderId: ['', Validators.required],
@@ -123,70 +142,56 @@ filteredTeams: TeamCompositionWithHighlight[] = [];
       error: (err) => console.error('Error loading divisions', err)
     });
   }
+  // filterTeams(): void {
+  //   const search = this.searchText?.trim().toLowerCase();
+
+  //   if (!search) {
+  //     this.filteredTeams = [...this.teamCompositions];
+  //     return;
+  //   }
+
+  //   this.filteredTeams = this.teamCompositions.filter((t) =>
+  //     t.teamName.toLowerCase().includes(search)
+  //   );
+  // }
   filterTeams(): void {
-    const search = this.searchText?.trim().toLowerCase();
+  const search = this.searchText?.trim().toLowerCase();
 
-    if (!search) {
-      this.filteredTeams = [...this.teamCompositions];
-      return;
-    }
-
-    this.filteredTeams = this.teamCompositions.filter((t) =>
-      t.teamName.toLowerCase().includes(search)
-    );
+  if (!search) {
+    this.filteredTeams = [...this.teamCompositions];
+    return;
   }
+
+  this.filteredTeams = this.teamCompositions.filter((t) => {
+    const teamNameMatch = t.teamName?.toLowerCase().includes(search);
+    const branchNameMatch = t.branchName?.toLowerCase().includes(search);
+    const teamLeaderMatch = t.teamLeaderName?.toLowerCase().includes(search);
+    const divisionNameMatch = t.divisionName?.toLowerCase().includes(search);
+
+    return teamNameMatch || branchNameMatch || teamLeaderMatch || divisionNameMatch;
+  });
+}
+
   fetchTeamLeaders(): void {
     this.teamService.getTeamLeaders().subscribe({
       next: (data) => this.teamLeaders = data,
       error: (err) => console.error('Error fetching team leaders', err)
     });
   }
-  
-  // exportToExcel(): void {
-  //   const exportData = this.teamCompositions.map((t, index) => ({
-  //     'Sr No': index + 1,
-  //     'Team Name': t.teamName,
-  //     'Team Leader': t.teamLeaderName,
-  //     'Branch': t.branchName,
-  //     'Division': t.divisionName,
-  //     'Status': t.teamStatus ? 'Active' : 'Inactive',
-  //     'Team Members Ids': Array.isArray(t.teamMemberIds) ? t.teamMemberIds.join(',') : 'N/A',
-  //   }));
-  
-  //   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
-  
-  //   // Step 3: Apply gray fill for Inactive rows
-  //   this.teamCompositions.forEach((t, index) => {
-  //     if (!t.teamStatus) {
-  //       const excelRow = index + 2; 
-  //       const colRange = ['A', 'B', 'C', 'D', 'E', 'F', 'G']; 
-  
-  //       colRange.forEach(col => {
-  //         const cellRef = `${col}${excelRow}`;
-  //         if (!worksheet[cellRef]) return;
-  //         worksheet[cellRef].s = {
-  //           fill: {
-  //             patternType: "solid",
-  //             fgColor: { rgb: "D3D3D3" } 
-  //           }
-  //         };
-  //       });
-  //     }
-  //   });
-  
-  //   const workbook: XLSX.WorkBook = {
-  //     Sheets: { 'TeamComposition': worksheet },
-  //     SheetNames: ['TeamComposition']
-  //   };
-  
-  //   const excelBuffer: any = XLSX.write(workbook, {
-  //     bookType: 'xlsx',
-  //     type: 'array',
-  //     cellStyles: true
-  //   });
-  
-  //   this.saveAsExcelFile(excelBuffer, 'TeamCompositionData');
-  // }
+  capitalizeEachWord() {
+  const control = this.teamForm.get('teamName');
+  const value = control?.value;
+
+  if (value) {
+    const formatted = value
+      .toLowerCase()
+      .replace(/\b\w/g, (char: string) => char.toUpperCase()); // Capitalize each word
+    if (value !== formatted) {
+      control?.setValue(formatted, { emitEvent: false }); // Prevent loop
+    }
+  }
+}
+
   exportToExcel(): void {
     const exportData = this.teamCompositions.map((t, index) => {
       const memberNames = t.teamMemberIds
@@ -318,25 +323,46 @@ filteredTeams: TeamCompositionWithHighlight[] = [];
     this.isEditMode = true;
     // this.teamModal?.show();
   }
-onEdit(team: GetTeamCompositionDto ): void {
-    this.selectedTeamId = team.teamId;
-    this.isEditMode = true;
-    // this.teamModal?.show();
+// onEdit(team: GetTeamCompositionDto ): void {
+//     this.selectedTeamId = team.teamId;
+//     this.isEditMode = true;
+//     // this.teamModal?.show();
 
-    this.loadEmployees(); // ensure dropdown is populated
-
-    setTimeout(() => {
-      this.teamForm.patchValue({
-        teamName: team.teamName,
-        fk_BranchId: team.fk_BranchId,
-        fk_DivisionId: team.fk_DivisionId,
-        fk_TeamLeaderId: team.fk_TeamLeaderId,
-        teamStatus: team.teamStatus ? '1' : '0',
-        teamMembers: team.teamMemberIds || []
-      });
+//     this.loadEmployees(); // ensure dropdown is populated
+  
+//     setTimeout(() => {
+//       this.teamForm.patchValue({
+//         teamName: team.teamName,
+//         fk_BranchId: team.fk_BranchId,
+//         fk_DivisionId: team.fk_DivisionId,
+//         fk_TeamLeaderId: team.fk_TeamLeaderId,
+//         teamStatus: team.teamStatus ? '1' : '0',
+//         teamMembers: team.teamMemberIds || []
+//       });
       
-    }, 200);
-  }
+//     }, 200);
+//   }
+  onEdit(team: GetTeamCompositionDto): void {
+  this.selectedTeamId = team.teamId;
+  this.isEditMode = true;
+
+  // Load employees and then patch the form
+  this.employeeService.getAllEmployees().subscribe(data => {
+    this.employeeList = data;
+
+    this.teamForm.patchValue({
+      teamName: team.teamName,
+      fk_BranchId: team.fk_BranchId,
+      fk_DivisionId: team.fk_DivisionId,
+      fk_TeamLeaderId: team.fk_TeamLeaderId,
+      teamStatus: team.teamStatus ? '1' : '0',
+      teamMembers: team.teamMemberIds || []
+    });
+
+    this.modal.show(); // open modal only after everything is ready
+  });
+}
+
   // onSubmit(): void {
   //   this.submitted = true;
 
@@ -389,7 +415,7 @@ onEdit(team: GetTeamCompositionDto ): void {
       this.teamForm.markAllAsTouched();
       return;
     }
-  
+    //const teamMemberIds = this.teamForm.value.teamMembers.map((member: any) => member.id);
     const statusBool = this.teamForm.value.teamStatus === '1' ? true : false;  
     const updatePayload = {
       teamId: this.selectedTeamId,
@@ -409,122 +435,34 @@ onEdit(team: GetTeamCompositionDto ): void {
       teamMembers: this.teamForm.value.teamMembers,
     };
   
-    // if (this.isEditMode && this.selectedTeamId !== null) {
-    //   const updateDto: UpdateTeamCompositionDto = {
-    //               ...updatePayload,
-    //               updatedBy: 1
-    //             };
-    //   this.teamService.updateTeam(updateDto).subscribe({
-    //     next: () => {
-    //       this.loadTeamCompositions();
-    //       this.resetForm();
-    //       this.modal.hide();
-    //       this.cleanUpModal();
-    //       this.fetchTeamCompositions();
-    //       Swal.fire({
-    //                             toast: true,
-    //                             position: 'top',
-    //                             timer: 1000,
-    //                             timerProgressBar: true,
-    //                             showConfirmButton: false,
-    //                             icon: 'success',
-    //                             title: 'Updated',
-    //                             text: 'Team updated successfully!',
-    //                             confirmButtonColor: '#3085d6',
-    //                           }).then(() => {
-    //                             this.cleanUpModal();
-    //                           });
-    //     },
-    //     error: (err) => this.errorHandler.handleError(err),
-    //   });
-    // } 
     if (this.isEditMode && this.selectedTeamId !== null) {
       const updateDto: UpdateTeamCompositionDto = {
-        ...updatePayload,
-        updatedBy: 1
-      };
-      
-      // this.teamService.updateTeam(updateDto).subscribe({
-      //   next: () => {
-    
-      //     // Move the updated item to the top temporarily
-      //     const updatedTeam = this.teamCompositions.find(t => t.teamId === this.selectedTeamId);
-      //     if (updatedTeam) {
-      //       this.filteredTeams = [updatedTeam, ...this.filteredTeams.filter(t => t.teamId !== this.selectedTeamId)];
-    
-      //       // Mark it as highlighted
-      //       updatedTeam['highlight'] = true;
-    
-      //       // Remove highlight after few seconds
-      //       setTimeout(() => {
-      //         updatedTeam['highlight'] = false;
-      //       }, 3000);
-      //     }
-      //     this.fetchTeamCompositions(); // Refresh all
-      //     this.resetForm();
-      //     this.modal.hide();
-      //     this.cleanUpModal();
-      //     Swal.fire({
-      //       toast: true,
-      //       position: 'top',
-      //       timer: 1000,
-      //       timerProgressBar: true,
-      //       showConfirmButton: false,
-      //       icon: 'success',
-      //       title: 'Updated',
-      //       text: 'Team updated successfully!',
-      //       confirmButtonColor: '#3085d6',
-      //     }).then(() => this.cleanUpModal());
-      //   },
-      //   error: (err) => this.errorHandler.handleError(err),
-      // });
+                  ...updatePayload,
+                  updatedBy: 1
+                };
       this.teamService.updateTeam(updateDto).subscribe({
         next: () => {
-          // Clone the updated values manually
-          const updatedTeam: TeamCompositionWithHighlight = {
-            ...updatePayload,
-            teamId: this.selectedTeamId!,
-            teamLeaderName: this.teamLeaders.find(l => l.id === updatePayload.fk_TeamLeaderId)?.name || '',
-            branchName: this.branches.find(b => b.branchId === updatePayload.fk_BranchId)?.branchName || '',
-            divisionName: this.divisions.find(d => d.divisionId === updatePayload.fk_DivisionId)?.divisionName || '',
-            teamMemberIds: updatePayload.teamMembers,
-            highlight: true
-          };
-      
-          // Move to top and highlight
-          this.filteredTeams = [updatedTeam, ...this.filteredTeams.filter(t => t.teamId !== this.selectedTeamId)];
-      
-          setTimeout(() => {
-            updatedTeam.highlight = false;
-      
-            // Reapply teamCompositions to reset order
-            this.filteredTeams = this.teamCompositions.map(team => {
-              if (team.teamId === updatedTeam.teamId) {
-                return { ...updatedTeam, highlight: false };
-              }
-              return team;
-            });
-          }, 3000);
-      
+          this.loadTeamCompositions();
           this.resetForm();
           this.modal.hide();
           this.cleanUpModal();
-      
+          this.fetchTeamCompositions();
           Swal.fire({
-            toast: true,
-            position: 'top',
-            timer: 1000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-            icon: 'success',
-            title: 'Updated',
-            text: 'Team updated successfully!',
-            confirmButtonColor: '#3085d6',
-          });
+                                toast: true,
+                                position: 'top',
+                                timer: 1000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                icon: 'success',
+                                title: 'Updated',
+                                text: 'Team updated successfully!',
+                                confirmButtonColor: '#3085d6',
+                              }).then(() => {
+                                this.cleanUpModal();
+                              });
         },
         error: (err) => this.errorHandler.handleError(err),
       });
-      
     } else {
       const createDto: CreateTeamCompositionDto = {
                   ...createPayload,
@@ -555,30 +493,14 @@ onEdit(team: GetTeamCompositionDto ): void {
       });
     }
   }
-  // sortTeams(column: string): void {
-  //   if (this.selectedSortColumn === column) {
-  //     this.sortDirectionAsc = !this.sortDirectionAsc;
-  //   } else {
-  //     this.selectedSortColumn = column;
-  //     this.sortDirectionAsc = true;
-  //   }
-
-  //   this.filteredTeams.sort((a, b) => {
-  //     const aVal = a[column]?.toString().toLowerCase() || '';
-  //     const bVal = b[column]?.toString().toLowerCase() || '';
-  //     return this.sortDirectionAsc
-  //       ? aVal.localeCompare(bVal)
-  //       : bVal.localeCompare(aVal);
-  //   });
-  // }
-  sortTeams(column: keyof TeamCompositionWithHighlight): void {
+  sortTeams(column: string): void {
     if (this.selectedSortColumn === column) {
       this.sortDirectionAsc = !this.sortDirectionAsc;
     } else {
       this.selectedSortColumn = column;
       this.sortDirectionAsc = true;
     }
-  
+
     this.filteredTeams.sort((a, b) => {
       const aVal = a[column]?.toString().toLowerCase() || '';
       const bVal = b[column]?.toString().toLowerCase() || '';
@@ -587,7 +509,6 @@ onEdit(team: GetTeamCompositionDto ): void {
         : bVal.localeCompare(aVal);
     });
   }
-  
 
   getSortIcon(column: string): string {
     return this.selectedSortColumn !== column

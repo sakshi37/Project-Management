@@ -1,7 +1,13 @@
 /* .bg-light-gray {
     background-color: #cccccc !important;
   } */
+  input.ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
 
+input.ng-valid.ng-touched {
+  border-color: #28a745;
+}
   table {
     width: 100%;
     height: 100%;

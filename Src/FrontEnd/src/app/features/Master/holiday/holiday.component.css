@@ -1,19 +1,32 @@
 /* .p-datepicker .p-datepicker-panel{
     background: black  !important;
 } */
+   input.ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
+
+input.ng-valid.ng-touched {
+  border-color: #28a745;
+}
 .datep{
     background: black  !important;
 }
+  input.ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
 
+input.ng-valid.ng-touched {
+  border-color: #28a745;
+}
 /* .p-datepicker-year-view.ng-tns-c133394098-0.ng-star-inserted{
     min-width: 100% !important;
     background-color: red !important;
 } */
 
-::ng-deep .p-datepicker-panel {
+/* ::ng-deep .p-datepicker-panel {
     background-color: rgb(255, 255, 255) !important; 
     border-radius: 10px !important; 
-  }
+  } */
 
 
 /* .bg-light-gray {

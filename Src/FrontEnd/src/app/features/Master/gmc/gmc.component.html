@@ -2,69 +2,43 @@
   <!-- EMPLOYEE DETAILS FORM BOX -->
   <div class="p-4 border rounded shadow-sm bg-white mb-5">
     <div class="d-flex justify-content-between align-items-center">
-      <h4 class="mb-3">Add GMC Details</h4>
+      <h4 class="mb-3">GMC Details</h4>
       <button class="btn btn-success" type="button" (click)="exportToExcel()">
         <i class="fas fa-download me-2"></i> Excel
       </button>
     </div>
     <hr />
 
-    <form (ngSubmit)="saveEmployeeDetails()" #empForm="ngForm">
+    <!-- <form (ngSubmit)="saveEmployeeDetails(empForm)" #empForm="ngForm"> -->
+    <form #empForm="ngForm">
       <div class="row g-3">
         <div class="col-md-6">
           <label>Employee Name</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="employee.name"
-            name="employeeName"
-            readonly
-          />
+          <input type="text" class="form-control" [(ngModel)]="employee.name" name="employeeName" readonly />
         </div>
         <div class="col-md-6">
           <label>Employee Code</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="employee.code"
-            name="employeeCode"
-            readonly
-          />
+          <input type="text" class="form-control" [(ngModel)]="employee.code" name="employeeCode" readonly />
         </div>
 
         <div class="col-md-6">
           <label>Address</label>
-          <textarea
-            class="form-control"
-            [(ngModel)]="employees.address"
-            name="address"
-            required
-          >
-              <small *ngIf="panRef.errors?.['required']">PAN Number is required.</small>
-            </textarea
-          >
+          <textarea class="form-control" [(ngModel)]="employees.address" name="address" #addressRef="ngModel" required
+            readonly></textarea>
+          <small *ngIf="addressRef.errors?.['required'] && addressRef.touched " class="text-danger">
+            Address is required.
+          </small>
         </div>
+
         <div class="col-md-6">
           <label>Designation</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="employee.designation"
-            name="designationName"
-            readonly
-          />
+          <input type="text" class="form-control" [(ngModel)]="employee.designation" name="designationName" readonly />
         </div>
 
         <div class="col-md-6">
           <label for="gender">Gender</label>
-          <select
-            id="gender"
-            class="form-select"
-            [(ngModel)]="employees.fk_GenderId"
-            name="gender"
-            required
-          >
-            <option value="0" selected disabled>Select Gender</option>
+          <select id="gender" class="form-select" [(ngModel)]="employees.fk_GenderId" name="gender" required disabled>
+            <option value="0" selected disabled readonly>Select Gender</option>
             <option *ngFor="let g of genders" [value]="g.genderId">
               {{ g.genderType }}
             </option>
@@ -77,144 +51,80 @@
 
         <div class="col-md-6">
           <label>PAN Number</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="employees.panNumber"
-            name="pan"
-            pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"
-            maxlength="10"
-            placeholder="Enter PAN Number"
-            #panRef="ngModel"
-            required
-          />
+          <input type="text" class="form-control" [(ngModel)]="employees.panNumber" name="pan"
+            pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$" maxlength="10" placeholder="Enter PAN Number" #panRef="ngModel"
+            required readonly />
           <div *ngIf="panRef.invalid" class="text-danger">
-            <small *ngIf="panRef.errors?.['pattern']"
-              >Invalid PAN format (e.g. ABCDE1234F).</small
-            >
-            <small *ngIf="panRef.errors?.['required']"
-              >PAN Number is required.</small
-            >
+            <small *ngIf="panRef.errors?.['pattern']">Invalid PAN format (e.g. ABCDE1234F).</small>
+            <small *ngIf="panRef.errors?.['required'] && panRef.touched">PAN Number is required.</small>
           </div>
         </div>
 
         <div class="col-md-6">
           <label>Join Date</label>
-          <input
-            type="date"
-            class="form-control"
-            [(ngModel)]="employees.joinDate"
-            name="joinDate"
-            [max]="today"
-            required
-            (change)="validateAge()"
-          />
+          <input type="date" class="form-control" [(ngModel)]="employees.joinDate" name="joinDate" [max]="today"
+            required (change)="validateAge()" #joindateRef="ngModel" readonly />
+          <small *ngIf="joindateRef.errors?.['required'] && joindateRef.touched" class="text-danger">
+            Joining Date is required.
+          </small>
         </div>
 
         <div class="col-md-6">
           <label>Birth Date</label>
-          <input
-            type="date"
-            class="form-control"
-            [(ngModel)]="employees.birthDate"
-            name="birthDate"
-            [max]="today"
-            required
-            (ngModelChange)="onEmployeeBirthDateChange($event)"
-          />
+          <input type="date" class="form-control" [(ngModel)]="employees.birthDate" name="birthDate" [max]="today"
+            required (ngModelChange)="onEmployeeBirthDateChange($event)" disabled />
         </div>
 
         <!-- Show error if age is less than 18 -->
-        <div
-          class="col-12 text-danger"
-          *ngIf="!isAgeValid && employees.joinDate && employees.birthDate"
-        >
+        <div class="col-12 text-danger" *ngIf="!isAgeValid && employees.joinDate && employees.birthDate">
           <small>Employee must be at least 18 years old to join.</small>
         </div>
 
         <div class="col-md-6">
           <label>Personal Email</label>
-          <input
-            type="email"
-            class="form-control"
-            [(ngModel)]="employees.email"
-            name="email"
-            required
-            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$"
-            #emailRef="ngModel"
-            placeholder="Enter your email"
-          />
+          <input type="email" class="form-control" [(ngModel)]="employees.email" name="email" required
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3}$" #emailRef="ngModel" placeholder="Enter your email"
+            readonly />
           <div *ngIf="emailRef.invalid && emailRef.touched" class="text-danger">
-            <small *ngIf="emailRef.errors?.['required']"
-              >Email is required.</small
-            >
-            <small *ngIf="emailRef.errors?.['pattern']"
-              >Invalid email format. Must end with 3-letter domain (e.g.,
-              .com)</small
-            >
+            <small *ngIf="emailRef.errors?.['required']">Email is required.</small>
+            <small *ngIf="emailRef.errors?.['pattern']">Invalid email format. Must end with 3-letter domain (e.g.,
+              .com)</small>
           </div>
         </div>
         <div class="col-md-6">
           <label>Employee Age</label>
-          <input
-            type="number"
-            class="form-control"
-            [(ngModel)]="employees.age"
-            name="age"
-            placeholder="Age"
-            required
-            readonly
-          />
+          <input type="number" class="form-control" [(ngModel)]="employees.age" name="age" placeholder="Age" required
+            readonly />
         </div>
 
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <label>Emergency Contact No</label>
 
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="employees.emergencyNo"
-            name="emergency"
-            pattern="^[6-9]\d{9}$"
-            maxlength="10"
-            required
-            #emergencyRef="ngModel"
-            placeholder="Enter 10-digit Contact Number"
-          />
+          <input type="text" class="form-control" [(ngModel)]="employees.emergencyNo" name="emergency"
+            pattern="^[6-9]\d{9}$" maxlength="10" required #emergencyRef="ngModel"
+            placeholder="Enter 10-digit Contact Number" />
           <div *ngIf="emergencyRef.invalid" class="text-danger">
             <small *ngIf="emergencyRef.errors?.['pattern']">
               Contact number must start with 6-9 and be exactly 10 digits.
             </small>
           </div>
-        </div>
+        </div> -->
 
         <div class="col-md-6">
           <label>Aadhar Card No</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="employees.aadharCardNo"
-            name="aadhar"
-            pattern="^\d{12}$"
-            maxlength="12"
-            required
-            #aadharRef="ngModel"
-            placeholder="Enter 12-digit Aadhar Number"
-            required
-          />
+          <input type="text" class="form-control" [(ngModel)]="employees.aadharCardNo" name="aadhar" pattern="^\d{12}$"
+            maxlength="12" required #aadharRef="ngModel" placeholder="Enter 12-digit Aadhar Number" required readonly />
           <div *ngIf="aadharRef.invalid" class="text-danger">
-            <small *ngIf="aadharRef.errors?.['pattern']"
-              >Aadhar must be 12 digits.</small
-            >
+            <small *ngIf="aadharRef.errors?.['pattern']">Aadhar must be 12 digits.</small>
           </div>
         </div>
       </div>
 
-      <div class="mt-4">
-        <button class="btn btn-success me-2" type="submit">
-          Save Employee Details
-        </button>
-      </div>
+      <!-- <div class="mt-4">
+        <button class="btn btn-success me-2" type="submit" [disabled]="empForm.invalid">
+  Save Employee Details
+</button>
+      </div> -->
     </form>
   </div>
 
@@ -222,74 +132,63 @@
   <div class="p-4 border rounded shadow-sm bg-white">
     <h4 class="mb-3">Add GMC Details - Family</h4>
     <hr class="my-3" />
-    <form (ngSubmit)="saveFamilyDetails()" #famForm="ngForm">
+    <form (ngSubmit)="saveFamilyDetails(famForm)" #famForm="ngForm">
       <div class="row g-3">
         <div class="col-md-6">
           <label>Family Member</label>
-          <select
-            class="form-control"
-            [(ngModel)]="family.fk_FamilyMemberTypeId"
-            name="familyMemberId"
-            placeholder="Select type"
-          >
-            <option value="0" disabled selected>
-              Select Family Member Type
-            </option>
-            <option *ngFor="let type of familyTypes" [value]="type.id">
-              {{ type.label }}
-            </option>
+          <select class="form-control" [(ngModel)]="family.fk_FamilyMemberTypeId" name="familyMemberId" required>
+            <option value="" disabled selected>Select Family Member Type</option>
+            <option *ngFor="let type of familyTypes" [value]="type.id">{{ type.label }}</option>
           </select>
         </div>
 
         <div class="col-md-6">
           <label>Name</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="family.familyMemberName"
-            name="familyName"
-            required
-            placeholder="Enter The Name"
-          />
+          <input type="text" class="form-control" [(ngModel)]="family.familyMemberName" name="familyName"
+            #familyName="ngModel" required minlength="5" maxlength="20" placeholder="Enter The Name" />
+          <div *ngIf="famForm.touched && (familyName.errors?.['minlength'] || familyName.errors?.['maxlength'])"
+            class="text-danger">
+            Name must be between 5 and 20 characters.
+          </div>
         </div>
+        <div class="col-md-6">
+          <label for="gender">Gender</label>
+          <select id="gender" class="form-select" [(ngModel)]="family.fk_GenderId" name="fk_GenderId" required>
+            <option value="0" selected disabled>Select Gender</option>
+            <option *ngFor="let g of genders" [value]="g.genderId">
+              {{ g.genderType }}
+            </option>
+          </select>
+          <!-- Show error message always if no gender selected -->
+          <div *ngIf="!employees.fk_GenderId" class="text-danger">
+            Gender is required.
+          </div>
+        </div>
+
 
         <div class="col-md-6">
           <label>Birth Date</label>
-          <input
-            type="date"
-            class="form-control"
-            [(ngModel)]="family.birthDate"
-            name="birthDate"
-            [max]="today"
-            (ngModelChange)="onFamilyBirthDateChange($event)"
-            placeholder="Birth Date"
-            required
-          />
+          <input type="date" class="form-control" [(ngModel)]="family.birthDate" name="birthDate" [max]="today"
+            (ngModelChange)="onFamilyBirthDateChange($event)" placeholder="Birth Date" required />
         </div>
 
         <div class="col-md-6">
           <label>Age</label>
-          <input
-            type="number"
-            class="form-control"
-            [(ngModel)]="family.age"
-            name="age"
-            placeholder="Enter The Age"
-            required
-            readonly
-          />
+          <input type="number" class="form-control" [(ngModel)]="family.age" name="age" placeholder="Enter The Age"
+            required readonly />
         </div>
 
         <div class="col-md-6">
           <label>Relation With Employee</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="family.relationWithEmployee"
-            name="relationWithEmployee"
-            required
-            placeholder="Relation With Employee"
-          />
+          <input type="text" class="form-control" [(ngModel)]="family.relationWithEmployee" name="relationWithEmployee"
+            #relationWithEmployee="ngModel" required minlength="5" maxlength="20"
+            placeholder="Relation With Employee" />
+          <div
+            *ngIf="famForm.touched && (relationWithEmployee.errors?.['minlength'] || relationWithEmployee.errors?.['maxlength'])"
+            class="text-danger">
+            Relation must be between 5 and 20 characters.
+          </div>
+
         </div>
       </div>
 

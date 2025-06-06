@@ -1,3 +1,8 @@
+.table-wrapper {
+  border: 1px solid #dee2e6; /* Optional: match Bootstrap table borders */
+  border-radius: 8px;
+  overflow: hidden;
+}
 table {
   border-collapse: separate;
   border-spacing: 0 10px;
@@ -53,4 +58,9 @@ tr:hover td {
 .status-badge.inactive {
   background-color: #beb5b5;
   color: #817070;
+}
+
+.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
 }
