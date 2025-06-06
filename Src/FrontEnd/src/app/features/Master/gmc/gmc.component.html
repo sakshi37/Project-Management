@@ -52,7 +52,7 @@
         <div class="col-md-6">
           <label>PAN Number</label>
           <input type="text" class="form-control" [(ngModel)]="employees.panNumber" name="pan"
-            pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$" maxlength="10" placeholder="Enter PAN Number" #panRef="ngModel"
+            pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$" maxlength="10" placeholder="Null" #panRef="ngModel"
             required readonly />
           <div *ngIf="panRef.invalid" class="text-danger">
             <small *ngIf="panRef.errors?.['pattern']">Invalid PAN format (e.g. ABCDE1234F).</small>
@@ -93,7 +93,7 @@
         </div>
         <div class="col-md-6">
           <label>Employee Age</label>
-          <input type="number" class="form-control" [(ngModel)]="employees.age" name="age" placeholder="Age" required
+          <input type="number" class="form-control" [(ngModel)]="employees.age" name="age" placeholder="Null" required
             readonly />
         </div>
 
@@ -113,7 +113,7 @@
         <div class="col-md-6">
           <label>Aadhar Card No</label>
           <input type="text" class="form-control" [(ngModel)]="employees.aadharCardNo" name="aadhar" pattern="^\d{12}$"
-            maxlength="12" required #aadharRef="ngModel" placeholder="Enter 12-digit Aadhar Number" required readonly />
+            maxlength="12" required #aadharRef="ngModel" placeholder="Null" required readonly />
           <div *ngIf="aadharRef.invalid" class="text-danger">
             <small *ngIf="aadharRef.errors?.['pattern']">Aadhar must be 12 digits.</small>
           </div>

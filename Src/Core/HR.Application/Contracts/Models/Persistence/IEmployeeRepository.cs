@@ -44,6 +44,8 @@ namespace HR.Application.Contracts.Persistence
 
         Task<List<SearchEmployeeVm>> SearchEmployeesAsync(SearchEmployeesDto dto);
 
+        Task<string> DeleteEmployeeAsync(string code);
+
 
     }
 }
