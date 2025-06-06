@@ -117,6 +117,24 @@
               "
             />
             <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('minlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field must be at least 10 characters long.
+            </div>
+            <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('maxlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field cannot exceed 100 characters.
+            </div>
+            <div
               class="invalid-feedback"
               *ngIf="taskForm.get('sequence')?.errors?.['required'] && (taskForm.get('sequence')?.touched || taskForm.get('sequence')?.dirty)"
             >
@@ -136,6 +154,24 @@
                   taskForm.get('activity')?.dirty)
               "
             />
+            <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('minlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field must be at least 10 characters long.
+            </div>
+            <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('maxlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field cannot exceed 100 characters.
+            </div>
             <div
               class="invalid-feedback"
               *ngIf="taskForm.get('activity')?.errors?.['required'] && (taskForm.get('activity')?.touched || taskForm.get('activity')?.dirty)"
@@ -157,6 +193,24 @@
               "
             />
             <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('minlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field must be at least 10 characters long.
+            </div>
+            <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('maxlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field cannot exceed 100 characters.
+            </div>
+            <div
               class="invalid-feedback"
               *ngIf="taskForm.get('part')?.errors?.['required'] && (taskForm.get('part')?.touched || taskForm.get('part')?.dirty)"
             >
@@ -175,6 +229,24 @@
                 (taskForm.get('type')?.touched || taskForm.get('type')?.dirty)
               "
             />
+            <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('minlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field must be at least 10 characters long.
+            </div>
+            <div
+              *ngIf="
+                taskForm.get('fieldName')?.hasError('maxlength') &&
+                (taskForm.get('fieldName')?.touched ||
+                  taskForm.get('fieldName')?.dirty)
+              "
+            >
+              Field cannot exceed 100 characters.
+            </div>
             <div
               class="invalid-feedback"
               *ngIf="taskForm.get('type')?.errors?.['required'] && (taskForm.get('type')?.touched || taskForm.get('type')?.dirty)"

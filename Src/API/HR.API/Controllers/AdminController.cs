@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HR.Application.Features.Admin.Commands.ApproveRequest;
 using HR.Application.Features.Admin.Commands.RejectRequest;
+using HR.Application.Features.Admin.Queries.GetAllEmployee;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace HR.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        public AdminController(IMediator mediator,IMapper mapper)
+        public AdminController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
             _mapper = mapper;
@@ -47,6 +48,14 @@ namespace HR.API.Controllers
 
             return Ok(new { Message = result });
         }
+
+        [HttpGet("GetEmployee")]
+        public async Task<IActionResult> GetEmployee()
+        {
+            var response = await _mediator.Send(new GetEmployeeQuery());
+            return Ok(response);
+        }
+
 
     }
 }

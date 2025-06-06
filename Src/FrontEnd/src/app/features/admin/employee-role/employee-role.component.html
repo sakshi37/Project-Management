@@ -1,0 +1,29 @@
+<p>employee-role works!</p>
+
+<table
+  border="1"
+  cellpadding="5"
+  cellspacing="0"
+  style="border-collapse: collapse; width: 100%"
+>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Code</th>
+      <th>Email</th>
+
+      <th>User Group ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of roles">
+      <td>{{ s.name }}</td>
+      <td>{{ s.code }}</td>
+      <td>{{ s.email }}</td>
+      <td>{{ s.fk_UserGroupId }}</td>
+      <td>
+        <button>Update</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
