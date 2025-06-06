@@ -27,10 +27,11 @@ namespace HR.Persistence.Repositories
             try
             {
                 var result = await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC sp_InsertFamilyMember @Fk_FamilyMemberTypeId = {0}, @EmployeeCode = {1}, @FamilyMemberName = {2}, @BirthDate = {3}, @Age = {4}, @RelationWithEmployee = {5}, @FamilyStatus = {6}",
+                    "EXEC sp_InsertFamilyMember @Fk_FamilyMemberTypeId = {0}, @EmployeeCode = {1}, @FamilyMemberName = {2}, @Fk_GenderId={3},@BirthDate = {4}, @Age = {5}, @RelationWithEmployee = {6}, @FamilyStatus = {7}",
                     dto.Fk_FamilyMemberTypeId,
                     dto.EmployeeCode,
                     dto.FamilyMemberName,
+                    dto.Fk_GenderId,
                     dto.BirthDate,
                     dto.Age,
                     dto.RelationWithEmployee,

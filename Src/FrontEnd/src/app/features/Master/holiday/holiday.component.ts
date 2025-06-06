@@ -12,7 +12,55 @@ import Swal from 'sweetalert2';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RoleService } from '../../../services/role.service';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
+function letterLengthValidator(minLength: number, maxLength: number) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value: string = control.value || '';
+
+    // Count only letters a-z, A-Z
+    const lettersOnly = value.replace(/[^a-zA-Z]/g, '');
+
+    if (lettersOnly.length < minLength) {
+      return { minLetterLength: { requiredLength: minLength, actualLength: lettersOnly.length } };
+    }
+
+    if (lettersOnly.length > maxLength) {
+      return { maxLetterLength: { requiredLength: maxLength, actualLength: lettersOnly.length } };
+    }
+
+    return null;
+  };
+}
+
+
+// export function noPastDateValidator(control: AbstractControl): ValidationErrors | null {
+//   if (!control.value) return null;
+
+//   const selectedDate = new Date(control.value);
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0); // normalize today
+//   selectedDate.setHours(0, 0, 0, 0); // normalize selected date
+
+//   return selectedDate < today ? { pastDate: true } : null;
+// }
+
+export function noPastDateValidator(control: AbstractControl): ValidationErrors | null {
+  if (!control.value) {
+    console.log('Validator: control empty');
+    return null; // no error if no value
+  }
+
+  const selectedDate = new Date(control.value);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  selectedDate.setHours(0, 0, 0, 0);
+
+  console.log('Validator:', { selectedDate, today });
+  
+
+  return selectedDate < today ? { pastDate: true } : null;
+}
 @Component({
   selector: 'app-holiday',
   templateUrl: './holiday.component.html',
@@ -39,6 +87,7 @@ viewModeToggle: boolean = false; // false = Table, true = user
 userRole:string | null = null; 
 existingImagePath: string | null = null;
 
+today!: string;
 
 
 viewMode: 'card' | 'table' = 'table';
@@ -49,6 +98,7 @@ splitCardHolidays(): void {
   this.activeCardHolidays = this.filteredResults.filter(h => !this.isPastDate(h.holidayDate));
   this.pastCardHolidays = this.filteredResults.filter(h => this.isPastDate(h.holidayDate));
 }
+
 
 
   filter = {
@@ -71,6 +121,7 @@ splitCardHolidays(): void {
     this.initForm();
     this.loadHolidays();
     this.userRole = this.roleService.getUserRole();
+    this.today = new Date().toISOString().split('T')[0]; 
     if (this.userRole !== 'HR') {
       this.viewModeToggle = true; 
     }
@@ -85,9 +136,9 @@ splitCardHolidays(): void {
 
   initForm(): void {
     this.holidayForm = this.fb.group({
-      holidayName: ['', [Validators.required, Validators.maxLength(100)]],
-      holidayDate: ['', Validators.required],
-      holidayListType: ['', Validators.required],
+      holidayName: ['', [Validators.required,Validators.required,letterLengthValidator(3, 20), Validators.pattern('^[a-zA-Z ]+$')]],
+      holidayDate: ['', [Validators.required,noPastDateValidator]],
+      holidayListType: ["", Validators.required],
       holidayStatus: ['1', Validators.required]
     });
   }
@@ -185,12 +236,15 @@ splitCardHolidays(): void {
   //   this.modal.show();
   // }
   onEdit(h: GetHolidayDto): void {
+
     this.holidayForm.patchValue({
       holidayName: h.holidayName,
       holidayDate: h.holidayDate.split('T')[0],
-      holidayListType: h.holidayListType ? 'true' : 'false',
+      holidayListType: h.holidayListType ? '1' : '0',
       holidayStatus: h.holidayStatus ? 'true' : 'false'
     });
+    console.log('listType:', h.holidayListType);
+    console.log('status:', h.holidayStatus);
     this.selectedHolidayId = h.holidayId;
     this.isEditMode = true;
 
@@ -212,135 +266,70 @@ splitCardHolidays(): void {
       text: `Holiday ${type.toLowerCase()} successfully!`
     });
   }
-  onImageChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input?.files?.length) {
-      this.selectedImageFile = input.files[0];
-      const objectUrl = URL.createObjectURL(this.selectedImageFile);
-      this.imagePreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl) as string;
+  // onImageChange(event: Event): void {
+  //   const input = event.target as HTMLInputElement;
+  //   if (input?.files?.length) {
+  //     this.selectedImageFile = input.files[0];
+  //     const objectUrl = URL.createObjectURL(this.selectedImageFile);
+  //     this.imagePreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl) as string;
+  //   }
+  // }
+  imageError: string | null = null;
+  
+ onImageChange(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input?.files?.length) {
+    const file = input.files[0];
+    const validTypes = ['image/jpeg', 'image/png'];
+
+    if (!validTypes.includes(file.type)) {
+      this.imageError = 'Only JPG and PNG images are allowed.';
+      input.value = ''; // Reset input
+      this.selectedImageFile = null;
+      this.imagePreviewUrl = null;
+      return;
     }
+
+    this.imageError = null; // Clear any previous errors
+    this.selectedImageFile = file;
+
+    const objectUrl = URL.createObjectURL(file);
+    this.imagePreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl) as string;
   }
+}
+
+
     
-  // onSubmit(): void {
-  //   if (this.holidayForm.invalid) {
-  //     this.holidayForm.markAllAsTouched();
-  //     return;
-  //   }
-  
-  //   const formData = new FormData();
-  //   formData.append('holidayName', this.holidayForm.value.holidayName);
-  //   formData.append('holidayDate', this.holidayForm.value.holidayDate);
-  //   formData.append('holidayListType', this.holidayForm.value.holidayListType);
-  //   formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
-  
-  //   if (this.selectedImageFile) {
-  //     formData.append('image', this.selectedImageFile);
-  //   }
-  
-  //   if (this.isEditMode && this.selectedHolidayId) {
-  //     formData.append('holidayId', this.selectedHolidayId.toString());
-  //     formData.append('updatedBy', '1');
-  //     this.holidayService.updateHoliday(formData).subscribe({
-  //       next: () => this.handleSuccess('Updated'),
-  //       error: err => this.errorHandler.handleError(err)
-  //     });
-  //   } else {
-  //     formData.append('createdBy', '1');
-  //     this.holidayService.createHoliday(formData).subscribe({
-  //       next: () => this.handleSuccess('Created'),
-  //       error: err => this.errorHandler.handleError(err)
-  //     });
-  //   }
-  // }
-  // onSubmit(): void {
-  //   if (this.holidayForm.invalid) {
-  //     this.holidayForm.markAllAsTouched();
-  //     return;
-  //   }
-  
-  //   const formData = new FormData();
-  //   formData.append('holidayName', this.holidayForm.value.holidayName);
-  //   formData.append('holidayDate', this.holidayForm.value.holidayDate);
-  //   formData.append('holidayListType', this.holidayForm.value.holidayListType);
-  //   formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
-  
-  //   if (this.selectedImageFile) {
-  //     formData.append('image', this.selectedImageFile);
-  //   } else if (this.isEditMode && this.existingImagePath) {
-  //     // send existing image path to keep the old image
-  //     formData.append('existingImagePath', this.existingImagePath);
-  //   }
-  
-  //   if (this.isEditMode && this.selectedHolidayId) {
-  //     formData.append('holidayId', this.selectedHolidayId.toString());
-  //     formData.append('updatedBy', '1');
-  //     this.holidayService.updateHoliday(formData).subscribe({
-  //       next: () => this.handleSuccess('Updated'),
-  //       error: err => this.errorHandler.handleError(err)
-  //     });
-  //   } else {
-  //     formData.append('createdBy', '1');
-  //     this.holidayService.createHoliday(formData).subscribe({
-  //       next: () => this.handleSuccess('Created'),
-  //       error: err => this.errorHandler.handleError(err)
-  //     });
-  //   }
-  // }
-  // onSubmit(): void {
-  //   if (this.holidayForm.invalid) {
-  //     this.holidayForm.markAllAsTouched();
-  //     return;
-  //   }
-  
-  //   const formData = new FormData();
-  //   formData.append('holidayName', this.holidayForm.value.holidayName);
-  //   formData.append('holidayDate', this.holidayForm.value.holidayDate);
-  //   formData.append('holidayListType', this.holidayForm.value.holidayListType);
-  //   formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
-  
-  //   if (this.selectedImageFile) {
-  //     formData.append('image', this.selectedImageFile);
-  //   } else if (this.isEditMode && this.existingImagePath) {
-  //     // Send existing image path to keep the old image
-  //     formData.append('existingImagePath', this.existingImagePath);
-  //   } else if (this.isEditMode && !this.existingImagePath) {
-  //     // Explicitly send empty string or marker to indicate no image
-  //     formData.append('existingImagePath', '');
-  //   }
-  
-  //   if (this.isEditMode && this.selectedHolidayId) {
-  //     formData.append('holidayId', this.selectedHolidayId.toString());
-  //     formData.append('updatedBy', '1');
-  //     this.holidayService.updateHoliday(formData).subscribe({
-  //       next: () => this.handleSuccess('Updated'),
-  //       error: err => this.errorHandler.handleError(err)
-  //     });
-  //   } else {
-  //     formData.append('createdBy', '1');
-  //     this.holidayService.createHoliday(formData).subscribe({
-  //       next: () => this.handleSuccess('Created'),
-  //       error: err => this.errorHandler.handleError(err)
-  //     });
-  //   }
-  // }
+
   onSubmit(): void {
     if (this.holidayForm.invalid) {
       this.holidayForm.markAllAsTouched();
       return;
     }
+    this.holidayForm.get('holidayDate')?.statusChanges.subscribe(status => {
+  console.log('holidayDate status:', status);
+  console.log('Errors:', this.holidayForm.get('holidayDate')?.errors);
+});
+const statusValue = this.holidayForm.value.holidayStatus;
+const ListTypeValue = this.holidayForm.value.holidayListType;
+
+// If it comes as string 'true'/'false', convert to boolean:
+const holidayStatusBool = statusValue === true || statusValue === 'true';
+const holidayListTypeBool = ListTypeValue == 1 || ListTypeValue == '1';
   
     const formData = new FormData();
     formData.append('holidayName', this.holidayForm.value.holidayName);
     formData.append('holidayDate', this.holidayForm.value.holidayDate);
-    formData.append('holidayListType', this.holidayForm.value.holidayListType);
-    formData.append('holidayStatus', this.holidayForm.value.holidayStatus);
-  
+    formData.append('holidayListType', holidayListTypeBool ? 'true' : 'false'); // Convert to string 'true'/'false'
+    formData.append('holidayStatus', holidayStatusBool ? 'true' : 'false'); // Convert to string 'true'/'false'
+
     if (this.selectedImageFile) {
       console.log('Appending new image file:', this.selectedImageFile);
       formData.append('image', this.selectedImageFile);
     } else if (this.isEditMode) {
       // Always send existingImagePath in edit mode (even empty)
       const existingPathToSend = this.existingImagePath ? this.existingImagePath : '';
+      console.log("after submiting",this.holidayForm.value)
       console.log('Appending existingImagePath:', existingPathToSend);
       formData.append('existingImagePath', existingPathToSend);
     }
@@ -353,6 +342,8 @@ splitCardHolidays(): void {
         error: err => this.errorHandler.handleError(err)
       });
     } else {
+            console.log("after again submiting",this.holidayForm.value)
+
       formData.append('createdBy', '1');
       this.holidayService.createHoliday(formData).subscribe({
         next: () => this.handleSuccess('Created'),
@@ -368,7 +359,7 @@ splitCardHolidays(): void {
     this.holidayForm.reset({
       holidayName: '',
       holidayDate: '',
-      holidayListType: '1',
+      holidayListType: '',
       holidayStatus: '1'
     });
     this.selectedHolidayId = null;

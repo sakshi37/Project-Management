@@ -28,6 +28,7 @@ export class EmployeeComponent implements OnInit {
   fullEmployeeList: EmployeeFull[] = [];
 
   searchText: string = '';
+currentUserCode: string = '';
 
   columns = [
     { key: 'srNo', label: 'Sr. No.' },
@@ -49,6 +50,8 @@ export class EmployeeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+  this.decodeToken();
+
     let updatedCode =
       this.Router.getCurrentNavigation()?.extras?.state?.['updatedCode'];
 
@@ -62,6 +65,17 @@ export class EmployeeComponent implements OnInit {
     console.log('Updated Code from navigation or sessionStorage:', updatedCode);
     this.loadEmployees(updatedCode);
   }
+  decodeToken(): void {
+  const token = localStorage.getItem('token'); // or sessionStorage
+  if (!token) return;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    this.currentUserCode = payload.sub;
+  } catch (err) {
+    console.error('Error decoding token:', err);
+  }
+}
 
   loadEmployees(updatedCode?: string) {
   const pageSizeToUse = updatedCode ? 1000 : this.pageSize;
@@ -166,9 +180,9 @@ export class EmployeeComponent implements OnInit {
           row['Sr.No'] = (this.pageNumber - 1) * this.pageSize + i + 1;
         } else if (col.key == 'loginStatus') {
           row['Status'] = emp[col.key] ? 'Active' : 'Inactive';
-        } else if (col.key !== 'photo' && col.key !== 'action') {
-          row[col.label] = emp[col.key];
-        }
+        } if (col.key !== 'photo' && col.key !== 'action' && col.key !== 'image') {
+  row[col.label] = emp[col.key];
+}
       });
       return row;
     });
@@ -304,54 +318,65 @@ export class EmployeeComponent implements OnInit {
   }
 
   // Delete (inactivate) selected employees
-  deleteSelectedEmployees() {
-    const selectedCodes = this.selectedEmployees().map((emp) => emp.code);
+ deleteSelectedEmployees() {
+  const selectedCodes = this.selectedEmployees().map((emp) => emp.code);
 
-    if (selectedCodes.length === 0) {
-      Swal.fire({
-        toast: true,
-        icon: 'warning',
-        text: 'Please select at least one employee.',
-        position: 'top',
-        timer: 3000,
-        showConfirmButton: false,
-      });
-      return;
-    }
+  if (selectedCodes.length === 0) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      text: 'Please select at least one employee.',
+      position: 'top',
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    return;
+  }
 
-    if (confirm('Are you sure you want to inactivate selected employees?')) {
-      const originalOrder = [...this.employees]; // Save original order
-
+  // SweetAlert2 confirmation modal
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You are about to inactivate selected employees.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Inactivate',
+    cancelButtonText: 'Cancel',
+    reverseButtons: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
       this.employeeService.inactivateEmployees(selectedCodes).subscribe({
         next: (response) => {
+          const msg = response.message || '';
+
+          // If response message contains "already inactive", show error toast and do NOT update UI
+          if (msg.toLowerCase().includes('already inactive')) {
+            Swal.fire({
+              toast: true,
+              icon: 'error',
+              text: msg.trim(),
+              position: 'top',
+              timer: 3000,
+              showConfirmButton: false,
+            });
+            return; // Stop here, don't update UI
+          }
+
+          // Success case — update UI and show success toast
           Swal.fire({
             toast: true,
             icon: 'success',
-            text: response.message || 'Employees inactivated successfully.',
+            text: msg.trim() || 'Employees inactivated successfully.',
             position: 'top',
             timer: 3000,
             showConfirmButton: false,
           });
 
-          // Update loginStatus and deselect
           this.employees.forEach((emp) => {
             if (selectedCodes.includes(emp.code)) {
               emp.loginStatus = false;
             }
             emp.selected = false;
           });
-
-          // Move inactivated employees to top
-          this.employees.sort((a, b) => {
-            const aSelected = selectedCodes.includes(a.code) ? -1 : 1;
-            const bSelected = selectedCodes.includes(b.code) ? -1 : 1;
-            return aSelected - bSelected;
-          });
-
-          // Restore original order after 10 seconds
-          setTimeout(() => {
-            this.employees = [...originalOrder];
-          }, 10000);
         },
         error: (error) => {
           console.error('Error:', error);
@@ -366,5 +391,8 @@ export class EmployeeComponent implements OnInit {
         },
       });
     }
-  }
+  });
+}
+
+
 }

@@ -80,11 +80,12 @@
         <div class="modal-body">
           <form [formGroup]="cityForm" (ngSubmit)="onSubmit()" class="row g-3">
 
-            <div class="col-md-12">
+            <div class="col-md-12"  *ngIf="!isEditMode">
               <label for="countryId" class="form-label">Country:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
                 <select id="countryId" class="form-select" formControlName="countryId" (change)="onCountryChange()"
+                  
                   [ngClass]="{ 'is-invalid': cityForm.get('countryId')?.touched && cityForm.get('countryId')?.invalid }">
                   <option value="">Select Country</option>
                   <option *ngFor="let country of filteredCountries" [ngValue]="country.countryId">{{ country.countryName }}
@@ -96,11 +97,11 @@
               </div>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-12"  *ngIf="!isEditMode">
               <label for="stateId" class="form-label">State:</label>
               <div class="input-icon-group">
                 <i class="fas fa-map-marked-alt"></i>
-                <select id="stateId" class="form-select" formControlName="stateId"
+                <select id="stateId" class="form-select" formControlName="stateId" [disabled]="isEditMode"
                   [ngClass]="{ 'is-invalid': cityForm.get('stateId')?.touched && cityForm.get('stateId')?.invalid }" (change)="onStateChange()">
                   <option value="">Select State</option>
                   <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
@@ -130,6 +131,7 @@
                 class="form-select"
                 formControlName="cityName"
                 required
+                [disabled]="isEditMode"
               >
                 <option value="">-- Select City --</option>
                 <option *ngFor="let city of cityDropdownList" [value]="city">
