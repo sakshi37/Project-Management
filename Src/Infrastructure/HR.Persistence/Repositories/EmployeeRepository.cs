@@ -476,6 +476,20 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
+        public async Task<string> DeleteEmployeeAsync(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                throw new EmployeeValidationException("Employee code must be provided.");
+
+            var result = await _appDbContext
+                 .Database
+                 .ExecuteSqlRawAsync("EXEC dbo.SP_DeleteEmployee @Code = {0}", code);
+
+            if (result <= 0)
+                throw new NotFoundException($"Employee with code '{code}' not found or could not be inactivated.");
+
+            return "Employee is Deleted successfully";
+        }
     }
 
 

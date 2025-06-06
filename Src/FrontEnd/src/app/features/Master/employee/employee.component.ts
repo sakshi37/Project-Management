@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
 import { Employee, EmployeeFull } from '../../../Models/employee-model';
+import { DeleteEmployeeComponent } from './delete-employee/delete-employee.component';
 
 @Component({
   selector: 'app-employee',
@@ -394,5 +395,17 @@ currentUserCode: string = '';
   });
 }
 
-
+openDeleteEmployeePopup(emp :any):void{
+ this.dialog
+      .open(DeleteEmployeeComponent, {
+        width: '1000px',
+        data: emp,
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result === true) {
+          this.loadEmployees();
+        }
+      });
+}
 }

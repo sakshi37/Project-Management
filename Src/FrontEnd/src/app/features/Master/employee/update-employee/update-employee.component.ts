@@ -89,13 +89,13 @@ export class UpdateEmployeeComponent implements OnInit {
     
     this.employeeForm = this.fb.group(
       {
-      name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+      name: ['', [ Validators.minLength(5), Validators.maxLength(50)]],
 
         address: [''],
         mobileNo: ['', [Validators.pattern(/^[6-9]\d{9}$/)]],
         // skypeId: ['', [Validators.minLength(10), Validators.maxLength(32)]],
-        email:['', [Validators, Validators.email]],
-        bccEmail:['', [Validators, Validators.email]],
+        email:['', [ Validators.email]],
+        bccEmail:['', [ Validators.email]],
         panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
         joinDate: ['', [this.noFutureDateValidator]],
         birthDate: ['', [this.noFutureDateValidator]],
@@ -164,7 +164,7 @@ export class UpdateEmployeeComponent implements OnInit {
       branchStatus: b.branchStatus,
     }));
 
-  // ✅ Filter active countries
+   
   this.countries = countries
     .filter(c => this.isActive(c, 'countryStatus'))
     .map(c => ({
@@ -174,7 +174,7 @@ export class UpdateEmployeeComponent implements OnInit {
       countryStatus: c.countryStatus,
     }));
 
-  // ✅ Filter active states
+   
   this.states = states
     .filter(s => this.isActive(s, 'stateStatus'))
     .map(s => ({
@@ -186,7 +186,7 @@ export class UpdateEmployeeComponent implements OnInit {
       countryName: s.countryName,
     }));
 
-  // ✅ Filter active cities
+ 
   this.cities = cities
     .filter(c => this.isActive(c, 'cityStatus'))
     .map(c => ({
@@ -199,15 +199,15 @@ export class UpdateEmployeeComponent implements OnInit {
       countryName: c.countryName,
     }));
 
-  // ✅ Filter active designations
+ 
   this.designations = designations
     .filter(d => this.isActive(d, 'designationStatus'));
 
-  // ✅ Filter active locations
+   
   this.locations = locations
     .filter(l => this.isActive(l, 'locationStatus'));
 
-  // 🟡 Use raw values (or filter if needed)
+   
   this.userGroups = userGroups;
   this.shifts = shifts;
   this.employeeTypes = employeeTypes;

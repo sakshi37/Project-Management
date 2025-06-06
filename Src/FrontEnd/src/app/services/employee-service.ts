@@ -10,6 +10,7 @@ import {
 import { CreateModel } from '../Models/create-model';
 import { API_URL } from '../../constant';
 import { error } from 'jquery';
+import { DeleteEmployeeModel } from '../Models/delete-employee-model';
 
 @Injectable({
   providedIn: 'root',
@@ -70,6 +71,11 @@ export class EmployeeService {
       }
     );
   }
+  
+      deleteEmployee(code: string): Observable<DeleteEmployeeModel> {
+        const sanitizedCode = code.replace('%09', ''); // Remove any unwanted tab characters
+        return this.http.delete <DeleteEmployeeModel>(`${this.url}/Employee/Delete/${code}`, {});
+      }
 }
 
 export type Location = {

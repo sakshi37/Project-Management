@@ -1,6 +1,7 @@
 ﻿using HR.API.Helper;
 using HR.Application.Features.Employee.Commands.CreateEmployeeMaster;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
+using HR.Application.Features.Employees.Commands.DeleteEmployee;
 using HR.Application.Features.Employees.Commands.MakeEmployeeActive;
 using HR.Application.Features.Employees.Commands.MakeEmployeeInactivate;
 using HR.Application.Features.Employees.Commands.MakeMultipleEmployeesInactive;
@@ -194,6 +195,15 @@ namespace HR.API.Controllers
         {
             var results = await _mediator.Send(new SearchEmployeesQuery(dto));
             return Ok(results);
+        }
+
+
+        [HttpDelete("Delete/{code}")]
+        public async Task<IActionResult> DeleteEmployee(string code)
+        {
+            code = code?.Trim();
+            var result = await _mediator.Send(new DeleteEmployeeCommand(code));
+            return Ok(new { message = result });
         }
     }
 }
