@@ -23,12 +23,28 @@ namespace HR.API.Broadcast
             {
                 if (ann.TargetType == "All")
                     await _hubContext.Clients.All.SendAsync("ReceiveAnnouncement", ann);
-                else if (ann.TargetType == "UserGroup")
-                    await _hubContext.Clients.Group($"Group_{ann.TargetValue}").SendAsync("ReceiveAnnouncement", ann);
-                else if (ann.TargetType == "Employee")
+                //else if (ann.TargetType == "UserGroup")
+                //    await _hubContext.Clients.Group($"Group_{ann.TargetValue}").SendAsync("ReceiveAnnouncement", ann);
+                //else if (ann.TargetType == "Employee")
+                //{
+                //    foreach (var id in ann.TargetValue.Split(','))
+                //        await _hubContext.Clients.User(id).SendAsync("ReceiveAnnouncement", ann);
+                //}
+                else if (ann.TargetType == "UserGroup" && !string.IsNullOrEmpty(ann.TargetValue))
                 {
-                    foreach (var id in ann.TargetValue.Split(','))
-                        await _hubContext.Clients.User(id).SendAsync("ReceiveAnnouncement", ann);
+                    var groupName = $"Group_{ann.TargetValue}";
+                    await _hubContext.Clients.Group(groupName).SendAsync("ReceiveAnnouncement", ann);
+                }
+                else if (ann.TargetType == "Employee" && !string.IsNullOrEmpty(ann.TargetValue))
+                {
+                    var empCodes = ann.TargetValue.Split(',');
+                    foreach (var empCode in empCodes)
+                    {
+                        Console.WriteLine($"Broadcasting to employee: {empCode.Trim()}");
+                        Console.WriteLine($"Attempting to send to user: {empCode.Trim()}");
+
+                        await _hubContext.Clients.User(empCode.Trim()).SendAsync("ReceiveAnnouncement", ann);
+                    }
                 }
             }
         }
