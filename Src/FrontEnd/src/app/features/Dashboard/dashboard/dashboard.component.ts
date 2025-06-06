@@ -4,6 +4,7 @@ import { LefSideNavComponent } from '../../../shared/lef-side-nav/lef-side-nav.c
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { DashboardInfoComponent } from '../dashboard-info/dashboard-info.component';
 import { ActivityTimesheetComponent } from '../activity-timesheet/activity-timesheet.component';
+import { AnnouncementService } from '../../../services/announcement.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,9 +15,11 @@ import { ActivityTimesheetComponent } from '../activity-timesheet/activity-times
 export class DashboardComponent implements OnInit {
   products: any;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private announcementService: AnnouncementService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.announcementService.startConnection();
+  }
 
   // * api call to get the list
   getProductList() {}
