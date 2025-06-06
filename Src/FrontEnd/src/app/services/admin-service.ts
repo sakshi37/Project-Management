@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from '../../constant';
+import { Employee } from '../Models/gmc-model';
 
 export interface ActivationRequest {
   id: number;
@@ -12,7 +13,7 @@ export interface ActivationRequest {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminService {
   private apiUrl = `${API_URL}/Admin`;
@@ -22,27 +23,33 @@ export class AdminService {
   getPendingRequests(): Observable<ActivationRequest[]> {
     return this.http.get<ActivationRequest[]>(this.apiUrl);
   }
-
+  getEmployee() {
+    return this.http.get<role[]>(`${this.apiUrl}/GetEmployee`);
+  }
   rejectRequest(requestId: number, empCode: string, comment: string) {
-  const payload = {
-    requestId,
-    empCode,
-    comment
-  };
+    const payload = {
+      requestId,
+      empCode,
+      comment,
+    };
 
-  return this.http.post<any>(this.apiUrl+'/rejectrequest', payload);
+    return this.http.post<any>(this.apiUrl + '/rejectrequest', payload);
+  }
+
+  approveRequest(requestId: number, empCode: string, comment: string) {
+    const payload = {
+      requestId,
+      empCode,
+      comment,
+    };
+
+    return this.http.post<any>(this.apiUrl + '/approverequest', payload);
+  }
 }
-
-approveRequest(requestId: number, empCode: string, comment: string) {
-  const payload = {
-    requestId,
-    empCode,
-    comment
-  };
-
-  return this.http.post<any>(this.apiUrl+'/approverequest', payload);
-}
-
-
- 
-}
+export type role = {
+  name: string;
+  code: string;
+  email: string | null;
+  // fk_DesignationId: string | null;
+  fk_UserGroupId: string | null;
+};

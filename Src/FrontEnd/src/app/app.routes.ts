@@ -28,6 +28,7 @@ import { AdminComponent } from './features/admin/admin.component';
 import { NotificationComponent } from './features/notification/notification.component';
 import { AssignedTaskComponent } from './features/Master/assigned-task/assigned-task.component';
 import { WorkTimesheetComponent } from './features/Master/work-timesheet/work-timesheet.component';
+import { EmployeeRoleComponent } from './features/admin/employee-role/employee-role.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -38,6 +39,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['HR'] },
   },
+
+  { path: 'role-assign', component: EmployeeRoleComponent },
 
   {
     path: 'dashboard',
@@ -66,7 +69,7 @@ export const routes: Routes = [
     path: 'holiday',
     component: HolidayComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['User', 'HR','Admin'] },
+    data: { roles: ['User', 'HR', 'Admin'] },
   },
   {
     path: 'changePassword',
