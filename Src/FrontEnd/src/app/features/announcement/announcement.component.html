@@ -1,0 +1,23 @@
+<p>announcement works!</p>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Message</th>
+      <th>From Date</th>
+      <th>To Date</th>
+      <th>Target Type</th>
+      <th>Target Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ann of announcements">
+      <td>{{ ann.title }}</td>
+      <td>{{ ann.message }}</td>
+      <td>{{ ann.fromDate | date:'medium' }}</td>
+      <td>{{ ann.toDate | date:'medium' }}</td>
+      <td>{{ ann.targetType }}</td>
+      <td>{{ ann.targetValue }}</td>
+    </tr>
+  </tbody>
+</table>

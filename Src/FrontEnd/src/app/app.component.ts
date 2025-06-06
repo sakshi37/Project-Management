@@ -10,6 +10,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { CountryComponent } from './features/Master/settings/country/country.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './features/Dashboard/dashboard/dashboard.component';
+import { AnnouncementComponent } from './features/announcement/announcement.component';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ import { DashboardComponent } from './features/Dashboard/dashboard/dashboard.com
     LefSideNavComponent,
     CommonModule,
     ReactiveFormsModule,
+    AnnouncementComponent,
     // DashboardComponent,
   ],
   templateUrl: './app.component.html',

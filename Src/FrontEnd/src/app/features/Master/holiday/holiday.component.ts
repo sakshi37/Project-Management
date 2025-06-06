@@ -13,6 +13,7 @@ import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RoleService } from '../../../services/role.service';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AnnouncementComponent } from '../../announcement/announcement.component';
 
 function letterLengthValidator(minLength: number, maxLength: number) {
   return (control: AbstractControl): ValidationErrors | null => {

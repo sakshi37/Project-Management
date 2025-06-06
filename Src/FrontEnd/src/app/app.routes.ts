@@ -28,8 +28,10 @@ import { AdminComponent } from './features/admin/admin.component';
 import { NotificationComponent } from './features/notification/notification.component';
 import { AssignedTaskComponent } from './features/Master/assigned-task/assigned-task.component';
 import { WorkTimesheetComponent } from './features/Master/work-timesheet/work-timesheet.component';
+import { AnnouncementComponent } from './features/announcement/announcement.component';
 
 export const routes: Routes = [
+
   { path: '', component: LoginComponent },
   { path: 'sidebar', component: LefSideNavComponent, canActivate: [AuthGuard] },
   {
@@ -38,6 +40,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['HR'] },
   },
+  { path: 'announcements', component: AnnouncementComponent },
+
 
   {
     path: 'dashboard',
