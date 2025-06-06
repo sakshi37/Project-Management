@@ -15,6 +15,7 @@ export class CountryService {
   constructor(private http: HttpClient) {}
 
   getAllCountries(): Observable<GetCountryDto[]> {
+    console.log('Calling API to fetch countries');
     return this.http.get<GetCountryDto[]>(`${this.apiUrl}`);
   }
 

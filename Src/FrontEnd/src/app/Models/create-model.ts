@@ -3,7 +3,7 @@ export interface CreateModel {
   code: string;
   address: string;
   mobileNo: string;
-  skypeId: string;
+
   email: string;
   joinDate: Date | string;
   bccEmail: string;
