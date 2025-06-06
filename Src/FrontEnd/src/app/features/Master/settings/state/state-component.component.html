@@ -136,7 +136,7 @@
       formControlName="countryId"
       (change)="onCountryChange($event)"
       [ngClass]="{
-        'is-invalid': stateForm.get('countryId')?.touched && stateForm.get('countryId')?.invalid
+        'is-invalid': stateForm.get('countryId')?.touched || stateForm.get('countryId')?.invalid
       }"
     >
       <option value="">Select Country</option>
@@ -145,7 +145,7 @@
       </option>
     </select>
   </div>
-  <div *ngIf="stateForm.get('countryId')?.touched && stateForm.get('countryId')?.invalid" class="text-danger">
+  <div *ngIf="stateForm.get('countryId')?.touched || stateForm.get('countryId')?.invalid" class="text-danger">
     Country is required.
   </div>
 </div>

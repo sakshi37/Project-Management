@@ -86,8 +86,10 @@ export class LocationComponent implements OnInit, AfterViewInit {
   }
 
   loadCountries(): void {
-    this.countryService.getAllCountries().subscribe(res => this.countries = res);
+    this.countryService.getAllCountries().subscribe(res =>
+       this.countries = res);
   }
+  
   loadStates(): void {
     this.stateService.getAllStates().subscribe(res => this.states = res);
   }
@@ -117,13 +119,14 @@ export class LocationComponent implements OnInit, AfterViewInit {
   filterStates(): void {
     const countryId = +this.locationForm.get('countryId')?.value;
     // console.log('Selected CountryId:', countryId);
-    this.filteredStates = this.states.filter(s => s.countryId === countryId);
+    this.filteredStates = this.states.filter(s => s.countryId === countryId && s.stateStatus === true);
   }
 
 filterCities(): void {
   const stateId = +this.locationForm.get('stateId')?.value;
   // console.log('Selected StateId:', stateId);
-  this.filteredCities = this.cities.filter(c => c.stateId === stateId);
+  this.filteredCities = this.cities.filter(c => c.stateId === stateId && c.cityStatus===true);
+
 }
 // filterLocations(): void {
 //   const cityId = +this.locationForm.get('cityId')?.value;
@@ -187,7 +190,10 @@ onStateChange(): void {
   
 
     onSubmit(): void {
-        if (this.locationForm.invalid) return;
+        if (this.locationForm.invalid){
+          this.locationForm.markAllAsTouched();
+           return
+        };
         
         
         const statusBool = this.locationForm.value.locationStatus === '1' ? true : false;
