@@ -1,5 +1,4 @@
-<p>announcement works!</p>
-<table class="table table-striped">
+<!-- <table class="table table-striped">
   <thead>
     <tr>
       <th>Title</th>
@@ -20,4 +19,35 @@
       <td>{{ ann.targetValue }}</td>
     </tr>
   </tbody>
-</table>
+</table> -->
+<div class="card">
+  <p-table
+      [value]="announcements"
+      [paginator]="true"
+      [rows]="5"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[5, 10, 20]"
+  >
+      <ng-template #header>
+          <tr>
+              <th style="width:20%">Title</th>
+              <th style="width:30%">Message</th>
+              <th style="width:15%">From-Date</th>
+              <th style="width:15%">To-Date</th>
+              <th style="width:10%">Target Type</th>
+              <th style="width:10%">Target Value</th>
+
+          </tr>
+      </ng-template>
+      <ng-template #body let-announcement>
+          <tr>
+              <td><i class="fa fa-bullhorn"></i> {{announcement.title }}</td>
+              <td>{{ announcement.message }}</td>
+              <td>{{ announcement.fromDate | date:'medium' }}</td>
+              <td>{{ announcement.toDate | date:'medium' }}</td>
+              <td>{{ announcement.targetType }}</td>
+              <td>{{ announcement.targetValue }}</td>      
+          </tr>
+      </ng-template>
+  </p-table>
+</div>

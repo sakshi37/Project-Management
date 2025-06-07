@@ -11,6 +11,7 @@ import { CountryComponent } from './features/Master/settings/country/country.com
 import { ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './features/Dashboard/dashboard/dashboard.component';
 import { AnnouncementComponent } from './features/announcement/announcement.component';
+import { AnnouncementService } from './services/announcement.service';
 
 @Component({
   selector: 'app-root',
@@ -48,7 +49,8 @@ export class AppComponent {
     this.isSidebarVisible = newState;
   }
 
-  constructor(private router: Router) {
+  constructor(private router: Router,private announcementService:AnnouncementService) {
+    this.announcementService.startConnection();
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
