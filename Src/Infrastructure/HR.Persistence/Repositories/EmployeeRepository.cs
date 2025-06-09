@@ -151,7 +151,7 @@ namespace HR.Persistence.Repositories
         new SqlParameter("@Code", employee.Code ?? (object)DBNull.Value),
         new SqlParameter("@Address", employee.Address ?? (object)DBNull.Value),
         new SqlParameter("@MobileNo", employee.MobileNo ?? (object)DBNull.Value),
-        new SqlParameter("@SkypeId", employee.SkypeId ?? (object)DBNull.Value),
+        //new SqlParameter("@SkypeId", employee.SkypeId ?? (object)DBNull.Value),
         new SqlParameter("@JoinDate", (object?)employee.JoinDate ?? DBNull.Value),
         new SqlParameter("@Email", employee.Email ?? (object)DBNull.Value),
         new SqlParameter("@PanNumber", employee.PanNumber ?? (object)DBNull.Value),
@@ -172,7 +172,7 @@ namespace HR.Persistence.Repositories
                 @Code, 
                 @Address, 
                 @MobileNo, 
-                @SkypeId, 
+               
                 @JoinDate, 
                 @Email, 
                 @PanNumber, 
@@ -205,7 +205,7 @@ namespace HR.Persistence.Repositories
                 Code = employee.Code,
                 Address = employee.Address,
                 MobileNo = employee.MobileNo,
-                SkypeId = employee.SkypeId,
+
                 JoinDate = employee.JoinDate,
                 Email = employee.Email,
                 PanNumber = employee.PanNumber,
@@ -424,7 +424,7 @@ namespace HR.Persistence.Repositories
             catch (SqlException ex)
             {
 
-                return $"SQL Error: {ex.Message}";
+                return $" {ex.Message}";
             }
             catch (Exception ex)
             {
@@ -471,6 +471,20 @@ namespace HR.Persistence.Repositories
             return result;
         }
 
+        public async Task<string> DeleteEmployeeAsync(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                throw new EmployeeValidationException("Employee code must be provided.");
+
+            var result = await _appDbContext
+                 .Database
+                 .ExecuteSqlRawAsync("EXEC dbo.SP_DeleteEmployee @Code = {0}", code);
+
+            if (result <= 0)
+                throw new NotFoundException($"Employee with code '{code}' not found or could not be inactivated.");
+
+            return "Employee is Deleted successfully";
+        }
     }
 
 

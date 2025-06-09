@@ -9,7 +9,26 @@ import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import { ErrorHandlerService } from '../../../../services/error-handler.service';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
+function letterLengthValidator(minLength: number, maxLength: number) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value: string = control.value || '';
+
+    // Count only letters a-z, A-Z
+    const lettersOnly = value.replace(/[^a-zA-Z]/g, '');
+
+    if (lettersOnly.length < minLength) {
+      return { minLetterLength: { requiredLength: minLength, actualLength: lettersOnly.length } };
+    }
+
+    if (lettersOnly.length > maxLength) {
+      return { maxLetterLength: { requiredLength: maxLength, actualLength: lettersOnly.length } };
+    }
+
+    return null;
+  };
+}
 @Component({
   selector: 'app-designation',
   templateUrl: './designation.component.html',
@@ -56,10 +75,24 @@ export class DesignationComponent implements OnInit, AfterViewInit {
 
   initForm(): void {
     this.designationForm = this.fb.group({
-      designationName: ['', [Validators.required, Validators.maxLength(100)]],
+      designationName: ['', [Validators.required,Validators.required,letterLengthValidator(2, 25) , Validators.pattern('^[a-zA-Z ]+$')]],
       designationStatus: ['1', Validators.required]
     });
   }
+  capitalizeEachWord() {
+  const control = this.designationForm.get('designationName');
+  const value = control?.value;
+
+  if (value) {
+    const formatted = value
+      .toLowerCase()
+      .replace(/\b\w/g, (char: string) => char.toUpperCase()); // Capitalize each word
+    if (value !== formatted) {
+      control?.setValue(formatted, { emitEvent: false }); // Prevent loop
+    }
+  }
+}
+
 
   // getDesignations(): void {
   //   this.designationService.getAllDesignations().subscribe(res => this.designations = res);

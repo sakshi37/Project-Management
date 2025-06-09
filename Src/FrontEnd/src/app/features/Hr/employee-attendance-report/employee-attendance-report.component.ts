@@ -34,6 +34,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   itemsPerPage: number = 5; 
   currentPage: number = 1;
   reportTypes: number = 0;
+  today:string="";
 
   @ViewChild("#empSelect") empSelect!: ElementRef; 
 
@@ -46,6 +47,9 @@ export class EmployeeAttendanceReportComponent implements OnInit {
     this.getTLs();
     this.getEmployees();
       this.getAttendanceReports();
+//no future dates can be slected
+  const currentDate = new Date();
+  this.today = currentDate.toISOString().split('T')[0];
    }
 
   getDivisions(): void {
@@ -161,13 +165,31 @@ toDate: string = '';
 
 filterByDate(): void {
   if (!this.fromDate || !this.toDate) {
-    alert('Please select both From and To dates.');
+    Swal.fire({
+            toast: true,
+            position: 'top',
+            timerProgressBar: true,
+            icon: 'warning',
+            title: 'please Select Both From and To date',
+            timer: 2000,
+            showConfirmButton: false,
+      
+          });
     return;
+    
   }
 
   if (this.fromDate > this.toDate) {
-    alert('From date cannot be after To date.');
-    return;
+Swal.fire({
+            toast: true,
+            position: 'top',
+            timerProgressBar: true,
+            icon: 'warning',
+            title: 'From date cannot be after To date.',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+              return;
   }
 
   this.filteredattendanceReports = this.attendanceReports.filter(report => {
@@ -176,9 +198,19 @@ filterByDate(): void {
   });
 
   if (this.filteredattendanceReports.length === 0) {
-    alert('No records found in the selected date range.');
+    Swal.fire({
+            toast: true,
+            position: 'top',
+            timerProgressBar: true,
+            icon: 'warning',
+            title: 'No records found in the selected date range.',
+            timer: 2000,
+            showConfirmButton: false,
+          
+          });
   }
 }
+
 resetDateFilter(): void {
   this.filteredattendanceReports = [...this.attendanceReports];
   this.fromDate = '';

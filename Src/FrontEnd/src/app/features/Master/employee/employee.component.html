@@ -64,8 +64,11 @@
       <tbody>
         <tr *ngFor="let emp of employees; let i = index">
           <td>
-            <input type="checkbox" [(ngModel)]="emp.selected" />
+            <input type="checkbox" [(ngModel)]="emp.selected"
+              [disabled]="emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode"
+              [class.disabled]="emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode" />
           </td>
+
           <td *ngFor="let col of columns">
 
             <div [ngClass]="{
@@ -100,14 +103,41 @@
                 </ng-container>
 
                 <!-- Action -->
-                <ng-container *ngSwitchCase="'action'">
-                  <img src="https://img.icons8.com/ios-glyphs/16/4B86D4/edit.png" alt="Edit" title="Edit" class="me-2"
-                    style="cursor: pointer;" (click)="editEmployee(emp)" />
-                  <img *ngIf="emp.loginStatus === true" src="https://img.icons8.com/ios-glyphs/16/FF0000/multiply.png"
-                    alt="Inactivate" title="Inactivate" style="cursor: pointer;" (click)="openInactivatePopup(emp)" />
-                  <img *ngIf="emp.loginStatus === false" src="https://img.icons8.com/metro/16/add-user-male.png"
-                    alt="Activate" title="Activate" style="cursor: pointer;" (click)="openActivatePopup(emp)" />
-                </ng-container>
+              <ng-container *ngSwitchCase="'action'">
+  <div class="d-flex align-items-center">
+    <!-- Edit -->
+    <img src="https://img.icons8.com/ios-glyphs/16/4B86D4/edit.png" alt="Edit" title="Edit" class="me-2"
+      [class.disabled]="emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode"
+      [style.pointerEvents]="(emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode) ? 'none' : 'auto'"
+      [style.opacity]="(emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode) ? 0.5 : 1"
+      (click)="(emp.userGroupName.toLowerCase() !== 'admin' && emp.code !== currentUserCode) && editEmployee(emp)"
+      style="cursor: pointer;" />
+
+    <!-- Inactivate -->
+    <img *ngIf="emp.loginStatus === true" src="https://img.icons8.com/ios-glyphs/16/FF6300/multiply.png"
+      alt="Inactivate" title="Inactivate" class="me-2"
+      [class.disabled]="emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode"
+      [style.pointerEvents]="(emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode) ? 'none' : 'auto'"
+      [style.opacity]="(emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode) ? 0.5 : 1"
+      (click)="(emp.userGroupName.toLowerCase() !== 'admin' && emp.code !== currentUserCode) && openInactivatePopup(emp)"
+      style="cursor: pointer;" />
+
+    <!-- Activate -->
+    <img *ngIf="emp.loginStatus === false" src="https://img.icons8.com/?size=16&id=60637&format=png&color=5CD325"
+      alt="Request" title="Request" class="me-2"
+      style="cursor: pointer;" (click)="openActivatePopup(emp)" />
+
+    <!-- Delete -->
+    <img src="https://img.icons8.com/?size=16&id=102350&format=png&color=FF0000" alt="Delete" title="Delete"
+      [class.disabled]="emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode"
+      [style.pointerEvents]="(emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode) ? 'none' : 'auto'"
+      [style.opacity]="(emp.userGroupName.toLowerCase() === 'admin' || emp.code === currentUserCode) ? 0.5 : 1"
+      (click)="(emp.userGroupName.toLowerCase() !== 'admin' && emp.code !== currentUserCode) && openDeleteEmployeePopup(emp)"
+      style="cursor: pointer;" />
+  </div>
+</ng-container>
+
+
 
                 <!-- Default -->
                 <ng-container *ngSwitchDefault>

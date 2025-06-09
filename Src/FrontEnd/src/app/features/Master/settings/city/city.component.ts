@@ -249,8 +249,12 @@ export class CityComponent implements OnInit, AfterViewInit {
   }
 
   openAddModal(): void {
+
     this.resetForm();
     this.isEditMode = false;
+    this.cityForm.get('countryId')?.enable();
+  this.cityForm.get('stateId')?.enable();
+  this.cityForm.get('cityName')?.enable();
     this.cityModal.show();
     this.filteredCountries = this.countries.filter(c => c.countryStatus == 1);
 
@@ -259,92 +263,17 @@ export class CityComponent implements OnInit, AfterViewInit {
   
   }
 
-  // onEdit(city: GetCityDto): void {
-  //   console.log('Editing city:', city);
-  //   this.selectedCityId = city.cityId;
-  //   this.isEditMode = true;
-
-  //   this.cityForm.patchValue({
-  //     countryId: city.countryId,
-  //     cityStatus: city.cityStatus ? '1' : '0',
-  //   });
-
-  //   setTimeout(() => {
-  //     this.filterStates();
-
-  //     this.cityForm.patchValue({ stateId: city.stateId });
-
-  //     this.loadValidCities();
-
-  //     setTimeout(() => {
-  //       this.cityForm.patchValue({ cityName: city.cityName });
-  //     }, 200); 
-  //   }, 150); 
-
-  //   this.cityModal.show();
-  // }
-  // onEdit(city: GetCityDto): void {
-  //   console.log('Editing city:', city);
-  //   this.selectedCityId = city.cityId;
-  //   this.isEditMode = true;
-
-  //   this.countryService.getAllCountries().subscribe({
-  //     next: (res) => {
-  //       this.countries = res;
-  //       this.filteredCountries = res.filter(c => c.countryStatus == 1);
-
-
-  //       const cityCountry = this.countries.find(c => c.countryId === city.countryId);
-  //       if (cityCountry && !cityCountry.countryStatus) {
-  //         this.filteredCountries.push(cityCountry);
-  //       }
-
-
-  //       // Patch countryId and cityStatus first
-  //       this.cityForm.patchValue({
-  //         countryId: city.countryId,
-  //         cityStatus: city.cityStatus ? '1' : '0',
-  //       });
-
-  //       // Do NOT call filterStates here because this.states is not yet loaded
-
-  //       this.stateService.getAllStates().subscribe({
-  //         next: (allStates) => {
-  //           this.states = allStates.filter(s => s.stateStatus === true);
-
-  //           const cityState = allStates.find(s => s.stateId === city.stateId);
-  //           if (cityState && !cityState.stateStatus) {
-  //             this.states.push(cityState);
-  //           }
-
-  //           // Now filter states by the patched countryId
-  //           this.filterStates();
-
-  //           // Patch stateId AFTER filtering states so dropdown has the option
-  //           this.cityForm.patchValue({ stateId: city.stateId });
-
-  //           // Patch cityName immediately (no timeout needed)
-  //           this.cityForm.patchValue({ cityName: city.cityName });
-
-  //           // Load other data if needed
-  //           this.loadValidCities();
-  //         },
-  //         error: (err) => console.error('Error loading states:', err),
-  //       });
-
-  //       this.cityModal.show();
-  //     },
-  //     error: (err) => console.error('Error loading countries:', err),
-  //   });
-  // }
+ 
   onEdit(city: GetCityDto): void {
     console.log('Editing city:', city);
     this.selectedCityId = city.cityId;
     this.isEditMode = true;
   
     this.cityForm.reset(); // Clear previous values
-  
     // Fetch countries first
+    this.cityForm.get('countryId')?.enable();
+    this.cityForm.get('stateId')?.enable();
+    this.cityForm.get('cityName')?.enable();
     this.countryService.getAllCountries().subscribe({
       next: (countries) => {
         this.countries = countries;
@@ -389,9 +318,12 @@ export class CityComponent implements OnInit, AfterViewInit {
             this.loadValidCities();
   
             // Finally, patch city name
-            this.cityForm.patchValue({ cityName: city.cityName });
-  
+            this.cityForm.patchValue({ cityName: city.cityName }, { onlySelf: true });
             // Show modal
+            
+
+            
+
             this.cityModal.show();
           },
           error: (err) => console.error('Error loading states:', err),
@@ -399,7 +331,10 @@ export class CityComponent implements OnInit, AfterViewInit {
       },
       error: (err) => console.error('Error loading countries:', err),
     });
+   
+    this.cityForm.get('cityName')?.disable();
   }
+
   
 
 
@@ -414,95 +349,189 @@ export class CityComponent implements OnInit, AfterViewInit {
 
 
 
-  onSubmit(): void {
-    if (this.cityForm.invalid) {
-      this.cityForm.markAllAsTouched();
-      return;
-    }
+//   onSubmit(): void {
+//     if (this.cityForm.invalid) {
+//       this.cityForm.markAllAsTouched();
+//       return;
+//     }
 
-    const cityName = this.cityForm.value.cityName;
-    if (!cityName) {
-      Swal.fire({
-        toast: true,
-        position: 'top',
-        timer: 3000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-        icon: 'error',
-        title: 'Invalid City',
-        text: 'Please select a valid city for the selected country and state.',
-      });
-      return;
-    }
+//     const cityName = this.cityForm.value.cityName;
+//     if (!cityName) {
+//       Swal.fire({
+//         toast: true,
+//         position: 'top',
+//         timer: 3000,
+//         timerProgressBar: true,
+//         showConfirmButton: false,
+//         icon: 'error',
+//         title: 'Invalid City',
+//         text: 'Please select a valid city for the selected country and state.',
+//       });
+//       return;
+//     }
 
-    const statusBool = this.cityForm.value.cityStatus === '1';
+    
+//    // Always get raw values to include disabled fields
+// const formValues = this.cityForm.getRawValue();
+// const statusBool = formValues.cityStatus === '1';
 
-    const payload = {
-      cityName: this.cityForm.value.cityName,
-      stateId: this.cityForm.value.stateId,
-      cityStatus: statusBool,
+
+//     const payload = {
+//       cityName: formValues.cityName,
+//       stateId: formValues.stateId,
+//       cityStatus: statusBool,
+//     };
+
+//     const createDto: CreateCityDto = {
+//       cityName: this.cityForm.value.cityName,
+//       stateId: this.cityForm.value.stateId,
+//       createdBy: 1,
+//     };
+
+//     if (this.isEditMode && this.selectedCityId) {
+//       const updateDto: UpdateCityDto = {
+//         ...payload,
+//         cityId: this.selectedCityId,
+//         updatedBy: 1,
+//       };
+
+//       this.cityService.updateCity(updateDto).subscribe({
+//         next: () => {
+//           this.loadCities();
+//           this.cityModal.hide();
+//           this.cleanUpModal();
+//           this.resetForm();
+//           Swal.fire({
+//             toast: true,
+//             position: 'top',
+//             timerProgressBar: true,
+//             icon: 'success',
+//             title: 'City updated successfully',
+//             timer: 1000,
+//             showConfirmButton: false,
+//           }).then(() => {
+//             this.cleanUpModal();
+//           });
+//         },
+//         error: (err) => this.errorHandler.handleError(err),
+//       });
+//     } else {
+//       this.cityService.createCity(createDto).subscribe({
+//         next: () => {
+//           this.loadCities();
+//           this.cityModal.hide();
+//           this.cleanUpModal();
+//           this.resetForm();
+
+//           Swal.fire({
+//             toast: true,
+//             position: 'top',
+//             timer: 1000,
+//             timerProgressBar: true,
+//             showConfirmButton: false,
+//             icon: 'success',
+//             title: 'Created',
+//             text: 'City created successfully!',
+//             confirmButtonColor: '#3085d6',
+//           }).then(() => {
+//             this.cleanUpModal();
+//           });
+//         },
+//         error: (err) => this.errorHandler.handleError(err),
+//       });
+//     }
+//   }
+onSubmit(): void {
+  if (this.cityForm.invalid) {
+    this.cityForm.markAllAsTouched();
+    return;
+  }
+
+  // Always use getRawValue() to get values from disabled fields too
+  const formValues = this.cityForm.getRawValue();
+  const cityName = formValues.cityName;
+  
+  if (!cityName) {
+    Swal.fire({
+      toast: true,
+      position: 'top',
+      timer: 3000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      icon: 'error',
+      title: 'Invalid City',
+      text: 'Please select a valid city for the selected country and state.',
+    });
+    return;
+  }
+
+  const statusBool = formValues.cityStatus === '1';
+
+  const payload = {
+    cityName: formValues.cityName,
+    stateId: formValues.stateId,
+    cityStatus: statusBool,
+  };
+
+  if (this.isEditMode && this.selectedCityId) {
+    const updateDto: UpdateCityDto = {
+      ...payload,
+      cityId: this.selectedCityId,
+      updatedBy: 1,
     };
 
+    this.cityService.updateCity(updateDto).subscribe({
+      next: () => {
+        this.loadCities();
+        this.cityModal.hide();
+        this.cleanUpModal();
+        this.resetForm();
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          timerProgressBar: true,
+          icon: 'success',
+          title: 'City updated successfully',
+          timer: 1000,
+          showConfirmButton: false,
+        }).then(() => {
+          this.cleanUpModal();
+        });
+      },
+      error: (err) => this.errorHandler.handleError(err),
+    });
+  } else {
     const createDto: CreateCityDto = {
-      cityName: this.cityForm.value.cityName,
-      stateId: this.cityForm.value.stateId,
+      cityName: formValues.cityName,
+      stateId: formValues.stateId,
       createdBy: 1,
     };
 
-    if (this.isEditMode && this.selectedCityId) {
-      const updateDto: UpdateCityDto = {
-        ...payload,
-        cityId: this.selectedCityId,
-        updatedBy: 1,
-      };
+    this.cityService.createCity(createDto).subscribe({
+      next: () => {
+        this.loadCities();
+        this.cityModal.hide();
+        this.cleanUpModal();
+        this.resetForm();
 
-      this.cityService.updateCity(updateDto).subscribe({
-        next: () => {
-          this.loadCities();
-          this.cityModal.hide();
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          timer: 1000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          icon: 'success',
+          title: 'Created',
+          text: 'City created successfully!',
+          confirmButtonColor: '#3085d6',
+        }).then(() => {
           this.cleanUpModal();
-          this.resetForm();
-          Swal.fire({
-            toast: true,
-            position: 'top',
-            timerProgressBar: true,
-            icon: 'success',
-            title: 'City updated successfully',
-            timer: 1000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.cleanUpModal();
-          });
-        },
-        error: (err) => this.errorHandler.handleError(err),
-      });
-    } else {
-      this.cityService.createCity(createDto).subscribe({
-        next: () => {
-          this.loadCities();
-          this.cityModal.hide();
-          this.cleanUpModal();
-          this.resetForm();
-
-          Swal.fire({
-            toast: true,
-            position: 'top',
-            timer: 1000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-            icon: 'success',
-            title: 'Created',
-            text: 'City created successfully!',
-            confirmButtonColor: '#3085d6',
-          }).then(() => {
-            this.cleanUpModal();
-          });
-        },
-        error: (err) => this.errorHandler.handleError(err),
-      });
-    }
+        });
+      },
+      error: (err) => this.errorHandler.handleError(err),
+    });
   }
-
+}
   resetForm(): void {
     this.cityForm.reset({
       countryId: '',

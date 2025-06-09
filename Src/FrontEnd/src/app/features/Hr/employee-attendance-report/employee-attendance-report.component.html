@@ -46,11 +46,11 @@
   <div class="row">
     <div class="col-md-3">
       <label for="From-label">From:</label>
-      <input class="form-control" type="date" id="From" name="From" [(ngModel)]="fromDate">
+      <input class="form-control" type="date" id="From" name="From" [(ngModel)]="fromDate" [max]="today">
     </div>
     <div class="col-md-3">
-      <label for="form-label">To:</label>
-      <input class="form-control" type="date" id="From" name="To" [(ngModel)]="toDate">
+      <label for="To-label">To:</label>
+      <input class="form-control" type="date" id="From" name="To" [(ngModel)]="toDate"[max]="today">
     </div>
     &nbsp;&nbsp;&nbsp;
     <div class="col-md-1 mt-3">
@@ -133,7 +133,7 @@
               <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
             </td>
             <td>
-              <div class="tr-other-child">{{ ateendanceReport.inTime != null ? ateendanceReport.inTime.toString().split('T')[0] : '-' }}</div>
+              <div class="tr-other-child">{{ ateendanceReport.inTime != null ? (ateendanceReport.inTime.toString().split('T')[0].split('-').reverse().join('-') ): '-' }}</div>
             </td>
             <td>
               <div class="tr-other-child">{{ ateendanceReport.divisionName }}</div>
@@ -162,7 +162,7 @@
               <div class="tr-other-child">{{ ateendanceReport.status }}</div>
             </td>
             <td>
-              <div class="tr-last-child">{{ ateendanceReport.leave }}</div>
+              <div class="tr-last-child">{{ (ateendanceReport.leave)?(ateendanceReport.leave):'0' }}</div>
             </td>
 
 
@@ -178,5 +178,5 @@
 
 <!-- nodatatemplate -->
 <ng-template #noData>
-  <div class="alert alert-info text-center mt-4">Select Data From Above Drop Down.</div>
+  <div class="alert alert-info text-center mt-4">No data Found</div>
 </ng-template>

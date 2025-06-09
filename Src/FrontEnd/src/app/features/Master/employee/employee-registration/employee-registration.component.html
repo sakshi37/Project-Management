@@ -146,27 +146,6 @@
               </div>
             </div>
           </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Skype ID</label>
-            <input
-              type="text"
-              class="form-control rounded-pill"
-              formControlName="skypeId"
-              placeholder="Enter Skype ID"
-            />
-            <div
-              class="text-danger small mt-1"
-              *ngIf="employeeForm.get('skypeId')?.touched"
-            >
-              <div *ngIf="employeeForm.get('skypeId')?.hasError('required')">
-                Skype ID is required.
-              </div>
-              <div *ngIf="employeeForm.get('skypeId')?.hasError('pattern')">
-                Invalid Skype ID format.
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -232,7 +211,7 @@
               class="form-select rounded-pill"
             >
               <option value="">Select Country</option>
-              <option *ngFor="let c of countries" [value]="c.id">
+              <option *ngFor="let c of countries" [ngValue]="c.id">
                 {{ c.name }}
               </option>
             </select>

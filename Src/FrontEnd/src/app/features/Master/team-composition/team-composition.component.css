@@ -5,6 +5,14 @@
     animation: highlightFade 3s ease-in-out;
     background-color: #d1f7d1 !important;
   }
+  input.ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
+
+input.ng-valid.ng-touched {
+  border-color: #28a745;
+}
+
   
   @keyframes highlightFade {
     0%   { background-color: #d1f7d1; }

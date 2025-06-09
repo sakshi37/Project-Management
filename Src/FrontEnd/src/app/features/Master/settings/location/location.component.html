@@ -1,8 +1,8 @@
 <div class="container mt-4">
   <!-- Add City Button -->
   <div class="text-end mb-3">
-    <button type="button" class="btn custom-add-btn"
-      data-bs-toggle="modal" data-bs-target="#locationModal" (click)="openAddModal()">
+    <button type="button" class="btn custom-add-btn" data-bs-toggle="modal" data-bs-target="#locationModal"
+      (click)="openAddModal()">
       + Add Location
     </button>
   </div>
@@ -14,12 +14,12 @@
     </select>
     <span>Entries</span>
   </div>
-  
+
   <div class="mb-3 row">
     <div class="input-group" style="width: 300px;">
-        <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
-        <input type="text" id="search" class="form-control" placeholder="Search Location"
-               [(ngModel)]="searchText" (ngModelChange)="filterLocations()" style="background-color: transparent;">
+      <span class="input-group-text" style="background-color: transparent;"><i class="fas fa-search"></i></span>
+      <input type="text" id="search" class="form-control" placeholder="Search Location" [(ngModel)]="searchText"
+        (ngModelChange)="filterLocations()" style="background-color: transparent;">
     </div>
   </div>
 
@@ -36,20 +36,20 @@
         <!-- Modal Body -->
         <div class="modal-body">
           <form [formGroup]="locationForm" (ngSubmit)="onSubmit()" class="row g-3">
-            
+
             <div class="col-md-12">
               <label for="countryId" class="form-label">Country:</label>
               <div class="input-icon-group">
                 <i class="fas fa-globe"></i>
-              <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId"
-              [ngClass]="{ 'is-invalid': locationForm.get('countryId')?.touched && locationForm.get('countryId')?.invalid }"
-              >
-                <option value="">Select Country</option>
-                <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}</option>
-              </select>
-                <div *ngIf="locationForm.get('countryId')?.touched && locationForm.get('countryId')?.invalid" class="text-danger">
-                <div *ngIf="locationForm.get('countryId')?.errors?.['required']">Please Select Country.</div>
-              </div>
+                <select class="form-select" formControlName="countryId" (change)="onCountryChange()" id="countryId">
+                  <option value="" disabled selected>Select Country</option>
+                  <option *ngFor="let country of countries" [value]="country.countryId">{{ country.countryName }}
+                  </option>
+                </select>
+                <div *ngIf="locationForm.get('countryId')?.touched && locationForm.get('countryId')?.invalid"
+                  class="text-danger">
+                  <div *ngIf="locationForm.get('countryId')?.errors?.['required']">Please Select Country.</div>
+                </div>
               </div>
             </div>
 
@@ -57,26 +57,32 @@
               <label for="stateId" class="form-label">State:</label>
               <div class="input-icon-group">
                 <i class="fas fa-map-marked-alt"></i>
-              <select class="form-select" formControlName="stateId" id="stateId"(change)="onStateChange()">
-                <option value="">Select State</option>
-                <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
-              </select>
-              <div *ngIf="locationForm.get('stateId')?.touched && locationForm.get('stateId')?.invalid" class="text-danger">
-                <div *ngIf="locationForm.get('stateId')?.errors?.['required']">Please Select State.</div>
-              </div>
+                <select class="form-select" formControlName="stateId" id="stateId" (change)="onStateChange()">
+                  <option value="" disabled selected>Select State</option>
+                  <option *ngFor="let state of filteredStates" [value]="state.stateId">{{ state.stateName }}</option>
+                </select>
+                <!-- <div *ngIf="locationForm.get('stateId')?.touched && locationForm.get('stateId')?.invalid"
+                  class="text-danger">
+                  Please Select State.
+                </div> -->
+                <div *ngIf="locationForm.get('stateId')?.hasError('required') && (locationForm.get('stateId')?.touched && locationForm.get('stateId')?.invalid)"
+                  class="text-danger">
+                  State is required.
+                </div>
               </div>
             </div>
             <div class="col-md-12">
               <label for="cityId" class="form-label">City:</label>
               <div class="input-icon-group">
                 <i class="fas fa-city"></i>
-              <select class="form-select" formControlName="cityId" id="cityId">
-                <option value="">Select City</option>
-                <option *ngFor="let city of filteredCities" [value]="city.cityId">{{ city.cityName }}</option>
-              </select>
-              <div *ngIf="locationForm.get('cityId')?.touched && locationForm.get('cityId')?.invalid" class="text-danger">
-                <div *ngIf="locationForm.get('cityId')?.errors?.['required']">Please Select City.</div>
-              </div>
+                <select class="form-select" formControlName="cityId" id="cityId">
+                  <option value="" disabled selected>---Select City---</option>
+                  <option *ngFor="let city of filteredCities" [value]="city.cityId">{{ city.cityName }}</option>
+                </select>
+                <div *ngIf="locationForm.get('cityId')?.touched && locationForm.get('cityId')?.invalid"
+                  class="text-danger">
+                  <div *ngIf="locationForm.get('cityId')?.errors?.['required']">Please Select City Or City Not Present in State.</div>
+                </div>
               </div>
 
             </div>
@@ -84,27 +90,28 @@
             <div class="col-md-12">
               <label for="locationName" class="form-label">Location Name:</label>
               <input type="text" class="form-control" formControlName="locationName" id="locationName" />
-              <div *ngIf="locationForm.get('locationName')?.touched && locationForm.get('locationName')?.invalid" class="text-danger">
+              <div *ngIf="locationForm.get('locationName')?.touched && locationForm.get('locationName')?.invalid"
+                class="text-danger">
                 <div *ngIf="locationForm.get('locationName')?.errors?.['required']">Location Name is required.</div>
                 <!-- <div *ngIf="locationForm.get('locationName')?.errors?.['pattern']">Max 15 characters allowed.</div> -->
               </div>
             </div>
 
             <div class="col-md-12">
-                
-              
+
+
               <label for="locationStatus" class="form-label">Status:</label>
               <div class="input-icon-group">
                 <i class="fas fa-toggle-on"></i>
-              <select id="locationStatus" class="form-select" formControlName="locationStatus">
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-              </select>
-            </div>
+                <select id="locationStatus" class="form-select" formControlName="locationStatus">
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
+              </div>
             </div>
 
             <div class="col-12 d-flex justify-content-end">
-              <button type="submit" class="btn btn-success" data-bs-dismiss="modal" >{{ isEditMode ? 'Update' : 'Add' }}</button>
+              <button type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Add' }}</button>
               <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal"
                 (click)="resetForm()">Cancel</button>
             </div>
@@ -121,42 +128,60 @@
         <table class="mb-0">
           <thead>
             <tr>
-              <th><div class="head-first">Sr. No</div></th>
+              <th>
+                <div class="head-first">Sr. No</div>
+              </th>
               <th (click)="sortLocations('locationName')">
-                <div class="head-other sortable">Location Name  <i class="fas" [ngClass]="getSortIcon('locationName')"></i></div>
-              </th>              
+                <div class="head-other sortable">Location Name <i class="fas"
+                    [ngClass]="getSortIcon('locationName')"></i></div>
+              </th>
               <th (click)="sortLocations('cityName')">
-                <div class="head-other sortable">City  <i class="fas" [ngClass]="getSortIcon('cityName')"></i></div>
-              </th>              
+                <div class="head-other sortable">City <i class="fas" [ngClass]="getSortIcon('cityName')"></i></div>
+              </th>
               <th (click)="sortLocations('stateName')">
-                <div class="head-other sortable">State  <i class="fas" [ngClass]="getSortIcon('stateName')"></i></div>
-              </th>              
+                <div class="head-other sortable">State <i class="fas" [ngClass]="getSortIcon('stateName')"></i></div>
+              </th>
               <th (click)="sortLocations('countryName')">
                 <div class="head-other sortable">Country<i class="fas" [ngClass]="getSortIcon('countryName')"></i></div>
-              </th>              
+              </th>
               <th (click)="sortLocations('locationStatus')">
                 <div class="head-other sortable">Status</div>
-              </th>              
-              <th><div class="head-last">Action</div></th>
+              </th>
+              <th>
+                <div class="head-last">Action</div>
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let location of filteredLocations | paginate  :{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i" [ngClass]="{ 'inactive-row': !location.locationStatus }">
-              <td><div class="tr-first-child">{{  (currentPage - 1) * itemsPerPage + i + 1 }}</div></td>
-              <td><div class="tr-other-child">{{ location.locationName }}</div></td>
-              <td><div class="tr-other-child">{{ location.cityName }}</div></td>
-              <td><div class="tr-other-child">{{ location.stateName }}</div></td>
-              <td><div class="tr-other-child">{{ location.countryName }}</div></td>
+            <tr
+              *ngFor="let location of filteredLocations | paginate  :{itemsPerPage: itemsPerPage, currentPage: currentPage}; index as i"
+              [ngClass]="{ 'inactive-row': !location.locationStatus }">
+              <td>
+                <div class="tr-first-child">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ location.locationName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ location.cityName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ location.stateName }}</div>
+              </td>
+              <td>
+                <div class="tr-other-child">{{ location.countryName }}</div>
+              </td>
               <td>
                 <div class="tr-other-child">
-                  <span class="badge status-badge"[ngClass]="location.locationStatus ? 'active' : 'inactive'">
+                  <span class="badge status-badge" [ngClass]="location.locationStatus ? 'active' : 'inactive'">
                     {{ location.locationStatus ? 'Active' : 'Inactive' }}
                   </span>
                 </div>
               </td>
               <td>
                 <div class="tr-last-child">
-                  <button class="btn btn-sm edit-btn" (click)="onEdit(location)" data-bs-toggle="modal" data-bs-target="#locationModal">
+                  <button class="btn btn-sm edit-btn" (click)="onEdit(location)" data-bs-toggle="modal"
+                    data-bs-target="#locationModal">
                     <i class="fas fa-edit"></i> Edit
                   </button>
                 </div>

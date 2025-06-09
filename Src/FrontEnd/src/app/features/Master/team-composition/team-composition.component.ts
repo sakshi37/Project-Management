@@ -18,6 +18,27 @@ import { UpdateTeamCompositionDto } from './Models/update-team-composition.dto';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { EmployeeService } from '../../../services/employee-service';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+
+function letterLengthValidator(minLength: number, maxLength: number) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value: string = control.value || '';
+
+    // Count only letters a-z, A-Z
+    const lettersOnly = value.replace(/[^a-zA-Z]/g, '');
+
+    if (lettersOnly.length < minLength) {
+      return { minLetterLength: { requiredLength: minLength, actualLength: lettersOnly.length } };
+    }
+
+    if (lettersOnly.length > maxLength) {
+      return { maxLetterLength: { requiredLength: maxLength, actualLength: lettersOnly.length } };
+    }
+
+    return null;
+  };
+}
+
 
 @Component({
   selector: 'app-team-composition',
@@ -81,7 +102,7 @@ export class TeamCompositionComponent {
 
   initForm() {
     this.teamForm = this.fb.group({
-      teamName: ['', Validators.required],
+      teamName: ['', [Validators.required,letterLengthValidator(4, 30), Validators.pattern('^[a-zA-Z ]+$')]],
       fk_BranchId: ['', Validators.required],
       fk_DivisionId: ['', Validators.required],
       fk_TeamLeaderId: ['', Validators.required],
@@ -121,70 +142,56 @@ export class TeamCompositionComponent {
       error: (err) => console.error('Error loading divisions', err)
     });
   }
+  // filterTeams(): void {
+  //   const search = this.searchText?.trim().toLowerCase();
+
+  //   if (!search) {
+  //     this.filteredTeams = [...this.teamCompositions];
+  //     return;
+  //   }
+
+  //   this.filteredTeams = this.teamCompositions.filter((t) =>
+  //     t.teamName.toLowerCase().includes(search)
+  //   );
+  // }
   filterTeams(): void {
-    const search = this.searchText?.trim().toLowerCase();
+  const search = this.searchText?.trim().toLowerCase();
 
-    if (!search) {
-      this.filteredTeams = [...this.teamCompositions];
-      return;
-    }
-
-    this.filteredTeams = this.teamCompositions.filter((t) =>
-      t.teamName.toLowerCase().includes(search)
-    );
+  if (!search) {
+    this.filteredTeams = [...this.teamCompositions];
+    return;
   }
+
+  this.filteredTeams = this.teamCompositions.filter((t) => {
+    const teamNameMatch = t.teamName?.toLowerCase().includes(search);
+    const branchNameMatch = t.branchName?.toLowerCase().includes(search);
+    const teamLeaderMatch = t.teamLeaderName?.toLowerCase().includes(search);
+    const divisionNameMatch = t.divisionName?.toLowerCase().includes(search);
+
+    return teamNameMatch || branchNameMatch || teamLeaderMatch || divisionNameMatch;
+  });
+}
+
   fetchTeamLeaders(): void {
     this.teamService.getTeamLeaders().subscribe({
       next: (data) => this.teamLeaders = data,
       error: (err) => console.error('Error fetching team leaders', err)
     });
   }
-  
-  // exportToExcel(): void {
-  //   const exportData = this.teamCompositions.map((t, index) => ({
-  //     'Sr No': index + 1,
-  //     'Team Name': t.teamName,
-  //     'Team Leader': t.teamLeaderName,
-  //     'Branch': t.branchName,
-  //     'Division': t.divisionName,
-  //     'Status': t.teamStatus ? 'Active' : 'Inactive',
-  //     'Team Members Ids': Array.isArray(t.teamMemberIds) ? t.teamMemberIds.join(',') : 'N/A',
-  //   }));
-  
-  //   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
-  
-  //   // Step 3: Apply gray fill for Inactive rows
-  //   this.teamCompositions.forEach((t, index) => {
-  //     if (!t.teamStatus) {
-  //       const excelRow = index + 2; 
-  //       const colRange = ['A', 'B', 'C', 'D', 'E', 'F', 'G']; 
-  
-  //       colRange.forEach(col => {
-  //         const cellRef = `${col}${excelRow}`;
-  //         if (!worksheet[cellRef]) return;
-  //         worksheet[cellRef].s = {
-  //           fill: {
-  //             patternType: "solid",
-  //             fgColor: { rgb: "D3D3D3" } 
-  //           }
-  //         };
-  //       });
-  //     }
-  //   });
-  
-  //   const workbook: XLSX.WorkBook = {
-  //     Sheets: { 'TeamComposition': worksheet },
-  //     SheetNames: ['TeamComposition']
-  //   };
-  
-  //   const excelBuffer: any = XLSX.write(workbook, {
-  //     bookType: 'xlsx',
-  //     type: 'array',
-  //     cellStyles: true
-  //   });
-  
-  //   this.saveAsExcelFile(excelBuffer, 'TeamCompositionData');
-  // }
+  capitalizeEachWord() {
+  const control = this.teamForm.get('teamName');
+  const value = control?.value;
+
+  if (value) {
+    const formatted = value
+      .toLowerCase()
+      .replace(/\b\w/g, (char: string) => char.toUpperCase()); // Capitalize each word
+    if (value !== formatted) {
+      control?.setValue(formatted, { emitEvent: false }); // Prevent loop
+    }
+  }
+}
+
   exportToExcel(): void {
     const exportData = this.teamCompositions.map((t, index) => {
       const memberNames = t.teamMemberIds
@@ -408,7 +415,7 @@ export class TeamCompositionComponent {
       this.teamForm.markAllAsTouched();
       return;
     }
-    const teamMemberIds = this.teamForm.value.teamMembers.map((member: any) => member.id);
+    //const teamMemberIds = this.teamForm.value.teamMembers.map((member: any) => member.id);
     const statusBool = this.teamForm.value.teamStatus === '1' ? true : false;  
     const updatePayload = {
       teamId: this.selectedTeamId,
@@ -416,7 +423,7 @@ export class TeamCompositionComponent {
       fk_BranchId: this.teamForm.value.fk_BranchId,
       fk_DivisionId: this.teamForm.value.fk_DivisionId,
       fk_TeamLeaderId: this.teamForm.value.fk_TeamLeaderId,
-      teamMembers: teamMemberIds,
+      teamMembers: this.teamForm.value.teamMembers,
       teamStatus: statusBool,
     };
   
@@ -425,7 +432,7 @@ export class TeamCompositionComponent {
       fk_BranchId: this.teamForm.value.fk_BranchId,
       fk_DivisionId: this.teamForm.value.fk_DivisionId,
       fk_TeamLeaderId: this.teamForm.value.fk_TeamLeaderId,
-      teamMembers: teamMemberIds,
+      teamMembers: this.teamForm.value.teamMembers,
     };
   
     if (this.isEditMode && this.selectedTeamId !== null) {

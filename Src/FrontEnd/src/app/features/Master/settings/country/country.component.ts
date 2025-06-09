@@ -394,8 +394,9 @@ export class CountryComponent implements OnInit, AfterViewInit {
 
   // Edit an existing country
   onEdit(country: GetCountryDto): void {
+    this.countryForm.get('countryName')?.disable();
     this.countryForm.patchValue({
-      countryName: country.countryName,
+      countryName: country.countryName, 
       countryCode: country.countryCode,
       status: country.countryStatus ? '1' : '0',
     });

@@ -63,10 +63,30 @@ export class AssignedTaskComponent implements OnInit {
   ) {
     this.updateForm = this.fb.group({
       id: [0],
-      sequence: ['', Validators.required],
-      part: ['', Validators.required],
-      activity: ['', Validators.required],
-      type: ['', Validators.required],
+      sequence: [
+        '',
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(100),
+      ],
+      part: [
+        '',
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(100),
+      ],
+      activity: [
+        '',
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(100),
+      ],
+      type: [
+        '',
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(100),
+      ],
       remark: [''],
       fk_EmpId: [0],
     });
@@ -106,10 +126,38 @@ export class AssignedTaskComponent implements OnInit {
   initForm(): void {
     this.taskForm = this.fb.group({
       jobId: [],
-      sequence: ['', Validators.required],
-      part: ['', Validators.required],
-      activity: ['', Validators.required],
-      type: ['', Validators.required],
+      sequence: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(100),
+        ]),
+      ],
+      part: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(100),
+        ]),
+      ],
+      activity: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(100),
+        ]),
+      ],
+      type: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(100),
+        ]),
+      ],
 
       empId: ['', Validators.required],
       timeSheetStatus: [],
@@ -117,6 +165,8 @@ export class AssignedTaskComponent implements OnInit {
   }
   submitted = false;
   onSubmit(projectId: number) {
+    this.initForm();
+    console.log(this.taskForm.get('sequence'));
     console.log(this.taskForm.value);
     this.submitted = true;
     if (this.taskForm.invalid) return;

@@ -1,7 +1,9 @@
-﻿using HR.Application.Features.Admin.Queries.GetPendingRequest;
+﻿using HR.Application.Features.Admin.Queries.GetAllEmployee;
+using HR.Application.Features.Admin.Queries.GetPendingRequest;
 using HR.Application.Features.Branches.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.Dtos;
 using HR.Application.Features.Countries.Commands.Dtos;
+using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
 using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
 using HR.Application.Features.Designations.Commands.Dtos;
@@ -17,6 +19,7 @@ using HR.Application.Features.Employees.Dtos;
 using HR.Application.Features.Employees.Queries.GetAllEmployees;
 using HR.Application.Features.Employees.Queries.GetAllEmployeesByIdName;
 using HR.Application.Features.Employees.Queries.GetEmployeeBasicDetails;
+using HR.Application.Features.Employees.Queries.SearchEmployee;
 using HR.Application.Features.EmployeeType.Queries.GetAllEmployeeType;
 using HR.Application.Features.Family.Queries.GetAllFamilyType;
 using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
@@ -37,20 +40,7 @@ using HR.Domain;
 using HR.Domain.Entities;
 using HR.Identity.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using HR.Application.Features.Employees.Dtos;
-using HR.Application.Features.Employees.Dtos;
-using HR.Application.Features.Family.Queries.GetFamilyDetailsByCode;
-using HR.Application.Features.DailyReport.Queries.GetMissPunchOutDetails;
-using HR.Application.Features.DailyReport.Queries.GetMissPuchInDetails;
-using Microsoft.SharePoint.WebControls;
-using HR.Application.Features.Admin.Queries.GetPendingRequest;
-using HR.Application.Features.EmployeeAttendanceReports.Dtos.EmployeeAttendanceReportDtos;
-using HR.Application.Features.EmployeeAttendanceReports.Dtos.ParticularEmployeeDtos;
-using HR.Application.Features.Notification.Queries;
-using HR.Application.Features.DailyReport.Queries.GetHalfDayDetails;
-
 using Microsoft.EntityFrameworkCore;
-using HR.Application.Features.Employees.Queries.SearchEmployee;
 
 
 namespace HR.Persistence.Context;
@@ -88,6 +78,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<GetAllAttendanceDto> GetAllAttendanceDtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
+    public DbSet<GetEmployeeDto> getEmployeeDtos { get; set; }
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }
@@ -144,7 +135,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<CountryDto>().HasNoKey();
         modelBuilder.Entity<StateDto>().HasNoKey();
         modelBuilder.Entity<DesignationDto>().HasNoKey();
-
+        modelBuilder.Entity<GetEmployeeDto>().HasNoKey();
 
         modelBuilder.Entity<City>().ToTable("Tbl_CityMaster");
         modelBuilder.Entity<State>().ToTable("Tbl_StateMaster");

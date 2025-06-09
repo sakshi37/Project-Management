@@ -18,6 +18,7 @@ import { CityService } from '../../../../services/city.service';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LocationService } from '../../../../services/location-service';
 import { ErrorHandlerService } from '../../../../services/error-handler.service';
+import { Country } from 'country-state-city';
 
 @Component({
   selector: 'app-employee',
@@ -65,6 +66,8 @@ export class EmployeeRegistrationComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    console.log('Form initialized:', this.employeeForm.value);
+    console.log('Countries:', this.countries);
     this.loadCountries();
     this.loadStates();
     this.loadCities();
@@ -93,7 +96,7 @@ export class EmployeeRegistrationComponent implements OnInit {
         ],
       ],
       code: [''],
-      address: ['Vikroli (w)', Validators.required],
+      address: ['', Validators.required],
       mobileNo: [
         '',
         [
@@ -103,13 +106,7 @@ export class EmployeeRegistrationComponent implements OnInit {
           Validators.maxLength(10),
         ],
       ],
-      skypeId: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern('^[a-zA-Z][a-zA-Z0-9._-]{5,31}$'),
-        ],
-      ],
+
       email: ['', [Validators.required, Validators.email]],
       joinDate: [
         '',
@@ -123,8 +120,8 @@ export class EmployeeRegistrationComponent implements OnInit {
         '',
         [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)],
       ],
-      image: [''],
-      signature: ['', [Validators.required]],
+      image: [null],
+      signature: [null],
       locationId: ['', [Validators.required]],
 
       CountryId: ['', [Validators.required]],
@@ -147,10 +144,16 @@ export class EmployeeRegistrationComponent implements OnInit {
   loadCountries(): void {
     this.countryService.getAllCountries().subscribe({
       next: (data) => {
-        this.countries = data.map((country) => ({
-          id: country.countryId,
-          name: country.countryName,
-        }));
+        console.log('Countries from API:', data);
+        console.log(typeof data[0].countryStatus, data[0].countryStatus);
+
+        this.countries = data
+
+          .filter((Country) => Country.countryStatus)
+          .map((country) => ({
+            id: country.countryId,
+            name: country.countryName,
+          }));
       },
     });
   }
@@ -158,11 +161,13 @@ export class EmployeeRegistrationComponent implements OnInit {
   loadStates(): void {
     this.stateService.getAllStates().subscribe({
       next: (data) => {
-        this.states = data.map((state) => ({
-          id: state.stateId,
-          name: state.stateName,
-          countryId: state.countryId,
-        }));
+        this.states = data
+          .filter((state) => state.stateStatus)
+          .map((state) => ({
+            id: state.stateId,
+            name: state.stateName,
+            countryId: state.countryId,
+          }));
         this.filterStates(this.employeeForm.get('CountryId')?.value);
       },
     });
@@ -171,11 +176,13 @@ export class EmployeeRegistrationComponent implements OnInit {
   loadCities(): void {
     this.cityService.getAllCities().subscribe({
       next: (data) => {
-        this.cities = data.map((city) => ({
-          id: city.cityId,
-          name: city.cityName,
-          stateId: city.stateId,
-        }));
+        this.cities = data
+          .filter((city) => city.cityStatus)
+          .map((city) => ({
+            id: city.cityId,
+            name: city.cityName,
+            stateId: city.stateId,
+          }));
         this.filterCities(this.employeeForm.get('StateId')?.value);
       },
     });
@@ -267,8 +274,8 @@ export class EmployeeRegistrationComponent implements OnInit {
       birthDate: this.formatDate(this.employeeForm.value.birthDate),
       joinDate: this.formatDate(this.employeeForm.value.joinDate),
 
-      image: this.employeeForm.value.image,
-      signature: this.employeeForm.value.signature,
+      image: this.employeeForm.value.image || null,
+      signature: this.employeeForm.value.signature || null,
     };
     this.employeeService.createEmployee(emp).subscribe({
       next: () => {

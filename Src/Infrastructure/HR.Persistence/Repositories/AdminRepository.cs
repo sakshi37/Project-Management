@@ -1,13 +1,8 @@
 ﻿using HR.Application.Contracts.Models.Persistence;
+using HR.Application.Features.Admin.Queries.GetAllEmployee;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
 using HR.Persistence.Context;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HR.Persistence.Repositories
 {
@@ -20,7 +15,7 @@ namespace HR.Persistence.Repositories
             _appDbContext = appDbContext;
         }
 
-        
+
         public async Task<List<PendingRequestVm>> GetPendingRequestAsync()
         {
             return await _appDbContext.pendingRequestVms.FromSqlRaw("EXEC SP_GetAllPendingRequest").ToListAsync();
@@ -35,7 +30,7 @@ namespace HR.Persistence.Repositories
             return result < 0 ? "Request is rejected successfully...." : "Failed to reject request";
 
         }
-        public async  Task<string> ApproveRequestAsync(int requestId, string empCode, string comment)
+        public async Task<string> ApproveRequestAsync(int requestId, string empCode, string comment)
         {
             var result = await _appDbContext
                .Database
@@ -44,7 +39,10 @@ namespace HR.Persistence.Repositories
 
             return result < 0 ? "Request is Approved successfully" : "Failed to Approve request";
         }
-
+        public async Task<List<GetEmployeeDto>> GetEmployee()
+        {
+            return await _appDbContext.getEmployeeDtos.FromSqlRaw("SP_GetEmpo").ToListAsync();
+        }
 
 
     }

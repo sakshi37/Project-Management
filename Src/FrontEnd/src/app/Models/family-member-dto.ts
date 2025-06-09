@@ -2,6 +2,7 @@ export interface FamilyMember {
   fk_FamilyMemberTypeId: number;
   employeeCode: string;
   familyMemberName: string;
+  fk_GenderId:number;
   birthDate: Date;
   age: number;
   relationWithEmployee: string;
