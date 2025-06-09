@@ -1,4 +1,4 @@
-﻿
+﻿    
 
 using AutoMapper;
 using HR.Application.Contracts.Models.Persistence;

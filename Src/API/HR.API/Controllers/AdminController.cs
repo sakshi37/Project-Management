@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using HR.Application.Features.Admin.Commands.ApproveRequest;
 using HR.Application.Features.Admin.Commands.RejectRequest;
+using HR.Application.Features.Admin.Commands.UpdateUserRole;
 using HR.Application.Features.Admin.Queries.GetAllEmployee;
+using HR.Application.Features.Admin.Queries.GetEmployeeById;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +58,18 @@ namespace HR.API.Controllers
             return Ok(response);
         }
 
+        [HttpPut("UpdateUserRole")]
+        public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRoleCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(new { Success = result });
 
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEmployeeById(int id) 
+        {
+            var resut = await _mediator.Send(new GetEmployeeByIdQuery(id));
+            return Ok(resut);
+        }
     }
-}
+}   

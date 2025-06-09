@@ -1,4 +1,5 @@
 ﻿using HR.Application.Features.Admin.Queries.GetAllEmployee;
+using HR.Application.Features.Admin.Queries.GetEmployeeById;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
 using HR.Application.Features.Branches.Commands.Dtos;
 using HR.Application.Features.Cities.Commands.Dtos;
@@ -79,6 +80,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<GetAllAttendanceDto> GetAllAttendanceDtos { get; set; }
     public DbSet<GetAllTimeSheetListDto> timeSheetListDtos { get; set; }
     public DbSet<GetEmployeeDto> getEmployeeDtos { get; set; }
+    public DbSet<GetEmployeeByIdDto> GetEmployeeByIdDto { get; set; }
+
     public DbSet<Tbl_LoginMaster> Tbl_LoginMaster { get; set; }
     public DbSet<GetAllEmployeeVm> GetAllEmployeeVms { get; set; }
     public DbSet<BranchDto> BranchDtos { get; set; }

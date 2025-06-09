@@ -1,5 +1,7 @@
 ﻿using HR.Application.Features.Admin.Queries.GetAllEmployee;
+using HR.Application.Features.Admin.Queries.GetEmployeeById;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
+using HR.Application.Features.Employee.Dtos;
 
 
 namespace HR.Application.Contracts.Models.Persistence
@@ -11,5 +13,11 @@ namespace HR.Application.Contracts.Models.Persistence
         Task<string> ApproveRequestAsync(int requestId, string empCode, string comment);
 
         Task<List<GetEmployeeDto>> GetEmployee();
+
+        Task<string> UpdateUserRole(string code, int UserGroupId);
+
+        Task<List<GetEmployeeByIdDto>> GetEmployeeById(int id);
+
+
     }
 }

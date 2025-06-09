@@ -41,6 +41,7 @@ export class LefSideNavComponent {
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
+   @ViewChild('adminMenu') adminMenu: ElementRef | undefined;
 
   constructor(
     private renderer: Renderer2,
@@ -141,4 +142,12 @@ export class LefSideNavComponent {
       });
     }
   }
+  toggleadminMastersMenu(){
+
+  if (this.adminMenu) {
+      const classList = this.adminMenu.nativeElement.classList;
+      classList.contains('show')
+        ? this.renderer.removeClass(this.adminMenu.nativeElement, 'show')
+        : this.renderer.addClass(this.adminMenu.nativeElement, 'show');
+    }}
 }

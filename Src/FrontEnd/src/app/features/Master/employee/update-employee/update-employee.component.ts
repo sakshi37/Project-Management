@@ -89,13 +89,13 @@ export class UpdateEmployeeComponent implements OnInit {
     
     this.employeeForm = this.fb.group(
       {
-      name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+      name: ['', [ Validators.minLength(5), Validators.maxLength(20)]],
 
         address: [''],
         mobileNo: ['', [Validators.pattern(/^[6-9]\d{9}$/)]],
         // skypeId: ['', [Validators.minLength(10), Validators.maxLength(32)]],
-        email:['', [Validators, Validators.email]],
-        bccEmail:['', [Validators, Validators.email]],
+        email:['', [ Validators.email]],
+        bccEmail:['', [ Validators.email]],
         panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)]],
         joinDate: ['', [this.noFutureDateValidator]],
         birthDate: ['', [this.noFutureDateValidator]],

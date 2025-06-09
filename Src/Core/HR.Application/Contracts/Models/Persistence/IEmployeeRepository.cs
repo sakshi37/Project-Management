@@ -1,4 +1,5 @@
 ﻿using HR.Application.Contracts.Models.Common;
+using HR.Application.Features.Admin.Commands.UpdateUserRole;
 using HR.Application.Features.Employee.Dtos;
 using HR.Application.Features.Employee.Queries.GetEmployeeProfile;
 using HR.Application.Features.Employees.Commands.InsertEmployeeDetailsGmc;

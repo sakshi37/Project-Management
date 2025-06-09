@@ -1,5 +1,7 @@
-﻿using HR.Application.Contracts.Models.Persistence;
+﻿using System.Net.WebSockets;
+using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.Admin.Queries.GetAllEmployee;
+using HR.Application.Features.Admin.Queries.GetEmployeeById;
 using HR.Application.Features.Admin.Queries.GetPendingRequest;
 using HR.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +46,22 @@ namespace HR.Persistence.Repositories
             return await _appDbContext.getEmployeeDtos.FromSqlRaw("SP_GetEmpo").ToListAsync();
         }
 
+        public async  Task<string> UpdateUserRole(string code, int UserGroupId)
+        {
+            var result=await _appDbContext
+                .Database
+                .ExecuteSqlRawAsync("EXEC dbo.SP_updateEmployeeRoles @Code = {0}, @Fk_UserGroupId = {1}", code, UserGroupId);
+            return result > 0 ? "Role is Updated successfully" : "Failed to update role";
+        }
 
+        public async  Task<List<GetEmployeeByIdDto>> GetEmployeeById(int id)
+        {
+            return await _appDbContext.GetEmployeeByIdDto
+                .FromSqlRaw("Exec [dbo].[GetEmployeeBYId] @Id ={0}", id).ToListAsync();
+             
+
+        }
+
+        
     }
 }
