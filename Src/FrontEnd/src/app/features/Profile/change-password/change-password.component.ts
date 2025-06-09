@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
+import { AuthResponseModel } from '../../../Models/login';
 
 @Component({
   selector: 'app-change-password',
@@ -53,7 +54,7 @@ export class ChangePasswordComponent {
     if (this.passwordModel.newPassword === this.passwordModel.oldPassword) {
       Swal.fire({
         toast: true,
-        position: 'top',
+        position: 'top',  
         icon: 'error',
         title: 'New Password can’t be the same as Old Password',
         showConfirmButton: false,
@@ -64,20 +65,18 @@ export class ChangePasswordComponent {
 
     const decodedToken = jwtDecode(String(localStorage.getItem('token')));
     const UserName = decodedToken.sub != undefined ? decodedToken.sub : '';
+    const firstLogin=decodedToken.nbf !=undefined ? decodedToken.nbf : '';
     const requestData = {
       userName: UserName,
       oldPassword: this.passwordModel.oldPassword,
       newPassword: this.passwordModel.newPassword,
-      confirmPassword: this.passwordModel.confirmPassword
+      confirmPassword: this.passwordModel.confirmPassword 
     };
 
-    console.log(requestData);
-
-
-
+      
     this.userService.updatePasswords(requestData).subscribe({
       next: (res: string) => {
-        // alert('Password updated successfully!');
+        
         Swal.fire('Success', 'Password updated successfully!', 'success').then(() => {
           form.resetForm();
           this.router.navigate(['/changePassword']);

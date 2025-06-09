@@ -57,6 +57,8 @@ export class LoginComponent implements OnInit {
 
   passwordModel = {
     oldPassword: '',
+    confirmNewPassword:'',
+    newPassword:''
   };
 
   showPassword: boolean = true;
@@ -268,7 +270,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  //===resend OTP modal=====
+  //===resend OTP module=====
   isLoading = false;
 
   resendOtp() {
@@ -326,9 +328,20 @@ export class LoginComponent implements OnInit {
               return;
             }
 
+            if (this.passwordModel.oldPassword===this.passwordModel.newPassword) {
+               Swal.fire({
+                      toast: true,
+                      position: 'top',  
+                      icon: 'error',
+                      title: 'New Password can’t be the same as Old Password',
+                      showConfirmButton: false,
+                      timer: 1000,
+                      timerProgressBar: true
+                    });
+            }
 
             this.forgotUsername = enteredUsername;
-
+  
             this.userService.sendForgotPasswordOtp(this.forgotUsername).subscribe({
               next: () => {
                 Swal.fire({

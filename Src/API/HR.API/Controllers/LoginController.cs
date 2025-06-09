@@ -161,7 +161,7 @@ namespace HR.API.Controllers
             var user = employees.FirstOrDefault(u => u.Code == username);
             if (user == null)
                 return NotFound();
-
+             
             return Ok(new { firstLogin = user.FirstLogin });
         }
 
