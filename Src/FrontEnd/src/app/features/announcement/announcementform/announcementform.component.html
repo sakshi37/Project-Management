@@ -1,0 +1,47 @@
+<div class="card p-4">
+    <form [formGroup]="announcementForm" (ngSubmit)="submitForm()">
+        <div class="col-md-12 mb-3">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>Target Type</label>
+                    <select class="form-select" formControlName="targetType">
+                        <option value="" disabled>Select Target Type</option>
+                        <option *ngFor="let type of targetTypes" [value]="type">{{ type }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6" >
+                    <label>Target Value</label>
+                    <input class="form-control" formControlName="targetValue" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>From Date</label>
+                    <input type="date" class="form-control" formControlName="fromDate" />
+                </div>
+                <div class="col-md-6">
+                    <label>To Date</label>
+                    <input type="date" class="form-control" formControlName="toDate" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>Title</label>
+                    <input class="form-control" formControlName="title" />
+                </div>
+                <div class="col-md-6">
+                    <label>Message</label>
+                    <textarea class="form-control" formControlName="message"></textarea>
+                </div>
+            </div>
+
+            
+        </div>
+
+
+
+        <button class="btn btn-primary" type="submit" [disabled]="announcementForm.invalid">
+            Post Announcement
+        </button>
+    </form>
+</div>

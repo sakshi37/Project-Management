@@ -20,7 +20,7 @@ export interface Announcement {
   providedIn: 'root'
 })
 export class AnnouncementService {
-    private apiUrl = `${API_URL}/BroadcastAnnouncement/get-by-user`;
+    private apiUrl = `${API_URL}`;
   
   private hubConnection!: signalR.HubConnection;
 
@@ -32,13 +32,17 @@ export class AnnouncementService {
   private shownAnnouncementIds = new Set<number>();
 
   constructor(private roleService: RoleService, private http: HttpClient) {}
+  postAnnouncement(data: any) {
+  return this.http.post(`${this.apiUrl}/BroadcastAnnouncement`, data);
+}
+
   getAnnouncements(employeeCode: string, userGroup: string): Observable<Announcement[]> {
   console.log('Fetching announcements for employeeCode:', employeeCode, 'and userGroup:', userGroup);
   const params = new HttpParams()
     .set('employeeCode', employeeCode)
     .set('userGroup', userGroup);
 
-  return this.http.get<Announcement[]>(this.apiUrl, { params });
+  return this.http.get<Announcement[]>(`${this.apiUrl}/BroadcastAnnouncement/get-by-user`, { params });
 }
 
 

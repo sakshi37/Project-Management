@@ -29,6 +29,7 @@ import { NotificationComponent } from './features/notification/notification.comp
 import { AssignedTaskComponent } from './features/Master/assigned-task/assigned-task.component';
 import { WorkTimesheetComponent } from './features/Master/work-timesheet/work-timesheet.component';
 import { AnnouncementComponent } from './features/announcement/announcement.component';
+import { AnnouncementformComponent } from './features/announcement/announcementform/announcementform.component';
 
 export const routes: Routes = [
 
@@ -41,6 +42,7 @@ export const routes: Routes = [
     data: { roles: ['HR'] },
   },
   { path: 'announcements', component: AnnouncementComponent },
+  { path: 'announcement-form', component: AnnouncementformComponent },
 
 
   {
