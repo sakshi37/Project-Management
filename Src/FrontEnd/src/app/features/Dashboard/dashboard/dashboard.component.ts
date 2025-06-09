@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { LefSideNavComponent } from '../../../shared/lef-side-nav/lef-side-nav.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
@@ -6,74 +6,91 @@ import { DashboardInfoComponent } from '../dashboard-info/dashboard-info.compone
 import { ActivityTimesheetComponent } from '../activity-timesheet/activity-timesheet.component';
 import { Announcement, AnnouncementService } from '../../../services/announcement.service';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DashboardInfoComponent, ActivityTimesheetComponent,CommonModule],
+  imports: [DashboardInfoComponent, ActivityTimesheetComponent, CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent  {
   products: any;
-  latestAnnouncement: Announcement | null = null;
-  private shownAnnouncementIds = new Set<number>();
+  private newAnnouncementSubscription?: Subscription;
+  private alertQueue: Announcement[] = [];
+  private isShowingAlert = false;
 
+  constructor(
+    private apiService: ApiService, 
+    private announcementService: AnnouncementService
+  ) {}
 
+  // async ngOnInit(): Promise<void> {
+  //   console.log('Dashboard component initializing');
+    
+  //   // Start SignalR connection
+  //   await this.announcementService.startConnection();
+    
+  //   console.log('SignalR connection state:', this.announcementService.getConnectionState());
 
-  constructor(private apiService: ApiService, private announcementService: AnnouncementService) {}
+  //   // Subscribe to new announcements in real-time
+  //   this.newAnnouncementSubscription = this.announcementService.newAnnouncement$.subscribe((announcement) => {
+  //     console.log('New announcement received in dashboard:', announcement);
+  //     this.queueAlert(announcement);
+  //   });
+  // }
 
-  ngOnInit(): void {
-    // this.announcementService.announcements$.subscribe((announcements) => {
-    //   if (announcements.length > 0) {
-    //     this.latestAnnouncement = announcements[0]; // only show the newest one
-    //     // Optional: Hide alert after some time
-    //     setTimeout(() => {
-    //       this.latestAnnouncement = null;
-    //     }, 5000);
-    //   }
-    // });
-    this.announcementService.startConnection();
+  // ngOnDestroy(): void {
+  //   console.log('Dashboard component destroying');
+  //   // Clean up subscription
+  //   if (this.newAnnouncementSubscription) {
+  //     this.newAnnouncementSubscription.unsubscribe();
+  //   }
+  // }
 
-    // this.announcementService.announcements$.subscribe((announcements) => {
-    //   if (announcements.length > 0) {
-    //     const latest = announcements[0];
-    //     this.latestAnnouncement = latest;
+  // private queueAlert(announcement: Announcement) {
+  //   console.log('Queueing alert for announcement:', announcement.id);
+  //   this.alertQueue.push(announcement);
+  //   this.processAlertQueue();
+  // }
 
-    //     // 👇 Show SweetAlert
-    //     Swal.fire({
-    //       title: latest.title,
-    //       text: latest.message,
-    //       icon: 'info',
-    //       confirmButtonText: 'OK',
-    //       timer: 10000,
-    //       timerProgressBar: true
-    //     });
-    //   }
-    // });
-    this.announcementService.startConnection();
+  // private async processAlertQueue() {
+  //   if (this.isShowingAlert || this.alertQueue.length === 0) {
+  //     return;
+  //   }
 
-    this.announcementService.announcements$.subscribe((announcements) => {
-      announcements.forEach((announcement) => {
-        if (!this.shownAnnouncementIds.has(announcement.id)) {
-          this.shownAnnouncementIds.add(announcement.id);
-          this.showAlert(announcement);
-        }
-      });
-    });
-  }
+  //   this.isShowingAlert = true;
+    
+  //   while (this.alertQueue.length > 0) {
+  //     const announcement = this.alertQueue.shift();
+  //     if (announcement) {
+  //       console.log('Showing alert for announcement:', announcement.id);
+  //       await this.showAlert(announcement);
+  //       this.announcementService.markAnnouncementAsShown(announcement.id);
+        
+  //       // Wait a bit before showing next alert
+  //       await this.delay(1000);
+  //     }
+  //   }
+    
+  //   this.isShowingAlert = false;
+  // }
 
-  private showAlert(announcement: Announcement) {
-    Swal.fire({
-      title: announcement.title,
-      text: announcement.message,
-      icon: 'info',
-      confirmButtonText: 'OK',
-      timer: 10000,
-      timerProgressBar: true
-    });
-  }
-  }
-  
+  // private showAlert(announcement: Announcement): Promise<any> {
+  //   return Swal.fire({
+  //     title: announcement.title,
+  //     text: announcement.message,
+  //     icon: 'info',
+  //     confirmButtonText: 'OK',
+  //     timer: 10000,
+  //     timerProgressBar: true,
+  //     allowOutsideClick: false,
+  //     allowEscapeKey: false
+  //   });
+  // }
 
-
+  // private delay(ms: number): Promise<void> {
+  //   return new Promise(resolve => setTimeout(resolve, ms));
+  // }
+}

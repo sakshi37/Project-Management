@@ -1,25 +1,4 @@
-<!-- <table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Message</th>
-      <th>From Date</th>
-      <th>To Date</th>
-      <th>Target Type</th>
-      <th>Target Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let ann of announcements">
-      <td>{{ ann.title }}</td>
-      <td>{{ ann.message }}</td>
-      <td>{{ ann.fromDate | date:'medium' }}</td>
-      <td>{{ ann.toDate | date:'medium' }}</td>
-      <td>{{ ann.targetType }}</td>
-      <td>{{ ann.targetValue }}</td>
-    </tr>
-  </tbody>
-</table> -->
+
 <div class="card">
   <p-table
       [value]="announcements"
@@ -28,7 +7,7 @@
       [tableStyle]="{ 'min-width': '50rem' }"
       [rowsPerPageOptions]="[5, 10, 20]"
   >
-      <ng-template #header>
+      <ng-template pTemplate="header">
           <tr>
               <th style="width:20%">Title</th>
               <th style="width:30%">Message</th>
@@ -39,7 +18,7 @@
 
           </tr>
       </ng-template>
-      <ng-template #body let-announcement>
+      <ng-template pTemplate="body" let-announcement>
           <tr>
               <td><i class="fa fa-bullhorn"></i> {{announcement.title }}</td>
               <td>{{ announcement.message }}</td>

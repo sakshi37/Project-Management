@@ -33,6 +33,7 @@ namespace HR.API.Broadcast
                 else if (ann.TargetType == "UserGroup" && !string.IsNullOrEmpty(ann.TargetValue))
                 {
                     var groupName = $"Group_{ann.TargetValue}";
+                    Console.WriteLine($"BroadCasting to UserGroup: {ann.TargetValue }");
                     await _hubContext.Clients.Group(groupName).SendAsync("ReceiveAnnouncement", ann);
                 }
                 else if (ann.TargetType == "Employee" && !string.IsNullOrEmpty(ann.TargetValue))

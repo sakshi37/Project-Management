@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
+import { RoleService } from '../../services/role.service';
 
 @Component({
   selector: 'app-announcement',
@@ -16,17 +17,28 @@ export class AnnouncementComponent implements OnInit, OnDestroy {
   announcements: Announcement[] = [];
   private subscription!: Subscription;
 
-  constructor(private announcementService: AnnouncementService) {}
+  constructor(
+    private announcementService: AnnouncementService,
+    private roleService: RoleService,
+  ) {}
+  
 
   ngOnInit(): void {
-    this.announcementService.startConnection();
+    const employeeCode = this.roleService.getEmpCode();
+    const userGroup = this.roleService.getUserRole();
 
-    this.subscription = this.announcementService.announcements$.subscribe(data => {
-      this.announcements = data;
-    });
+    if (employeeCode && userGroup) {
+      this.subscription = this.announcementService
+        .getAnnouncements(employeeCode, userGroup)
+        .subscribe({
+          next: (data) => (this.announcements = data),
+          error: (err) => console.error('Error fetching announcements:', err)
+        });
+    }
   }
-
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

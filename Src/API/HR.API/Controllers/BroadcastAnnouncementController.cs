@@ -30,6 +30,14 @@ namespace HR.API.Controllers
             var announcements = await _mediator.Send(new GetTodayAnnouncementsQuery());
             return Ok(announcements);
         }
+
+        [HttpGet("get-by-user")]
+        public async Task<IActionResult> GetAnnouncementsForUser([FromQuery] GetAnnouncementsForUserDTO dto)
+        {
+            var result = await _mediator.Send(new GetAnnouncementsForUserQuery(dto));
+            return Ok(result);
+        }
+
     }
 
 }

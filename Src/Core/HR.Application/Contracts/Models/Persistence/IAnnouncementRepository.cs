@@ -11,6 +11,7 @@ namespace HR.Application.Contracts.Models.Persistence
     {
         Task<string> InsertAsync(BroadcastAnnouncementDto dto);
         Task<List<BroadcastAnnouncementDto>> GetTodayAnnouncementsAsync();
+        Task<List<BroadcastAnnouncementDto>> GetAnnouncementsForUserAsync(string employeeCode, string userGroup);
     }
 
 }

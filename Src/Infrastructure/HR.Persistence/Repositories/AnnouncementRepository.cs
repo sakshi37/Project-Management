@@ -9,6 +9,7 @@ using HR.Application.Contracts.Models.Persistence;
 using HR.Application.Features.Annoucements.Dtos;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace HR.Persistence.Repositories
 {
@@ -42,6 +43,19 @@ namespace HR.Persistence.Repositories
             var result = await _db.QueryAsync<BroadcastAnnouncementDto>("dbo.SP_GetTodayBroadcastAnnouncements", commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
+        public async Task<List<BroadcastAnnouncementDto>> GetAnnouncementsForUserAsync(string employeeCode, string userGroup)
+        {
+
+            var result = await _db.QueryAsync<BroadcastAnnouncementDto>(
+                "SP_GetAnnouncementsForUser",
+                new { EmployeeCode = employeeCode, UserGroup = userGroup },
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result.ToList();
+        }
+
+
     }
 
 }

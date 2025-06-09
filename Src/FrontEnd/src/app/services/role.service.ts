@@ -13,6 +13,19 @@ export class RoleService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+  getEmpCode(): string | null {
+  const token = this.getToken();
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<any>(token);
+    return decoded["unique_name"] || decoded["sub"] || null;
+  } catch (err) {
+    console.error('Invalid token', err);
+    return null;
+  }
+}
+
 
   getUserRole(): string | null {
     const token = this.getToken();
