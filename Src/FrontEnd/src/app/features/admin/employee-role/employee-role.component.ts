@@ -18,6 +18,7 @@ declare var bootstrap: any;
 export class EmployeeRoleComponent {
   roles: role[] = [];
    userGroups: UserGroup[] = [];
+  
   private updateRoleModal!: bootstrap.Modal;
 
   constructor(private adminService: AdminService ,
@@ -28,7 +29,15 @@ export class EmployeeRoleComponent {
     this.getAllUserGroups()
 
   }
+  
+  employeeUpdateForm: FormGroup = new FormGroup({
+    code: new FormControl('', [Validators.required]),
+    fk_UserGroupId: new FormControl('', [Validators.required]),
+    name : new FormControl('',Validators.required),
+    email:new FormControl('',Validators.required),
+    userGroupName: new FormControl('', Validators.required )
 
+  })
   getAllUserGroups(): void {
   this.updateService.getAllUserGroups().subscribe({
     next: (res) => {
@@ -46,11 +55,6 @@ export class EmployeeRoleComponent {
     });
   }
 
-  employeeUpdateForm: FormGroup = new FormGroup({
-    code: new FormControl('', [Validators.required]),
-    fk_UserGroupId: new FormControl('', [Validators.required]),
-    userGroupName: new FormControl('')
-  })
 
  UpdateRole(code: string, fk_UserGroupId: number) {
   const payload = { code, fk_UserGroupId }; 
@@ -71,7 +75,9 @@ export class EmployeeRoleComponent {
   if (role) {
     const matchedUserGroup = this.userGroups.find(ug => ug.userGroupId === role.fk_UserGroupId);
     this.employeeUpdateForm.patchValue({
+      name:role.name,
       code: role.code,
+      email:role.email,
       fk_UserGroupId: matchedUserGroup ? matchedUserGroup.userGroupId : null,
       userGroupName: matchedUserGroup ? matchedUserGroup.userGroupName : ''
     });

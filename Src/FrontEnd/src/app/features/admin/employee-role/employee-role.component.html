@@ -39,11 +39,21 @@
 <br>
 <h5>Update User Role:</h5>
           <div class="row">
+            <!-- Employee Code -->
+            <div class="col-md-8 form-group">
+              <label for="code">Employee Name:</label>
+              <input type="text" class="form-control" formControlName="name"  readonly>
+            </div>
             
             <!-- Employee Code -->
             <div class="col-md-8 form-group">
               <label for="code">Employee Code:</label>
-              <input type="text" class="form-control" formControlName="code" [disabled]="true" readonly>
+              <input type="text" class="form-control" formControlName="code"  readonly>
+            </div>
+            <!-- Employee Code -->
+            <div class="col-md-8 form-group">
+              <label for="code">Employee Email:</label>
+              <input type="text" class="form-control" formControlName="email"  readonly>
             </div>
 
             <!-- User Group -->
