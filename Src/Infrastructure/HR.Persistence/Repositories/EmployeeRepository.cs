@@ -300,7 +300,6 @@ namespace HR.Persistence.Repositories
         new SqlParameter("@Fk_DivisionId", (object?)dto.DivisionId ?? DBNull.Value),
         new SqlParameter("@Fk_GenderId", (object?)dto.GenderId ?? DBNull.Value),
 
-
     };
 
             try
@@ -309,9 +308,9 @@ namespace HR.Persistence.Repositories
                     @"EXEC SP_Employee_update 
               @Code,@Name, @Address, @MobileNo, @SkypeId, @JoinDate, @Email, @BccEmail, @PanNumber,@AadharCardNo, @BirthDate, 
               @Image, @Signature, @LoginStatus, @LeftCompany, @LeftDate, 
-              @Fk_LocationId, @Fk_DesignationId, 
+              @Fk_LocationId, @Fk_DesignationId,
               @Fk_ShiftId, @Fk_EmployeeTypeId, @Fk_UserGroupId, @Fk_BranchId, @Fk_DivisionId,@Fk_CountryId,@Fk_StateId,@Fk_CityId,@Fk_GenderId",
-                    parameters.ToArray()
+               parameters.ToArray()
                 );
 
                 Console.WriteLine($"[DEBUG] Rows affected: {result}");
@@ -397,10 +396,6 @@ namespace HR.Persistence.Repositories
         {
             return await _appDbContext.GetAllEmployeeByIdNameDtos.FromSqlRaw("EXEC SP_GetAllEmployees @TeamLeadId = {0}", teamLeadId).ToListAsync();
         }
-
-
-
-
 
         public async Task<string> MakeMultipleEmployeesInactiveAsync(string codes)
         {

@@ -110,8 +110,6 @@ namespace HR.Identity.Services
                 }
 
 
-
-
                 var token = GenerateToken(user);
 
                 return new LoginResponse
@@ -206,18 +204,22 @@ namespace HR.Identity.Services
                 .ToListAsync();
 
             var user = employees.FirstOrDefault(cp => cp.Code == changePasswordRequest.UserName);
+
             if (user == null)
                 throw new UserNotFoundException("User not found");
 
+            if (user.FirstLogin == true || user.FirstLogin?.ToString().ToLower() == "true")
+                throw new Exception("You are a new user. Please verify the OTP first to change your password.");
+
             if (changePasswordRequest.NewPassword != changePasswordRequest.ConfirmNewPassword)
                 throw new Exception("New and Confirm Password must be the same");
-
 
             var otpRequest = new OtpRequest
             {
                 Code = changePasswordRequest.UserName,
                 Otp = changePasswordRequest.Otp
             };
+
             var otpVerificationResult = await VerifyOtp(otpRequest);
             if (otpVerificationResult == null)
                 throw new OtpNotFoundException("Invalid or expired OTP.");
@@ -233,6 +235,7 @@ namespace HR.Identity.Services
 
             return result > 0;
         }
+
 
 
 
@@ -290,6 +293,7 @@ namespace HR.Identity.Services
                 new Claim("jti", DateTime.Now.ToString()),
                 new Claim("sub", user.Code),
                 new Claim("iss", user.Email),
+                new Claim("nbf",user.FirstLogin.ToString())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor

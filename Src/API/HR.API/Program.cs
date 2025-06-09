@@ -16,7 +16,7 @@ using System.Text;
 
 namespace HR.API
 {
-    public class Program
+    public class Program 
     {
         public static void Main(string[] args)
         {
@@ -28,7 +28,7 @@ namespace HR.API
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connString),
                 ServiceLifetime.Scoped
-            );
+            );   
 
             // Register Application Services
             builder.Services.AddApplicationServices();
