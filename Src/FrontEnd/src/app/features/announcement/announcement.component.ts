@@ -22,6 +22,7 @@ export class AnnouncementComponent implements OnInit, OnDestroy {
   filteredAnnouncements: Announcement[] = [];
   filteredAdminAnnouncements: Announcement[] = []; // Add this for admin filtering
   searchTerm: string = '';
+  adminSearchTerm: string = '';
   private pollingSubscription!: Subscription;
   userRole!: string | null;
 
@@ -55,40 +56,96 @@ export class AnnouncementComponent implements OnInit, OnDestroy {
     this.filterAdminAnnouncements();
   }
 
+  // Add search methods
+  onSearchChange(): void {
+    this.filterAnnouncements();
+  }
+
+  onAdminSearchChange(): void {
+    this.filterAdminAnnouncements();
+  }
+
   filterAnnouncements(): void {
+    let filtered: Announcement[] = [];
+    
+    // First apply filter by type
     if (this.activeFilter === 'all') {
-      this.filteredAnnouncements = [...this.announcements];
+      filtered = [...this.announcements];
     } else if (this.activeFilter === 'userGroup') {
       // Show all announcements targeted to UserGroups
-      this.filteredAnnouncements = this.announcements.filter(a =>
+      filtered = this.announcements.filter(a =>
         a.targetType === 'UserGroup'
       );
     } else if (this.activeFilter === 'employee') {
       // Show all announcements targeted to Employees
-      this.filteredAnnouncements = this.announcements.filter(a =>
+      filtered = this.announcements.filter(a =>
         a.targetType === 'Employee'
       );
-    } else {
-      this.filteredAnnouncements = [];
     }
+
+    // Then apply search filter
+    if (this.searchTerm.trim()) {
+      const searchLower = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(a =>
+        a.title?.toLowerCase().includes(searchLower) ||
+        a.message?.toLowerCase().includes(searchLower) ||
+        a.targetType?.toLowerCase().includes(searchLower) ||
+        a.targetValue?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    this.filteredAnnouncements = filtered;
   }
 
   // Add filtering method for admin announcements
   filterAdminAnnouncements(): void {
+    let filtered: Announcement[] = [];
+    
+    // First apply filter by type
     if (this.adminActiveFilter === 'all') {
-      this.filteredAdminAnnouncements = [...this.adminannouncements];
+      filtered = [...this.adminannouncements];
     } else if (this.adminActiveFilter === 'userGroup') {
       // Show all announcements targeted to UserGroups
-      this.filteredAdminAnnouncements = this.adminannouncements.filter(a =>
+      filtered = this.adminannouncements.filter(a =>
         a.targetType === 'UserGroup'
       );
     } else if (this.adminActiveFilter === 'employee') {
       // Show all announcements targeted to Employees
-      this.filteredAdminAnnouncements = this.adminannouncements.filter(a =>
+      filtered = this.adminannouncements.filter(a =>
         a.targetType === 'Employee'
       );
-    } else {
-      this.filteredAdminAnnouncements = [];
+    }
+
+    // Then apply search filter
+    if (this.adminSearchTerm.trim()) {
+      const searchLower = this.adminSearchTerm.toLowerCase().trim();
+      filtered = filtered.filter(a =>
+        a.title?.toLowerCase().includes(searchLower) ||
+        a.message?.toLowerCase().includes(searchLower) ||
+        a.targetType?.toLowerCase().includes(searchLower) ||
+        a.targetValue?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    this.filteredAdminAnnouncements = filtered;
+  }
+
+  // Helper methods for display names
+  getFilterDisplayName(): string {
+    switch (this.activeFilter) {
+      case 'all': return 'All';
+      case 'userGroup': return 'UserGroup wise';
+      case 'employee': return 'For You';
+      default: return '';
+    }
+  }
+
+  getAdminFilterDisplayName(): string {
+    switch (this.adminActiveFilter) {
+      case 'all': return 'All';
+      case 'userGroup': return 'UserGroup wise';
+      case 'employee': return 'For You';
+      default: return '';
     }
   }
 
