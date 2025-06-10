@@ -45,6 +45,10 @@ export class AnnouncementService {
   return this.http.get<Announcement[]>(`${this.apiUrl}/BroadcastAnnouncement/get-by-user`, { params });
 }
 
+  gettodayAnnouncements(){
+    return this.http.get<Announcement[]>(`${this.apiUrl}/BroadcastAnnouncement/today`);
+  }
+
 
   async startConnection() {
     // If connection exists and is connected, don't start again

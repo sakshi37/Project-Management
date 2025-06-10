@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { AppComponent } from '../../app.component';
 import { Toast } from 'bootstrap';
+import { AnnouncementService } from '../../services/announcement.service';
 
 declare var bootstrap: any;
 
@@ -47,12 +48,12 @@ export class LoginComponent implements OnInit {
       ),
     ]),
   });
-
   constructor(
     private router: Router,
     private userService: UserService,
     private ngZone: NgZone,
-    private injector: Injector
+    private injector: Injector,
+    private announcementService: AnnouncementService
   ) { }
 
   passwordModel = {
@@ -90,6 +91,8 @@ loginUser(loginForm: NgForm) {
       this.loginAttempts = 0; 
       localStorage.setItem('token', response.token);
       localStorage.setItem('loginStatus', String(response.loginStatus));
+      this.announcementService.restartConnection();
+
       const decodedToken = jwtDecode(response.token);
       this.UserName = decodedToken.sub;
       this.UserEmail = decodedToken.iss;

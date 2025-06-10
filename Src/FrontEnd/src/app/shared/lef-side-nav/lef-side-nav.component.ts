@@ -15,6 +15,7 @@ import { ProfileService, UserProfile } from '../../services/profile-services';
 import { RoleService } from '../../services/role.service';
 import { NotificationModel } from '../../Models/notification-model';
 import { NotificationService } from '../../services/notification-service';
+import { AnnouncementService } from '../../services/announcement.service';
 
 @Component({
   selector: 'app-lef-side-nav',
@@ -41,13 +42,13 @@ export class LefSideNavComponent {
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
-
   constructor(
     private renderer: Renderer2,
     private profileService: ProfileService,
     private router: Router,
     private roleService: RoleService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private announcementService: AnnouncementService
   ) {}
 
   ngOnInit(): void {
@@ -92,6 +93,8 @@ export class LefSideNavComponent {
     localStorage.clear();
     sessionStorage.clear();
     this.router.navigate(['login']);
+     this.announcementService.clear();
+    
   }
 
   toggleSidebar() {

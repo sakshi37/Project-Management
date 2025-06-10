@@ -13,6 +13,7 @@ import { DashboardComponent } from './features/Dashboard/dashboard/dashboard.com
 import { Subscription } from 'rxjs';
 import { Announcement, AnnouncementService } from './services/announcement.service';
 import Swal from 'sweetalert2';
+import { RoleService } from './services/role.service';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,10 @@ export class AppComponent {
     private alertQueue: Announcement[] = [];
     private isShowingAlert = false;
       async ngOnInit(): Promise<void> {
+        if (this.roleService.getToken()) {
+      // Start connection if token exists
+      this.announcementService.startConnection();
+    }
         console.log('Dashboard component initializing');
         
         // Start SignalR connection
@@ -122,8 +127,11 @@ export class AppComponent {
   onSidebarToggled(newState: boolean) {
     this.isSidebarVisible = newState;
   }
-
-  constructor(private router: Router, private announcementService: AnnouncementService) {
+  constructor(
+    private router: Router,
+    private announcementService: AnnouncementService,
+    private roleService: RoleService
+  ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -138,3 +146,4 @@ export class AppComponent {
       });
   }  
 }
+
