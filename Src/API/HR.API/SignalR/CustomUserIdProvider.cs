@@ -18,7 +18,7 @@ namespace HR.API.SignalR
 
             Console.WriteLine($"CustomUserIdProvider => sub: {userId}");
 
-            return userId; // should return NS085
+            return userId; 
         }
     }
 }

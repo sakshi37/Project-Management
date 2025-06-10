@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Announcement, AnnouncementService } from '../../../services/announcement.service';
 import { RoleService } from '../../../services/role.service';
@@ -15,13 +15,13 @@ import { Subscription } from 'rxjs';
   styleUrl: './announcementform.component.css',
   standalone: true
 })
-export class AnnouncementformComponent implements OnInit {
+export class AnnouncementformComponent implements OnInit, OnDestroy {
   announcements: Announcement[] = [];
   private subscription!: Subscription;
   
   announcementForm!: FormGroup;
   targetTypes = ['All', 'UserGroup', 'Employee'];
-  userGroups = ['HR', 'Team Leader', 'User'];
+  userGroups = ['HR', 'Team Lead', 'User'];
   userGroup: string | null = '';
   empCode: string | null = '';
 
@@ -29,39 +29,55 @@ export class AnnouncementformComponent implements OnInit {
     private fb: FormBuilder,
     private announcementService: AnnouncementService,
     private roleService: RoleService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.userGroup = this.roleService.getUserRole();
-    this.empCode = this.roleService.getEmpId(); // fixed method name
+    this.empCode = this.roleService.getEmpId();
 
+    this.initializeForm();
+    this.loadAnnouncements();
+    this.setupTargetTypeListener();
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  private initializeForm(): void {
     this.announcementForm = this.fb.group({
       title: ['', Validators.required],
       message: ['', Validators.required],
       fromDate: ['', Validators.required],
       toDate: ['', Validators.required],
       targetType: ['', Validators.required],
-      targetValue: ['']
+      targetValue: ['', Validators.required] // Initialize as required
     });
+  }
+
+  private loadAnnouncements(): void {
     this.subscription = this.announcementService.gettodayAnnouncements().subscribe({
       next: (announcements) => {
         this.announcements = announcements;
       },
       error: (err) => this.errorHandler.handleError(err)
     });
+  }
 
-    // Dynamically handle targetValue field based on selected targetType
+  private setupTargetTypeListener(): void {
     this.announcementForm.get('targetType')?.valueChanges.subscribe((type) => {
       const targetValueControl = this.announcementForm.get('targetValue');
-
+      
       if (type === 'All') {
+        targetValueControl?.setValue(''); // Set empty string for "All"
         targetValueControl?.clearValidators();
-        targetValueControl?.reset();
       } else {
         targetValueControl?.setValidators(Validators.required);
       }
-
       targetValueControl?.updateValueAndValidity();
     });
   }
@@ -74,20 +90,31 @@ export class AnnouncementformComponent implements OnInit {
     return this.userGroups;
   }
 
+  shouldShowTargetValueField(): boolean {
+  return !!this.targetTypeValue && this.targetTypeValue !== 'All';
+}
+
   submitForm(): void {
     if (this.announcementForm.valid) {
+      const formValue = this.announcementForm.value;
+      
+      // Ensure targetValue is empty string when "All" is selected
       const body = {
         id: 0,
-        ...this.announcementForm.value
+        ...formValue,
+        targetValue: this.targetTypeValue === 'All' ? '' : formValue.targetValue
       };
 
       this.announcementService.postAnnouncement(body).subscribe({
-        next: () =>
+        next: () => {
           Swal.fire({
             title: 'Success',
             text: 'Announcement posted successfully!',
             icon: 'success'
-          }),
+          }).then(() => {
+            this.router.navigate(['/announcements']);
+          });
+        },
         error: (err) => this.errorHandler.handleError(err)
       });
     }
