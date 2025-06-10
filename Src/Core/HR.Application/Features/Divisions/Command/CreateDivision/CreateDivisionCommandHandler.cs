@@ -16,12 +16,10 @@ namespace HR.Application.Features.Divisions.Command.CreateDivision
     public class CreateDivisionCommandHandler : IRequestHandler<CreateDivisionCommand, division>
     {
         private readonly IDivisionRepositry _repo;
-        private readonly IMapper _mapper;
 
         public CreateDivisionCommandHandler(IDivisionRepositry repo, IMapper mapper)
         {
             _repo = repo;
-            _mapper = mapper;
         }
 
         public async  Task<division> Handle(CreateDivisionCommand request, CancellationToken cancellationToken)

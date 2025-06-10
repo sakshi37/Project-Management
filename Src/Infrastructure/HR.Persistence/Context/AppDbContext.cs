@@ -128,6 +128,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<EmployeeAttendanceReportDto> attendanceRepoertdtos { get; set; }
     public DbSet<ParticularEmployeeDto> ParticularEmployee { get; set; }
     public DbSet<SearchEmployeeVm> SearchEmployeeVm { get; set; }
+    public DbSet<AccessRole> accessRole  { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -204,6 +205,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<HalfDayQueryVm>().HasNoKey();
 
         modelBuilder.Entity<SearchEmployeeVm>().HasNoKey();
+        modelBuilder.Entity<AccessRole>().HasNoKey();
     }
 
 }

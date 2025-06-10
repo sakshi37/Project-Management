@@ -102,5 +102,7 @@ public class MappingProfile : Profile
         CreateMap<RejectRequestDto, RejectRequestCommand>();
         CreateMap<ApproveRequestDto, ApproveRequestCommand>();
 
+        //CreateMap<AccessRole,Acess>
+
     }
 }

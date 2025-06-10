@@ -35,7 +35,7 @@ export class EmployeeRoleComponent {
     fk_UserGroupId: new FormControl('', [Validators.required]),
     name : new FormControl('',Validators.required),
     email:new FormControl('',Validators.required),
-    userGroupName: new FormControl('', Validators.required )
+userGroupName: new FormControl('' )
 
   })
   getAllUserGroups(): void {
@@ -78,8 +78,8 @@ export class EmployeeRoleComponent {
       name:role.name,
       code: role.code,
       email:role.email,
-      fk_UserGroupId: matchedUserGroup ? matchedUserGroup.userGroupId : null,
-      userGroupName: matchedUserGroup ? matchedUserGroup.userGroupName : ''
+      fk_UserGroupId:role.fk_UserGroupId,
+userGroupName: matchedUserGroup ? matchedUserGroup.userGroupName : ''
     });
     console.log('Patched form:', this.employeeUpdateForm.value);
   }

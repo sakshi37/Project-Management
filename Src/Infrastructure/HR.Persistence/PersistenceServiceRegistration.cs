@@ -46,6 +46,7 @@ namespace HR.Persistence
             services.AddScoped<IRequestByHrRepository, RequestByHrRepository>();
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IAccessRoleRepositoy, AccessRoleRepository>();
 
 
 

@@ -1,28 +1,46 @@
-
 <table cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%">
   <thead>
     <tr>
       <!-- <th>
                 <div class="head-first">Sr. No</div>
               </th> -->
-      <th> <div class="head-first">Name</div></th>
-      <th>  <div class="head-other sortable">Code</div></th>
-      <th><div class="head-other sortable">Email</div></th>
-      <th><div class="head-other sortable">User Group ID</div></th>
-      <th><div class="head-last">Action</div></th>
+      <th>
+        <div class="head-first">Name</div>
+      </th>
+      <th>
+        <div class="head-other sortable">Code</div>
+      </th>
+      <th>
+        <div class="head-other sortable">Email</div>
+      </th>
+      <th>
+        <div class="head-other sortable">Role</div>
+      </th>
+      <th>
+        <div class="head-last">Action</div>
+      </th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let s of roles">
-      
-      <td> <div class="tr-first-child">{{ s.name }}</div></td>
-      <td> <div class="tr-other-child">{{ s.code }}</div></td>
-      <td> <div class="tr-other-child">{{ s.email }}</div></td>
-      <td><div class="tr-other-child">{{ s.fk_UserGroupId }}</div></td>
-      <td><div class="tr-last-child">
-        <button type="button" class="btn custom-add-btn" (click)="openAddModal(s.id)">
-           <i class="fas fa-edit"></i> Edit
-        </button>
+
+      <td>
+        <div class="tr-first-child">{{ s.name }}</div>
+      </td>
+      <td>
+        <div class="tr-other-child">{{ s.code }}</div>
+      </td>
+      <td>
+        <div class="tr-other-child">{{ s.email }}</div>
+      </td>
+      <td>
+        <div class="tr-other-child">{{ s.fk_UserGroupId }}</div>
+      </td>
+      <td>
+        <div class="tr-last-child">
+          <button type="button" class="btn custom-add-btn" (click)="openAddModal(s.id)">
+            <i class="fas fa-edit"></i> Edit
+          </button>
         </div>
       </td>
     </tr>
@@ -36,32 +54,32 @@
 
       <div class="modal-body">
         <form [formGroup]="employeeUpdateForm" (ngSubmit)="onSubmit()" class="row g-3">
-<br>
-<h5>Update User Role:</h5>
+          <br>
+          <h5>Update User Role:</h5>
           <div class="row">
             <!-- Employee Code -->
             <div class="col-md-8 form-group">
               <label for="code">Employee Name:</label>
-              <input type="text" class="form-control" formControlName="name"  readonly>
+              <input type="text" class="form-control" formControlName="name" readonly>
             </div>
-            
+
             <!-- Employee Code -->
             <div class="col-md-8 form-group">
               <label for="code">Employee Code:</label>
-              <input type="text" class="form-control" formControlName="code"  readonly>
+              <input type="text" class="form-control" formControlName="code" readonly>
             </div>
             <!-- Employee Code -->
             <div class="col-md-8 form-group">
               <label for="code">Employee Email:</label>
-              <input type="text" class="form-control" formControlName="email"  readonly>
+              <input type="text" class="form-control" formControlName="email" readonly>
             </div>
 
             <!-- User Group -->
             <div class="col-md-8 form-group">
               <label for="userGroupId">User Group</label>
-              <select id="fk_UserGroupId" class="form-control" formControlName="fk_UserGroupId" >
-                <option  [ngValue]="''"  >Select User Group</option>
-                
+              <select id="fk_UserGroupId" class="form-control" formControlName="fk_UserGroupId">
+                <option [ngValue]="''">Select User Group</option>
+
                 <option *ngFor="let ug of userGroups" [ngValue]="ug.userGroupId">
                   {{ ug.userGroupName }}
                 </option>
