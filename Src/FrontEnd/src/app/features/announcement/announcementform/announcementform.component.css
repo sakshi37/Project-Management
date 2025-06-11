@@ -219,7 +219,24 @@
 }
 
 
-
+.back-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        color: #334155;
+        text-decoration: none;
+    }
+    .back-circle:hover {
+        background: #64748b;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    }
+    .back-circle i {
+        margin: 0;
+    }
 /* 
 .banner {
     min-height: 90px;

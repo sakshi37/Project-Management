@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { Announcement, AnnouncementService } from '../../../services/announcement.service';
 import { RoleService } from '../../../services/role.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
@@ -24,6 +24,8 @@ export class AnnouncementformComponent implements OnInit, OnDestroy {
   userGroups = ['HR', 'Team Lead', 'User'];
   userGroup: string | null = '';
   empCode: string | null = '';
+  minDate: string = '';
+
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +38,7 @@ export class AnnouncementformComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userGroup = this.roleService.getUserRole();
     this.empCode = this.roleService.getEmpId();
+     this.minDate = new Date().toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
 
     this.initializeForm();
     this.loadAnnouncements();
@@ -49,14 +52,23 @@ export class AnnouncementformComponent implements OnInit, OnDestroy {
   }
 
   private initializeForm(): void {
+    // this.announcementForm = this.fb.group({
+    //   title: ['', Validators.required],
+    //   message: ['', Validators.required],
+    //   fromDate: ['', Validators.required],
+    //   toDate: ['', Validators.required],
+    //   targetType: ['', Validators.required],
+    //   targetValue: ['', Validators.required] // Initialize as required
+    // });
     this.announcementForm = this.fb.group({
-      title: ['', Validators.required],
-      message: ['', Validators.required],
-      fromDate: ['', Validators.required],
-      toDate: ['', Validators.required],
-      targetType: ['', Validators.required],
-      targetValue: ['', Validators.required] // Initialize as required
-    });
+  title: ['', [Validators.required, Validators.maxLength(50)]],
+  message: ['', [Validators.required, Validators.maxLength(100)]],
+  fromDate: ['', [Validators.required, this.futureDateValidator()]],
+  toDate: ['', Validators.required],
+  targetType: ['', Validators.required],
+  targetValue: ['', Validators.required]
+});
+
   }
 
   private loadAnnouncements(): void {
@@ -67,6 +79,18 @@ export class AnnouncementformComponent implements OnInit, OnDestroy {
       error: (err) => this.errorHandler.handleError(err)
     });
   }
+  futureDateValidator() {
+  return (control: AbstractControl) => {
+    const inputDate = new Date(control.value);
+    const now = new Date();
+
+    if (inputDate < now) {
+      return { pastDate: true };
+    }
+    return null;
+  };
+}
+
 
   private setupTargetTypeListener(): void {
     this.announcementForm.get('targetType')?.valueChanges.subscribe((type) => {
@@ -95,6 +119,13 @@ export class AnnouncementformComponent implements OnInit, OnDestroy {
 }
 
   submitForm(): void {
+    const fromDate = new Date(this.announcementForm.value.fromDate);
+  const toDate = new Date(this.announcementForm.value.toDate);
+
+  if (toDate < fromDate) {
+    Swal.fire('Validation Error', 'To Date cannot be earlier than From Date.', 'warning');
+    return;
+  }
     if (this.announcementForm.valid) {
       const formValue = this.announcementForm.value;
       
@@ -109,6 +140,11 @@ export class AnnouncementformComponent implements OnInit, OnDestroy {
         next: () => {
           Swal.fire({
             title: 'Success',
+            toast: true,
+            position: 'top',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
             text: 'Announcement posted successfully!',
             icon: 'success'
           }).then(() => {

@@ -1,24 +1,24 @@
-    <div class="banner px-4 py-4 m-2 mt-3 rounded shadow-sm position-relative overflow-hidden"
-        style="background-color: #f1f5f9;">
-        <!-- Decorative Circles -->
-        <div class="circle-decoration circle-1"></div>
-        <div class="circle-decoration circle-2"></div>
-        <div class="circle-decoration circle-3"></div>
-        <div class="circle-decoration circle-4"></div>
-        <div class="circle-decoration circle-5"></div>
+<div class="banner px-4 py-4 m-2 mt-3 rounded shadow-sm position-relative overflow-hidden"
+    style="background-color: #f1f5f9;">
+    <!-- Decorative Circles -->
+    <div class="circle-decoration circle-1"></div>
+    <div class="circle-decoration circle-2"></div>
+    <div class="circle-decoration circle-3"></div>
+    <div class="circle-decoration circle-4"></div>
+    <div class="circle-decoration circle-5"></div>
 
-        <div class="row align-items-center position-relative" style="z-index: 2;">
-            <!-- Left Image -->
-            <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
-                <img src="images/announcement.png" alt="Announcement Icon" style="width: 90px; height: 90px;">
-            </div>
+    <div class="row align-items-center position-relative" style="z-index: 2;">
+        <!-- Left Image -->
+        <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
+            <img src="images/announcement.png" alt="Announcement Icon" style="width: 90px; height: 90px;">
+        </div>
 
-            <!-- Center Title + Search -->
-            <div class="col-12 col-md-6">
-                <h1 class="fw-bold mb-3"
-                    style="font-size: 2.4rem; text-align: left; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
-                    Create Announcements</h1>
-                <!-- <div class="search-box" style="max-width: 500px;" *ngIf="userRole !== 'Admin'">
+        <!-- Center Title + Search -->
+        <div class="col-12 col-md-6">
+            <h1 class="fw-bold mb-3"
+                style="font-size: 2.4rem; text-align: left; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
+                Create Announcements</h1>
+            <!-- <div class="search-box" style="max-width: 500px;" *ngIf="userRole !== 'Admin'">
                     <input type="text" 
                            class="form-control" 
                            placeholder="Search announcements by title, message, or employeecode..." 
@@ -32,8 +32,8 @@
                            [(ngModel)]="adminSearchTerm"
                            (input)="onAdminSearchChange()">
                 </div> -->
-                <!-- Search box for non-admin users -->
-                <!-- <div class="search-box input-group" style="max-width: 500px;" *ngIf="userRole !== 'Admin'">
+            <!-- Search box for non-admin users -->
+            <!-- <div class="search-box input-group" style="max-width: 500px;" *ngIf="userRole !== 'Admin'">
                     <input type="text" class="form-control"
                         placeholder="Search announcements by title, message, or employeecode..."
                         [(ngModel)]="searchTerm" (input)="onSearchChange()">
@@ -42,45 +42,55 @@
                     </span>
                 </div> -->
 
-                
-
-            </div>
 
 
-            <!-- Right Image -->
-            <div class="col-12 col-md-3 mt-3 mt-md-0">
-                <img src="images/386.Remote-Meeting-removebg-preview.png" alt="Announcement Banner"
-                    style="width: 100px; height: 100px;">
-            </div>
+        </div>
+
+
+        <!-- Right Image -->
+        <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <img src="images/386.Remote-Meeting-removebg-preview.png" alt="Announcement Banner"
+                style="width: 100px; height: 100px;">
         </div>
     </div>
-<div class="card p-4 m-2" >
-    <a class="d-flex align-items-center mb-3 text-decoration-none" [routerLink]="['/announcements']">
-        <i class="bi bi-arrow-left me-2"></i>
-        <span>Back to Announcements</span>
-    </a>
+</div>
+<div class="card p-4 m-2">
+    <div class="back-button mb-2">
+        <a class="d-flex align-items-center justify-content-center back-circle" [routerLink]="['/announcements']">
+            <i class="fa fa-arrow-left fa-lg"></i>
+        </a>
+    </div>
+    
     <form [formGroup]="announcementForm" (ngSubmit)="submitForm()">
         <div class="col-md-12 mb-3">
             <div class="row mb-3">
                 <!-- Target Type -->
                 <div class="col-md-6">
                     <label>Target Type</label>
-                    <select class="form-select" formControlName="targetType">
+                    <select class="form-select" formControlName="targetType" [ngClass]="{'is-invalid': announcementForm.get('targetType')?.touched && announcementForm.get('targetType')?.invalid}">
                         <option value="" disabled>Select Target Type</option>
                         <option *ngFor="let type of targetTypes" [value]="type">{{ type }}</option>
                     </select>
+                    <div class="text-danger small"
+                        *ngIf="announcementForm.get('targetType')?.touched && announcementForm.get('targetType')?.invalid">
+                        Target Type is required.
+                    </div>
                 </div>
-                
+
 
                 <!-- Target Value: dropdown or input shown conditionally -->
                 <div class="col-md-6" *ngIf="shouldShowTargetValueField()">
                     <label>Target Value</label>
 
                     <!-- UserGroup dropdown -->
-                    <select *ngIf="targetTypeValue === 'UserGroup'" class="form-select" formControlName="targetValue">
+                    <select *ngIf="targetTypeValue === 'UserGroup'" class="form-select" formControlName="targetValue" [ngClass]="{'is-invalid': announcementForm.get('targetValue')?.touched && announcementForm.get('targetValue')?.invalid}">
                         <option value="" disabled>Select User Group</option>
                         <option *ngFor="let group of userGroupOptions" [value]="group">{{ group }}</option>
                     </select>
+                    <div class="text-danger small"
+                        *ngIf="announcementForm.get('targetValue')?.touched && announcementForm.get('targetValue')?.invalid">
+                        Target Value is required.
+                    </div>
 
                     <!-- Employee input -->
                     <input *ngIf="targetTypeValue === 'Employee'" type="text" class="form-control"
@@ -94,24 +104,52 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label>From Date</label>
-                    <input type="datetime-local" class="form-control" formControlName="fromDate" />
+                    <!-- <input type="datetime-local" class="form-control" formControlName="fromDate" /> -->
+                    <input type="datetime-local" class="form-control" formControlName="fromDate" [min]="minDate" [ngClass]="{'is-invalid': announcementForm.get('fromDate')?.touched && announcementForm.get('fromDate')?.invalid}"/>
+                    <div class="text-danger small"
+                        *ngIf="announcementForm.get('fromDate')?.touched && announcementForm.get('fromDate')?.errors?.['pastDate']">
+                        From Date cannot be in the past.
+                    </div>
+                    <div class="text-danger small"
+                        *ngIf="announcementForm.get('fromDate')?.touched && announcementForm.get('fromDate')?.errors?.['required']">
+                        From Date is required.
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label>To Date</label>
-                    <input type="datetime-local" class="form-control" formControlName="toDate" />
+                    <input type="datetime-local" class="form-control" formControlName="toDate" [ngClass]="{'is-invalid': announcementForm.get('toDate')?.touched && announcementForm.get('toDate')?.invalid}"/>
+                    <div class="text-danger small"
+                        *ngIf="announcementForm.get('toDate')?.touched && announcementForm.get('toDate')?.errors?.['required']">
+                        To Date is required.
+                        <div *ngIf="announcementForm.get('toDate')?.errors?.['pastDate']">To Date cannot be in the past.</div>
+                        <div *ngIf="announcementForm.get('toDate')?.errors?.['dateMismatch']">To Date must be after From Date.</div>
+                    </div>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label>Title</label>
-                    <input class="form-control" formControlName="title" placeholder="Enter title" />
+                    <input class="form-control" formControlName="title" placeholder="Enter title" [ngClass]="{'is-invalid': announcementForm.get('title')?.touched && announcementForm.get('title')?.invalid}"/>
+                    <div class="text-danger small"
+                        *ngIf="announcementForm.get('title')?.touched && announcementForm.get('title')?.invalid">
+                        <div *ngIf="announcementForm.get('title')?.errors?.['required']">Title is required.</div>
+                        <div *ngIf="announcementForm.get('title')?.errors?.['maxlength']">Title can't exceed 50
+                            characters.</div>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label>Message</label>
                     <textarea rows="3" class="form-control" formControlName="message"
-                        placeholder="Enter announcement message"></textarea>
+                        placeholder="Enter announcement message" [ngClass]="{'is-invalid': announcementForm.get('message')?.touched && announcementForm.get('message')?.invalid}"></textarea>
+                    <div class="text-danger small"
+                        *ngIf="announcementForm.get('message')?.touched && announcementForm.get('message')?.invalid">
+                        <div *ngIf="announcementForm.get('message')?.errors?.['required']">Message is required.</div>
+                        <div *ngIf="announcementForm.get('message')?.errors?.['maxlength']">Message can't exceed 100
+                            characters.</div>
+                    </div>
                 </div>
+
             </div>
         </div>
 

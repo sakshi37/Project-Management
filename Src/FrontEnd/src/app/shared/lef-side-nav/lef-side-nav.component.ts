@@ -27,6 +27,8 @@ import { AppComponent } from '../../app.component';
   imports: [RouterLink, HeaderComponent, CommonModule],
 })
 export class LefSideNavComponent {
+  hasNewAnnouncement: boolean = false;
+
   userRole: string | null = null;
   user: UserProfile = {
     image: '',
@@ -52,7 +54,7 @@ export class LefSideNavComponent {
     private notificationService: NotificationService,
     private announcementService: AnnouncementService,
     private injector: Injector
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
@@ -60,6 +62,17 @@ export class LefSideNavComponent {
       console.error('No token found.');
       return;
     }
+    this.announcementService.newAnnouncement$.subscribe((announcement) => {
+        console.log('🔴 New announcement received in sidebar');
+
+      this.hasNewAnnouncement = true; // show red dot
+    });
+    this.router.events.subscribe((event: any) => {
+      if (event.url === '/announcements') {
+        this.hasNewAnnouncement = false; // hide red dot on visiting announcement page
+      }
+    });
+
 
     const decodedToken = jwtDecode<any>(token);
     const code = decodedToken?.sub;
@@ -98,8 +111,8 @@ export class LefSideNavComponent {
     localStorage.clear();
     sessionStorage.clear();
     this.router.navigate(['login']);
-     this.announcementService.clear();
-    
+    this.announcementService.clear();
+
   }
 
   toggleSidebar() {
