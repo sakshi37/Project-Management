@@ -7,7 +7,7 @@ import {
   EventEmitter,
   Injector,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { CommonModule } from '@angular/common';
 import { jwtDecode } from 'jwt-decode';
@@ -28,6 +28,9 @@ import { AppComponent } from '../../app.component';
 })
 export class LefSideNavComponent {
   hasNewAnnouncement: boolean = false;
+  unreadAnnouncements: any[] = [];
+  unreadAnnouncementCount: number = 0;
+
 
   userRole: string | null = null;
   user: UserProfile = {
@@ -40,12 +43,15 @@ export class LefSideNavComponent {
   unreadCount: number = 0;
   sidebarVisible: boolean = true;
   code: string = '';
+  icon: string = 'fa fa-eye-slash ms-2';
 
   @Output() sidebarToggled = new EventEmitter<boolean>();
 
   @ViewChild('profileMenu') profileMenu: ElementRef | undefined;
   @ViewChild('mastersMenu') mastersMenu: ElementRef | undefined;
   @ViewChild('hrMenu') hrMenu: ElementRef | undefined;
+  @ViewChild('announcementMenu') announcementMenu: ElementRef | undefined;
+
   constructor(
     private renderer: Renderer2,
     private profileService: ProfileService,
@@ -62,14 +68,25 @@ export class LefSideNavComponent {
       console.error('No token found.');
       return;
     }
-    this.announcementService.newAnnouncement$.subscribe((announcement) => {
-        console.log('🔴 New announcement received in sidebar');
+    // this.announcementService.newAnnouncement$.subscribe((announcement) => {
+    //     console.log('🔴 New announcement received in sidebar');
 
-      this.hasNewAnnouncement = true; // show red dot
+    //   this.hasNewAnnouncement = true; // show red dot
+    // });
+    // this.router.events.subscribe((event: any) => {
+    //   if (event.url === '/announcements') {
+    //     this.hasNewAnnouncement = false; // hide red dot on visiting announcement page
+    //   }
+    // });
+
+    this.announcementService.newAnnouncement$.subscribe((announcement) => {
+      this.unreadAnnouncements.unshift(announcement); // Add to preview list
+      this.unreadAnnouncementCount = this.unreadAnnouncements.length;
     });
-    this.router.events.subscribe((event: any) => {
-      if (event.url === '/announcements') {
-        this.hasNewAnnouncement = false; // hide red dot on visiting announcement page
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd && event.url === '/announcements') {
+        this.unreadAnnouncements = [];
+        this.unreadAnnouncementCount = 0;
       }
     });
 
@@ -103,6 +120,27 @@ export class LefSideNavComponent {
 
     // Initial load
     this.notificationService.updateUnreadCount(code);
+  }
+  toggleAnnouncementMenu() {
+    if (this.announcementMenu) {
+      const classList = this.announcementMenu.nativeElement.classList;
+
+      if (classList.contains('show')) {
+        this.renderer.removeClass(this.announcementMenu.nativeElement, 'show');
+        this.icon = 'fa fa-eye-slash ms-2';
+      } else {
+        this.renderer.addClass(this.announcementMenu.nativeElement, 'show');
+        this.icon = 'fa fa-eye ms-2';
+
+        // Clear unread
+        this.unreadAnnouncementCount = 0;
+      }
+    }
+  }
+  goToAnnouncements() {
+    this.router.navigate(['/announcements']);
+    this.unreadAnnouncements = [];
+    this.unreadAnnouncementCount = 0;
   }
 
   logout() {
