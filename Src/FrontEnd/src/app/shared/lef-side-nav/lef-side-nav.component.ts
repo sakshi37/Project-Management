@@ -5,6 +5,7 @@ import {
   ViewChild,
   Output,
   EventEmitter,
+  Injector,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
@@ -16,6 +17,7 @@ import { RoleService } from '../../services/role.service';
 import { NotificationModel } from '../../Models/notification-model';
 import { NotificationService } from '../../services/notification-service';
 import { AnnouncementService } from '../../services/announcement.service';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-lef-side-nav',
@@ -48,7 +50,8 @@ export class LefSideNavComponent {
     private router: Router,
     private roleService: RoleService,
     private notificationService: NotificationService,
-    private announcementService: AnnouncementService
+    private announcementService: AnnouncementService,
+    private injector: Injector
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +93,8 @@ export class LefSideNavComponent {
   }
 
   logout() {
+    const appRef = this.injector.get(AppComponent);
+    appRef.clearAnnouncementStream();
     localStorage.clear();
     sessionStorage.clear();
     this.router.navigate(['login']);

@@ -217,3 +217,155 @@
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   border-color: #80bdff;
 }
+
+
+
+/* 
+.banner {
+    min-height: 90px;
+} */
+
+.circle-decoration {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.6;
+    z-index: 1;
+}
+
+/* Circle variations matching your design */
+.circle-1 {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    top: -30px;
+    left: -30px;
+}
+
+.circle-2 {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    top: 20px;
+    right: -20px;
+}
+
+.circle-3 {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    bottom: -15px;
+    left: 100px;
+}
+
+.circle-4 {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    bottom: -40px;
+    right: 80px;
+}
+
+.circle-5 {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .circle-1 {
+        width: 80px;
+        height: 80px;
+        top: -20px;
+        left: -20px;
+    }
+    
+    .circle-2 {
+        width: 60px;
+        height: 60px;
+        top: 15px;
+        right: -15px;
+    }
+    
+    .circle-3 {
+        width: 45px;
+        height: 45px;
+        bottom: -10px;
+        left: 60px;
+    }
+    
+    .circle-4 {
+        width: 70px;
+        height: 70px;
+        bottom: -30px;
+        right: 40px;
+    }
+    
+    .circle-5 {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .circle-1 {
+        width: 60px;
+        height: 60px;
+        top: -15px;
+        left: -15px;
+    }
+    
+    .circle-2 {
+        width: 45px;
+        height: 45px;
+        top: 10px;
+        right: -10px;
+    }
+    
+    .circle-3 {
+        width: 35px;
+        height: 35px;
+        bottom: -8px;
+        left: 40px;
+    }
+    
+    .circle-4 {
+        width: 50px;
+        height: 50px;
+        bottom: -20px;
+        right: 20px;
+    }
+    
+    .circle-5 {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+/* Additional decorative elements for extra visual appeal */
+.circle-decoration::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+
+/* Subtle animation for enhanced visual appeal */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.circle-1 { animation: float 6s ease-in-out infinite; }
+.circle-2 { animation: float 8s ease-in-out infinite 1s; }
+.circle-3 { animation: float 7s ease-in-out infinite 2s; }
+.circle-4 { animation: float 9s ease-in-out infinite 0.5s; }
+.circle-5 { animation: float 5s ease-in-out infinite 1.5s; }

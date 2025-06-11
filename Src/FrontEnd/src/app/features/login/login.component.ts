@@ -91,7 +91,10 @@ loginUser(loginForm: NgForm) {
       this.loginAttempts = 0; 
       localStorage.setItem('token', response.token);
       localStorage.setItem('loginStatus', String(response.loginStatus));
-      this.announcementService.restartConnection();
+      this.announcementService.restartConnection().then(() => {
+  const appRef = this.injector.get(AppComponent);
+  appRef.subscribeToAnnouncements(); // ✅ Subscribing again
+});
 
       const decodedToken = jwtDecode(response.token);
       this.UserName = decodedToken.sub;

@@ -22,7 +22,7 @@ namespace HR.API.Controllers
         public async Task<IActionResult> Create([FromBody] BroadcastAnnouncementDto dto)
         {
             var result = await _mediator.Send(new CreateBroadcastAnnouncementCommand(dto));
-            return Ok(result);
+            return Ok(new { message = result });
         }
         [HttpGet("today")]
         public async Task<ActionResult<List<BroadcastAnnouncementDto>>> GetTodayAnnouncements()

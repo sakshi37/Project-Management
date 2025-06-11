@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Injector, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnnouncementService } from '../../services/announcement.service';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-header',
@@ -10,10 +11,12 @@ import { AnnouncementService } from '../../services/announcement.service';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-  constructor(private router: Router, private announcementService: AnnouncementService) {}
+  constructor(private router: Router, private announcementService: AnnouncementService, private injector: Injector) {}
 
   logout() {
     // Clear session or token
+    const appRef = this.injector.get(AppComponent);
+appRef.clearAnnouncementStream();
     localStorage.clear();
     sessionStorage.clear();
     this.router.navigate(['/login']);
