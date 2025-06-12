@@ -126,12 +126,14 @@
          class="sidebar-link-text sidebar-link d-block mb-2 text-white"
          style="cursor: pointer;"
          (click)="goToAnnouncements()">
-        <div class="fw-bold">{{ a.title }}</div>
+        <div class="fw-bold">{{ a.title }} {{a.targetType}}</div>
         <div class="small text-truncate">{{ a.message }}</div>
       </a>
 
-      <div *ngIf="unreadAnnouncements.length > 3" class="text-white small text-center mt-2">
-        +{{ unreadAnnouncements.length - 3 }} more
+      <div *ngIf="unreadAnnouncements.length > 3" class="small text-dark mt-2">
+        <a routerLink="/announcements" class="text-primary" style="text-decoration: none;"> +{{ unreadAnnouncements.length - 3 }} more
+</a>
+
       </div>
     </div>
   </div>

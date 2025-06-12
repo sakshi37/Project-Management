@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AnnouncementService, Announcement } from '../../services/announcement.service';
 import { Subscription, timer, forkJoin, of } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
-import { RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { RoleService } from '../../services/role.service';
@@ -29,7 +29,8 @@ export class AnnouncementComponent implements OnInit, OnDestroy {
   constructor(
     private announcementService: AnnouncementService,
     private roleService: RoleService,
-    private errorHandler: ErrorHandler
+    private errorHandler: ErrorHandler,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +98,7 @@ export class AnnouncementComponent implements OnInit, OnDestroy {
     this.filteredAnnouncements = filtered;
   }
 
+
   // Add filtering method for admin announcements
   filterAdminAnnouncements(): void {
     let filtered: Announcement[] = [];
@@ -148,7 +150,20 @@ export class AnnouncementComponent implements OnInit, OnDestroy {
       default: return '';
     }
   }
+// announcement-list.component.ts
+editAnnouncement(announcement: Announcement) {
+  this.announcementService.setEditAnnouncement(announcement);
+    this.router.navigate(['/announcement-form']);
 
+}
+createAnnouncement(): void {
+  this.announcementService.clearEditAnnouncement();
+  this.router.navigate(['/announcement-form']);
+}
+// editAnnouncement(announcement: Announcement) {
+//   this.announcementService.editAnnouncement$.next(announcement);
+//   this.router.navigate(['/announcement-form']);
+// }
   startPolling(): void {
     const employeeCode = this.roleService.getEmpCode();
     const userGroup = this.roleService.getUserRole();

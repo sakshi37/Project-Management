@@ -48,6 +48,19 @@ export class AnnouncementService {
   gettodayAnnouncements(){
     return this.http.get<Announcement[]>(`${this.apiUrl}/BroadcastAnnouncement/today`);
   }
+  updateAnnouncement(data: any) {
+  return this.http.put(`${this.apiUrl}/BroadcastAnnouncement/update`, data);
+}
+  private editAnnouncementSubject = new BehaviorSubject<Announcement | null>(null);
+editAnnouncement$ = this.editAnnouncementSubject.asObservable();
+
+setEditAnnouncement(announcement: Announcement) {
+  this.editAnnouncementSubject.next(announcement);
+}
+
+clearEditAnnouncement() {
+  this.editAnnouncementSubject.next(null);
+}
 
 
   async startConnection() {

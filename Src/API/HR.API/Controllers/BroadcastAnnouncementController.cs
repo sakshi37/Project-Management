@@ -1,4 +1,5 @@
 ﻿using HR.Application.Features.Annoucements.Commands.CreateBroadcastAnnoucement;
+using HR.Application.Features.Annoucements.Commands.UpdateAnnouncement;
 using HR.Application.Features.Annoucements.Dtos;
 using HR.Application.Features.Annoucements.Queries;
 using MediatR;
@@ -37,6 +38,14 @@ namespace HR.API.Controllers
             var result = await _mediator.Send(new GetAnnouncementsForUserQuery(dto));
             return Ok(result);
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateAnnouncement(UpdateAnnouncementCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(new { message = result});
+        }
+
 
     }
 
