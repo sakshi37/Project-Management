@@ -54,9 +54,12 @@
       <thead class="table-light">
         <tr>
           <th>
-            <input type="checkbox" [checked]="areAllSelected()" (change)="toggleSelectAll($event)" />
+            <!-- <input type="checkbox" [checked]="areAllSelected()" (change)="toggleSelectAll($event)"  /> -->
           </th>
-          <th *ngFor="let col of columns">{{ col.label }}</th>
+          <th *ngFor="let col of columns"  (click)="sortEmployee(col.key)" style="cursor: pointer;">{{ col.label }}
+              <i class="fa" [ngClass]="getSortIcon(col.key)"></i>
+          </th>
+
 
         </tr>
 
