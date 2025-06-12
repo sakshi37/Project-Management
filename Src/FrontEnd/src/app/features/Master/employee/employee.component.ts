@@ -30,6 +30,8 @@ export class EmployeeComponent implements OnInit {
 
   searchText: string = '';
 currentUserCode: string = '';
+  selectedSortColumn = '';
+  sortDirectionAsc = true;
 
   columns = [
     { key: 'srNo', label: 'Sr. No.' },
@@ -408,4 +410,44 @@ openDeleteEmployeePopup(emp :any):void{
         }
       });
 }
+
+
+sortEmployee(column: string) {
+  const nonSortableColumns = ['srNo', 'image', 'action']; // use column keys, not labels
+
+  if (nonSortableColumns.includes(column)) {
+    return; // Exit if column is not sortable
+  }
+
+  if (this.selectedSortColumn === column) {
+    this.sortDirectionAsc = !this.sortDirectionAsc;
+  } else {
+    this.selectedSortColumn = column;
+    this.sortDirectionAsc = true;
+  }
+
+  this.employees.sort((a, b) => {
+    const aValue = a[column]?.toString().toLowerCase() || '';
+    const bValue = b[column]?.toString().toLowerCase() || '';
+
+    if (aValue < bValue) return this.sortDirectionAsc ? -1 : 1;
+    if (aValue > bValue) return this.sortDirectionAsc ? 1 : -1;
+    return 0;
+  });
+}
+
+
+
+getSortIcon(column: string): string {
+  const nonSortableColumns = ['srNo', 'image', 'action'];
+  if (nonSortableColumns.includes(column)) {
+    return ''; // Don't show any icon for non-sortable columns
+  }
+
+  if (this.selectedSortColumn !== column) return 'fa-sort';
+  return this.sortDirectionAsc ? 'fa-sort-up' : 'fa-sort-down';
+}
+
+
+
 }
