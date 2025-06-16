@@ -26,7 +26,7 @@
 
 
 
-<!-- <a routerLink="/announcements" routerLinkActive="active-link"
+  <!-- <a routerLink="/announcements" routerLinkActive="active-link"
    class="sidebar-link mb-2 position-relative d-flex align-items-center">
   <span class="position-relative d-inline-block">
     <i class="fas fa-bullhorn me-2"></i>
@@ -38,8 +38,8 @@
   </span>
   Announcements
 </a> -->
-<!-- Announcements with badge and dropdown -->
-<!-- <div class="dropdown w-50">
+  <!-- Announcements with badge and dropdown -->
+  <!-- <div class="dropdown w-50">
   <a routerLink="/announcements"
      routerLinkActive="active-link"
      class="sidebar-link mb-2 position-relative d-flex align-items-center dropdown-toggle"
@@ -82,62 +82,57 @@
   <a routerLink="/dashboard" routerLinkActive="active-link" class="sidebar-link mb-2">
     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
   </a>
-  
-<div class="accordion-item bg-transparent border-0">
-  <h2 class="accordion-header">
-    <button
-      class="accordion-button collapsed bg-transparent text-white d-flex justify-content-between align-items-center mb-2"
-      type="button"
-      aria-expanded="false"
-      aria-controls="announcementMenu"
-      (click)="toggleAnnouncementMenu()">
-      <span class="d-flex align-items-center position-relative">
-        <!-- Badge Count -->
-        <i class="fas fa-bullhorn me-2"></i>
-        <span *ngIf="unreadAnnouncementCount > 0"
-              class="badge bg-danger position-absolute translate-middle"
-              style="font-size: 0.7rem; z-index: 1000; left: 1.6rem; top: -0.3rem;">
-          {{ unreadAnnouncementCount }}
+
+  <div class="accordion-item bg-transparent border-0">
+    <h2 class="accordion-header">
+      <button
+        class="accordion-button collapsed bg-transparent text-white d-flex justify-content-between align-items-center mb-2"
+        type="button" aria-expanded="false" aria-controls="announcementMenu" (click)="toggleAnnouncementMenu()">
+        <span class="d-flex align-items-center position-relative">
+          <!-- Badge Count -->
+          <i class="fas fa-bullhorn me-2"></i>
+          <span *ngIf="unreadAnnouncementCount > 0" class="badge bg-danger position-absolute translate-middle"
+            style="font-size: 0.7rem; z-index: 1000; left: 1.6rem; top: -0.3rem;">
+            {{ unreadAnnouncementCount }}
+          </span>
+          Announcements
+
+
+
         </span>
-        Announcements
-        
-        
-
-      </span>
-      <span style="position:absolute; right:1rem;">
-          <i class ="{{icon}}"
-           style="color: #fff; font-size: 0.8rem;"></i>
+        <span style="position:absolute; right:1rem;">
+          <i class="{{icon}}" style="color: #fff; font-size: 0.8rem;"></i>
         </span>
-    </button>
-    
-  </h2>
+      </button>
 
-  <!-- Accordion Body with preview -->
-  <div id="announcementMenu" #announcementMenu class="accordion-collapse collapse mb-2" data-bs-parent="#sidebarMenu">
-    <div class="accordion-body ps-4 pe-2" style="max-height: 200px; overflow-y: auto;">
+    </h2>
 
-      <div *ngIf="unreadAnnouncements.length === 0" class="text-muted small">
-        No new announcements<br/>
+    <!-- Accordion Body with preview -->
+    <div id="announcementMenu" #announcementMenu class="accordion-collapse collapse mb-2" data-bs-parent="#sidebarMenu">
+      <div class="accordion-body ps-4 pe-2" style="max-height: 200px; overflow-y: auto;">
 
-        <a routerLink="/announcements" class="">View All</a>
-      </div>
+        <div *ngIf="unreadAnnouncements.length === 0" class="text-muted small">
+          No new announcements<br />
 
-      <a *ngFor="let a of unreadAnnouncements.slice(0, 5)"
-         class="sidebar-link-text sidebar-link d-block mb-2 text-white"
-         style="cursor: pointer;"
-         (click)="goToAnnouncements()">
-        <div class="fw-bold">{{ a.title }} {{a.targetType}}</div>
-        <div class="small text-truncate">{{ a.message }}</div>
-      </a>
+          <a routerLink="/announcements" class="">View All</a>
+        </div>
 
-      <div *ngIf="unreadAnnouncements.length > 3" class="small text-dark mt-2">
-        <a routerLink="/announcements" class="text-primary" style="text-decoration: none;"> +{{ unreadAnnouncements.length - 3 }} more
-</a>
+        <a *ngFor="let a of unreadAnnouncements.slice(0, 5)"
+          class="sidebar-link-text sidebar-link d-block mb-2 text-white" style="cursor: pointer;"
+          (click)="goToAnnouncements()">
+          <div class="fw-bold">{{ a.title }} ({{a.targetType}}) </div>
+          <div class="small text-truncate">{{ a.message }}</div>
+        </a>
 
+        <div *ngIf="unreadAnnouncements.length > 3" class="small text-dark mt-2">
+          <a routerLink="/announcements" class="text-primary" style="text-decoration: none;"> +{{
+            unreadAnnouncements.length - 3 }} more
+          </a>
+
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- Admin -->
   <div class="accordion-item bg-transparent border-0" *ngIf="userRole === 'Admin'">
