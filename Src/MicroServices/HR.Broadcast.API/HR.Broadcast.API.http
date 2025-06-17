@@ -1,0 +1,6 @@
+@HR.Broadcast.API_HostAddress = http://localhost:5022
+
+GET {{HR.Broadcast.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

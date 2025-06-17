@@ -2,16 +2,17 @@ import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } fr
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 
 import Aura from '@primeng/themes/aura';
+import { jwtInterceptor } from './services/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(),importProvidersFrom(BrowserAnimationsModule),importProvidersFrom(NgxPaginationModule),provideAnimationsAsync(),
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideHttpClient(withInterceptorsFromDi()),provideHttpClient(withInterceptors([jwtInterceptor])), importProvidersFrom(BrowserAnimationsModule),importProvidersFrom(NgxPaginationModule),provideAnimationsAsync(),
         providePrimeNG({
             theme: {
                 preset: Aura,

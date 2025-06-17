@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { RoleService } from './role.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { API_URL } from '../../constant';
+import { ANNOUNCEMENT_HUB_URL, API_URL } from '../../constant';
 
 export interface Announcement {
   id: number;
@@ -21,6 +21,7 @@ export interface Announcement {
 })
 export class AnnouncementService {
     private apiUrl = `${API_URL}`;
+    private announcementUrl = `${ANNOUNCEMENT_HUB_URL}`;
   
   private hubConnection!: signalR.HubConnection;
 
@@ -33,7 +34,7 @@ export class AnnouncementService {
 
   constructor(private roleService: RoleService, private http: HttpClient) {}
   postAnnouncement(data: any) {
-  return this.http.post(`${this.apiUrl}/BroadcastAnnouncement`, data);
+  return this.http.post(`${this.announcementUrl}/Broadcast`, data);
 }
 
   getAnnouncements(employeeCode: string, userGroup: string): Observable<Announcement[]> {
@@ -42,14 +43,14 @@ export class AnnouncementService {
     .set('employeeCode', employeeCode)
     .set('userGroup', userGroup);
 
-  return this.http.get<Announcement[]>(`${this.apiUrl}/BroadcastAnnouncement/get-by-user`, { params });
+  return this.http.get<Announcement[]>(`${this.announcementUrl}/Broadcast/get-by-user`, { params });
 }
 
   gettodayAnnouncements(){
-    return this.http.get<Announcement[]>(`${this.apiUrl}/BroadcastAnnouncement/today`);
+    return this.http.get<Announcement[]>(`${this.announcementUrl}/Broadcast/today`);
   }
   updateAnnouncement(data: any) {
-  return this.http.put(`${this.apiUrl}/BroadcastAnnouncement/update`, data);
+  return this.http.put(`${this.announcementUrl}/Broadcast/update`, data);
 }
   private editAnnouncementSubject = new BehaviorSubject<Announcement | null>(null);
 editAnnouncement$ = this.editAnnouncementSubject.asObservable();
@@ -82,7 +83,7 @@ clearEditAnnouncement() {
     }
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7292/announcementHub', {
+      .withUrl('https://localhost:7052/announcementHub', {
         accessTokenFactory: () => this.roleService.getToken() || ''
       })
       .withAutomaticReconnect()

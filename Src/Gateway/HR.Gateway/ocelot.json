@@ -1,0 +1,65 @@
+{
+    "Routes": [
+        {
+            "DownstreamPathTemplate": "/api/Broadcast",
+            "DownstreamScheme": "https",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 7052
+                }
+            ],
+            "UpstreamPathTemplate": "/api/Broadcast",
+            "UpstreamHttpMethod": [ "POST", "GET", "PUT" ],
+            "AuthenticationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "AllowedScopes": []
+            }
+        },
+        {
+            "DownstreamPathTemplate": "/api/Broadcast/{everything}",
+            "DownstreamScheme": "https",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 7052
+                }
+            ],
+            "UpstreamPathTemplate": "/Broadcast/{everything}",
+            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+            "AuthenticationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "AllowedScopes": []
+            }
+        },
+        {
+            "DownstreamPathTemplate": "/announcementHub/negotiate",
+            "UpstreamPathTemplate": "/announcementHub/negotiate",
+            "DownstreamScheme": "https",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 7052
+                }
+            ],
+            "UpstreamHttpMethod": [ "GET", "POST", "OPTIONS" ],
+            "DownstreamHttpVersion": "2.0"
+        },
+        {
+            "DownstreamPathTemplate": "/announcementHub",
+            "UpstreamPathTemplate": "/announcementHub",
+            "DownstreamScheme": "wss",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 7052
+                }
+            ],
+            "UpstreamHttpMethod": [ "GET", "POST" ],
+            "DownstreamHttpVersion": "2.0"
+        }
+    ],
+    "GlobalConfiguration": {
+        "BaseUrl": "https://localhost:7033"
+    }
+}
